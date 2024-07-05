@@ -5,11 +5,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BERGER_ONE_PORTAL_API.Dtos;
 using BERGER_ONE_PORTAL_API.Logic;
+using BERGER_ONE_PORTAL_API.Filters;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
     [Route(Constant.Common.PortalAPIPrefix + "[controller]/[action]")]
     [ApiController]
+    [Authorize]
+    [ServiceFilter(typeof(FluentValidationActionFilterAttribute))]
+    [ServiceFilter(typeof(ErrorHandlerFilterAttribute))]
+    [ServiceFilter(typeof(APILogAttribute))]
+
     public class LoginController : ControllerBase
     {
         private readonly ILoginLogic _loginLogic;
