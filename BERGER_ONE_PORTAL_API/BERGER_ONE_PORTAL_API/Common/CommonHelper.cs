@@ -15,6 +15,25 @@ namespace BERGER_ONE_PORTAL_API.Common
             var userDetailsList = JsonConvert.DeserializeObject<UserDetailsModel>(user.Claims.FirstOrDefault()?.Value);
             return userDetailsList;
         }
+
+        public static bool StringEquals(this string? obj, string? value, StringComparison comparison)
+        {
+            return (string.IsNullOrEmpty(obj) && string.IsNullOrEmpty(value))
+                   || string.Equals(obj, value, comparison);
+        }
+
+        public static List<T> MapResult<T>(DataTable? dt)
+        {
+            var serializeObject = JsonConvert.SerializeObject(dt);
+            return JsonConvert.DeserializeObject<List<T>>(serializeObject) ?? [];
+        }
+
+        public struct ViewType
+        {
+            public const string ListView = "ListView";
+            public const string SplitView = "SplitView";
+            public const string Kanban = "Kanban";
+        }
     }
     public class NumericHttpStatusCodeConverter : JsonConverter<HttpStatusCode>
     {
@@ -34,6 +53,7 @@ namespace BERGER_ONE_PORTAL_API.Common
     }
     public class Utils
     {
+        
         public static object IIFStringOrDBNull(string? value)
         {
             return (string.IsNullOrWhiteSpace(value) ? (object)DBNull.Value : value);
@@ -86,6 +106,11 @@ namespace BERGER_ONE_PORTAL_API.Common
             }
             //put a breakpoint here and check datatable
             return dataTable;
+        }
+
+        public static object IIFListOrDBNull(dynamic? value)
+        {
+            return (value != null ? JsonConvert.SerializeObject(value) : (object)DBNull.Value);
         }
     }
 
