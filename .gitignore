@@ -2,8 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/BERGER_ONE_API/.vs
-/BERGER_ONE_API/ONE_PORTAL_API/obj/*
-/BERGER_ONE_API/ONE_PORTAL_API/bin/Debug/*
-/BERGER_ONE_API/MSSQL_HELPER/obj/*
+/BERGER_ONE_PORTAL_API/.vs
+/BERGER_ONE_PORTAL_API/BERGER_ONE_PORTAL_API/obj/*
+/BERGER_ONE_PORTAL_API/BERGER_ONE_PORTAL_API/bin/Debug/*
+/BERGER_ONE_PORTAL_API/MSSQL_HELPER/obj/*
 
