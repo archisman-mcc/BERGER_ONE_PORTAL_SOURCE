@@ -44,5 +44,11 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
             return response;
         }
+
+        public async Task<UserAppsResponseDto?> GetAppList()
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetAppListData();
+            return UserAdapter.MapAppResponse(dataResponse);
+        }
     }
 }

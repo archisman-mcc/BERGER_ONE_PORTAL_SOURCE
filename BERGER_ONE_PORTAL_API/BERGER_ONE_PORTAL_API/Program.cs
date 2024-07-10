@@ -15,6 +15,10 @@ using BERGER_ONE_PORTAL_API.Repository.JWT;
 using BERGER_ONE_PORTAL_API.Repository.Login;
 using BERGER_ONE_PORTAL_API.Validators;
 using System.Text;
+using BERGER_ONE_PORTAL_API.Repository.Common;
+using BERGER_ONE_PORTAL_API.Repository.Utility;
+using BERGER_ONE_PORTAL_API.Repository.Logger;
+using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 
 namespace BERGER_ONE_PORTAL_API
 {
@@ -25,7 +29,7 @@ namespace BERGER_ONE_PORTAL_API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddCors();
             builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -37,14 +41,23 @@ namespace BERGER_ONE_PORTAL_API
 
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddTransient<IValidator<TokenRefreshDto>, TokenRefreshValidator>();
+            builder.Services.AddTransient<IValidator<UserProfileDetailsRequest>, UserProfileDetailsRequestValidator>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ISqlHelper, SqlHelper>();
             builder.Services.AddScoped<IServiceContext, ServiceContext>();
             builder.Services.AddScoped<IJwtManager, JwtManager>();
 
+
             builder.Services.AddScoped<ILoginRepo, LoginRepo>();
             builder.Services.AddScoped<ILoginLogic, LoginLogic>();
+            builder.Services.AddScoped<ICommonLogic, CommonLogic>();
+            builder.Services.AddScoped<ICommonRepo, CommonRepo>();
+
+            builder.Services.AddScoped<ILoggerService, LoggerService>();
+            builder.Services.AddScoped<FluentValidationActionFilterAttribute>();
+            builder.Services.AddScoped<ErrorHandlerFilterAttribute>();
+            builder.Services.AddScoped<APILogAttribute>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
             {
@@ -102,10 +115,12 @@ namespace BERGER_ONE_PORTAL_API
                     throw new InvalidOperationException("Unable to determine tag for endpoint.");
                 });
                 c.DocInclusionPredicate((name, api) => true);
-                c.DocumentFilter<SwaggerDocumentFilter>();
+                //c.DocumentFilter<SwaggerDocumentFilter>();
                 c.CustomSchemaIds(x => x.FullName);
             });
 
+
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -119,7 +134,11 @@ namespace BERGER_ONE_PORTAL_API
 
             app.UseAuthorization();
 
-
+            app.UseCors(corsPolicyBuilder =>
+          corsPolicyBuilder.AllowAnyOrigin()
+         .AllowAnyMethod()
+         .AllowAnyHeader()
+          );
             app.MapControllers();
 
             app.Run();
