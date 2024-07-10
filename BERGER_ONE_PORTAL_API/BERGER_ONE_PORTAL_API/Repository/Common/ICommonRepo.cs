@@ -7,5 +7,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
     {
         Task<MSSQLResponse?> GetUserList(UserListDto dto);
         Task<MSSQLResponse?> GetUserDetails(UserProfileDetailsRequest dto);
+
+        Task<MSSQLResponse?> GetAppListData();
     }
 }

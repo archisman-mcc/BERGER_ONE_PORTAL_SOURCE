@@ -6,6 +6,7 @@ using BERGER_ONE_PORTAL_API.Models;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using System.Net;
 using static BERGER_ONE_PORTAL_API.Dtos.UserResponseDto;
 
 namespace BERGER_ONE_PORTAL_API.Logic
@@ -80,41 +81,103 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         var ds = (data?.Data as DataSet);
                         if (ds != null && ds.Tables.Count > 0)
                         {
+                            ds.Tables[0].TableName = "UserDetails";
+                            ds.Tables[1].TableName = "UserApplDepot";
                             var dtUserDetails = ds?.Tables[0];
                             var dtApplicabledepot = ds?.Tables[1];
-                            response = new UserProfileResponse()
+                            response = new UserProfileResponse();
+                            response.Data = ds;
+
+                            if (response != null)
                             {
-                                Data = dtUserDetails?.AsEnumerable().Select(dr => new UserProfileModel()
-                                {
-                                    UspUserId = Convert.ToString(dr["usp_user_id"]),
-                                    UspFirstName = Convert.ToString(dr["usp_first_name"]),
-                                    UspLastName = Convert.ToString(dr["usp_last_name"]),
-                                    UspGroupCode = Convert.ToString(dr["usp_group_code"]),
-                                    UspDept = Convert.ToString(dr["usp_dept"]),
-                                    UspMailid = Convert.ToString(dr["usp_mailid"]),
-                                    UspMobile = Convert.ToString(dr["usp_mobile"]),
-                                    UspDesig = Convert.ToString(dr["usp_desig"]),
-                                    UspDoj = Convert.ToString(dr["usp_doj"]),
-                                    UspDepot = Convert.ToString(dr["usp_depot"]),
-                                    UspEmployeeId = Convert.ToString(dr["usp_employee_id"]),
-                                    created_user = Convert.ToString(dr["created_user"]),
-                                    Active = Convert.ToString(dr["active"]),
-                                    Depot = dtApplicabledepot?.AsEnumerable().Select(r => new DepotModels()
-                                    {
-                                        DepotCode = Convert.ToString(r["uad_depot_code"])
-                                    })?.ToList(),
-                                })?.ToList(),
-                            };
+                                response.success = true;
+                                response.message = OutputMsg;
+                                response.statusCode = HttpStatusCode.OK;
+                            }
+                            else
+                            {
+                                response.Data = null;
+                                response.success = false;
+                                response.message = OutputMsg;
+                                response.statusCode = HttpStatusCode.NoContent;
+                            }
+                        }
+                        else
+                        {
+                            response.Data = null;
+                            response.success = false;
+                            response.message = OutputMsg;
+                            response.statusCode = HttpStatusCode.NoContent;
                         }
                     }
                 }
                 else
                 {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = OutputMsg;
+                    response.statusCode = HttpStatusCode.NoContent;
                     throw new DataException(OutputMsg);
                 }
             }
             else
             {
+                response.Data = null;
+                response.success = false;
+                response.message = "Data Access Response is null or empty";
+                response.statusCode = HttpStatusCode.NoContent;
+                throw new ArgumentNullException("Data Access Response is null or empty");
+            }
+
+            return response;
+        }
+
+
+        public static UserAppsResponseDto? MapAppResponse(MSSQLResponse? data)
+        {
+            UserAppsResponseDto? response = null;
+
+            if (data != null)
+            {
+                //int outputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                //string? outputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                //if (outputCode == 1)
+                //{
+                response = new UserAppsResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserAppModel()
+                    {
+                        AppId = dr.Field<int?>("oam_app_id"),
+                        AppName = dr.Field<string?>("oam_app_name"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+                //}
+                //else
+                //{
+                //    throw new DataException(outputMsg);
+                //}
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
                 throw new ArgumentNullException("Data Access Response is null or empty");
             }
 
