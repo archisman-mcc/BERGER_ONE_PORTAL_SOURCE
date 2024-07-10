@@ -4,7 +4,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 {
     public class UserProfileDetailsRequest
     {
-        [JsonProperty("user_id")]
+        [JsonProperty("UserId")]
         public string? UserId { get; set; }
     }
 }

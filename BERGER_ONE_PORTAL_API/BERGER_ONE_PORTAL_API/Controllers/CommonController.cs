@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using BERGER_ONE_PORTAL_API.Filters;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+using Microsoft.AspNetCore.Cors;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
@@ -27,11 +29,16 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             _commonLogic = commonLogic;
         }
 
+        [EnableCors("AllowOrigin")]         
         [HttpPost]
         public async Task<JObject?> GetUserList([FromBody] UserListDto dto) => await _commonLogic.GetUserList(dto);
 
         [HttpPost]
         public async Task<UserProfileResponse?> GetUserDetails([FromBody] UserProfileDetailsRequest dto) => await _commonLogic.GetUserDetails(dto);
+
+        [HttpPost]
+        public async Task<UserAppsResponseDto?> GetAppList() => await _commonLogic.GetAppList();
+
 
     }
 }

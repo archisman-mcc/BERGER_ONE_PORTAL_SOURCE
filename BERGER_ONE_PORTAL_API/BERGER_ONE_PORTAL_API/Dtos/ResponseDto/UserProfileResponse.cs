@@ -8,7 +8,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse
     public class UserProfileResponse: BaseResponse
     {
         [JsonProperty("data")]
-        public List<UserProfileModel>? Data { get; set; }
+        public dynamic? Data { get; set; }
     }
     public class UserProfileSaveResponse
     {
