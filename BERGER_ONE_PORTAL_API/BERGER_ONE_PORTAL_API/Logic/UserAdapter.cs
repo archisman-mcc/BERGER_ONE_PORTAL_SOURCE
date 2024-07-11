@@ -183,5 +183,64 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
             return response;
         }
+
+        public static DynamicResponse? MapReportingUserResponse(MSSQLResponse? data)
+        {
+            DynamicResponse? response = null;
+
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode == 1)
+                {
+                    if (data != null && data.Data != null)
+                    {
+                        var ds = (data?.Data as DataTable);
+                        if (ds != null && ds.Rows.Count > 0)
+                        {
+                            response = new DynamicResponse();
+                            response.Data = ds;
+
+                            if (response != null)
+                            {
+                                response.success = true;
+                                response.message = OutputMsg;
+                                response.statusCode = HttpStatusCode.OK;
+                            }
+                            else
+                            {
+                                response.Data = null;
+                                response.success = false;
+                                response.message = OutputMsg;
+                                response.statusCode = HttpStatusCode.NoContent;
+                            }
+                        }
+                        else
+                        {
+                            response.Data = null;
+                            response.success = false;
+                            response.message = OutputMsg;
+                            response.statusCode = HttpStatusCode.NoContent;
+                        }
+                    }
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = OutputMsg;
+                    response.statusCode = HttpStatusCode.NoContent;
+                    throw new DataException(OutputMsg);
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException("Data Access Response is null or empty");
+            }
+
+            return response;
+        }
     }
 }

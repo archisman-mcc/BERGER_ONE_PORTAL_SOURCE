@@ -15,4 +15,10 @@ namespace BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse
         [JsonProperty("response_message")]
         public string? ResponseMessage { get; set; }
     }
+
+    public class DynamicResponse : BaseResponse
+    {
+        [JsonProperty("data")]
+        public dynamic? Data { get; set; }
+    }
 }
