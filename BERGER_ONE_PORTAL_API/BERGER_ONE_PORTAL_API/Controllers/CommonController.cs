@@ -29,7 +29,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             _commonLogic = commonLogic;
         }
 
-        [EnableCors("AllowOrigin")]         
+        //[EnableCors("AllowOrigin")]         
         [HttpPost]
         public async Task<JObject?> GetUserList([FromBody] UserListDto dto) => await _commonLogic.GetUserList(dto);
 
@@ -39,6 +39,8 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         [HttpPost]
         public async Task<UserAppsResponseDto?> GetAppList() => await _commonLogic.GetAppList();
 
+        [HttpPost]
+        public async Task<DynamicResponse?> GetReportingUser([FromBody] ReportingUserRequest dto) => await _commonLogic.GetReportingUser(dto);
 
     }
 }

@@ -11,5 +11,6 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
         Task<UserProfileResponse?> GetUserDetails(UserProfileDetailsRequest dto);
         Task<UserAppsResponseDto?> GetAppList();
+        Task<DynamicResponse?> GetReportingUser(ReportingUserRequest request);
     }
 }
