@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BERGER_ONE_PORTAL_API.CustomAttribute;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 {
@@ -76,5 +78,53 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
     public class GenericTblType
     {
         public string text_col { get; set; }
+    }
+
+    public class Filter
+    {
+        [JsonProperty("id")]
+        public string? Id { get; set; }
+
+        [JsonProperty("value")]
+        public List<string>? Value { get; set; }
+
+        [JsonProperty("operator")]
+        public string? Operator { get; set; }
+
+        [JsonProperty("dataType")]
+        public string? DataType { get; set; }
+    }
+
+    public class Sorting
+    {
+        [JsonProperty("id")]
+        public string? Id { get; set; }
+
+        [JsonProperty("desc")]
+        public bool? IsDescending { get; set; }
+    }
+
+    public class DataTableRequest
+    {
+        [JsonProperty("start"), CustomSqlParameterName("@start")]
+        public int? Start { get; set; }
+
+        [JsonProperty("size"), CustomSqlParameterName("@length")]
+        public int? Size { get; set; }
+
+        [JsonProperty("filters"), CustomSqlParameterIgnore]
+        public List<Filter>? Filters { get; set; }
+
+        [JsonIgnore, CustomSqlParameterName("@filterJSON")]
+        public string? FilterSerializeValue => JsonConvert.SerializeObject(Filters ?? new());
+
+        [JsonProperty("globalFilter"), CustomSqlParameterName("@keyword")]
+        public string? GlobalFilter { get; set; }
+
+        [JsonProperty("sorting"), CustomSqlParameterIgnore]
+        public List<Sorting>? Sorting { get; set; }
+
+        [JsonIgnore, CustomSqlParameterName("@orderJSON")]
+        public string? OrderSerializeValue => JsonConvert.SerializeObject(Sorting ?? new());
     }
 }
