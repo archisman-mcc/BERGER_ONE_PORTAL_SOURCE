@@ -45,11 +45,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         #region For Form Menu Master:  
         [HttpPost]
-        [Route("FormMenuMasterList")]
         public async Task<DynamicResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequest dto) => await _commonLogic.FormMenuMasterList(dto);
 
         [HttpPost]
-        [Route("FormMenuMasterInsert")]
         public async Task<FormMenuSaveResponse?> FormMenuMasterInsert([FromBody] FormMenuInsertRequest dto) => await _commonLogic.FormMenuMasterInsert(dto);
         #endregion
 
