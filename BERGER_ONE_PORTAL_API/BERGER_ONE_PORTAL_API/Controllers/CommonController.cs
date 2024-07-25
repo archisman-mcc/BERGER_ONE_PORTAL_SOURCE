@@ -29,7 +29,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             _commonLogic = commonLogic;
         }
 
-        //[EnableCors("AllowOrigin")]         
+        #region For User Profile:
         [HttpPost]
         public async Task<JObject?> GetUserList([FromBody] UserListDto dto) => await _commonLogic.GetUserList(dto);
 
@@ -41,6 +41,39 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<DynamicResponse?> GetReportingUser([FromBody] ReportingUserRequest dto) => await _commonLogic.GetReportingUser(dto);
+        #endregion
 
+        #region For Form Menu Master:  
+        [HttpPost]
+        [Route("FormMenuMasterList")]
+        public async Task<DynamicResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequest dto) => await _commonLogic.FormMenuMasterList(dto);
+
+        [HttpPost]
+        [Route("FormMenuMasterInsert")]
+        public async Task<FormMenuSaveResponse?> FormMenuMasterInsert([FromBody] FormMenuInsertRequest dto) => await _commonLogic.FormMenuMasterInsert(dto);
+        #endregion
+
+        #region For User Form Access :  
+        //[HttpPost]
+        //[Route("GetUserApplicableForms")]
+        //public async Task<UserAccessFormsResponse?> GetUserApplicableForms([FromBody] UserAccessFormsRequest dto)
+        //{
+        //    return await _adminLogic.GetUserApplicableForms(dto);
+        //}
+
+        //[HttpPost]
+        //[Route("GetUserAvailableForms")]
+        //public async Task<UserAccessFormsResponse?> GetUserAvailableForms([FromBody] UserAccessFormsRequest dto)
+        //{
+        //    return await _adminLogic.GetUserAvailableForms(dto);
+        //}
+
+        //[HttpPost]
+        //[Route("UserFormAccessInsert")]
+        //public async Task<UserAccessFormsSaveResponse?> UserFormAccessInsert([FromBody] UserAccessFormsInserRequest dto)
+        //{
+        //    return await _adminLogic.UserFormAccessInsert(dto);
+        //}
+        #endregion
     }
 }
