@@ -26,28 +26,31 @@ namespace BERGER_ONE_PORTAL_API
     {
         public static void Main(string[] args)
         {
+            var corsPol = "corspolicy";
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddCors();
+            builder.Services.AddCors(p => p.AddPolicy(corsPol, build =>
+            {
+                build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+            }));
+
             builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
                 options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ssZ";
-
             });
 
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddTransient<IValidator<TokenRefreshDto>, TokenRefreshValidator>();
-            builder.Services.AddTransient<IValidator<UserProfileDetailsRequest>, UserProfileDetailsRequestValidator>();
+            //builder.Services.AddTransient<IValidator<UserProfileDetailsRequest>, UserProfileDetailsRequestValidator>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ISqlHelper, SqlHelper>();
             builder.Services.AddScoped<IServiceContext, ServiceContext>();
             builder.Services.AddScoped<IJwtManager, JwtManager>();
-
 
             builder.Services.AddScoped<ILoginRepo, LoginRepo>();
             builder.Services.AddScoped<ILoginLogic, LoginLogic>();
@@ -94,31 +97,22 @@ namespace BERGER_ONE_PORTAL_API
                           Scheme = "oauth2",
                           Name = "Bearer",
                           In = ParameterLocation.Header,
-
                         },
                         new List<string>()
                       }
                     });
                 c.TagActionsBy(api =>
                 {
-                    if (api.GroupName != null)
-                    {
-                        return new[] { api.GroupName };
-                    }
+                    if (api.GroupName != null) return new[] { api.GroupName };
 
                     var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
-                    if (controllerActionDescriptor != null)
-                    {
-                        return new[] { controllerActionDescriptor.ControllerName };
-                    }
-
+                    if (controllerActionDescriptor != null) return new[] { controllerActionDescriptor.ControllerName };
                     throw new InvalidOperationException("Unable to determine tag for endpoint.");
                 });
                 c.DocInclusionPredicate((name, api) => true);
                 //c.DocumentFilter<SwaggerDocumentFilter>();
                 c.CustomSchemaIds(x => x.FullName);
             });
-
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             var app = builder.Build();
@@ -130,15 +124,15 @@ namespace BERGER_ONE_PORTAL_API
                 app.UseSwaggerUI();
             }
 
+            app.UseCors(corsPol);
+
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors(corsPolicyBuilder =>
-          corsPolicyBuilder.AllowAnyOrigin()
-         .AllowAnyMethod()
-         .AllowAnyHeader()
-          );
+            //app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.MapControllers();
 
             app.Run();

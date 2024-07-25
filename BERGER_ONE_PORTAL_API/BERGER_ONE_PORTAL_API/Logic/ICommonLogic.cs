@@ -7,10 +7,16 @@ namespace BERGER_ONE_PORTAL_API.Logic
 {
     public interface ICommonLogic
     {
+        #region For User Profile:
         Task<JObject?> GetUserList(UserListDto dto);
-
         Task<UserProfileResponse?> GetUserDetails(UserProfileDetailsRequest dto);
         Task<UserAppsResponseDto?> GetAppList();
         Task<DynamicResponse?> GetReportingUser(ReportingUserRequest request);
+        #endregion
+
+        #region For Form Menu Master:
+        Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequest dto);
+        Task<FormMenuSaveResponse?> FormMenuMasterInsert(FormMenuInsertRequest request);
+        #endregion
     }
 }
