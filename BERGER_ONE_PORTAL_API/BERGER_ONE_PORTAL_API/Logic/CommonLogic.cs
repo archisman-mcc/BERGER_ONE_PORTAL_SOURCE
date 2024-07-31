@@ -66,13 +66,13 @@ namespace BERGER_ONE_PORTAL_API.Logic
         #endregion
 
         #region For Form Menu Master:
-        public async Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequest dto)
+        public async Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto)
         {
             MSSQLResponse? dataResponse = await _commonRepo.FormMenuMasterList(dto);
-            return UserAdapter.MapGetFormMenuMasterResponse(dataResponse); ;
+            return UserAdapter.MapGetFormMenuMasterResponse(dataResponse);
         }
 
-        public async Task<FormMenuSaveResponse?> FormMenuMasterInsert(FormMenuInsertRequest request)
+        public async Task<FormMenuSaveResponse?> FormMenuMasterInsert(FormMenuInsertRequestDto request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (request?.fmm_id == null || string.IsNullOrWhiteSpace(request?.fmm_id)) throw new ArgumentNullException(nameof(request.fmm_id));
@@ -85,6 +85,14 @@ namespace BERGER_ONE_PORTAL_API.Logic
             if (request?.Active != "Y" && request?.Active != "N") throw new Exception(nameof(request.Active) + " is not valid");
             MSSQLResponse? dataResponse = await _commonRepo.FormMenuMasterInsert(request);
             return UserAdapter.MapFormMenuMasterSaveResponse(dataResponse);
+        }
+        #endregion
+
+        #region For Common Actions Only:
+        public async Task<ParentMenuResponse?> GetAllParentMenu(ParentMenuRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetAllParentMenu(request);
+            return UserAdapter.MapParentMenuResponse(dataResponse);
         }
         #endregion
     }

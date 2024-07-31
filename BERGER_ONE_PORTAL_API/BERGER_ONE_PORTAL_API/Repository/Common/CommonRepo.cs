@@ -395,7 +395,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         #endregion
 
         #region For Form Menu Master:
-        public async Task<MSSQLResponse?> FormMenuMasterList(FormMenuFetchRequest dto)
+        public async Task<MSSQLResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[7];
@@ -482,7 +482,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             return response;
         }
 
-        public async Task<MSSQLResponse> FormMenuMasterInsert(FormMenuInsertRequest request)
+        public async Task<MSSQLResponse> FormMenuMasterInsert(FormMenuInsertRequestDto request)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[12];
@@ -594,6 +594,72 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Data = null,
                 OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
             };
+            return response;
+        }
+        #endregion
+
+        #region For Common Actions Only:
+        public async Task<MSSQLResponse?> GetAllParentMenu(ParentMenuRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[5];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userId",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserId)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@keyword",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.GlobalFilter)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@flag",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = string.IsNullOrWhiteSpace(dto.Flag) ? "W" : Utils.IIFStringOrDBNull(dto.Flag)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[Parent_Menu_List]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = false,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
             return response;
         }
         #endregion
