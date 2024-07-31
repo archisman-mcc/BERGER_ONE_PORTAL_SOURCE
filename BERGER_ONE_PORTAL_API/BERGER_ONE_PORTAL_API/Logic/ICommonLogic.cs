@@ -17,8 +17,12 @@ namespace BERGER_ONE_PORTAL_API.Logic
         #endregion
 
         #region For Form Menu Master:
-        Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequest dto);
-        Task<FormMenuSaveResponse?> FormMenuMasterInsert(FormMenuInsertRequest request);
+        Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto);
+        Task<FormMenuSaveResponse?> FormMenuMasterInsert(FormMenuInsertRequestDto request);
+        #endregion
+
+        #region For Common Actions Only:
+        Task<ParentMenuResponse?> GetAllParentMenu(ParentMenuRequestDto dto);
         #endregion
     }
 }
