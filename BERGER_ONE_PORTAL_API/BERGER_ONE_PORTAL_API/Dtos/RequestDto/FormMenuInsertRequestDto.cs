@@ -2,7 +2,7 @@
 
 namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 {
-    public class FormMenuInsertRequest
+    public class FormMenuInsertRequestDto
     {
         [JsonProperty("fmm_id")]
         public string? fmm_id { get; set; }
