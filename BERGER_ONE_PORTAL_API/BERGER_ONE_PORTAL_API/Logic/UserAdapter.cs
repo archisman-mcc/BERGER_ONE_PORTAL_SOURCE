@@ -158,6 +158,82 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return response;
         }
 
+        public static UserDeptResponseDto? MapUserDeptResponse(MSSQLResponse? data)
+        {
+            UserDeptResponseDto? response = null;
+            if (data != null)
+            {
+                response = new UserDeptResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserDeptModel()
+                    {
+                        LovName = dr.Field<string?>("lov_value"),
+                        LovCode = dr.Field<string?>("lov_code"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+        public static UserDepotResponseDto? MapUserDepotResponse(MSSQLResponse? data)
+        {
+            UserDepotResponseDto? response = null;
+            if (data != null)
+            {
+                response = new UserDepotResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserDepotModel()
+                    {
+                        DepotCode = dr.Field<string?>("depot_code"),
+                        DepotName = dr.Field<string?>("depot_name"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
         public static DynamicResponse? MapReportingUserResponse(MSSQLResponse? data)
         {
             DynamicResponse? response = null;
@@ -174,7 +250,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         {
                             response = new DynamicResponse();
                             response.Data = ds;
-                            if (response != null && response.Data.Count > 0)
+                            if (response != null && response.Data.Rows.Count> 0)
                             {
                                 response.success = true;
                                 response.message = OutputMsg;

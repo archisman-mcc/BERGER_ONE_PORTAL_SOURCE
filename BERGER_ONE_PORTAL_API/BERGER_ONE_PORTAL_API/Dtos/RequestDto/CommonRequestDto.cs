@@ -75,6 +75,27 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         public string? terr_code { get; set; }
     }
 
+    public class UserDeptRequestDto
+    {
+        [JsonProperty("lov_type")]
+        public string? lov_type { get; set; }
+
+        [JsonProperty("active")]
+        public string? active { get; set; }
+    }
+
+    public class UserDepotRequestDto
+    {
+        [JsonProperty("user_id")]
+        public string? user_id { get; set; }
+
+        [JsonProperty("region")]
+        public string? Region { get; set; }
+
+        [JsonProperty("app_id")]
+        public long? app_id { get; set; }
+
+    }
     public class GenericTblType
     {
         public string text_col { get; set; }
