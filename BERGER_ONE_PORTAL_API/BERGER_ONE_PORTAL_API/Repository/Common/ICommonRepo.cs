@@ -15,8 +15,12 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         #endregion
 
         #region For Form Menu Master:
-        Task<MSSQLResponse?> FormMenuMasterList(FormMenuFetchRequest dto);
-        Task<MSSQLResponse> FormMenuMasterInsert(FormMenuInsertRequest request);
+        Task<MSSQLResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto);
+        Task<MSSQLResponse> FormMenuMasterInsert(FormMenuInsertRequestDto request);
+        #endregion
+
+        #region For Common Actions Only:
+        Task<MSSQLResponse?> GetAllParentMenu(ParentMenuRequestDto dto);
         #endregion
     }
 }

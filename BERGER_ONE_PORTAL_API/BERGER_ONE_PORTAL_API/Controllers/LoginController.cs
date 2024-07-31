@@ -11,7 +11,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 {
     [Route(Constant.Common.PortalAPIPrefix + "[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [ServiceFilter(typeof(FluentValidationActionFilterAttribute))]
     [ServiceFilter(typeof(ErrorHandlerFilterAttribute))]
     [ServiceFilter(typeof(APILogAttribute))]
@@ -25,6 +25,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             _loginLogic = loginLogic;
         }
 
+        [Authorize]
         [AllowAnonymous]
         [HttpGet]
         public async Task<LoginResponseDto?> Login([FromQuery] LoginRequestDto requestDto)

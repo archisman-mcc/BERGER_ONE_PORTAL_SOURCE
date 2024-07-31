@@ -51,10 +51,10 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         #region For Form Menu Master:  
         [HttpPost]
-        public async Task<DynamicResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequest dto) => await _commonLogic.FormMenuMasterList(dto);
+        public async Task<DynamicResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequestDto dto) => await _commonLogic.FormMenuMasterList(dto);
 
         [HttpPost]
-        public async Task<FormMenuSaveResponse?> FormMenuMasterInsert([FromBody] FormMenuInsertRequest dto) => await _commonLogic.FormMenuMasterInsert(dto);
+        public async Task<FormMenuSaveResponse?> FormMenuMasterInsert([FromBody] FormMenuInsertRequestDto dto) => await _commonLogic.FormMenuMasterInsert(dto);
         #endregion
 
         #region For User Form Access :  
@@ -78,6 +78,11 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         //{
         //    return await _adminLogic.UserFormAccessInsert(dto);
         //}
+        #endregion
+
+        #region For Common Actions Only:
+        [HttpPost]
+        public async Task<ParentMenuResponse?> GetAllParentMenu([FromBody] ParentMenuRequestDto dto) => await _commonLogic.GetAllParentMenu(dto);
         #endregion
     }
 }
