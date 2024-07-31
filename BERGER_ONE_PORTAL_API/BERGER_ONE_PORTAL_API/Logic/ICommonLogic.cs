@@ -12,6 +12,8 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<UserProfileResponse?> GetUserDetails(UserProfileDetailsRequest dto);
         Task<UserAppsResponseDto?> GetAppList();
         Task<DynamicResponse?> GetReportingUser(ReportingUserRequest request);
+        Task<UserDeptResponseDto?> GetDeptList(UserDeptRequestDto request);
+        Task<UserDepotResponseDto?> GetApplicableDepotList(UserDepotRequestDto request);
         #endregion
 
         #region For Form Menu Master:

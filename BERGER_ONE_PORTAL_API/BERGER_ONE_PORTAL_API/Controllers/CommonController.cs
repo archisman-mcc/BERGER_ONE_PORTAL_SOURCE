@@ -41,6 +41,12 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<DynamicResponse?> GetReportingUser([FromBody] ReportingUserRequest dto) => await _commonLogic.GetReportingUser(dto);
+
+        [HttpPost]
+        public async Task<UserDeptResponseDto?> GetDeptList([FromBody] UserDeptRequestDto dto) => await _commonLogic.GetDeptList(dto);
+
+        [HttpPost]
+        public async Task<UserDepotResponseDto?> GetApplicableDepotList([FromBody] UserDepotRequestDto dto) => await _commonLogic.GetApplicableDepotList(dto);
         #endregion
 
         #region For Form Menu Master:  

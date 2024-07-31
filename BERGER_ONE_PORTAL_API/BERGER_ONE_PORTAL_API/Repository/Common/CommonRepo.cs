@@ -290,6 +290,108 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
 
             return response;
         }
+
+        public async Task<MSSQLResponse?> GetDeptList(UserDeptRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@lov_type",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.lov_type)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@active",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.active)
+                };
+                
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[app].[common_get_lov_list]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetApplicableDepotList(UserDepotRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.user_id)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@region",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.Region)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@app_id",
+                    DbType = DbType.Int64,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFLongOrDBNull(dto.app_id)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[app].[get_applicable_depot]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
         #endregion
 
         #region For Form Menu Master:
