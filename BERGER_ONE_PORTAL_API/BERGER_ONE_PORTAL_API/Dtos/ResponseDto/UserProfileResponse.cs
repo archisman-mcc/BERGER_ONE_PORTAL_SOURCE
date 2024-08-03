@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse
 {
-    public class UserProfileResponse: BaseResponse
+    public class UserProfileResponse : BaseResponse
     {
         [JsonProperty("data")]
         public dynamic? Data { get; set; }

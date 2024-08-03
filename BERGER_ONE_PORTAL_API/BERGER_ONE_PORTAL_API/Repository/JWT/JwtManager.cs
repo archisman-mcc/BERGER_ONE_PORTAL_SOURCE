@@ -40,7 +40,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.JWT
 
         }
 
-        public string? GenerateToken(UserDetailsModel user, int expireMinutes = 2)
+        public string? GenerateToken(UserDetailsModel user, int expireMinutes = 60)
         {
             _secret = _configuration.GetSection("JwtConfiguration").GetValue(typeof(string), "TokenSecret").ToString();
             SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
