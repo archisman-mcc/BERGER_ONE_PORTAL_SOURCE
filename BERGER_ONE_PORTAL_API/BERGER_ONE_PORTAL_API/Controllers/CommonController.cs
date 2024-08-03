@@ -24,10 +24,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
     {
         private readonly ICommonLogic _commonLogic;
 
-        public CommonController(ICommonLogic commonLogic)
-        {
-            _commonLogic = commonLogic;
-        }
+        public CommonController(ICommonLogic commonLogic) { _commonLogic = commonLogic; }
 
         #region For User Profile:
         [HttpPost]
@@ -51,38 +48,32 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         #region For Form Menu Master:  
         [HttpPost]
-        public async Task<DynamicResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequestDto dto) => await _commonLogic.FormMenuMasterList(dto);
+        public async Task<FormMenuResponse?> FormMenuMasterList([FromBody] FormMenuFetchRequestDto dto) => await _commonLogic.FormMenuMasterList(dto);
 
         [HttpPost]
         public async Task<FormMenuSaveResponse?> FormMenuMasterInsert([FromBody] FormMenuInsertRequestDto dto) => await _commonLogic.FormMenuMasterInsert(dto);
         #endregion
 
         #region For User Form Access :  
-        //[HttpPost]
-        //[Route("GetUserApplicableForms")]
-        //public async Task<UserAccessFormsResponse?> GetUserApplicableForms([FromBody] UserAccessFormsRequest dto)
-        //{
-        //    return await _adminLogic.GetUserApplicableForms(dto);
-        //}
+        [HttpPost]
+        public async Task<UserAccessFormsResponse?> GetUserApplicableForms([FromBody] UserAccessFormsRequest dto) => await _commonLogic.GetUserApplicableForms(dto);
 
-        //[HttpPost]
-        //[Route("GetUserAvailableForms")]
-        //public async Task<UserAccessFormsResponse?> GetUserAvailableForms([FromBody] UserAccessFormsRequest dto)
-        //{
-        //    return await _adminLogic.GetUserAvailableForms(dto);
-        //}
+        [HttpPost]
+        public async Task<UserAccessFormsResponse?> GetUserAvailableForms([FromBody] UserAccessFormsRequest dto) => await _commonLogic.GetUserAvailableForms(dto);
 
-        //[HttpPost]
-        //[Route("UserFormAccessInsert")]
-        //public async Task<UserAccessFormsSaveResponse?> UserFormAccessInsert([FromBody] UserAccessFormsInserRequest dto)
-        //{
-        //    return await _adminLogic.UserFormAccessInsert(dto);
-        //}
+        [HttpPost]
+        public async Task<UserAccessFormsSaveResponse?> UserFormAccessInsert([FromBody] UserAccessFormsInserRequest dto) => await _commonLogic.UserFormAccessInsert(dto);
         #endregion
 
         #region For Common Actions Only:
         [HttpPost]
         public async Task<ParentMenuResponse?> GetAllParentMenu([FromBody] ParentMenuRequestDto dto) => await _commonLogic.GetAllParentMenu(dto);
+
+        [HttpPost]
+        public async Task<UserGroupAllResponse?> GetAllUserGroup([FromBody] UserGroupAllRequest dto) => await _commonLogic.GetAllUserGroup(dto);
+
+        [HttpPost]
+        public async Task<UserByGroupResponse?> GetUserListByGroup([FromBody] UserByGroupRequest dto) => await _commonLogic.GetUserListByGroup(dto);
         #endregion
     }
 }

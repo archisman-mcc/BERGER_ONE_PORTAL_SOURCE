@@ -23,11 +23,8 @@ namespace BERGER_ONE_PORTAL_API.Models
         [JsonProperty("fmm_sequence")]
         public string? FmmSequence { get; set; }
 
-        [JsonProperty("fmm_app_id")]
-        public string? FmmAppId { get; set; }
-
         [JsonProperty("fafa_icon")]
-        public string? FafaIcon { get; set; }
+        public string? fafa_icon { get; set; }
 
         [JsonProperty("activedesc")]
         public string? ActiveDesc { get; set; }

@@ -59,7 +59,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
     public class GetUserApplicableDealerReuqestDto
     {
         [Required]
-        public Int64? app_id { get;  set; }
+        public Int64? app_id { get; set; }
         public string? depot_regn { get; set; }
         public string? state_regn { get; set; }
         public string? depot_code { get; set; }
