@@ -12,6 +12,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse?> GetReportingUser(ReportingUserRequest dto);
         Task<MSSQLResponse?> GetDeptList(UserDeptRequestDto dto);
         Task<MSSQLResponse?> GetApplicableDepotList(UserDepotRequestDto dto);
+        Task<MSSQLResponse?> GetApplicableAppList(UserApplAppRequestDto dto);
+        Task<MSSQLResponse?> GetAllUserGroupList(AllUserGroupRequestDto dto);
+        Task<MSSQLResponse?> GetTerrDepotWise(UserTerrRequestDto dto);
         #endregion
 
         #region For Form Menu Master:

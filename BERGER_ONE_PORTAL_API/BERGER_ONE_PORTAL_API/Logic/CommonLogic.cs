@@ -63,6 +63,24 @@ namespace BERGER_ONE_PORTAL_API.Logic
             MSSQLResponse? dataResponse = await _commonRepo.GetApplicableDepotList(request);
             return UserAdapter.MapUserDepotResponse(dataResponse);
         }
+
+        public async Task<UserApplAppResponseDto?> GetApplicableAppList(UserApplAppRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetApplicableAppList(request);
+            return UserAdapter.MapUserApplAppResponse(dataResponse);
+        }
+
+        public async Task<AllUserGroupResponseDto?> GetAllUserGroupList(AllUserGroupRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetAllUserGroupList(request);
+            return UserAdapter.MapUserProfileGroupAllResponse(dataResponse);
+        }
+
+        public async Task<UserTerrResponseDto?> GetTerrDepotWise(UserTerrRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetTerrDepotWise(request);
+            return UserAdapter.MapUserTerrResponse(dataResponse);
+        }
         #endregion
 
         #region For Form Menu Master:
