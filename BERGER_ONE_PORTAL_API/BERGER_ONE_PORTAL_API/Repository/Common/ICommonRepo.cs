@@ -19,8 +19,16 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse> FormMenuMasterInsert(FormMenuInsertRequestDto request);
         #endregion
 
+        #region For User Form Access:
+        Task<MSSQLResponse?> GetUserApplicableForms(UserAccessFormsRequest dto);
+        Task<MSSQLResponse?> GetUserAvailableForms(UserAccessFormsRequest dto);
+        Task<MSSQLResponse> UserFormAccessInsert(UserAccessFormsInserRequest request);
+        #endregion
+
         #region For Common Actions Only:
         Task<MSSQLResponse?> GetAllParentMenu(ParentMenuRequestDto dto);
+        Task<MSSQLResponse?> GetAllUserGroup(UserGroupAllRequest dto);
+        Task<MSSQLResponse?> GetUserListByGroup(UserByGroupRequest dto);
         #endregion
     }
 }

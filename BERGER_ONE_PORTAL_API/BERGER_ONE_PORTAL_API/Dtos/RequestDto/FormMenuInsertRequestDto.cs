@@ -19,9 +19,6 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         [JsonProperty("fmm_sequence")]
         public string? fmm_sequence { get; set; }
 
-        [JsonProperty("fmm_app_id")]
-        public string? fmm_app_id { get; set; }
-
         [JsonProperty("fafa_icon")]
         public string? fafa_icon { get; set; }
 
@@ -33,5 +30,8 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 
         [JsonProperty("insert_update_flag")]
         public string? insert_update_flag { get; set; }
+
+        [JsonProperty("page_type")]
+        public string? page_type { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using LoginRequestDto = BERGER_ONE_PORTAL_API.Dtos.LoginRequestDto;
 using BERGER_ONE_PORTAL_API.Common;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Common
 {
@@ -313,7 +314,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(dto.active)
                 };
-                
+
                 response = new MSSQLResponse()
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
@@ -528,14 +529,6 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             };
             sqlParams[5] = new SqlParameter
             {
-                ParameterName = "@fmm_app_id",
-                SqlDbType = SqlDbType.VarChar,
-                Direction = ParameterDirection.Input,
-                Size = -1,
-                Value = Utils.IIFStringOrDBNull(request.fmm_app_id)
-            };
-            sqlParams[6] = new SqlParameter
-            {
                 ParameterName = "@fafa_icon",
                 SqlDbType = SqlDbType.VarChar,
                 Direction = ParameterDirection.Input,
@@ -543,7 +536,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Value = Utils.IIFStringOrDBNull(request.fafa_icon)
             };
 
-            sqlParams[7] = new SqlParameter
+            sqlParams[6] = new SqlParameter
             {
                 ParameterName = "@created_user",
                 SqlDbType = SqlDbType.VarChar,
@@ -551,7 +544,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.created_user)
             };
-            sqlParams[8] = new SqlParameter
+            sqlParams[7] = new SqlParameter
             {
                 ParameterName = "@active",
                 SqlDbType = SqlDbType.VarChar,
@@ -559,13 +552,21 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.Active)
             };
-            sqlParams[9] = new SqlParameter
+            sqlParams[8] = new SqlParameter
             {
                 ParameterName = "@insert_update_flag",
                 SqlDbType = SqlDbType.VarChar,
                 Direction = ParameterDirection.Input,
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.insert_update_flag)
+            };
+            sqlParams[9] = new SqlParameter
+            {
+                ParameterName = "@page_type",
+                SqlDbType = SqlDbType.Char,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.page_type)
             };
             sqlParams[10] = new SqlParameter
             {
@@ -586,6 +587,201 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
                 {
                     CommandText = "[dbo].[FormMenu_Insert]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+        #endregion
+
+        #region For User Form Access:
+        public async Task<MSSQLResponse?> GetUserApplicableForms(UserAccessFormsRequest dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[5];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userid",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserId)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@userGroup",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserGroup)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@keyword",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.GlobalFilter)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[User_Form_Access_Get_Applicable_Forms]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = false,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+            return response;
+        }
+        public async Task<MSSQLResponse?> GetUserAvailableForms(UserAccessFormsRequest dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[5];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userid",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserId)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@userGroup",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserGroup)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@keyword",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.GlobalFilter)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[User_Form_Access_Get_Avlble_Forms]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = false,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+            return response;
+        }
+
+        public async Task<MSSQLResponse> UserFormAccessInsert(UserAccessFormsInserRequest request)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[6];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@json_form_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(JsonConvert.SerializeObject(request.form_list_access))
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@userGroup",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.UserGroup)
+            };
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@userid",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.UserId)
+            };
+            sqlParams[3] = new SqlParameter
+            {
+                ParameterName = "@created_user",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.created_user)
+            };
+            sqlParams[4] = new SqlParameter
+            {
+                ParameterName = "@outputCode",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
+            };
+            sqlParams[5] = new SqlParameter
+            {
+                ParameterName = "@outputMsg",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Output,
+                Size = -1
+            };
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[dbo].[User_Form_Access_Insert]",
                     CommandTimeout = Constant.Common.SQLCommandTimeOut,
                     CommandType = CommandType.StoredProcedure,
                     ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -649,6 +845,126 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
                         CommandText = "[dbo].[Parent_Menu_List]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = false,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetAllUserGroup(UserGroupAllRequest dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[4];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userId",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserId)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@keyword",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.GlobalFilter)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[User_Group_All]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = false,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetUserListByGroup(UserByGroupRequest dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[5];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userid",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserId)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@userGroup",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.UserGroup)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@keyword",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.GlobalFilter)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[User_By_Group_Get]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
