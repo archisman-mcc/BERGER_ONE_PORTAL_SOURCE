@@ -15,7 +15,7 @@ using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 
 namespace BERGER_ONE_PORTAL_API.Logic
 {
-    public class CommonLogic:ICommonLogic
+    public class CommonLogic : ICommonLogic
     {
         public ICommonRepo _commonRepo;
         private readonly IJwtManager _jwtManager;
@@ -66,7 +66,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         #endregion
 
         #region For Form Menu Master:
-        public async Task<DynamicResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto)
+        public async Task<FormMenuResponse?> FormMenuMasterList(FormMenuFetchRequestDto dto)
         {
             MSSQLResponse? dataResponse = await _commonRepo.FormMenuMasterList(dto);
             return UserAdapter.MapGetFormMenuMasterResponse(dataResponse);
@@ -80,11 +80,34 @@ namespace BERGER_ONE_PORTAL_API.Logic
             if (request?.fmm_link == null || string.IsNullOrWhiteSpace(request?.fmm_link)) throw new ArgumentNullException(nameof(request.fmm_link));
             if (request?.fmm_parent_id == null || string.IsNullOrWhiteSpace(request?.fmm_parent_id)) throw new ArgumentNullException(nameof(request.fmm_parent_id));
             if (request?.fmm_sequence == null || string.IsNullOrWhiteSpace(request?.fmm_sequence)) throw new ArgumentNullException(nameof(request.fmm_sequence));
-            if (request?.fmm_app_id == null || string.IsNullOrWhiteSpace(request?.fmm_app_id)) throw new ArgumentNullException(nameof(request.fmm_app_id));
+            if (request?.fafa_icon == null || string.IsNullOrWhiteSpace(request?.fafa_icon)) throw new ArgumentNullException(nameof(request.created_user));
             if (request?.created_user == null || string.IsNullOrWhiteSpace(request?.created_user)) throw new ArgumentNullException(nameof(request.created_user));
             if (request?.Active != "Y" && request?.Active != "N") throw new Exception(nameof(request.Active) + " is not valid");
             MSSQLResponse? dataResponse = await _commonRepo.FormMenuMasterInsert(request);
             return UserAdapter.MapFormMenuMasterSaveResponse(dataResponse);
+        }
+        #endregion
+
+        #region For User Form Access:
+        public async Task<UserAccessFormsResponse?> GetUserApplicableForms(UserAccessFormsRequest request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetUserApplicableForms(request);
+            return UserAdapter.MapUserApplicableResponse(dataResponse);
+        }
+        public async Task<UserAccessFormsResponse?> GetUserAvailableForms(UserAccessFormsRequest request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetUserAvailableForms(request);
+            return UserAdapter.MapUserAvailableResponse(dataResponse);
+        }
+        public async Task<UserAccessFormsSaveResponse?> UserFormAccessInsert(UserAccessFormsInserRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request?.form_list_access == null || request?.form_list_access.Count == 0) throw new ArgumentNullException(nameof(request.form_list_access));
+            if (request?.UserId == null || string.IsNullOrWhiteSpace(request?.UserId)) throw new ArgumentNullException(nameof(request.UserId));
+            if (request?.UserGroup == null || string.IsNullOrWhiteSpace(request?.UserGroup)) throw new ArgumentNullException(nameof(request.UserGroup));
+            if (request?.created_user == null || string.IsNullOrWhiteSpace(request?.created_user)) throw new ArgumentNullException(nameof(request.created_user));
+            MSSQLResponse? dataResponse = await _commonRepo.UserFormAccessInsert(request);
+            return UserAdapter.MapUserAccessSaveResponse(dataResponse);
         }
         #endregion
 
@@ -93,6 +116,17 @@ namespace BERGER_ONE_PORTAL_API.Logic
         {
             MSSQLResponse? dataResponse = await _commonRepo.GetAllParentMenu(request);
             return UserAdapter.MapParentMenuResponse(dataResponse);
+        }
+
+        public async Task<UserGroupAllResponse?> GetAllUserGroup(UserGroupAllRequest request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetAllUserGroup(request);
+            return UserAdapter.MapUserGroupAllResponse(dataResponse);
+        }
+        public async Task<UserByGroupResponse?> GetUserListByGroup(UserByGroupRequest request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetUserListByGroup(request);
+            return UserAdapter.MapUserListByGroupResponse(dataResponse);
         }
         #endregion
     }

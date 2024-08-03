@@ -287,52 +287,87 @@ namespace BERGER_ONE_PORTAL_API.Logic
         #endregion
 
         #region For Form Menu Master:
-        public static DynamicResponse? MapGetFormMenuMasterResponse(MSSQLResponse? data)
+        public static FormMenuResponse? MapGetFormMenuMasterResponse(MSSQLResponse? data)
         {
-            DynamicResponse? response = null;
+            //DynamicResponse? response = null;
+            //if (data != null) 
+            //{
+            //    int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+            //    string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+            //    if (OutputCode == 1)
+            //    {
+            //        if (data != null && data.Data != null)
+            //        {
+            //            var ds = (data?.Data as DataTable);
+            //            if (ds != null && ds.Rows.Count > 0)
+            //            {
+            //                response = new DynamicResponse();
+            //                response.Data = ds;
+            //                if (response != null && response.Data.Rows.Count > 0)
+            //                {
+            //                    response.success = true;
+            //                    response.message = OutputMsg;
+            //                    response.statusCode = HttpStatusCode.OK;
+            //                }
+            //                else
+            //                {
+            //                    response.Data = null;
+            //                    response.success = false;
+            //                    response.message = OutputMsg;
+            //                    response.statusCode = HttpStatusCode.NoContent;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                response.Data = null;
+            //                response.success = false;
+            //                response.message = OutputMsg;
+            //                response.statusCode = HttpStatusCode.NoContent;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        response.Data = null;
+            //        response.success = false;
+            //        response.message = OutputMsg;
+            //        response.statusCode = HttpStatusCode.NoContent;
+            //    }
+            //}
+            //else throw new ArgumentNullException("Data Access Response is null or empty");
+
+            FormMenuResponse? response = null;
             if (data != null)
             {
                 int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
                 string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
                 if (OutputCode == 1)
                 {
-                    if (data != null && data.Data != null)
+                    response = new FormMenuResponse()
                     {
-                        var ds = (data?.Data as DataTable);
-                        if (ds != null && ds.Rows.Count > 0)
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new FormMenuModel()
                         {
-                            response = new DynamicResponse();
-                            response.Data = ds;
-                            if (response != null && response.Data.Rows.Count > 0)
-                            {
-                                response.success = true;
-                                response.message = OutputMsg;
-                                response.statusCode = HttpStatusCode.OK;
-                            }
-                            else
-                            {
-                                response.Data = null;
-                                response.success = false;
-                                response.message = OutputMsg;
-                                response.statusCode = HttpStatusCode.NoContent;
-                            }
-                        }
-                        else
+                            FmmId = Convert.ToInt32(dr["fmm_id"]),
+                            FmmName = Convert.ToString(dr["fmm_name"]),
+                            FmmLink = Convert.ToString(dr["fmm_link"]),
+                            FmmParentId = Convert.ToInt32(dr["fmm_parent_id"]),
+                            FmmParentName = Convert.ToString(dr["fmm_parent_name"]),
+                            FmmSequence = Convert.ToString(dr["fmm_sequence"]),
+                            fafa_icon = Convert.ToString(dr["fafa_icon"]),
+                            ActiveDesc = Convert.ToString(dr["activedesc"]),
+                            CreatedUser = Convert.ToString(dr["created_user"]),
+                            CreatedDate = !string.IsNullOrWhiteSpace(Convert.ToString(dr["created_date"])) ? Convert.ToDateTime(dr["created_date"]) : null,
+                            Active = Convert.ToString(dr["active"])
+
+                        })?.ToList(),
+                        Meta = new Meta()
                         {
-                            response.Data = null;
-                            response.success = false;
-                            response.message = OutputMsg;
-                            response.statusCode = HttpStatusCode.NoContent;
+                            TotalRowCount = (data.Data as DataTable)?.AsEnumerable().Select(dr => Convert.ToInt64(dr["total_record"])).FirstOrDefault()
                         }
-                    }
+                    };
                 }
-                else
-                {
-                    response.Data = null;
-                    response.success = false;
-                    response.message = OutputMsg;
-                    response.statusCode = HttpStatusCode.NoContent;
-                }
+                else throw new DataException(OutputMsg);
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;
@@ -348,6 +383,151 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
                 if (OutputCode <= 0) throw new Exception(OutputMsg);
                 else response.ResponseMessage = OutputMsg;
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+        #endregion
+
+        #region For User Form Access:
+        public static UserAccessFormsResponse? MapUserApplicableResponse(MSSQLResponse? data)
+        {
+            UserAccessFormsResponse? response = null;
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+                if (OutputCode == 1)
+                {
+                    response = new UserAccessFormsResponse()
+                    {
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new UserAccessFormsModel()
+                        {
+                            FormCode = Convert.ToString(dr["form_code"]),
+                            FormDesc = Convert.ToString(dr["form_desc"])
+
+                        })?.ToList(),
+                    };
+                }
+                else throw new DataException(OutputMsg);
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+        public static UserAccessFormsResponse? MapUserAvailableResponse(MSSQLResponse? data)
+        {
+            UserAccessFormsResponse? response = null;
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode == 1)
+                {
+                    response = new UserAccessFormsResponse()
+                    {
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new UserAccessFormsModel()
+                        {
+                            FormCode = Convert.ToString(dr["form_code"]),
+                            FormDesc = Convert.ToString(dr["form_desc"])
+
+                        })?.ToList(),
+                    };
+                }
+                else throw new DataException(OutputMsg);
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+        public static UserAccessFormsSaveResponse? MapUserAccessSaveResponse(MSSQLResponse? data)
+        {
+            UserAccessFormsSaveResponse? response = new UserAccessFormsSaveResponse();
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode <= 0) throw new Exception(OutputMsg);
+                else response.ResponseMessage = OutputMsg;
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+        #endregion
+
+        #region For Common Actions Only:
+        public static ParentMenuResponse? MapParentMenuResponse(MSSQLResponse? data)
+        {
+            ParentMenuResponse? response = null;
+            if (data != null && data.Data.Rows.Count > 0)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+                if (OutputCode == 1)
+                {
+                    response = new ParentMenuResponse()
+                    {
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new ParentMenuModel()
+                        {
+                            FmmParentId = Convert.ToString(dr["fmm_parent_id"]),
+                            FmmParentName = Convert.ToString(dr["fmm_parent_name"])
+
+                        })?.ToList(),
+                    };
+                }
+                else throw new DataException(OutputMsg);
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+
+        public static UserGroupAllResponse? MapUserGroupAllResponse(MSSQLResponse? data)
+        {
+            UserGroupAllResponse? response = null;
+
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode == 1)
+                {
+                    response = new UserGroupAllResponse()
+                    {
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new UserGroupAllModel()
+                        {
+                            usp_group_code = Convert.ToString(dr["usp_group_code"]),
+                            usp_group_desc = Convert.ToString(dr["usp_group_desc"])
+
+                        })?.ToList(),
+                    };
+                }
+                else throw new DataException(OutputMsg);
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+        public static UserByGroupResponse? MapUserListByGroupResponse(MSSQLResponse? data)
+        {
+            UserByGroupResponse? response = null;
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode == 1)
+                {
+                    response = new UserByGroupResponse()
+                    {
+                        Data = (data.Data as DataTable)?.AsEnumerable().Select(dr => new UserByGroupListModel()
+                        {
+                            UserId = Convert.ToString(dr["userid"]),
+                            UserName = Convert.ToString(dr["username"])
+
+                        })?.ToList(),
+                    };
+                }
+                else throw new DataException(OutputMsg);
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;
