@@ -44,6 +44,14 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<UserDepotResponseDto?> GetApplicableDepotList([FromBody] UserDepotRequestDto dto) => await _commonLogic.GetApplicableDepotList(dto);
+
+        [HttpPost]
+        public async Task<UserApplAppResponseDto?> GetApplicableAppList([FromBody] UserApplAppRequestDto dto) => await _commonLogic.GetApplicableAppList(dto);
+
+        [HttpPost]
+        public async Task<AllUserGroupResponseDto?> GetAllUserGroupList([FromBody] AllUserGroupRequestDto dto) => await _commonLogic.GetAllUserGroupList(dto);
+        [HttpPost]
+        public async Task<UserTerrResponseDto?> GetTerrDepotWise([FromBody] UserTerrRequestDto dto) => await _commonLogic.GetTerrDepotWise(dto);
         #endregion
 
         #region For Form Menu Master:  

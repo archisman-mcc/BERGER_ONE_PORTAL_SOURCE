@@ -393,6 +393,175 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
 
             return response;
         }
+
+
+        public async Task<MSSQLResponse?> GetApplicableAppList(UserApplAppRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.user_id)
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[app].[User_AppList_Get]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetAllUserGroupList(AllUserGroupRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.user_id)
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[app].[Get_User_Group_All]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetTerrDepotWise(UserTerrRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.depot_code)
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@outputCode",
+                    DbType = DbType.Int32,
+                    Size = -1,
+                    Direction = ParameterDirection.Output,
+                };
+
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@outputMsg",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Output,
+                    Size = -1,
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[app].[Common_getTerritoryDepotWise]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
         #endregion
 
         #region For Form Menu Master:
