@@ -234,6 +234,121 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return response;
         }
 
+        public static UserApplAppResponseDto? MapUserApplAppResponse(MSSQLResponse? data)
+        {
+            UserApplAppResponseDto? response = null;
+            if (data != null)
+            {
+                response = new UserApplAppResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserApplAppModel()
+                    {
+                        UserAppId = dr.Field<Int32?>("user_app_id"),
+                        UserAppName = dr.Field<string?>("user_app_name"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+        public static AllUserGroupResponseDto? MapUserProfileGroupAllResponse(MSSQLResponse? data)
+        {
+            AllUserGroupResponseDto? response = null;
+            if (data != null)
+            {
+                response = new AllUserGroupResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new AllUserGroupModel()
+                    {
+                        UserGroupCode = dr.Field<string?>("usp_group_code"),
+                        UserGroupDesc = dr.Field<string?>("usp_group_desc"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+        public static UserTerrResponseDto? MapUserTerrResponse(MSSQLResponse? data)
+        {
+            UserTerrResponseDto? response = null;
+            if (data != null)
+            {
+                response = new UserTerrResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserTerrDepotWiseModel()
+                    {
+                        TerrCode = dr.Field<string?>("terr_code"),
+                        TerrtName = dr.Field<string?>("terr"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+
         public static DynamicResponse? MapReportingUserResponse(MSSQLResponse? data)
         {
             DynamicResponse? response = null;
