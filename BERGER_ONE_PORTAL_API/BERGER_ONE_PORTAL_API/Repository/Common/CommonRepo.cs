@@ -899,7 +899,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse> UserFormAccessInsert(UserAccessFormsInserRequest request)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[6];
+            SqlParameter[] sqlParams = new SqlParameter[7];
             sqlParams[0] = new SqlParameter
             {
                 ParameterName = "@json_form_id",
@@ -926,19 +926,27 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             };
             sqlParams[3] = new SqlParameter
             {
+                ParameterName = "@app_id",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.AppId)
+            };
+            sqlParams[4] = new SqlParameter
+            {
                 ParameterName = "@created_user",
                 SqlDbType = SqlDbType.VarChar,
                 Direction = ParameterDirection.Input,
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.created_user)
             };
-            sqlParams[4] = new SqlParameter
+            sqlParams[5] = new SqlParameter
             {
                 ParameterName = "@outputCode",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.Output
             };
-            sqlParams[5] = new SqlParameter
+            sqlParams[6] = new SqlParameter
             {
                 ParameterName = "@outputMsg",
                 SqlDbType = SqlDbType.NVarChar,
