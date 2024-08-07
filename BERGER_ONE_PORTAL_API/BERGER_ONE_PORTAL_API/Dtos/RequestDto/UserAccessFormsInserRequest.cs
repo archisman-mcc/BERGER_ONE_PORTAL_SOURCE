@@ -10,6 +10,9 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         [JsonProperty("userid")]
         public string? UserId { get; set; }
 
+        [JsonProperty("appid")]
+        public string? AppId { get; set; }
+
         [JsonProperty("created_user")]
         public string? created_user { get; set; }
 
