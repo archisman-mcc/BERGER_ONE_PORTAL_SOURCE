@@ -54,5 +54,11 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
         public List<UserTerrDepotWiseModel>? Data { get; set; }
     }
 
+    public class UserInsertResponseDto : BaseResponse
+    {
+        [JsonProperty("response_message")]
+        public string? ResponseMessage { get; set; }
+    }
+
 
 }

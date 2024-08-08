@@ -52,6 +52,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public async Task<AllUserGroupResponseDto?> GetAllUserGroupList([FromBody] AllUserGroupRequestDto dto) => await _commonLogic.GetAllUserGroupList(dto);
         [HttpPost]
         public async Task<UserTerrResponseDto?> GetTerrDepotWise([FromBody] UserTerrRequestDto dto) => await _commonLogic.GetTerrDepotWise(dto);
+
+        [HttpPost]
+        public async Task<UserInsertResponseDto?> UserProfileInsert([FromBody] UserInsertRequestDto dto) => await _commonLogic.UserProfileInsert(dto);
         #endregion
 
         #region For Form Menu Master:  
