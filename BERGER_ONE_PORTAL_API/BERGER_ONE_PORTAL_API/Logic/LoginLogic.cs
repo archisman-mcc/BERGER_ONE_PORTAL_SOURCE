@@ -42,6 +42,8 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         last_name = Convert.ToString(dr["last_name"]),
                         mailid = Convert.ToString(dr["mailid"]),
                         mobile = Convert.ToString(dr["mobile"]),
+                        group_code = Convert.ToString(dt.Rows[0]["usp_group_code"]),
+                        group_desc = Convert.ToString(dt.Rows[0]["usp_group_desc"]),
                     })?.ToList().FirstOrDefault();
                     if (usermapping != null)
                     {
@@ -50,7 +52,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         var mSSQLResponse = await _loginRepo.SaveRefreshToken(usermapping.user_id, refresh_token);
                         if (!string.IsNullOrWhiteSpace(token) && (mSSQLResponse != null) && (mSSQLResponse.RowsAffected > 0))
                         {
-                            response.Data = null;
+                            response.Data = usermapping;
                             response.success = true;
                             response.message = outputMsg;
                             response.statusCode = HttpStatusCode.OK;

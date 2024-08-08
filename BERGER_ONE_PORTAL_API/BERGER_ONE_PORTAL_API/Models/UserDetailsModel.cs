@@ -8,5 +8,7 @@
         public string? mailid { get; set; }
         public string? mobile { get; set; }
         public string? profile_pic_url { get; set; }
+        public string? group_code { get; set; }
+        public string? group_desc { get; set; }
     }
 }
