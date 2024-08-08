@@ -81,6 +81,21 @@ namespace BERGER_ONE_PORTAL_API.Logic
             MSSQLResponse? dataResponse = await _commonRepo.GetTerrDepotWise(request);
             return UserAdapter.MapUserTerrResponse(dataResponse);
         }
+
+        public async Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request?.userId == null || string.IsNullOrWhiteSpace(request?.userId)) throw new ArgumentNullException(nameof(request.userId));
+            if (request?.firstName == null || string.IsNullOrWhiteSpace(request?.firstName)) throw new ArgumentNullException(nameof(request.firstName));
+            if (request?.employeeId == null || string.IsNullOrWhiteSpace(request?.employeeId)) throw new ArgumentNullException(nameof(request.employeeId));
+            if (request?.department == null || string.IsNullOrWhiteSpace(request?.department)) throw new ArgumentNullException(nameof(request.department));
+            if (request?.mobileNo == null || string.IsNullOrWhiteSpace(request?.mobileNo)) throw new ArgumentNullException(nameof(request.mobileNo));
+            if (request?.designation == null || string.IsNullOrWhiteSpace(request?.designation)) throw new ArgumentNullException(nameof(request.designation));
+            if (request?.depot == null || string.IsNullOrWhiteSpace(request?.depot)) throw new ArgumentNullException(nameof(request.depot));
+
+            MSSQLResponse? dataResponse = await _commonRepo.UserProfileInsert(request);
+            return UserAdapter.MapUserProfileInsertResponse(dataResponse);
+        }
         #endregion
 
         #region For Form Menu Master:
