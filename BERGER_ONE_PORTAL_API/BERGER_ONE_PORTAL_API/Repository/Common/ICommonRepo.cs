@@ -15,6 +15,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse?> GetApplicableAppList(UserApplAppRequestDto dto);
         Task<MSSQLResponse?> GetAllUserGroupList(AllUserGroupRequestDto dto);
         Task<MSSQLResponse?> GetTerrDepotWise(UserTerrRequestDto dto);
+        Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request);
         #endregion
 
         #region For Form Menu Master:

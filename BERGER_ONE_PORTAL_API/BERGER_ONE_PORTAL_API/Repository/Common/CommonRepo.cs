@@ -562,6 +562,158 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
 
             return response;
         }
+
+        public async Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[16];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@usp_user_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.userId)
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@usp_first_name",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.firstName)
+            };
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@usp_last_name",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.lastName)
+            };
+            sqlParams[3] = new SqlParameter
+            {
+                ParameterName = "@usp_pswd",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Encrypt.EncryptString("9999")
+            };
+            sqlParams[4] = new SqlParameter
+            {
+                ParameterName = "@usp_dept",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.department)
+            };
+            sqlParams[5] = new SqlParameter
+            {
+                ParameterName = "@usp_mailid",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.emailId)
+            };
+
+            sqlParams[6] = new SqlParameter
+            {
+                ParameterName = "@usp_mobile",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.mobileNo)
+            };
+            sqlParams[7] = new SqlParameter
+            {
+                ParameterName = "@usp_desig",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.designation)
+            };
+            sqlParams[8] = new SqlParameter
+            {
+                ParameterName = "@usp_doj",
+                SqlDbType = SqlDbType.DateTime,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFDateTimeOrDBNull(request.dateOfJoining)
+            };
+            sqlParams[9] = new SqlParameter
+            {
+                ParameterName = "@created_user",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull("subhrajit")
+            };
+
+            sqlParams[10] = new SqlParameter
+            {
+                ParameterName = "@active",
+                SqlDbType = SqlDbType.Char,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.Active)
+            };
+
+            sqlParams[11] = new SqlParameter
+            {
+                ParameterName = "@usp_employee_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.employeeId)
+            };
+
+            sqlParams[12] = new SqlParameter
+            {
+                ParameterName = "@usp_depot",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.depot)
+            };
+
+            sqlParams[13] = new SqlParameter
+            {
+                ParameterName = "@tbl_userapp",
+                SqlDbType = SqlDbType.Structured,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.ToDataTable(request.appWiseData)
+            };
+            sqlParams[14] = new SqlParameter
+            {
+                ParameterName = "@outputCode",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
+            };
+            sqlParams[15] = new SqlParameter
+            {
+                ParameterName = "@outputMsg",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Output,
+                Size = -1
+            };
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[app].[UserProfile_insert]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
         #endregion
 
         #region For Form Menu Master:

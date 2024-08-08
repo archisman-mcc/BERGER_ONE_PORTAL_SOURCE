@@ -73,7 +73,13 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         if (ds != null && ds.Tables.Count > 0)
                         {
                             ds.Tables[0].TableName = "UserDetails";
-                            ds.Tables[1].TableName = "UserApplDepot";
+                            ds.Tables[1].TableName = "UserApps";
+                            ds.Tables[2].TableName = "UserGroup";
+                            ds.Tables[3].TableName = "UserDepot";
+                            ds.Tables[4].TableName = "AllTerr";
+                            ds.Tables[5].TableName = "UserTerr";
+
+
                             var dtUserDetails = ds?.Tables[0];
                             var dtApplicabledepot = ds?.Tables[1];
                             response = new UserProfileResponse();
@@ -395,6 +401,21 @@ namespace BERGER_ONE_PORTAL_API.Logic
                     response.message = OutputMsg;
                     response.statusCode = HttpStatusCode.NoContent;
                 }
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+
+        public static UserInsertResponseDto? MapUserProfileInsertResponse(MSSQLResponse? data)
+        {
+            UserInsertResponseDto? response = new UserInsertResponseDto();
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode <= 0) throw new Exception(OutputMsg);
+                else response.ResponseMessage = OutputMsg;
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;
