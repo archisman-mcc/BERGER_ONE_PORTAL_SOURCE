@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace BERGER_ONE_PORTAL_API.Common
 {
@@ -55,7 +56,7 @@ namespace BERGER_ONE_PORTAL_API.Common
     }
     public class Utils
     {
-        
+
         public static object IIFStringOrDBNull(string? value)
         {
             return (string.IsNullOrWhiteSpace(value) ? (object)DBNull.Value : value);
@@ -160,6 +161,66 @@ namespace BERGER_ONE_PORTAL_API.Common
             memoryStream.Close();
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+        }
+
+        public static string EncryptStr(string encryptString)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(encryptString))
+                {
+                    string EncryptionKey = "";// "mccIT@BERGER@ADMIN$$%2#659KMDnde%!`*";
+
+                    byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
+                    using (Aes encryptor = Aes.Create())
+                    {
+                        Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                        encryptor.Key = pdb.GetBytes(32);
+                        encryptor.IV = pdb.GetBytes(16);
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                            {
+                                cs.Write(clearBytes, 0, clearBytes.Length);
+                                cs.Close();
+                            }
+                            encryptString = Convert.ToBase64String(ms.ToArray());
+                        }
+                    }
+                    return HttpUtility.UrlEncode(encryptString);
+                }
+                else return string.Empty;
+            }
+            catch (Exception) { return string.Empty; }
+
+        }
+
+        public static string DecryptStr(string cipherText)
+        {
+            if (!string.IsNullOrEmpty(cipherText))
+            {
+                cipherText = HttpUtility.UrlDecode(cipherText);
+                string EncryptionKey = "";// "mccIT@BERGER@ADMIN$$%2#659KMDnde%!`*";
+                cipherText = cipherText.Replace(" ", "+");
+                byte[] cipherBytes = Convert.FromBase64String(cipherText);
+                using (Aes encryptor = Aes.Create())
+                {
+                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.IV = pdb.GetBytes(16);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(cipherBytes, 0, cipherBytes.Length);
+                            cs.Close();
+                        }
+                        cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                    }
+                }
+                return cipherText;
+            }
+            else return string.Empty;
         }
     }
 
