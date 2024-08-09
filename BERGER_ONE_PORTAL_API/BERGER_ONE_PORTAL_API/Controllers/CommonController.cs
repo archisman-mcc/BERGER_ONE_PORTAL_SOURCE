@@ -11,6 +11,7 @@ using BERGER_ONE_PORTAL_API.Filters;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using Microsoft.AspNetCore.Cors;
+using BERGER_ONE_PORTAL_API.Models;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
@@ -85,6 +86,11 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<UserByGroupResponse?> GetUserListByGroup([FromBody] UserByGroupRequest dto) => await _commonLogic.GetUserListByGroup(dto);
+        #endregion
+
+        #region For Password Encrypt & Decrypt:
+        [HttpPost]
+        public async Task<PwdEncryptDecryptResponse?> PasswordEncryptDecrypt([FromBody] PwdEncryptDecryptRequest dto) => await _commonLogic.PasswordEncryptDecrypt(dto);
         #endregion
     }
 }
