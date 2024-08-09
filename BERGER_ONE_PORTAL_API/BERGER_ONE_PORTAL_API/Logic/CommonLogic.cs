@@ -12,6 +12,7 @@ using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using Newtonsoft.Json.Linq;
 using BERGER_ONE_PORTAL_API.Repository.Common;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
+using BERGER_ONE_PORTAL_API.Common;
 
 namespace BERGER_ONE_PORTAL_API.Logic
 {
@@ -160,6 +161,31 @@ namespace BERGER_ONE_PORTAL_API.Logic
         {
             MSSQLResponse? dataResponse = await _commonRepo.GetUserListByGroup(request);
             return UserAdapter.MapUserListByGroupResponse(dataResponse);
+        }
+        #endregion
+
+        #region For Password Encrypt & Decrypt:
+        public Task<PwdEncryptDecryptResponse?> PasswordEncryptDecrypt(PwdEncryptDecryptRequest request)
+        {
+            PwdEncryptDecryptResponse? response = null;
+            string psw = string.Empty;
+
+            if (string.IsNullOrEmpty(request.pwd_type)) throw new NullReferenceException(request.pwd_type);
+
+            if (string.IsNullOrEmpty(request.input_password)) throw new NullReferenceException(request.input_password);
+            if (request.pwd_type.ToUpper().Equals("ENCRYPT")) psw = Encrypt.EncryptStr(request.input_password);
+            else psw = Encrypt.DecryptStr(request.input_password);
+            if (!string.IsNullOrEmpty(psw))
+            {
+                response = new PwdEncryptDecryptResponse()
+                {
+                    Data = new PwdEncryptDecryptModel()
+                    {
+                        OutputPassword = psw
+                    }
+                };
+            }
+            return Task.FromResult(response);
         }
         #endregion
     }
