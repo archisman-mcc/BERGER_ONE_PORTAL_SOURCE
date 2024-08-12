@@ -56,6 +56,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<UserInsertResponseDto?> UserProfileInsert([FromBody] UserInsertRequestDto dto) => await _commonLogic.UserProfileInsert(dto);
+
+        [HttpPost]
+        public async Task<UserApplTerrResponseDto?> GetApplicableTerrList([FromBody] UserApplTerrRequestDto dto) => await _commonLogic.GetApplicableTerrList(dto);
         #endregion
 
         #region For Form Menu Master:  

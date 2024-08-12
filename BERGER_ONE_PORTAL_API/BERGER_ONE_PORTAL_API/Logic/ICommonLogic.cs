@@ -19,6 +19,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<AllUserGroupResponseDto?> GetAllUserGroupList(AllUserGroupRequestDto request);
         Task<UserTerrResponseDto?> GetTerrDepotWise(UserTerrRequestDto request);
         Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request);
+        Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request);
         #endregion
 
         #region For Form Menu Master:

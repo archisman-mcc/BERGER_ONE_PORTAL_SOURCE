@@ -97,6 +97,19 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 
     }
 
+    public class UserApplTerrRequestDto
+    {
+        [JsonProperty("user_id")]
+        public string? user_id { get; set; }
+
+        [JsonProperty("depot_code")]
+        public string? depot_code { get; set; }
+
+        [JsonProperty("app_id")]
+        public long? app_id { get; set; }
+
+    }
+
     public class UserApplAppRequestDto
     {
         [JsonProperty("user_id")]

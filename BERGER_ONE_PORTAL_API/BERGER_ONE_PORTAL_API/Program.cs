@@ -19,6 +19,8 @@ using BERGER_ONE_PORTAL_API.Repository.Common;
 using BERGER_ONE_PORTAL_API.Repository.Utility;
 using BERGER_ONE_PORTAL_API.Repository.Logger;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
+using BERGER_ONE_PORTAL_API.Logic.Protecton;
+using BERGER_ONE_PORTAL_API.Repository.Protecton;
 
 namespace BERGER_ONE_PORTAL_API
 {
@@ -61,6 +63,11 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<FluentValidationActionFilterAttribute>();
             builder.Services.AddScoped<ErrorHandlerFilterAttribute>();
             builder.Services.AddScoped<APILogAttribute>();
+
+            #region Protecton
+            builder.Services.AddScoped<IEpcaLogic, EpcaLogic>();
+            builder.Services.AddScoped<IEpcaRepo, EpcaRepo>();
+            #endregion
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
             {

@@ -97,6 +97,13 @@ namespace BERGER_ONE_PORTAL_API.Logic
             MSSQLResponse? dataResponse = await _commonRepo.UserProfileInsert(request);
             return UserAdapter.MapUserProfileInsertResponse(dataResponse);
         }
+
+        public async Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetApplicableTerrList(request);
+            return UserAdapter.MapUserApplTerrResponse(dataResponse);
+        }
+
         #endregion
 
         #region For Form Menu Master:
