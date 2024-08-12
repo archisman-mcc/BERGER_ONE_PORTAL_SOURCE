@@ -42,6 +42,12 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
         public List<UserApplAppModel>? Data { get; set; }
     }
 
+    public class UserApplTerrResponseDto : BaseResponse
+    {
+        [JsonProperty("data")]
+        public List<UserApplTerrModel>? Data { get; set; }
+    }
+
     public class AllUserGroupResponseDto : BaseResponse
     {
         [JsonProperty("data")]
