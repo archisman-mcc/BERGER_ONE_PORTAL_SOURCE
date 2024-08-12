@@ -240,6 +240,45 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return response;
         }
 
+
+        public static UserApplTerrResponseDto? MapUserApplTerrResponse(MSSQLResponse? data)
+        {
+            UserApplTerrResponseDto? response = null;
+            if (data != null)
+            {
+                response = new UserApplTerrResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new UserApplTerrModel()
+                    {
+                        terr_code = dr.Field<string?>("terr_code"),
+                        terr_name = dr.Field<string?>("terr_name"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
         public static UserApplAppResponseDto? MapUserApplAppResponse(MSSQLResponse? data)
         {
             UserApplAppResponseDto? response = null;
