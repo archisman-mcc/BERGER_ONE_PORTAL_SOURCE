@@ -13,6 +13,45 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public long? app_id { get; set; }
     }
 
+    public class pcaDealersRequestDto
+    {
+        [Required]
+        public string? depot_code { get; set; }
+        public string? terr_code { get; set; }
+        public string? sbl_code { get; set; }
+    }
+
+    public class pcaProjectRequestDto
+    {
+        [Required]
+        public string? depot_code { get; set; }
+        public string? terr_code { get; set; }
+    }
+
+    public class GetSKUListRequestDto
+    {
+        public int app_id { get; set; }
+        [Required]
+        public string? PrefixText { get; set; }
+
+    }
+
+    public class GetBillToRequestDto
+    {
+        public string? depot_code { get; set; }
+        public string? dealer_code { get; set; }
+        public string? sbl_code { get; set; }
+
+    }
+
+    public class GetFactoryRequestDto
+    {
+        public string? sku_code { get; set; }
+        public int? app_id { get; set; }
+
+    }
+
+
     public class GetePCAListRequestDto
     {
         public int app_id { get; set; }

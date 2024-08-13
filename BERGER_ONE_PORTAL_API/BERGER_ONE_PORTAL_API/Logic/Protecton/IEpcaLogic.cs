@@ -7,5 +7,10 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
     {
         Task<EpcaStatusResponseDto?> GetPcaStatusList(pcaStatusRequestDto request);
         Task<EpcaResponseDto?> GetePCAList(GetePCAListRequestDto request, string user_id);
+        Task<EpcaDealersResponseDto?> GetPcaDealersList(pcaDealersRequestDto request);
+        Task<EpcaPrjoctResponseDto?> GetPcaProjectListByDepotTerr(pcaProjectRequestDto request);
+        Task<EpcaResponseDto?> GetSKUList(GetSKUListRequestDto request);
+        Task<EpcaBillToResponseDto?> GetPcaBillToList(GetBillToRequestDto request);
+        Task<EpcaFactoryResponseDto?> GetFactoryListBySKU(GetFactoryRequestDto request, string User_id);
     }
 }
