@@ -9,6 +9,8 @@ using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos;
 using LoginRequestDto = BERGER_ONE_PORTAL_API.Dtos.LoginRequestDto;
 using BERGER_ONE_PORTAL_API.Common;
+using BERGER_ONE_PORTAL_API.Models;
+using Microsoft.VisualBasic;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Login
 {
@@ -178,6 +180,74 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
             };
             return response;
         }
+
+        #region "Other"
+        public async Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup)
+        {
+            MSSQLResponse? response = null;
+            var sqlParams = new SqlParameter[2];
+
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@logingrpid",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Input,
+                Size = -1,
+                Value = UserGroup
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@loginuserid",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Input,
+                Size = -1,
+                Value = UserId
+            };
+
+            response = new MSSQLResponse()
+            {
+                Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                {
+                    CommandText = "[dbo].[LoginUserAccessForms_Get]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    IsMultipleTables = false,
+                    Parameters = sqlParams
+                }),
+                RowsAffected = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
+        internal static List<UserApplicableMenuModel>? MapUserApplicableMenu(DataTable? dt)
+        {
+            var data = new List<UserApplicableMenuModel>();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                data = dt.AsEnumerable()?.Where(nav => Convert.ToInt32(nav.Field<object>("fmm_parent_id")) == 0)?.Select(nav => new UserApplicableMenuModel
+                {
+                    form_id = Convert.ToInt32(nav.Field<object>("fmm_id")),
+                    fafa_icon = Convert.ToString(nav.Field<object>("fmm_menu_icon")),
+                    form_name = Convert.ToString(nav.Field<object>("fmm_name")),
+                    form_link = Convert.ToString(nav.Field<object>("fmm_link")),
+                    form_parent_id = Convert.ToInt32(nav.Field<object>("fmm_parent_id")),
+                    form_seq = Convert.ToInt32(nav.Field<object>("fmm_sequence")),
+                    Children = dt.AsEnumerable().Where(x => Convert.ToString(x.Field<object>("fmm_parent_id")).StringEquals(Convert.ToString(nav.Field<object>("fmm_id")), StringComparison.OrdinalIgnoreCase))?.Select(r => new UserApplicableMenuModel
+                    {
+                        form_id = Convert.ToInt32(r.Field<object>("fmm_id")),
+                        form_name = Convert.ToString(r.Field<object>("fmm_name")),
+                        form_link = Convert.ToString(r.Field<object>("fmm_link")),
+                        form_parent_id = Convert.ToInt32(r.Field<object>("fmm_parent_id")),
+                        fafa_icon = Convert.ToString(r.Field<object>("fmm_menu_icon")),
+                        form_seq = Convert.ToInt32(r.Field<object>("fmm_sequence"))
+                    })?.ToList(),
+                }).DistinctBy(r => r.form_id)?.ToList();
+            }
+            return data;
+        }
+        #endregion
     }
 
 }

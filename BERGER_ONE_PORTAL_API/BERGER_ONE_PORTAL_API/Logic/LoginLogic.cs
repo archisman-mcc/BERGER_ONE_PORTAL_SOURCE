@@ -45,8 +45,13 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         group_code = Convert.ToString(dt.Rows[0]["usp_group_code"]),
                         group_desc = Convert.ToString(dt.Rows[0]["usp_group_desc"]),
                     })?.ToList().FirstOrDefault();
+
                     if (usermapping != null)
                     {
+                        var menuData = await _loginRepo.GetUserApplicableMenu(Convert.ToString(dt.Rows[0]["user_id"]), Convert.ToString(dt.Rows[0]["usp_group_code"]));
+
+                        if (usermapping != null && (menuData != null && menuData.Data.Rows.Count > 0)) usermapping.UserApplicableMenu = LoginRepo.MapUserApplicableMenu(menuData.Data as DataTable);
+
                         string? token = _jwtManager.GenerateToken(usermapping, Constant.Common.JWTTokenExpiryMinsPortal);
                         string? refresh_token = _jwtManager.GenerateRefreshToken();
                         var mSSQLResponse = await _loginRepo.SaveRefreshToken(usermapping.user_id, refresh_token);
