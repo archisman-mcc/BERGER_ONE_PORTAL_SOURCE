@@ -26,6 +26,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         [Required]
         public string? depot_code { get; set; }
         public string? terr_code { get; set; }
+        public string? srch { get; set; }
     }
 
     public class GetSKUListRequestDto

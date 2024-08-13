@@ -240,7 +240,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         public async Task<MSSQLResponse?> GetPcaProjectListByDepotTerr(pcaProjectRequestDto dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[2];
+            SqlParameter[] sqlParams = new SqlParameter[3];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -259,6 +259,15 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Direction = ParameterDirection.Input,
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(dto.terr_code)
+                };
+
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@srch",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.srch)
                 };
 
 
