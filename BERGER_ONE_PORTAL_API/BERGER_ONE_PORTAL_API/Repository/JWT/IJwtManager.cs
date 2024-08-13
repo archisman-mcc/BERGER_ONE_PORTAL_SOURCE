@@ -1,5 +1,6 @@
 ﻿using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Models;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace BERGER_ONE_PORTAL_API.Repository.JWT
