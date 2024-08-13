@@ -35,5 +35,25 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.GetePCAList(dto, userDetails.user_id);
         }
+
+        [HttpPost]
+        public async Task<EpcaDealersResponseDto?> GetPcaDealersList([FromBody] pcaDealersRequestDto dto) => await _ePcaLogic.GetPcaDealersList(dto);
+
+        [HttpPost]
+        public async Task<EpcaPrjoctResponseDto?> GetPcaProjectListByDepotTerr([FromBody] pcaProjectRequestDto dto) => await _ePcaLogic.GetPcaProjectListByDepotTerr(dto);
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetSKUList([FromBody] GetSKUListRequestDto dto) => await _ePcaLogic.GetSKUList(dto);
+
+        [HttpPost]
+        public async Task<EpcaBillToResponseDto?> GetPcaBillToList([FromBody] GetBillToRequestDto dto) => await _ePcaLogic.GetPcaBillToList(dto);
+
+        [HttpPost]
+        public async Task<EpcaFactoryResponseDto?> GetFactoryListBySKU([FromBody] GetFactoryRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetFactoryListBySKU(dto, userDetails.user_id);
+        }
+
     }
 }

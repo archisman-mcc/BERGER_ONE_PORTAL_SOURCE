@@ -31,5 +31,35 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.GetePCAList(request, user_id);
             return EpcaAdapter.MapEpcaListResponse(dataResponse);
         }
+
+        public async Task<EpcaDealersResponseDto?> GetPcaDealersList(pcaDealersRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaDealersList(request);
+            return EpcaAdapter.MapPcaDealerResponse(dataResponse);
+        }
+
+        public async Task<EpcaPrjoctResponseDto?> GetPcaProjectListByDepotTerr(pcaProjectRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaProjectListByDepotTerr(request);
+            return EpcaAdapter.MapPcaProjectResponse(dataResponse);
+        }
+
+        public async Task<EpcaResponseDto?> GetSKUList(GetSKUListRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetSKUList(request);
+            return EpcaAdapter.MapSKUListResponse(dataResponse);
+        }
+
+        public async Task<EpcaBillToResponseDto?> GetPcaBillToList(GetBillToRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaBillToList(request);
+            return EpcaAdapter.MapPcaBillToResponse(dataResponse);
+        }
+
+        public async Task<EpcaFactoryResponseDto?> GetFactoryListBySKU(GetFactoryRequestDto request, string User_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetFactoryListBySKU(request, User_id);
+            return EpcaAdapter.MapPcaFactoryResponse(dataResponse);
+        }
     }
 }
