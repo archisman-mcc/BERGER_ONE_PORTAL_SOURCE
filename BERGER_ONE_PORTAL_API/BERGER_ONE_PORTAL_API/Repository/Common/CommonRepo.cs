@@ -6,7 +6,6 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
-using BERGER_ONE_PORTAL_API.Dtos;
 using LoginRequestDto = BERGER_ONE_PORTAL_API.Dtos.LoginRequestDto;
 using BERGER_ONE_PORTAL_API.Common;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
