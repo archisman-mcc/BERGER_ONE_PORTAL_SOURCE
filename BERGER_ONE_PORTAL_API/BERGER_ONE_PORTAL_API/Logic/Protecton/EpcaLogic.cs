@@ -93,5 +93,18 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.DeletePcaDetails(request, User_id);
             return EpcaAdapter.MapPcaDeleteResponse(dataResponse);
         }
+
+        public async Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList(PcaCancellationRequestDto request, string User_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.PcaCancellationGetList(request, User_id);
+            return EpcaAdapter.MapPcaCancellationResponse(dataResponse);
+        }
+
+        public async Task<PcaCancleResponseDto?> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id)
+        {
+
+            MSSQLResponse? dataResponse = await _epcaRepo.PcaCancellationUpdate(request, User_id);
+            return EpcaAdapter.MapPcaCancleResponse(dataResponse);
+        }
     }
 }

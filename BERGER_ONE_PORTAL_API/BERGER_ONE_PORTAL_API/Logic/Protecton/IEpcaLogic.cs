@@ -17,5 +17,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<EpcaDetailsStatusResponseDto?> PcaDetailsGetStatus(GetPcaDetailsStatusRequestDto request);
         Task<EpcaDetailsGetListResponseDto?> PcaDetailsGetDtl(GetPcaDetailsRequestDto request, string User_id);
         Task<PcaDeleteResponseDto?> DeletePcaDetails(DeletePCARequestDto request, string User_id);
+        Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList(PcaCancellationRequestDto request, string User_id);
+        Task<PcaCancleResponseDto?> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
     }
 }
