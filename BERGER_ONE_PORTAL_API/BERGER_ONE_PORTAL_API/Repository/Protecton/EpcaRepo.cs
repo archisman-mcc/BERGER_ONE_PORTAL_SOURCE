@@ -68,7 +68,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             try
             {
                 sqlParams[0] = new SqlParameter
-                { 
+                {
                     ParameterName = "@user_id",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
@@ -409,7 +409,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
-        public async Task<MSSQLResponse?> GetFactoryListBySKU(GetFactoryRequestDto dto,string User_id)
+        public async Task<MSSQLResponse?> GetFactoryListBySKU(GetFactoryRequestDto dto, string User_id)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[4];
@@ -498,7 +498,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Value = dto.bill_to
                 };
 
-                
+
                 response = new MSSQLResponse()
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
@@ -594,7 +594,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.Decimal,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value =  dto.billto_code
+                    Value = dto.billto_code
                 };
 
                 sqlParams[1] = new SqlParameter
@@ -668,7 +668,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         }
 
 
-        public async Task<MSSQLResponse> InsertePcaDetails_Vr1(PcaInsertRequestDto request,string User_id)
+        public async Task<MSSQLResponse> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[16];
@@ -820,6 +820,151 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
+
+        public async Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto request, string User_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[14];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.DepotCode)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@terr_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.TerrCode)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@billto_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.BilltoCode)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@dealer_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.DealerCode)
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@dealer_name",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request?.DealerName)
+                };
+                sqlParams[5] = new SqlParameter
+                {
+                    ParameterName = "@main_status",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.MainStatus)
+                };
+                sqlParams[6] = new SqlParameter
+                {
+                    ParameterName = "@aprv_status",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.AprvStatus)
+                };
+                sqlParams[7] = new SqlParameter
+                {
+                    ParameterName = "@sbl_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = "4"
+                };
+                sqlParams[8] = new SqlParameter
+                {
+                    ParameterName = "@app_id",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFIntegerOrDBNull(request.app_id)
+                };
+                sqlParams[9] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = User_id
+                };
+                sqlParams[10] = new SqlParameter
+                {
+                    ParameterName = "@frm_date",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.frm_date)
+                };
+                sqlParams[11] = new SqlParameter
+                {
+                    ParameterName = "@to_date",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.to_date)
+                };
+                sqlParams[12] = new SqlParameter
+                {
+                    ParameterName = "@PageNumber",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFIntegerOrDBNull(request.PageNumber)
+                };
+                sqlParams[13] = new SqlParameter
+                {
+                    ParameterName = "@PageSize",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFIntegerOrDBNull(request.PageSize)
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[PCA_Cancellation_getList_Portal]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
         public async Task<MSSQLResponse> DeletePcaDetails(DeletePCARequestDto request, string User_id)
         {
             MSSQLResponse? response = null;
@@ -860,6 +1005,52 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
                 {
                     CommandText = "[protecton].[PCA_Details_delete_by_auto_id]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
+        public async Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@app_id",
+                SqlDbType = SqlDbType.Decimal,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = 15
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@auto_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = request.auto_id
+            };
+
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@user_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = User_id
+            };
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[protecton].[PCA_Cancellation_update]",
                     CommandTimeout = Constant.Common.SQLCommandTimeOut,
                     CommandType = CommandType.StoredProcedure,
                     ConnectionProperties = _serviceContext.MSSQLConnectionModel,
