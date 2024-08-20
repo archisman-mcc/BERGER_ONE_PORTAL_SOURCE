@@ -61,5 +61,37 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.GetFactoryListBySKU(request, User_id);
             return EpcaAdapter.MapPcaFactoryResponse(dataResponse);
         }
+
+        public async Task<EpcaMinRateResponseDto?> GetPcaMinRateBySku_Vr1(GetMinRateBySkuRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaMinRateBySku_Vr1(request);
+            return EpcaAdapter.MapSkuMinRateResponse(dataResponse);
+        }
+
+        public async Task<PcaInsertResponseDto?> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id)
+        {
+
+            MSSQLResponse? dataResponse = await _epcaRepo.InsertePcaDetails_Vr1(request, User_id);
+            return EpcaAdapter.MapPcaInsertResponse(dataResponse);
+        }
+
+        public async Task<EpcaDetailsStatusResponseDto?> PcaDetailsGetStatus(GetPcaDetailsStatusRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.PcaDetailsGetStatus(request);
+            return EpcaAdapter.MapPcaDetailsStatusResponse(dataResponse);
+        }
+
+        public async Task<EpcaDetailsGetListResponseDto?> PcaDetailsGetDtl(GetPcaDetailsRequestDto request, string User_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.PcaDetailsGetDtl(request, User_id);
+            return EpcaAdapter.MapPcaDetailsResponse(dataResponse);
+        }
+
+        public async Task<PcaDeleteResponseDto?> DeletePcaDetails(DeletePCARequestDto request, string User_id)
+        {
+
+            MSSQLResponse? dataResponse = await _epcaRepo.DeletePcaDetails(request, User_id);
+            return EpcaAdapter.MapPcaDeleteResponse(dataResponse);
+        }
     }
 }

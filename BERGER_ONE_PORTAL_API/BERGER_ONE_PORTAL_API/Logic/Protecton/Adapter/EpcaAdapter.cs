@@ -203,6 +203,115 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
             return response;
         }
 
+        public static EpcaMinRateResponseDto? MapSkuMinRateResponse(MSSQLResponse? data)
+        {
+            EpcaMinRateResponseDto? response = null;
+            if (data != null)
+            {
+                response = new EpcaMinRateResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new EpcaSkuMinRateModel()
+                    {
+                        smr_sku_code = dr.Field<string?>("smr_sku_code"),
+                        smr_packsize = dr.Field<decimal?>("smr_packsize"),
+                        smr_min_rate = dr.Field<decimal?>("smr_min_rate"),
+                        smr_rebate = dr.Field<decimal?>("smr_rebate"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+
+        public static EpcaDetailsStatusResponseDto? MapPcaDetailsStatusResponse(MSSQLResponse? data)
+        {
+            EpcaDetailsStatusResponseDto? response = null;
+            if (data != null)
+            {
+                response = new EpcaDetailsStatusResponseDto()
+                {
+                    Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new PcaDetailsStatusModel()
+                    {
+                        pd_auto_id = dr.Field<decimal?>("pd_auto_id"),
+                        pd_status = dr.Field<string?>("pd_status"),
+                    })
+                    .ToList(),
+                };
+                if (response != null && response.Data != null && response.Data.Count > 0)
+                {
+                    response.success = true;
+                    response.message = "Success";
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "No Content";
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "No Content";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+        public static PcaInsertResponseDto? MapPcaInsertResponse(MSSQLResponse? data)
+        {
+            PcaInsertResponseDto? response = new PcaInsertResponseDto();
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode <= 0) throw new Exception(OutputMsg);
+                else response.ResponseMessage = OutputMsg;
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+
+        public static PcaDeleteResponseDto? MapPcaDeleteResponse(MSSQLResponse? data)
+        {
+            PcaDeleteResponseDto? response = new PcaDeleteResponseDto();
+            if (data != null)
+            {
+                int OutputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+                string? OutputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+                if (OutputCode <= 0) throw new Exception(OutputMsg);
+                else response.ResponseMessage = OutputMsg;
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+
         public static EpcaResponseDto? MapSKUListResponse(MSSQLResponse? data)
         {
             EpcaResponseDto? response = null;
@@ -215,6 +324,54 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                     if (ds != null && ds.Tables.Count > 0)
                     {
                         response = new EpcaResponseDto();
+                        response.Data = ds;
+
+                        if (response != null && response.Data.Tables[0].Rows.Count > 0)
+                        {
+                            response.success = true;
+                            response.message = "Success";
+                            response.statusCode = HttpStatusCode.OK;
+                        }
+                        else
+                        {
+                            response.Data = null;
+                            response.success = false;
+                            response.message = "No Content";
+                            response.statusCode = HttpStatusCode.NoContent;
+                        }
+                    }
+                    else
+                    {
+                        response.Data = null;
+                        response.success = false;
+                        response.message = "No Content";
+                        response.statusCode = HttpStatusCode.NoContent;
+                    }
+                }
+
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = "Data Access Response is null or empty";
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
+        public static EpcaDetailsGetListResponseDto? MapPcaDetailsResponse(MSSQLResponse? data)
+        {
+            EpcaDetailsGetListResponseDto? response = null;
+            if (data != null)
+            {
+
+                if (data != null && data.Data != null)
+                {
+                    var ds = (data?.Data as DataSet);
+                    if (ds != null && ds.Tables.Count > 0)
+                    {
+                        response = new EpcaDetailsGetListResponseDto();
                         response.Data = ds;
 
                         if (response != null && response.Data.Tables[0].Rows.Count > 0)
