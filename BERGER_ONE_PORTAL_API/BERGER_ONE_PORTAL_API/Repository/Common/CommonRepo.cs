@@ -700,7 +700,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 SqlDbType = SqlDbType.VarChar,
                 Direction = ParameterDirection.Input,
                 Size = -1,
-                Value = Utils.IIFStringOrDBNull("subhrajit")
+                Value = Utils.IIFStringOrDBNull(request.createdUser)
             };
 
             sqlParams[10] = new SqlParameter

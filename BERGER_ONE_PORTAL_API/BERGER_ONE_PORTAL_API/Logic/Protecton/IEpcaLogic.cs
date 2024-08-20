@@ -12,5 +12,10 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<EpcaResponseDto?> GetSKUList(GetSKUListRequestDto request);
         Task<EpcaBillToResponseDto?> GetPcaBillToList(GetBillToRequestDto request);
         Task<EpcaFactoryResponseDto?> GetFactoryListBySKU(GetFactoryRequestDto request, string User_id);
+        Task<EpcaMinRateResponseDto?> GetPcaMinRateBySku_Vr1(GetMinRateBySkuRequestDto request);
+        Task<PcaInsertResponseDto?> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id);
+        Task<EpcaDetailsStatusResponseDto?> PcaDetailsGetStatus(GetPcaDetailsStatusRequestDto request);
+        Task<EpcaDetailsGetListResponseDto?> PcaDetailsGetDtl(GetPcaDetailsRequestDto request, string User_id);
+        Task<PcaDeleteResponseDto?> DeletePcaDetails(DeletePCARequestDto request, string User_id);
     }
 }
