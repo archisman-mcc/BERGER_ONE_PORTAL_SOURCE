@@ -67,6 +67,19 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton
 
     }
 
+    public class EpcaCancellationGetListResponseDto : BaseResponse
+    {
+        [JsonProperty("data")]
+        public dynamic? Data { get; set; }
+
+    }
+
+    public class PcaCancleResponseDto : BaseResponse
+    {
+        [JsonProperty("response_message")]
+        public string? ResponseMessage { get; set; }
+    }
+
     public class PcaInsertResponseDto : BaseResponse
     {
         [JsonProperty("response_message")]

@@ -83,5 +83,21 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.DeletePcaDetails(dto, userDetails.user_id);
         }
+
+        [HttpPost]
+        public async Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList([FromBody] PcaCancellationRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaCancellationGetList(dto, userDetails.user_id);
+
+        }
+
+        [HttpPost]
+        public async Task<PcaCancleResponseDto?> PcaCancellationUpdate([FromBody] CanclePcaRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaCancellationUpdate(dto, userDetails.user_id);
+
+        }
     }
 }

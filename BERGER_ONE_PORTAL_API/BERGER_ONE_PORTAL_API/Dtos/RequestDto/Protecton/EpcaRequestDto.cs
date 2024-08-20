@@ -68,6 +68,29 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
 
     }
 
+    public class PcaCancellationRequestDto
+    {
+        public int app_id { get; set; }
+        public string? DepotCode { get; set; }
+        public string? TerrCode { get; set; }
+        public string? BilltoCode { get; set; }
+        public string? DealerCode { get; set; }
+        public string DealerName { get; set; } = "";
+        public string? AprvStatus { get; set; }
+        public string? MainStatus { get; set; }
+        public string? frm_date { get; set; }
+        public string? to_date { get; set; }
+        public int? PageNumber { get; set; }
+        public int? PageSize { get; set; }
+
+    }
+
+    public class CanclePcaRequestDto
+    {
+        public Decimal auto_id { get; set; }
+
+    }
+
     public class GetFactoryRequestDto
     {
         public string? sku_code { get; set; }
