@@ -19,5 +19,10 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse> DeletePcaDetails(DeletePCARequestDto request, string User_id);
         Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto dto, string User_id);
         Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
+
+        #region "TLV MODULE"
+        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+        Task<MSSQLResponse?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id);
+        #endregion
     }
 }
