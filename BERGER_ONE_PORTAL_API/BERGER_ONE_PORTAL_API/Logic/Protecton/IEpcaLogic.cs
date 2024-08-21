@@ -23,6 +23,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         Task<EpcaResponseDto?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id);
+        Task<EpcaStatusResponseDto?> GetTlvStatusList(TlvStatusRequestDto request);
+        Task<EpcaResponseDto?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         #endregion
     }
 }

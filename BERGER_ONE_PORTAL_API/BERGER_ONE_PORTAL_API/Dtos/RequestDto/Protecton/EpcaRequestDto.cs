@@ -104,6 +104,23 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
 
     }
 
+    public class TlvStatusRequestDto
+    {
+        public string? status { get; set; }
+
+    }
+
+    public class TlvRSMApprovalRequestDto
+    {
+        public string? DepotCode { get; set; }  
+        public string? TerrCode { get; set; }   
+        public string? BillToCode { get; set; } 
+        public string? DealerCode { get; set; } 
+        public string? DealerName { get; set; } 
+        public string? MainStatus { get; set; } 
+        public string? AprvStatus { get; set; } 
+    }                
+
 
     public class GetePCAListRequestDto
     {
