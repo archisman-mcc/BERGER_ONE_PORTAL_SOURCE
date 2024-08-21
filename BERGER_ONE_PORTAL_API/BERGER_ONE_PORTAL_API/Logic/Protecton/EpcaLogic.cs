@@ -106,5 +106,14 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.PcaCancellationUpdate(request, User_id);
             return EpcaAdapter.MapPcaCancleResponse(dataResponse);
         }
+
+        #region "TLV MODULE"
+        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+        public async Task<EpcaResponseDto?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetTlvRevisionList(request, user_id);
+            return EpcaAdapter.MapTlvRevisionListResponse(dataResponse);
+        }
+        #endregion
     }
 }

@@ -99,5 +99,15 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             return await _ePcaLogic.PcaCancellationUpdate(dto, userDetails.user_id);
 
         }
+
+        #region "TLV MODULE"
+        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetTlvRevisionList([FromBody] GetePCAListRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetTlvRevisionList(dto, userDetails.user_id);
+        }
+        #endregion
     }
 }
