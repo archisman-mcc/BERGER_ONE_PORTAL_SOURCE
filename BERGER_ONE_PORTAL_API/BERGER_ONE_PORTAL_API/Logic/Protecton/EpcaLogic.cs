@@ -126,6 +126,18 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.GetTlvRSMApprovalList(request, user_id);
             return EpcaAdapter.MapTlvRSMApprovalResponse(dataResponse);
         }
+
+        public async Task<EpcaResponseDto?> GetTlvRevisionLogDetails(TlvRevisionLogRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetTlvRevisionLogDetails(request);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
+        public async Task<TlvRevisionResponseDto?> TlvRevisionApproval(TlvApprovalRequestDto request, string User_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.TlvRevisionApproval(request, User_id);
+            return EpcaAdapter.MapTlvApproveResponse(dataResponse);
+        }
         #endregion
     }
 }
