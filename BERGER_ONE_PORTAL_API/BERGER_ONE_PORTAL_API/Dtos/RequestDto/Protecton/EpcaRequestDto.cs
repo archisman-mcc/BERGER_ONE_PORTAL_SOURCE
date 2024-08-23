@@ -119,7 +119,22 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? DealerName { get; set; } 
         public string? MainStatus { get; set; } 
         public string? AprvStatus { get; set; } 
-    }                
+    }
+
+    public class TlvRevisionLogRequestDto
+    {
+        public string? auto_id { get; set; }
+    }
+
+    public class TlvApprovalRequestDto
+    {
+        public string? tlv_id { get; set; }
+        public string? approval_status { get; set; }
+        public string? remarks { get; set; }
+        public string? term_id { get; set; }
+        public string? Proposed_tlv { get; set; }
+        public string? proposed_credit_days { get; set; }
+    }
 
 
     public class GetePCAListRequestDto
