@@ -1120,7 +1120,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DealerName)
+                    Value = request.DealerName
                 };
 
                 sqlParams[6] = new SqlParameter
@@ -1177,7 +1177,6 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             catch (Exception ex) { throw new Exception(ex.Message, ex); }
             return response;
         }
-
 
         public async Task<MSSQLResponse?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id)
         {
