@@ -1293,6 +1293,128 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
+        public async Task<MSSQLResponse?> GetTlvRevisionLogDetails(TlvRevisionLogRequestDto request)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@auto_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.auto_id)
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@sbl_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = "4"
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[TLV_Details_get_log_details]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+                };
+            }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+            return response;
+        }
+
+        public async Task<MSSQLResponse> TlvRevisionApproval(TlvApprovalRequestDto request, string User_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[7];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@tlv_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.tlv_id)
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@approval_status",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.approval_status)
+            };
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@remarks",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.remarks)
+            };
+            sqlParams[3] = new SqlParameter
+            {
+                ParameterName = "@term_id",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.term_id)
+            };
+            sqlParams[4] = new SqlParameter
+            {
+                ParameterName = "@Proposed_tlv",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.Proposed_tlv)
+            };
+            sqlParams[5] = new SqlParameter
+            {
+                ParameterName = "@proposed_credit_days",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.proposed_credit_days)
+            };
+
+            sqlParams[6] = new SqlParameter
+            {
+                ParameterName = "@created_user",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = User_id
+            };
+           
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[protecton].[TLV_Details_Approval]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
         public async Task<MSSQLResponse?> GetTlvStatusList(TlvStatusRequestDto request)
         {
             MSSQLResponse? response = null;

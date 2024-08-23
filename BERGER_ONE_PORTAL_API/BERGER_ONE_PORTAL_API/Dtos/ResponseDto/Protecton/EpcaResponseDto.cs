@@ -91,4 +91,10 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton
         [JsonProperty("response_message")]
         public string? ResponseMessage { get; set; }
     }
+
+    public class TlvRevisionResponseDto : BaseResponse
+    {
+        [JsonProperty("response_message")]
+        public string? ResponseMessage { get; set; }
+    }
 }
