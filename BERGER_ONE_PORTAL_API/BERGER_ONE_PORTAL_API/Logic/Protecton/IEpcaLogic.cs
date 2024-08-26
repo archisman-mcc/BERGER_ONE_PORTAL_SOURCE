@@ -27,6 +27,9 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<EpcaResponseDto?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<EpcaResponseDto?> GetTlvRevisionLogDetails(TlvRevisionLogRequestDto request);
         Task<TlvRevisionResponseDto?> TlvRevisionApproval(TlvApprovalRequestDto request, string User_id);
+        Task<EpcaResponseDto?> GetTlvHOApprovalList(TlvRSMApprovalRequestDto request, string user_id);
+        Task<EpcaResponseDto?> GetTlvHoCommercialApprovalList(TlvRSMApprovalRequestDto request, string user_id);
+        Task<EpcaResponseDto?> TlvGetTermDetails(TlvTermDetailsRequestDto request, string user_id);
         #endregion
     }
 }

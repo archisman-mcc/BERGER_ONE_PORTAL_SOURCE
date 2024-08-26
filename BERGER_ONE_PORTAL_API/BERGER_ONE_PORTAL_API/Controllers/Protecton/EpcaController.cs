@@ -134,6 +134,27 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.TlvRevisionApproval(dto, userDetails.user_id);
         }
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetTlvHOApprovalList([FromBody] TlvRSMApprovalRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetTlvHOApprovalList(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetTlvHoCommercialApprovalList([FromBody] TlvRSMApprovalRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetTlvHoCommercialApprovalList(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> TlvGetTermDetails([FromBody] TlvTermDetailsRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.TlvGetTermDetails(dto, userDetails.user_id);
+        }
         #endregion
     }
 }
