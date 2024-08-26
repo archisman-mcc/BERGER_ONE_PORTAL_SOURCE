@@ -27,6 +27,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<MSSQLResponse?> GetTlvRevisionLogDetails(TlvRevisionLogRequestDto request);
         Task<MSSQLResponse> TlvRevisionApproval(TlvApprovalRequestDto request, string User_id);
+        Task<MSSQLResponse?> GetTlvHOApprovalList(TlvRSMApprovalRequestDto request, string user_id);
+        Task<MSSQLResponse?> GetTlvHoCommercialApprovalList(TlvRSMApprovalRequestDto request, string user_id);
+        Task<MSSQLResponse?> TlvGetTermDetails(TlvTermDetailsRequestDto request, string user_id);
         #endregion
     }
 }
