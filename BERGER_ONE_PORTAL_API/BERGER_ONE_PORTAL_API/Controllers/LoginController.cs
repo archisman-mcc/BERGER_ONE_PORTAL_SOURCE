@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using BERGER_ONE_PORTAL_API.Dtos;
 using BERGER_ONE_PORTAL_API.Logic;
 using BERGER_ONE_PORTAL_API.Filters;
+using System.Security.Claims;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
@@ -33,6 +34,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             return await _loginLogic.ValidateLogin(requestDto);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<LoginResponseDto?> RefreshToken([FromQuery] TokenRefreshDto? tokenRefreshDto)
         {
@@ -40,7 +42,15 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             return await _loginLogic.ValidateRefreshToken(userDetails.user_id, tokenRefreshDto.RefreshToken);
         }
 
-        [Authorize]
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<LoginResponseDto?> RefreshTokenV1([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto)
+        {
+            //User.Identity.IsAuthenticated = true;
+            //var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _loginLogic.ValidateRefreshTokenV1(tokenRefreshNewDto.user_id, tokenRefreshNewDto.RefreshToken);
+        }
+
         [HttpGet]
         public string ProtectedResource()
         {

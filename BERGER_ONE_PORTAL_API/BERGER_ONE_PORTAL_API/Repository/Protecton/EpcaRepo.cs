@@ -1163,7 +1163,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
-                        CommandText = "[epca].[TLV_Details_getList]",
+                        CommandText = "[protecton].[TLV_Details_getList]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
