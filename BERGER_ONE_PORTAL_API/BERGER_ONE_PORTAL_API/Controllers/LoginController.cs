@@ -29,10 +29,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         [Authorize]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<LoginResponseDto?> Login([FromQuery] LoginRequestDto requestDto)
-        {
-            return await _loginLogic.ValidateLogin(requestDto);
-        }
+        public async Task<LoginResponseDto?> Login([FromQuery] LoginRequestDto requestDto) => await _loginLogic.ValidateLogin(requestDto);
 
         [AllowAnonymous]
         [HttpGet]
@@ -44,12 +41,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<LoginResponseDto?> RefreshTokenV1([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto)
-        {
-            //User.Identity.IsAuthenticated = true;
-            //var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _loginLogic.ValidateRefreshTokenV1(tokenRefreshNewDto.user_id, tokenRefreshNewDto.RefreshToken);
-        }
+        public async Task<LoginResponseDto?> RefreshTokenV1([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto) => await _loginLogic.ValidateRefreshTokenV1(tokenRefreshNewDto.user_id, tokenRefreshNewDto.RefreshToken);
 
         [HttpGet]
         public string ProtectedResource()

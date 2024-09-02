@@ -216,6 +216,49 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
             return response;
         }
 
+        public async Task<MSSQLResponse> ValidateRefreshTokenIsExpire(string username)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParameters = new SqlParameter[3];
+
+            sqlParameters[0] = new SqlParameter
+            {
+                ParameterName = "@user_id",
+                DbType = DbType.String,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(username)
+            };
+            sqlParameters[1] = new SqlParameter
+            {
+                ParameterName = "@app_portal",
+                DbType = DbType.String,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = "PORTAL"
+            };
+            sqlParameters[2] = new SqlParameter
+            {
+                ParameterName = "@isExpired",
+                SqlDbType = SqlDbType.Char,
+                Direction = ParameterDirection.Output,
+                Size = -1,
+            };
+            response = new MSSQLResponse()
+            {
+                Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                {
+                    CommandText = "app.validate_refresh_token_isexpired",
+                    CommandTimeout = BERGER_ONE_PORTAL_API.Common.Utilty.Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParameters
+                }),
+                OutputParameters = sqlParameters.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
         #region "Other"
         public async Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup)
         {
