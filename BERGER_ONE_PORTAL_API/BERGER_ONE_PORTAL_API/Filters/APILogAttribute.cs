@@ -40,24 +40,27 @@ namespace BERGER_ONE_PORTAL_API.Filters
                 {
                     string? token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
 
-                    if (token != null || !token.Equals("Bearer null"))
+                    if (token != null)
                     {
-                        var userDetails = JsonConvert.DeserializeObject<UserDetailsModel>(TokenExtensions.GetSubFromBearerToken(token));
-                        string? user_id = userDetails?.user_id;
+                        if (!token.Equals("Bearer null"))
+                        {
+                            var userDetails = JsonConvert.DeserializeObject<UserDetailsModel>(TokenExtensions.GetSubFromBearerToken(token));
+                            string? user_id = userDetails?.user_id;
 
-                        ApiLogDBModel apiLog = new ApiLogDBModel();
-                        ApiLogDBDto apiLogDto = new ApiLogDBDto();
-                        apiLog.al_params = parameters;
-                        apiLog.al_action = actionName;
-                        apiLog.al_controller = controllerName;
-                        apiLog.al_time_taken = -1;
-                        apiLog.al_url = route_url;
-                        apiLog.al_user_id = user_id;
+                            ApiLogDBModel apiLog = new ApiLogDBModel();
+                            ApiLogDBDto apiLogDto = new ApiLogDBDto();
+                            apiLog.al_params = parameters;
+                            apiLog.al_action = actionName;
+                            apiLog.al_controller = controllerName;
+                            apiLog.al_time_taken = -1;
+                            apiLog.al_url = route_url;
+                            apiLog.al_user_id = user_id;
 
-                        _mapper.Map(apiLog, apiLogDto);
+                            _mapper.Map(apiLog, apiLogDto);
 
-                        MSSQLResponse? mSSQLResponse = await _LoggerService.InsertAPILog(apiLogDto);
-                        if ((mSSQLResponse != null)) req_id = mSSQLResponse.OutputParameters?[0].Value.ToString();
+                            MSSQLResponse? mSSQLResponse = await _LoggerService.InsertAPILog(apiLogDto);
+                            if ((mSSQLResponse != null)) req_id = mSSQLResponse.OutputParameters?[0].Value.ToString();
+                        }
                     }
                 }
             }
