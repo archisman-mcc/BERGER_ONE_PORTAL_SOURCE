@@ -40,7 +40,7 @@ namespace BERGER_ONE_PORTAL_API.Filters
                 {
                     string? token = context.HttpContext.Request.Headers["Authorization"].FirstOrDefault();
 
-                    if (token != null)
+                    if (token != null || !token.Equals("Bearer null"))
                     {
                         var userDetails = JsonConvert.DeserializeObject<UserDetailsModel>(TokenExtensions.GetSubFromBearerToken(token));
                         string? user_id = userDetails?.user_id;
@@ -57,27 +57,16 @@ namespace BERGER_ONE_PORTAL_API.Filters
                         _mapper.Map(apiLog, apiLogDto);
 
                         MSSQLResponse? mSSQLResponse = await _LoggerService.InsertAPILog(apiLogDto);
-                        if ((mSSQLResponse != null))
-                        {
-                            req_id = mSSQLResponse.OutputParameters?[0].Value.ToString();
-                        }
-
+                        if ((mSSQLResponse != null)) req_id = mSSQLResponse.OutputParameters?[0].Value.ToString();
                     }
-
                 }
             }
-
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-
-
             _timer?.Stop();
-            if (req_id != null && req_id != string.Empty)
-            {
-                _LoggerService.UpdateTime(Int64.Parse(req_id), int.Parse((_timer.ElapsedMilliseconds / 1000).ToString()));
-            }
+            if (req_id != null && req_id != string.Empty) _LoggerService.UpdateTime(Int64.Parse(req_id), int.Parse((_timer.ElapsedMilliseconds / 1000).ToString()));
 
             base.OnActionExecuted(context);
         }

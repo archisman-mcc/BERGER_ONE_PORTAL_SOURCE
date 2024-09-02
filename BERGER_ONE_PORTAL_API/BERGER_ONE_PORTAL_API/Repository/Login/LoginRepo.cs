@@ -181,6 +181,41 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
             return response;
         }
 
+        public async Task<MSSQLResponse> ValidateRefreshTokenV1(string username, string token)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParameters = new SqlParameter[2];
+
+            sqlParameters[0] = new SqlParameter
+            {
+                ParameterName = "@user_id",
+                DbType = DbType.String,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(username)
+            };
+            sqlParameters[1] = new SqlParameter
+            {
+                ParameterName = "@isValid",
+                DbType = DbType.Boolean,
+                Direction = ParameterDirection.Output,
+                Size = -1,
+            };
+            response = new MSSQLResponse()
+            {
+                Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                {
+                    CommandText = "app.validate_refresh_token_vr1",
+                    CommandTimeout = BERGER_ONE_PORTAL_API.Common.Utilty.Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParameters
+                }),
+                OutputParameters = sqlParameters.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
         #region "Other"
         public async Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup)
         {
