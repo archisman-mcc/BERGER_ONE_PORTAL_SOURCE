@@ -107,6 +107,18 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             return EpcaAdapter.MapPcaCancleResponse(dataResponse);
         }
 
+        public async Task<EpcaResponseDto?> GetePCADepotApprovalList(GetePCADepotApprovalListRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalList(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
+        public async Task<EpcaResponseDto?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalDetails(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         public async Task<EpcaResponseDto?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id)

@@ -157,6 +157,30 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? MainStatus { get; set; }
     }
 
+    public class GetePCADepotApprovalListRequestDto
+    {
+        public string? DepotCode { get; set; }
+        public string? TerritoryCode { get; set; }
+        public string? BillToCode { get; set; }
+        public string? DealerCode { get; set; }
+        public string? DealerName { get; set; }
+        public string? SblCode { get; set; }
+        public string? ApprovedStatus { get; set; }
+        public string? MainStatus { get; set; }
+    }
+
+    public class GetePCADepotApprovalDetailsRequestDto
+    {
+        public string? DepotCode { get; set; }
+        public string? TerritoryCode { get; set; }
+        public string? BillToCode { get; set; }
+        public string? DealerCode { get; set; }
+        public string? DealerName { get; set; }
+        public string? SblCode { get; set; }
+        public string? ApprovedStatus { get; set; }
+        public string? MainStatus { get; set; }
+    }
+
     public class PcaInsertRequestDto
     {
         public decimal? auto_id { get; set; }
