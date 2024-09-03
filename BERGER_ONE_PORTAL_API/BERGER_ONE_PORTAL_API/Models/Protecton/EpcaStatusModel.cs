@@ -9,5 +9,11 @@ namespace BERGER_ONE_PORTAL_API.Models.Protecton
 
         [JsonProperty("lov_value")]
         public string? LovValue { get; set; }
+
+        [JsonProperty("lov_field1_value")]
+        public string? LovField1Value { get; set; }
+
+        [JsonProperty("lov_field2_value")]
+        public string? LovField2Value { get; set; }
     }
 }

@@ -23,6 +23,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                     {
                         LovValue = dr.Field<string?>("lov_value"),
                         LovCode = dr.Field<string?>("lov_code"),
+                        LovField1Value = dr.Field<string?>("lov_field1_value"),
+                        LovField2Value = dr.Field<string?>("lov_field2_value"),
                     })
                     .ToList(),
                 };
