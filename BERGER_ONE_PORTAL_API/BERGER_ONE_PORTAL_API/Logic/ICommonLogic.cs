@@ -18,7 +18,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<UserApplAppResponseDto?> GetApplicableAppList(UserApplAppRequestDto request);
         Task<AllUserGroupResponseDto?> GetAllUserGroupList(AllUserGroupRequestDto request);
         Task<UserTerrResponseDto?> GetTerrDepotWise(UserTerrRequestDto request);
-        Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request);
+        Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request);
         #endregion
 

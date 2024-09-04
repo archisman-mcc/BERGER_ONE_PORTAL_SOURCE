@@ -617,7 +617,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             return response;
         }
 
-        public async Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request)
+        public async Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request, string user_id)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[16];
@@ -700,7 +700,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 SqlDbType = SqlDbType.VarChar,
                 Direction = ParameterDirection.Input,
                 Size = -1,
-                Value = Utils.IIFStringOrDBNull(request.createdUser)
+                Value = Utils.IIFStringOrDBNull(user_id)
             };
 
             sqlParams[10] = new SqlParameter
