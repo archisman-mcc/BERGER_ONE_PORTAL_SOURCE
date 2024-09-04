@@ -42,7 +42,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
                 DbType = DbType.String,
                 Direction = System.Data.ParameterDirection.Input,
                 Size = -1,
-                Value = request?.password
+                Value = Encrypt.EncryptString(request?.password)
             };
             sqlParams[2] = new SqlParameter
             {

@@ -181,8 +181,8 @@ namespace BERGER_ONE_PORTAL_API.Logic
             if (string.IsNullOrEmpty(request.pwd_type)) throw new NullReferenceException(request.pwd_type);
 
             if (string.IsNullOrEmpty(request.input_password)) throw new NullReferenceException(request.input_password);
-            if (request.pwd_type.ToUpper().Equals("ENCRYPT")) psw = Encrypt.EncryptStr(request.input_password);
-            else psw = Encrypt.DecryptStr(request.input_password);
+            if (request.pwd_type.ToUpper().Equals("ENCRYPT")) psw = Encrypt.EncryptString(request.input_password);
+            else psw = Encrypt.DecryptString(request.input_password);
             if (!string.IsNullOrEmpty(psw))
             {
                 response = new PwdEncryptDecryptResponse()
