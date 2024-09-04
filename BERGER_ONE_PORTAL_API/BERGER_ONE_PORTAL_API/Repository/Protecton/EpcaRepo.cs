@@ -81,16 +81,17 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DepotCode)
+                    //Value = Utils.IIFStringOrDBNull(request.DepotCode)
+                    Value = !string.IsNullOrWhiteSpace(request.DepotCode) ? request.DepotCode : DBNull.Value
                 };
-
                 sqlParams[2] = new SqlParameter
                 {
                     ParameterName = "@terr_code",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.TerritoryCode)
+                    //Value = Utils.IIFStringOrDBNull(request.TerritoryCode)
+                    Value = !string.IsNullOrWhiteSpace(request.TerritoryCode) ? request.TerritoryCode : DBNull.Value
                 };
 
                 sqlParams[3] = new SqlParameter
@@ -99,27 +100,26 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.BillToCode)
+                    //Value = Utils.IIFStringOrDBNull(request.BillToCode)
+                    Value = !string.IsNullOrWhiteSpace(request.BillToCode) ? request.BillToCode : DBNull.Value
                 };
-
                 sqlParams[4] = new SqlParameter
                 {
                     ParameterName = "@dealer_code",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.AcctNo)
+                    //Value = Utils.IIFStringOrDBNull(request.AcctNo)
+                    Value = !string.IsNullOrWhiteSpace(request.AcctNo) ? request.AcctNo : DBNull.Value
                 };
-
                 sqlParams[5] = new SqlParameter
                 {
                     ParameterName = "@dealer_name",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DealerName)
+                    Value = request.DealerName
                 };
-
                 sqlParams[6] = new SqlParameter
                 {
                     ParameterName = "@main_status",
@@ -137,7 +137,6 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(request.ApprovedStatus)
                 };
-
                 sqlParams[8] = new SqlParameter
                 {
                     ParameterName = "@sbl_code",
@@ -146,10 +145,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(request.SblCode)
                 };
-
                 sqlParams[9] = new SqlParameter
                 {
-                    ParameterName = "@app_id",
+                    ParameterName = "@app_name",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,
@@ -160,7 +158,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
-                        CommandText = "[protecton].[PCA_Details_getList]",
+                        CommandText = "[protecton].[PCA_getApprovalList_RSM]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -169,14 +167,12 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     }),
                     RowsAffected = null,
                     OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
-
                 };
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex);
             }
-
             return response;
         }
 
