@@ -55,7 +55,11 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public async Task<UserTerrResponseDto?> GetTerrDepotWise([FromBody] UserTerrRequestDto dto) => await _commonLogic.GetTerrDepotWise(dto);
 
         [HttpPost]
-        public async Task<UserInsertResponseDto?> UserProfileInsert([FromBody] UserInsertRequestDto dto) => await _commonLogic.UserProfileInsert(dto);
+        public async Task<UserInsertResponseDto?> UserProfileInsert([FromBody] UserInsertRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _commonLogic.UserProfileInsert(dto, userDetails.user_id);
+        } 
 
         [HttpPost]
         public async Task<UserApplTerrResponseDto?> GetApplicableTerrList([FromBody] UserApplTerrRequestDto dto) => await _commonLogic.GetApplicableTerrList(dto);
