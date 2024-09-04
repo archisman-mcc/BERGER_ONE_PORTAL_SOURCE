@@ -83,7 +83,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return UserAdapter.MapUserTerrResponse(dataResponse);
         }
 
-        public async Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request)
+        public async Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request, string user_id)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (request?.userId == null || string.IsNullOrWhiteSpace(request?.userId)) throw new ArgumentNullException(nameof(request.userId));
@@ -94,7 +94,8 @@ namespace BERGER_ONE_PORTAL_API.Logic
             if (request?.designation == null || string.IsNullOrWhiteSpace(request?.designation)) throw new ArgumentNullException(nameof(request.designation));
             if (request?.depot == null || string.IsNullOrWhiteSpace(request?.depot)) throw new ArgumentNullException(nameof(request.depot));
 
-            MSSQLResponse? dataResponse = await _commonRepo.UserProfileInsert(request);
+
+            MSSQLResponse? dataResponse = await _commonRepo.UserProfileInsert(request, user_id);
             return UserAdapter.MapUserProfileInsertResponse(dataResponse);
         }
 
