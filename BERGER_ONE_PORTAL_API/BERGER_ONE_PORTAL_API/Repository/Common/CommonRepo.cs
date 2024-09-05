@@ -978,7 +978,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse?> GetUserApplicableForms(UserAccessFormsRequest dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[5];
+            SqlParameter[] sqlParams = new SqlParameter[6];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -1007,12 +1007,20 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 };
                 sqlParams[3] = new SqlParameter
                 {
+                    ParameterName = "@app_id",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFIntegerOrDBNull(dto.appId)
+                };
+                sqlParams[4] = new SqlParameter
+                {
                     ParameterName = "@outputCode",
                     DbType = DbType.Int32,
                     Size = -1,
                     Direction = ParameterDirection.Output,
                 };
-                sqlParams[4] = new SqlParameter
+                sqlParams[5] = new SqlParameter
                 {
                     ParameterName = "@outputMsg",
                     DbType = DbType.String,
