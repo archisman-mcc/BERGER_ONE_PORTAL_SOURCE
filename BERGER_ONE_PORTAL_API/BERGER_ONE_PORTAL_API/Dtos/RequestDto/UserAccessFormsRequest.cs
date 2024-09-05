@@ -10,6 +10,9 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         [JsonProperty("userGroup")]
         public string? UserGroup { get; set; }
 
+        [JsonProperty("appId")]
+        public int? appId { get; set; }
+
         [JsonProperty("globalFilter")]
         public string? GlobalFilter { get; set; }
     }
