@@ -21,6 +21,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
         Task<MSSQLResponse?> GetePCADepotApprovalList(GetePCADepotApprovalListRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
+        Task<MSSQLResponse?> GetePCADetailsView(ePCADetailsViewRequestDto dto);
+        Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id);
 
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
