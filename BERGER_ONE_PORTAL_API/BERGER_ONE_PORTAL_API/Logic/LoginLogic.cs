@@ -49,7 +49,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
                     if (usermapping != null)
                     {
-                        var menuData = await _loginRepo.GetUserApplicableMenu(Convert.ToString(dt.Rows[0]["user_id"]), Convert.ToString(dt.Rows[0]["usp_group_code"]));
+                        var menuData = await _loginRepo.GetUserApplicableMenu(Convert.ToString(dt.Rows[0]["user_id"]), Convert.ToString(dt.Rows[0]["usp_group_code"]), 15);
 
                         if (usermapping != null && (menuData != null && menuData.Data.Rows.Count > 0)) usermapping.UserApplicableMenu = LoginRepo.MapUserApplicableMenu(menuData.Data as DataTable);
 
@@ -168,7 +168,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         })?.ToList().FirstOrDefault();
                         if (usermapping != null)
                         {
-                            var menuData = await _loginRepo.GetUserApplicableMenu(Convert.ToString(dt.Rows[0]["user_id"]), Convert.ToString(dt.Rows[0]["usp_group_code"]));
+                            var menuData = await _loginRepo.GetUserApplicableMenu(Convert.ToString(dt.Rows[0]["user_id"]), Convert.ToString(dt.Rows[0]["usp_group_code"]), 15);
 
                             if (usermapping != null && (menuData != null && menuData.Data.Rows.Count > 0)) usermapping.UserApplicableMenu = LoginRepo.MapUserApplicableMenu(menuData.Data as DataTable);
 

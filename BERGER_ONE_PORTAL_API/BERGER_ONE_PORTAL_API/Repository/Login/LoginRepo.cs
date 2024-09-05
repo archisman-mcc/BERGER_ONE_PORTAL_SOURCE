@@ -260,10 +260,10 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
         }
 
         #region "Other"
-        public async Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup)
+        public async Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup, Int32 AppId)
         {
             MSSQLResponse? response = null;
-            var sqlParams = new SqlParameter[2];
+            var sqlParams = new SqlParameter[3];
 
             sqlParams[0] = new SqlParameter
             {
@@ -280,6 +280,14 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
                 Direction = System.Data.ParameterDirection.Input,
                 Size = -1,
                 Value = UserId
+            };
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@app_id",
+                SqlDbType = SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Input,
+                Size = -1,
+                Value = AppId
             };
 
             response = new MSSQLResponse()
