@@ -40,6 +40,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
     public class GetBillToRequestDto
     {
         public string? depot_code { get; set; }
+        public string? terr_code { get; set; }
         public string? dealer_code { get; set; }
         public string? sbl_code { get; set; }
 
