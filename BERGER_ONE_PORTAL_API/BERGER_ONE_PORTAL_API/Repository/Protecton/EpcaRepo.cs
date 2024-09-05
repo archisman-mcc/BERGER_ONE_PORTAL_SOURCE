@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 {
@@ -767,6 +768,55 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
+        public async Task<MSSQLResponse?> GetePCADetailsView(ePCADetailsViewRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@sku_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = dto.SkuCode
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@pdl_auto_id",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = dto.AutoId
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[PCA_View_GetList]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
 
         public async Task<MSSQLResponse?> PcaDetailsGetStatus(GetPcaDetailsStatusRequestDto dto)
         {
@@ -1053,6 +1103,57 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
                 {
                     CommandText = "[protecton].[PCA_Details_Submit_Vr1]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
+            return response;
+        }
+
+        public async Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[4];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@user_id",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = User_id
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@json_pca_approval_dlt",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(JsonConvert.SerializeObject(request.Pca_Request_Dtl_List))
+            };
+
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@outputCode",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
+            };
+            sqlParams[3] = new SqlParameter
+            {
+                ParameterName = "@outputMsg",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Output,
+                Size = -1
+            };
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[protecton].[PCA_Details_Submit_Portal]",
                     CommandTimeout = Constant.Common.SQLCommandTimeOut,
                     CommandType = CommandType.StoredProcedure,
                     ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -1640,7 +1741,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 Size = -1,
                 Value = User_id
             };
-           
+
 
             response = new MSSQLResponse()
             {

@@ -181,6 +181,12 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? MainStatus { get; set; }
     }
 
+    public class ePCADetailsViewRequestDto
+    {
+        public string? SkuCode { get; set; }
+        public string? AutoId { get; set; }
+    }
+
     public class PcaInsertRequestDto
     {
         public decimal? auto_id { get; set; }
@@ -197,5 +203,24 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? user_id { get; set; }
         public decimal? mrp { get; set; }
         public long? projectid { get; set; }
+    }
+
+    public class PcaApprovalInsertRequestDto
+    {
+        public List<PcaApprovalRequestModel>? Pca_Request_Dtl_List { get; set; }
+    }
+
+    public class PcaApprovalRequestModel
+    {
+        public long AutoId { get; set; }
+        public long BillTo { get; set; }
+        public string SkuCode { get; set; }
+        public string FactoryCode { get; set; }
+        public int Nop { get; set; }
+        public decimal RatePerPack { get; set; }
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTill { get; set; }
+        public string CurrentStatus { get; set; }
+        public string RejectionRemarks { get; set; }
     }
 }

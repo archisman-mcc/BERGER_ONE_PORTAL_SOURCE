@@ -114,6 +114,19 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             return await _ePcaLogic.GetePCADepotApprovalDetails(dto, userDetails.user_id);
         }
 
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetePCADetailsView([FromBody] ePCADetailsViewRequestDto dto)
+        {
+            return await _ePcaLogic.GetePCADetailsView(dto);
+        }
+
+        [HttpPost]
+        public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit([FromBody] PcaApprovalInsertRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaApprovalDetailsSubmit(dto, userDetails.user_id);
+        }
+
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         [HttpPost]
