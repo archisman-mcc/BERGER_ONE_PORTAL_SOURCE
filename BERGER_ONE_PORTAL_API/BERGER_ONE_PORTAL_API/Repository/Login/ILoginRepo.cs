@@ -10,6 +10,6 @@ namespace BERGER_ONE_PORTAL_API.Repository.Login
         Task<MSSQLResponse> ValidateRefreshToken(string username, string token);
         Task<MSSQLResponse> ValidateRefreshTokenV1(string username, string token);
         Task<MSSQLResponse> ValidateRefreshTokenIsExpire(string username);
-        Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup); 
+        Task<MSSQLResponse> GetUserApplicableMenu(string UserId, string UserGroup, Int32 AppId); 
     }
 }
