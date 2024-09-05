@@ -600,7 +600,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         public async Task<MSSQLResponse?> GetPcaBillToList(GetBillToRequestDto dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[3];
+            SqlParameter[] sqlParams = new SqlParameter[4];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -614,6 +614,15 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 
                 sqlParams[1] = new SqlParameter
                 {
+                    ParameterName = "@terr_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.terr_code)
+                };
+
+                sqlParams[2] = new SqlParameter
+                {
                     ParameterName = "@dealer_code",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
@@ -621,7 +630,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Value = Utils.IIFStringOrDBNull(dto.dealer_code)
                 };
 
-                sqlParams[2] = new SqlParameter
+                sqlParams[3] = new SqlParameter
                 {
                     ParameterName = "@sbl_code",
                     DbType = DbType.String,
@@ -634,7 +643,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
-                        CommandText = "[protecton].[PCA_Details_getBillTo]",
+                        CommandText = "[protecton].[PCA_Details_getBillTo_portal]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -1153,7 +1162,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             {
                 RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
                 {
-                    CommandText = "[protecton].[PCA_Details_Submit_Portal]",
+                    CommandText = "[protecton].[PCA_Details_Approval_Submit_Portal]",
                     CommandTimeout = Constant.Common.SQLCommandTimeOut,
                     CommandType = CommandType.StoredProcedure,
                     ConnectionProperties = _serviceContext.MSSQLConnectionModel,
