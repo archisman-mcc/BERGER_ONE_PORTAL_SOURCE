@@ -23,6 +23,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCADetailsView(ePCADetailsViewRequestDto dto);
         Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id);
+        Task<MSSQLResponse?> GetePCARsmApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
+        Task<MSSQLResponse?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
 
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
