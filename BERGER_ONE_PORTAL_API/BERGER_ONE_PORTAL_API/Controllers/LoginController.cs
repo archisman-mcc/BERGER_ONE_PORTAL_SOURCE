@@ -41,7 +41,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<LoginResponseDto?> RefreshTokenV1([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto) => await _loginLogic.ValidateRefreshTokenV1(tokenRefreshNewDto.user_id, tokenRefreshNewDto.RefreshToken);
+        public async Task<LoginResponseDto?> RefreshTokenV1([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto) => await _loginLogic.ValidateRefreshTokenV1(tokenRefreshNewDto);
 
         [HttpGet]
         public string ProtectedResource()
