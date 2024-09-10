@@ -139,16 +139,16 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return response;
         }
 
-        public async Task<LoginResponseDto?> ValidateRefreshTokenV1(string user_id, string RefreshToken)
+        public async Task<LoginResponseDto?> ValidateRefreshTokenV1(TokenRefreshDtoNew? tokenRefreshNewDto)
         {
             LoginResponseDto response = new LoginResponseDto();
 
-            var _dbResponse = await _loginRepo.ValidateRefreshTokenIsExpire(user_id);
+            var _dbResponse = await _loginRepo.ValidateRefreshTokenIsExpire(tokenRefreshNewDto.user_id);
             char _outputCode = Convert.ToChar(_dbResponse.OutputParameters?[0].Value);
 
             if (_dbResponse != null && _outputCode.Equals('N'))
             {
-                var dbResponse = await _loginRepo.ValidateRefreshTokenV1(user_id, RefreshToken);
+                var dbResponse = await _loginRepo.ValidateRefreshTokenV1(tokenRefreshNewDto.user_id, tokenRefreshNewDto.RefreshToken);
                 if (dbResponse != null)
                 {
                     bool outputCode = bool.TryParse(Convert.ToString(dbResponse.OutputParameters?[0].Value), out _) ? Convert.ToBoolean(dbResponse.OutputParameters?[0].Value) : false;
