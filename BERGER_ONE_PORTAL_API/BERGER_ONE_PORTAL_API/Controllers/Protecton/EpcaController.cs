@@ -134,7 +134,6 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             return await _ePcaLogic.GetePCARsmApprovalDetails(dto, userDetails.user_id);
         }
 
-
         [HttpPost]
         public async Task<EpcaResponseDto?> GetePCAHoApprovalDetails([FromBody] GetePCADepotApprovalDetailsRequestDto dto)
         {
@@ -142,7 +141,6 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             return await _ePcaLogic.GetePCAHoApprovalDetails(dto, userDetails.user_id);
         }
 
-        
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         [HttpPost]
