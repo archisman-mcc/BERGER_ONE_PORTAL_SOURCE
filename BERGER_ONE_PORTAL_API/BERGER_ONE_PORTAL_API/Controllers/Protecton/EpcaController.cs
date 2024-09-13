@@ -27,15 +27,45 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
 
         public EpcaController(IEpcaLogic ePcaLogic) { _ePcaLogic = ePcaLogic; }
 
+        #region "EPCA MODULE"
+        // COMMON DETAILS BIND
         [HttpPost]
         public async Task<EpcaStatusResponseDto?> GetPcaStatusList([FromBody] pcaStatusRequestDto dto) => await _ePcaLogic.GetPcaStatusList(dto);
+        // ===============================================================================
 
+
+        // EPCA LIST AND ENTRY
         [HttpPost]
-        public async Task<EpcaResponseDto?> GetePCAList([FromBody] GetePCAListRequestDto dto)
+        public async Task<EpcaResponseDto?> GetPcaList([FromBody] GetePCAListRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.GetePCAList(dto, userDetails.user_id);
+            return await _ePcaLogic.GetPcaList(dto, userDetails.user_id);
         }
+        // ===============================================================================
+
+
+        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
+        // ===============================================================================
+
+
+        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetPcaRsmList([FromBody] GetePCAListRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetPcaRsmList(dto, userDetails.user_id);
+        }
+        // ===============================================================================
+
+
+        // EPCA HO LIST AND ENTRY -- (APPROVAL)
+        // ===============================================================================
+        #endregion
+
+
+
+
+
 
         [HttpPost]
         public async Task<EpcaDealersResponseDto?> GetPcaDealersList([FromBody] pcaDealersRequestDto dto) => await _ePcaLogic.GetPcaDealersList(dto);
