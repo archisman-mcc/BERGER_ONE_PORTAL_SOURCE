@@ -9,7 +9,7 @@ using BERGER_ONE_PORTAL_API.Repository.Protecton;
 
 namespace BERGER_ONE_PORTAL_API.Logic.Protecton
 {
-    public class EpcaLogic:IEpcaLogic
+    public class EpcaLogic : IEpcaLogic
     {
         public IEpcaRepo _epcaRepo;
         private readonly IJwtManager _jwtManager;
@@ -19,18 +19,46 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             _jwtManager = jwtManager;
         }
 
-
+        #region "EPCA MODULE"
+        // COMMON DETAILS BIND
         public async Task<EpcaStatusResponseDto?> GetPcaStatusList(pcaStatusRequestDto request)
         {
             MSSQLResponse? dataResponse = await _epcaRepo.GetPcaStatusList(request);
             return EpcaAdapter.MapPcaStatusResponse(dataResponse);
         }
+        // ===============================================================================
 
-        public async Task<EpcaResponseDto?> GetePCAList(GetePCAListRequestDto request, string user_id)
+
+        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetPcaList(GetePCAListRequestDto request, string user_id)
         {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAList(request, user_id);
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
             return EpcaAdapter.MapEpcaListResponse(dataResponse);
         }
+        // ===============================================================================
+
+
+        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
+        // ===============================================================================
+
+
+        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetPcaRsmList(GetePCAListRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
+            return EpcaAdapter.MapEpcaListResponse(dataResponse);
+        }
+        // ===============================================================================
+
+
+        // EPCA HO LIST AND ENTRY -- (APPROVAL)
+        // ===============================================================================
+
+        #endregion
+
+
+
+
 
         public async Task<EpcaDealersResponseDto?> GetPcaDealersList(pcaDealersRequestDto request)
         {
