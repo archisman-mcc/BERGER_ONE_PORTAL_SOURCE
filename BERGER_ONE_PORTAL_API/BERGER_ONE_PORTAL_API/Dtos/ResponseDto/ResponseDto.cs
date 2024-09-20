@@ -1,13 +1,13 @@
 ﻿using BERGER_ONE_PORTAL_API.Common;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
 {
-    public class ResponseDto<T>
+    public class ResponseDto<T>: BaseResponse
     {
-        public bool? IsSuccess { get; set; } = true;
+        [JsonProperty("data")]
         public T? Data { get; set; }
-        public string Message { get; set; } = Common.Utilty.Constant.ResponseMsg.Success;
         public int? ErrorCode { get; set; }
     }
 
