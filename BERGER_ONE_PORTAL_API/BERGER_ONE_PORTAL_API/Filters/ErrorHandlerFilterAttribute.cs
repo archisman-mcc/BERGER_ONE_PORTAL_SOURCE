@@ -1,34 +1,108 @@
-﻿using BERGER_ONE_PORTAL_API.Dtos;
-using BERGER_ONE_PORTAL_API.Repository.Logger;
+﻿using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Net;
+using Microsoft.AspNetCore.Http.Extensions;
+using System.Text;
+using BERGER_ONE_PORTAL_API.Exceptions;
+using BERGER_ONE_PORTAL_API.Models;
+using BERGER_ONE_PORTAL_API.Repository.Logger;
+using Newtonsoft.Json;
+// ReSharper disable MustUseReturnValue
 
 namespace BERGER_ONE_PORTAL_API.Filters
 {
-    public class ErrorHandlerFilterAttribute: ExceptionFilterAttribute
+    public class ErrorHandlerFilterAttribute(ILoggerService loggerService) : ExceptionFilterAttribute
     {
-        private readonly ILoggerService _LoggerService;
-        public ErrorHandlerFilterAttribute(ILoggerService LoggerService)
+        public override async void OnException(ExceptionContext context)
         {
-            _LoggerService = LoggerService;
+            context.ExceptionHandled = true;
+            if (context.Exception is AggregateException ae &&
+                ae.InnerExceptions.FirstOrDefault(c => c is SqlException) is SqlException { Number: > 50000 } se)
+            {
+                context.Result = new ObjectResult(new ResponseDto<dynamic>()
+                {
+                    success = false,
+                    statusCode = HttpStatusCode.NoContent,
+                    ErrorCode = StatusCodes.Status400BadRequest,
+                    message = se.Message
+                })
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
+            }
+            else if (context.Exception is CustomException ce)
+            {
+                context.Result = new ObjectResult(new ResponseDto<dynamic>()
+                {
+                    success = false,
+                    statusCode = HttpStatusCode.NoContent,
+                    ErrorCode = StatusCodes.Status400BadRequest,
+                    message = ce.Message
+                })
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
+            }
+            else
+            {
+                var refNo = Guid.NewGuid().ToString().Split('-').LastOrDefault();
+                var message = $"Something went wrong, Please try after sometime. ({refNo})";
+                
+                var responseDto = new ResponseDto<dynamic>
+                {
+                    success = false,
+                    statusCode = HttpStatusCode.InternalServerError,
+                    ErrorCode = StatusCodes.Status500InternalServerError,
+                    message = message,
+                    Data = new UnprocessableEntityObjectResult(context.ModelState).Value
+                };
+
+                _ = await loggerService.InsertExceptionLog(new ExceptionLogInsertModel
+                {
+                    LogRefNo = refNo,
+                    ResponseContent = JsonConvert.SerializeObject(responseDto, Formatting.None),
+                    RequestCurl = await GenerateCurl(context.HttpContext.Request).ConfigureAwait(false),
+                    ExceptionStackTrace = context.Exception.StackTrace
+                });
+
+                context.Result = new JsonResult(responseDto);
+                //context.Result = new JsonResult(new ResponseDto<string> { IsSuccess = false, Message = "Error", Data = context.Exception.Message });
+            }
         }
-        public override void OnException(ExceptionContext context)
+
+        private async Task<string> GenerateCurl(HttpRequest request)
         {
-            string message = $"\nAn error occurred in {context.ActionDescriptor.DisplayName}: {context.Exception.Message}";
-
-            _LoggerService.Log(message);
-
-            context.ExceptionHandled = true; // Mark exception as handled
-
-            ErrorResponseDto responseDto = new ErrorResponseDto();
-            responseDto.success = false;
-            responseDto.statusCode = System.Net.HttpStatusCode.InternalServerError;
-            responseDto.ErrorCode = 500;
-            responseDto.message = message;
-            responseDto.Data = new UnprocessableEntityObjectResult(context.ModelState).Value;
-            context.Result = new JsonResult(responseDto);
-
-            //context.Result = new JsonResult(new ResponseDto<string> { IsSuccess = false, Message = "Error", Data = context.Exception.Message });
+            var curl = "curl \n";
+            curl += $" --location '{request.GetDisplayUrl()}' \n";
+            curl += request.Headers.Where(c => c.Value.Any(d => d != null))
+                .Select(c => $" --header '{c.Key}: {c.Value.FirstOrDefault()}' \n")
+                .Aggregate((s1, s2) => $"{s1}{s2}");
+            if (request.Headers.All(c => c.Key != "Content-Type"))
+            {
+                curl += " --header 'Content-Type: application/json' \n";
+            }
+            if (await GetRequestBody(request) is {} content)
+            {
+                //var content = await request.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(content))
+                    curl += $" --data '{content.Trim()}'";
+            }
+            return curl;
+        }
+        private async Task<string> GetRequestBody(HttpRequest request)
+        {
+            var requestBody = string.Empty;
+            if (request.ContentLength > 0)
+            {
+                request.EnableBuffering();
+                var buffer = new byte[Convert.ToInt32(request.ContentLength)];
+                await request.Body.ReadAsync(buffer, 0, buffer.Length);
+                requestBody = Encoding.UTF8.GetString(buffer);
+                request.Body.Position = 0;
+            }
+            return requestBody;
         }
     }
 }
