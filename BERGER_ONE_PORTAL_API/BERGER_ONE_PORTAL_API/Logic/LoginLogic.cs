@@ -1,14 +1,12 @@
 ﻿using System.Data;
 using System.Net;
-using BERGER_ONE_PORTAL_API.NotificationSender;
 using Constant = BERGER_ONE_PORTAL_API.Common.Utilty.Constant;
 using BERGER_ONE_PORTAL_API.Repository.JWT;
 
 using BERGER_ONE_PORTAL_API.Dtos;
 using BERGER_ONE_PORTAL_API.Repository.Login;
 using BERGER_ONE_PORTAL_API.Models;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
-using Azure;
+using BERGER_ONE_PORTAL_API.Exceptions;
 
 namespace BERGER_ONE_PORTAL_API.Logic
 {
@@ -69,18 +67,12 @@ namespace BERGER_ONE_PORTAL_API.Logic
                 }
                 else
                 {
-                    response.Data = null;
-                    response.success = false;
-                    response.message = outputMsg;
-                    response.statusCode = HttpStatusCode.NoContent;
+                    throw new CustomException(outputMsg);
                 }
             }
             else
             {
-                response.Data = null;
-                response.success = false;
-                response.message = Constant.ResponseMsg.InvalidMobileNo;
-                response.statusCode = HttpStatusCode.NoContent;
+                throw new CustomException(Constant.ResponseMsg.InvalidMobileNo);
             }
             return response;
         }

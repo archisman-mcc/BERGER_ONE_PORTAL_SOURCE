@@ -8,6 +8,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using Microsoft.Data.SqlClient;
+using BERGER_ONE_PORTAL_API.CustomAttribute;
 
 namespace BERGER_ONE_PORTAL_API.Common
 {
@@ -114,6 +116,92 @@ namespace BERGER_ONE_PORTAL_API.Common
         public static object IIFListOrDBNull(dynamic? value)
         {
             return (value != null ? JsonConvert.SerializeObject(value) : (object)DBNull.Value);
+        }
+
+        public static List<SqlParameter> ObjectToSqlParams<T>(T parameters, bool isCommonOutputParamRequired = false)
+        {
+            var sqlParameters = new List<SqlParameter>();
+            if (parameters == null) return sqlParameters;
+            var p = parameters
+                .GetType()
+                .GetProperties()
+                .Where(c => c.GetCustomAttributes(typeof(CustomSqlParameterIgnoreAttribute), false).Any() == false)
+                .Select(c =>
+                {
+                    var sqlParameter = new SqlParameter
+                    {
+                        //ParameterName = $"@{c.Name}",
+                        Value = c.GetValue(parameters) ?? DBNull.Value,
+                        ParameterName = (c.GetCustomAttributes(typeof(CustomSqlParameterNameAttribute), false).FirstOrDefault() as
+                                CustomSqlParameterNameAttribute)?.ParameterName ?? $"@{c.Name}"
+                    };
+
+                    var attr1 = c.GetCustomAttributes(typeof(CustomSqlParameterDirectionAttribute), false);
+                    if (attr1.Length > 0)
+                        sqlParameter.Direction = (attr1[0] as CustomSqlParameterDirectionAttribute)!.Direction;
+
+                    var attr3 = c.GetCustomAttributes(typeof(CustomSqlParameterTypeAttribute), false);
+                    if (attr3.Length > 0)
+                        sqlParameter.DbType = (attr3[0] as CustomSqlParameterTypeAttribute)!.Type;
+                    else
+                    {
+                        if (c.PropertyType == typeof(string))
+                        {
+                            sqlParameter.DbType = DbType.String;
+                            if (sqlParameter.Value.ToString() == "")
+                            {
+                                sqlParameter.Value = DBNull.Value;
+                            }
+                        }
+                        else if (c.PropertyType == typeof(int?) || c.PropertyType == typeof(int))
+                            sqlParameter.DbType = DbType.Int32;
+                        else if (c.PropertyType == typeof(short?) || c.PropertyType == typeof(short))
+                            sqlParameter.DbType = DbType.Int16;
+                        else if (c.PropertyType == typeof(long?) || c.PropertyType == typeof(long))
+                            sqlParameter.DbType = DbType.Int64;
+                        else if (c.PropertyType == typeof(decimal?) || c.PropertyType == typeof(decimal))
+                            sqlParameter.DbType = DbType.Decimal;
+                        else if (c.PropertyType == typeof(DateOnly?) || c.PropertyType == typeof(DateOnly))
+                            sqlParameter.DbType = DbType.Date;
+                        else if (c.PropertyType == typeof(TimeOnly) || c.PropertyType == typeof(TimeSpan))
+                            sqlParameter.DbType = DbType.Time;
+                    }
+
+                    var attr2 = c.GetCustomAttributes(typeof(CustomSqlParameterSizeAttribute), false);
+                    if (attr2.Length > 0)
+                        sqlParameter.Size = (attr2[0] as CustomSqlParameterSizeAttribute)!.Size;
+                    else
+                    {
+                        if (sqlParameter.DbType == DbType.String)
+                        {
+                            sqlParameter.Size = -1;
+                        }
+                    }
+
+                    return sqlParameter;
+                })
+                .ToList();
+            sqlParameters.AddRange(p);
+            if (!isCommonOutputParamRequired) return sqlParameters;
+            {
+                if (sqlParameters.Any(c => c.ParameterName == "@outputCode") == false)
+                    sqlParameters.Add(new SqlParameter
+                    {
+                        ParameterName = "@outputCode",
+                        Direction = ParameterDirection.Output,
+                        DbType = DbType.Int32
+                    });
+                if (sqlParameters.Any(c => c.ParameterName == "@outputMsg") == false)
+                    sqlParameters.Add(new SqlParameter
+                    {
+                        ParameterName = "@outputMsg",
+                        Direction = ParameterDirection.Output,
+                        DbType = DbType.String,
+                        Size = -1
+                    });
+            }
+
+            return sqlParameters;
         }
     }
 

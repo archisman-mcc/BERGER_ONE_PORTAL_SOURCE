@@ -5,7 +5,9 @@ using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using MSSQL_HELPER.Model;
 using MSSQL_HELPER.MSSQLHelper;
 using System.Data;
+using BERGER_ONE_PORTAL_API.Models;
 using Microsoft.Data.SqlClient;
+using BERGER_ONE_PORTAL_API.Common;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Logger
 {
@@ -20,6 +22,28 @@ namespace BERGER_ONE_PORTAL_API.Repository.Logger
             _serviceContext = serviceContext;
             _logger = logger;
         }
+
+        private async Task<MSSQLResponse> ExecuteNonQuery(string commandText,
+            IReadOnlyCollection<SqlParameter> sqlParameters)
+        {
+            var noOfEffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest
+            {
+                CommandText = commandText,
+                CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                CommandType = CommandType.StoredProcedure,
+                ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                Parameters = sqlParameters.ToArray<IDbDataParameter>()
+            });
+            return new MSSQLResponse
+            {
+                Data = null,
+                RowsAffected = noOfEffected,
+                OutputParameters = sqlParameters
+                    .Where(r => r.Direction is ParameterDirection.Output or ParameterDirection.InputOutput)
+                    .ToArray()
+            };
+        }
+
         public void Log(string message)
         {
             _logger.LogError(message);
@@ -136,6 +160,11 @@ namespace BERGER_ONE_PORTAL_API.Repository.Logger
                 OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
             };
             return response;
+        }
+
+        public Task<MSSQLResponse> InsertExceptionLog(ExceptionLogInsertModel requestModel)
+        {
+            return ExecuteNonQuery("ONE_APP.app.exception_log_insert", Utils.ObjectToSqlParams(requestModel));
         }
     }
 }
