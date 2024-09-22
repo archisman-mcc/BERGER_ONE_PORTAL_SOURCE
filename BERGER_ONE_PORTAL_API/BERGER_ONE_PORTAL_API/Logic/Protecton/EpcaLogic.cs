@@ -26,39 +26,6 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.GetPcaStatusList(request);
             return EpcaAdapter.MapPcaStatusResponse(dataResponse);
         }
-        // ===============================================================================
-
-
-        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
-        public async Task<EpcaResponseDto?> GetPcaList(GetePCAListRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
-            return EpcaAdapter.MapEpcaListResponse(dataResponse);
-        }
-        // ===============================================================================
-
-
-        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
-        // ===============================================================================
-
-
-        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
-        public async Task<EpcaResponseDto?> GetPcaRsmList(GetePCAListRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
-            return EpcaAdapter.MapEpcaListResponse(dataResponse);
-        }
-        // ===============================================================================
-
-
-        // EPCA HO LIST AND ENTRY -- (APPROVAL)
-        // ===============================================================================
-
-        #endregion
-
-
-
-
 
         public async Task<EpcaDealersResponseDto?> GetPcaDealersList(pcaDealersRequestDto request)
         {
@@ -90,15 +57,44 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             return EpcaAdapter.MapPcaFactoryResponse(dataResponse);
         }
 
+        public async Task<EpcaResponseDto?> GetePCADetailsView(ePCADetailsViewRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADetailsView(request);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
+        //public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
+        //{
+        //    MSSQLResponse? dataResponse = await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id);
+        //    return EpcaAdapter.MapPcaInsertResponse(dataResponse);
+        //}
+
+        public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id));
+
         public async Task<EpcaMinRateResponseDto?> GetPcaMinRateBySku_Vr1(GetMinRateBySkuRequestDto request)
         {
             MSSQLResponse? dataResponse = await _epcaRepo.GetPcaMinRateBySku_Vr1(request);
             return EpcaAdapter.MapSkuMinRateResponse(dataResponse);
         }
 
-        public async Task<PcaInsertResponseDto?> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id)
+        public async Task<PcaDeleteResponseDto?> DeletePcaDetails(DeletePCARequestDto request, string User_id)
         {
 
+            MSSQLResponse? dataResponse = await _epcaRepo.DeletePcaDetails(request, User_id);
+            return EpcaAdapter.MapPcaDeleteResponse(dataResponse);
+        }
+        // ===============================================================================
+
+
+        // EPCA LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetPcaList(GetePCAListRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
+            return EpcaAdapter.MapEpcaListResponse(dataResponse);
+        }
+
+        public async Task<PcaInsertResponseDto?> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id)
+        {
             MSSQLResponse? dataResponse = await _epcaRepo.InsertePcaDetails_Vr1(request, User_id);
             return EpcaAdapter.MapPcaInsertResponse(dataResponse);
         }
@@ -114,14 +110,55 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.PcaDetailsGetDtl(request, User_id);
             return EpcaAdapter.MapPcaDetailsResponse(dataResponse);
         }
+        // ===============================================================================
 
-        public async Task<PcaDeleteResponseDto?> DeletePcaDetails(DeletePCARequestDto request, string User_id)
+
+        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetePCADepotApprovalList(GetePCADepotApprovalListRequestDto request, string user_id)
         {
-
-            MSSQLResponse? dataResponse = await _epcaRepo.DeletePcaDetails(request, User_id);
-            return EpcaAdapter.MapPcaDeleteResponse(dataResponse);
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalList(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
 
+        public async Task<EpcaResponseDto?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalDetails(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+        // ===============================================================================
+
+
+        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetPcaRsmList(GetePCAListRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetPcaList(request, user_id);
+            return EpcaAdapter.MapEpcaListResponse(dataResponse);
+        }
+
+        public async Task<EpcaResponseDto?> GetePCARsmApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCARsmApprovalDetails(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+        // ===============================================================================
+
+
+        // EPCA HO LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalDetails(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
+        public async Task<EpcaResponseDto?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalList(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+        // ===============================================================================
+
+
+        // EPCA CANCELLATION LIST AND ENTRY -- (APPROVAL)
         public async Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList(PcaCancellationRequestDto request, string User_id)
         {
             MSSQLResponse? dataResponse = await _epcaRepo.PcaCancellationGetList(request, User_id);
@@ -134,50 +171,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.PcaCancellationUpdate(request, User_id);
             return EpcaAdapter.MapPcaCancleResponse(dataResponse);
         }
-
-        public async Task<EpcaResponseDto?> GetePCADepotApprovalList(GetePCADepotApprovalListRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalList(request, user_id);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
-
-        public async Task<EpcaResponseDto?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADepotApprovalDetails(request, user_id);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
-
-        public async Task<EpcaResponseDto?> GetePCADetailsView(ePCADetailsViewRequestDto request)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCADetailsView(request);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
-
-        //public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
-        //{
-        //    MSSQLResponse? dataResponse = await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id);
-        //    return EpcaAdapter.MapPcaInsertResponse(dataResponse);
-        //}
-
-        public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id));
-
-        public async Task<EpcaResponseDto?> GetePCARsmApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCARsmApprovalDetails(request, user_id);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
-
-        public async Task<EpcaResponseDto?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalList(request, user_id);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
-
-        public async Task<EpcaResponseDto?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
-        {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalDetails(request, user_id);
-            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
-        }
+        // ===============================================================================
+        #endregion
 
 
         #region "TLV MODULE"
