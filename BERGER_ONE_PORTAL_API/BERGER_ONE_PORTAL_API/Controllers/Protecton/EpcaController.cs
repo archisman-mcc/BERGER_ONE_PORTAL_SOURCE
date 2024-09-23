@@ -136,6 +136,13 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
 
         // EPCA HO LIST AND ENTRY -- (APPROVAL)
         [HttpPost]
+        public async Task<EpcaResponseDto?> GetePCAHoApprovalList([FromBody] GetePCADepotApprovalDetailsRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetePCAHoApprovalList(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
         public async Task<EpcaResponseDto?> GetePCAHoApprovalDetails([FromBody] GetePCADepotApprovalDetailsRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
@@ -143,10 +150,10 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         }
 
         [HttpPost]
-        public async Task<EpcaResponseDto?> GetePCAHoApprovalList([FromBody] GetePCADepotApprovalDetailsRequestDto dto)
+        public async Task<EpcaResponseDto?> GetEpcaGpGcRateDtls([FromBody] PcaGpGcRateRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.GetePCAHoApprovalList(dto, userDetails.user_id);
+            return await _ePcaLogic.GetEpcaGpGcRateDtls(dto, userDetails.user_id);
         }
         // ===============================================================================
 
