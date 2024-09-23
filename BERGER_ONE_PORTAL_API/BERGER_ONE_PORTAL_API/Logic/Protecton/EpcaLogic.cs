@@ -144,15 +144,21 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
 
 
         // EPCA HO LIST AND ENTRY -- (APPROVAL)
+        public async Task<EpcaResponseDto?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalList(request, user_id);
+            return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
+        }
+
         public async Task<EpcaResponseDto?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
         {
             MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalDetails(request, user_id);
             return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
 
-        public async Task<EpcaResponseDto?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id)
+        public async Task<EpcaResponseDto?> GetEpcaGpGcRateDtls(PcaGpGcRateRequestDto request, string user_id)
         {
-            MSSQLResponse? dataResponse = await _epcaRepo.GetePCAHoApprovalList(request, user_id);
+            MSSQLResponse? dataResponse = await _epcaRepo.GetEpcaGpGcRateDtls(request, user_id);
             return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
         // ===============================================================================
