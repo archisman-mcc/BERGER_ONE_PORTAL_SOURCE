@@ -32,41 +32,6 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         // COMMON DETAILS BIND
         [HttpPost]
         public async Task<EpcaStatusResponseDto?> GetPcaStatusList([FromBody] pcaStatusRequestDto dto) => await _ePcaLogic.GetPcaStatusList(dto);
-        // ===============================================================================
-
-
-        // EPCA LIST AND ENTRY
-        [HttpPost]
-        public async Task<EpcaResponseDto?> GetPcaList([FromBody] GetePCAListRequestDto dto)
-        {
-            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.GetPcaList(dto, userDetails.user_id);
-        }
-        // ===============================================================================
-
-
-        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
-        // ===============================================================================
-
-
-        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
-        [HttpPost]
-        public async Task<EpcaResponseDto?> GetPcaRsmList([FromBody] GetePCAListRequestDto dto)
-        {
-            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.GetPcaRsmList(dto, userDetails.user_id);
-        }
-        // ===============================================================================
-
-
-        // EPCA HO LIST AND ENTRY -- (APPROVAL)
-        // ===============================================================================
-        #endregion
-
-
-
-
-
 
         [HttpPost]
         public async Task<EpcaDealersResponseDto?> GetPcaDealersList([FromBody] pcaDealersRequestDto dto) => await _ePcaLogic.GetPcaDealersList(dto);
@@ -88,13 +53,40 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         }
 
         [HttpPost]
+        public async Task<EpcaResponseDto?> GetePCADetailsView([FromBody] ePCADetailsViewRequestDto dto) => await _ePcaLogic.GetePCADetailsView(dto);
+
+        [HttpPost]
+        public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit([FromBody] PcaApprovalInsertRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaApprovalDetailsSubmit(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
         public async Task<EpcaMinRateResponseDto?> GetPcaMinRateBySku_Vr1([FromBody] GetMinRateBySkuRequestDto dto) => await _ePcaLogic.GetPcaMinRateBySku_Vr1(dto);
+
+        [HttpPost]
+        public async Task<PcaDeleteResponseDto?> DeletePcaDetails([FromBody] DeletePCARequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.DeletePcaDetails(dto, userDetails.user_id);
+        }
+        // ===============================================================================
+
+
+        // EPCA LIST AND ENTRY
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetPcaList([FromBody] GetePCAListRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetPcaList(dto, userDetails.user_id);
+        }
 
         [HttpPost]
         public async Task<PcaInsertResponseDto?> InsertePcaDetails_Vr1([FromBody] PcaInsertRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.InsertePcaDetails_Vr1(dto,userDetails.user_id);
+            return await _ePcaLogic.InsertePcaDetails_Vr1(dto, userDetails.user_id);
         }
 
         [HttpPost]
@@ -105,32 +97,11 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.PcaDetailsGetDtl(dto, userDetails.user_id);
-
         }
+        // ===============================================================================
 
-        [HttpPost]
-        public async Task<PcaDeleteResponseDto?> DeletePcaDetails([FromBody] DeletePCARequestDto dto)
-        {
-            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.DeletePcaDetails(dto, userDetails.user_id);
-        }
 
-        [HttpPost]
-        public async Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList([FromBody] PcaCancellationRequestDto dto)
-        {
-            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.PcaCancellationGetList(dto, userDetails.user_id);
-
-        }
-
-        [HttpPost]
-        public async Task<PcaCancleResponseDto?> PcaCancellationUpdate([FromBody] CanclePcaRequestDto dto)
-        {
-            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.PcaCancellationUpdate(dto, userDetails.user_id);
-
-        }
-
+        // EPCA DEPOT LIST AND ENTRY -- (APPROVAL)
         [HttpPost]
         public async Task<EpcaResponseDto?> GetePCADepotApprovalList([FromBody] GetePCADepotApprovalListRequestDto dto)
         {
@@ -144,18 +115,15 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.GetePCADepotApprovalDetails(dto, userDetails.user_id);
         }
+        // ===============================================================================
 
-        [HttpPost]
-        public async Task<EpcaResponseDto?> GetePCADetailsView([FromBody] ePCADetailsViewRequestDto dto)
-        {
-            return await _ePcaLogic.GetePCADetailsView(dto);
-        }
 
+        // EPCA RSM LIST AND ENTRY -- (APPROVAL)
         [HttpPost]
-        public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit([FromBody] PcaApprovalInsertRequestDto dto)
+        public async Task<EpcaResponseDto?> GetPcaRsmList([FromBody] GetePCAListRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _ePcaLogic.PcaApprovalDetailsSubmit(dto, userDetails.user_id);
+            return await _ePcaLogic.GetPcaRsmList(dto, userDetails.user_id);
         }
 
         [HttpPost]
@@ -164,7 +132,10 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.GetePCARsmApprovalDetails(dto, userDetails.user_id);
         }
+        // ===============================================================================
 
+
+        // EPCA HO LIST AND ENTRY -- (APPROVAL)
         [HttpPost]
         public async Task<EpcaResponseDto?> GetePCAHoApprovalList([FromBody] GetePCADepotApprovalDetailsRequestDto dto)
         {
@@ -179,6 +150,33 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             return await _ePcaLogic.GetePCAHoApprovalDetails(dto, userDetails.user_id);
         }
 
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetEpcaGpGcRateDtls([FromBody] PcaGpGcRateRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetEpcaGpGcRateDtls(dto, userDetails.user_id);
+        }
+        // ===============================================================================
+
+
+        // EPCA CANCELLATION LIST AND ENTRY -- (APPROVAL)
+        [HttpPost]
+        public async Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList([FromBody] PcaCancellationRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaCancellationGetList(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
+        public async Task<PcaCancleResponseDto?> PcaCancellationUpdate([FromBody] CanclePcaRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.PcaCancellationUpdate(dto, userDetails.user_id);
+        }
+        // ===============================================================================
+        #endregion
+        
+
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         [HttpPost]
@@ -189,10 +187,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         }
 
         [HttpPost]
-        public async Task<EpcaStatusResponseDto?> GetTlvStatusList([FromBody] TlvStatusRequestDto dto)
-        {
-            return await _ePcaLogic.GetTlvStatusList(dto);
-        }
+        public async Task<EpcaStatusResponseDto?> GetTlvStatusList([FromBody] TlvStatusRequestDto dto) => await _ePcaLogic.GetTlvStatusList(dto);
 
         [HttpPost]
         public async Task<EpcaResponseDto?> GetTlvRSMApprovalList([FromBody] TlvRSMApprovalRequestDto dto)
@@ -202,10 +197,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         }
 
         [HttpPost]
-        public async Task<EpcaResponseDto?> GetTlvRevisionLogDetails([FromBody] TlvRevisionLogRequestDto dto)
-        {
-            return await _ePcaLogic.GetTlvRevisionLogDetails(dto);
-        }
+        public async Task<EpcaResponseDto?> GetTlvRevisionLogDetails([FromBody] TlvRevisionLogRequestDto dto) => await _ePcaLogic.GetTlvRevisionLogDetails(dto);
 
         [HttpPost]
         public async Task<TlvRevisionResponseDto?> TlvRevisionApproval([FromBody] TlvApprovalRequestDto dto)

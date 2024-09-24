@@ -5,31 +5,32 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 {
     public interface IEpcaRepo
     {
+        #region "EPCA MODULE"
         Task<MSSQLResponse?> GetPcaStatusList(pcaStatusRequestDto dto);
-        Task<MSSQLResponse?> GetPcaList(GetePCAListRequestDto request, string user_id);
-        Task<MSSQLResponse?> GetPcaRsmList(GetePCAListRequestDto request, string user_id);
-        
-
-
         Task<MSSQLResponse?> GetPcaDealersList(pcaDealersRequestDto dto);
         Task<MSSQLResponse?> GetPcaProjectListByDepotTerr(pcaProjectRequestDto dto);
         Task<MSSQLResponse?> GetSKUList(GetSKUListRequestDto dto);
         Task<MSSQLResponse?> GetPcaBillToList(GetBillToRequestDto dto);
         Task<MSSQLResponse?> GetFactoryListBySKU(GetFactoryRequestDto dto, string User_id);
+        Task<MSSQLResponse?> GetePCADetailsView(ePCADetailsViewRequestDto dto);
+        Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id);
         Task<MSSQLResponse?> GetPcaMinRateBySku_Vr1(GetMinRateBySkuRequestDto dto);
+        Task<MSSQLResponse> DeletePcaDetails(DeletePCARequestDto request, string User_id);
+        Task<MSSQLResponse?> GetPcaList(GetePCAListRequestDto request, string user_id);
         Task<MSSQLResponse> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id);
         Task<MSSQLResponse?> PcaDetailsGetStatus(GetPcaDetailsStatusRequestDto dto);
         Task<MSSQLResponse?> PcaDetailsGetDtl(GetPcaDetailsRequestDto dto, string User_id);
-        Task<MSSQLResponse> DeletePcaDetails(DeletePCARequestDto request, string User_id);
-        Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto dto, string User_id);
-        Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
         Task<MSSQLResponse?> GetePCADepotApprovalList(GetePCADepotApprovalListRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCADepotApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
-        Task<MSSQLResponse?> GetePCADetailsView(ePCADetailsViewRequestDto dto);
-        Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id);
+        Task<MSSQLResponse?> GetPcaRsmList(GetePCAListRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCARsmApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
+        Task<MSSQLResponse?> GetEpcaGpGcRateDtls(PcaGpGcRateRequestDto request, string user_id);
+        Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto dto, string User_id);
+        Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
+        #endregion
+
 
         #region "TLV MODULE"
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024

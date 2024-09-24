@@ -228,6 +228,15 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string RejectionRemarks { get; set; }
     }
 
+    public class PcaGpGcRateRequestDto
+    {
+        public string? SkuCode { get; set; }
+        public string? MonthYr { get; set; }
+        public string? YrMonthWAV { get; set; }
+        public string? OrgCode { get; set; }
+    }
+
+
     public class TlvDetailsSubmitRequestDto
     {
         private string? _depotCode;
