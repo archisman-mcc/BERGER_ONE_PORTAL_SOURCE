@@ -1,22 +1,11 @@
-﻿using BERGER_ONE_PORTAL_API.Common.Utilty;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.VisualBasic;
-using MSSQL_HELPER.Model;
-using System.Net.Sockets;
-using System.Net;
+﻿using MSSQL_HELPER.Model;
 
 namespace BERGER_ONE_PORTAL_API.Core;
 public class ServiceContext: IServiceContext
 {
-    public ServiceContext(IConfiguration configuration)
+    public ServiceContext(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
     {
-        if (configuration == null)
-        {
-            throw new ArgumentNullException("All DI parameters is required!");
-        }
-        Configuration = configuration;
+        Configuration = configuration ?? throw new ArgumentNullException("All DI parameters is required!");
         RequestTimeout = Convert.ToInt32(configuration["AppSettings:RequestTimeoutInSecond"]);
         MSSQLConnectionModel = new MSSQLConnectionModel()
         {
@@ -28,10 +17,13 @@ public class ServiceContext: IServiceContext
             ConnectionRetryInterval = 2,
             ConnectionTimeout = 30
         };
+        CurrentEnvironment = hostingEnvironment;
     }
     public MSSQLConnectionModel MSSQLConnectionModel { get; set; }
 
 
     public IConfiguration Configuration { get; set; }
     public int RequestTimeout { get; set; }
+
+    public IWebHostEnvironment CurrentEnvironment { get; }
 }

@@ -5,4 +5,5 @@ public interface IServiceContext
     IConfiguration Configuration { get; set; }
     MSSQLConnectionModel MSSQLConnectionModel { get; }
     int RequestTimeout { get; set; }
+    IWebHostEnvironment CurrentEnvironment { get; }
 }
