@@ -1,6 +1,5 @@
 ﻿using BERGER_ONE_PORTAL_API.Common;
 using BERGER_ONE_PORTAL_API.Core;
-using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using MSSQL_HELPER.Model;
 using MSSQL_HELPER.MSSQLHelper;
@@ -8,10 +7,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
-using Azure.Core;
 using Newtonsoft.Json;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
-using BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 {
@@ -2567,6 +2563,72 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             catch (Exception ex) { throw new Exception(ex.Message, ex); }
             return response;
         }
+
+        public async Task<MSSQLResponse> TlvDetailsSubmit(TlvDetailsSubmitRequestDto requestDto)
+        {
+            await using var sqlConn = _sqlHelper.CreateConnection(_serviceContext.MSSQLConnectionModel);
+            await sqlConn.OpenAsync();
+            await using var sqlTrans = sqlConn.BeginTransaction();
+            try
+            {
+                var sqlParams = Utils.ObjectToSqlParams(requestDto);
+                var res = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[protecton].[TLV_Details_Submit]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams.ToArray<IDbDataParameter>(),
+                    Transaction = sqlTrans
+                }).ContinueWith(r => new MSSQLResponse
+                {
+                    RowsAffected = r.Result,
+                    OutputParameters = sqlParams
+                        .Where(parameter => parameter.Direction is ParameterDirection.Output or ParameterDirection.InputOutput)
+                        .ToArray(),
+                    Data = null
+                });
+                await sqlTrans.CommitAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                await sqlTrans.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await sqlConn.CloseAsync();
+            }
+        }
+
+        public async Task<MSSQLResponse> TlvGetEmailId(long autoId, string section, string? userId)
+        {
+            var sqlParams = Utils.ObjectToSqlParams(new
+            {
+                auto_id= autoId,
+                section,
+                user_id=userId
+            });
+            var data = await _sqlHelper.FetchData(new ExecuteDataSetRequest
+            {
+                CommandText = "[protecton].[tlv_Get_email_id]",
+                CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                CommandType = CommandType.StoredProcedure,
+                ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                Parameters = sqlParams.ToArray(),
+                IsMultipleTables = true
+            });
+            return new MSSQLResponse
+            {
+                Data = data,
+                OutputParameters = sqlParams
+                    .AsEnumerable()
+                    .Where(r => r.Direction is ParameterDirection.Output or ParameterDirection.InputOutput)
+                    .ToArray()
+            };
+        }
+
         #endregion
     }
 }

@@ -4,7 +4,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MSSQL_HELPER.MSSQLHelper;
@@ -18,7 +17,6 @@ using System.Text;
 using BERGER_ONE_PORTAL_API.Repository.Common;
 using BERGER_ONE_PORTAL_API.Repository.Utility;
 using BERGER_ONE_PORTAL_API.Repository.Logger;
-using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using BERGER_ONE_PORTAL_API.Logic.Protecton;
 using BERGER_ONE_PORTAL_API.Repository.Protecton;
 
@@ -59,10 +57,13 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<ICommonLogic, CommonLogic>();
             builder.Services.AddScoped<ICommonRepo, CommonRepo>();
 
+            //builder.Services.AddScoped<ICommonProxy, CommonProxy>();
+
             builder.Services.AddScoped<ILoggerService, LoggerService>();
             builder.Services.AddScoped<FluentValidationActionFilterAttribute>();
             builder.Services.AddScoped<ErrorHandlerFilterAttribute>();
             builder.Services.AddScoped<APILogAttribute>();
+            //builder.Services.AddScoped<HttpHelper>();
 
             #region Protecton
             builder.Services.AddScoped<IEpcaLogic, EpcaLogic>();
@@ -125,11 +126,11 @@ namespace BERGER_ONE_PORTAL_API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             app.UseCors(corsPol);
 
