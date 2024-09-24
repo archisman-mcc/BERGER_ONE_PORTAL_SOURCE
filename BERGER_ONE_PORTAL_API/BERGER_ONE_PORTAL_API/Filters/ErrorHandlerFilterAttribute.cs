@@ -18,8 +18,21 @@ namespace BERGER_ONE_PORTAL_API.Filters
         public override async void OnException(ExceptionContext context)
         {
             context.ExceptionHandled = true;
-            if (context.Exception is AggregateException ae &&
-                ae.InnerExceptions.FirstOrDefault(c => c is SqlException) is SqlException { Number: > 50000 } se)
+            if (context.Exception is SqlException se1)
+            {
+                context.Result = new ObjectResult(new ResponseDto<dynamic>()
+                {
+                    success = false,
+                    statusCode = HttpStatusCode.NoContent,
+                    ErrorCode = StatusCodes.Status400BadRequest,
+                    message = se1.Message
+                })
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
+            }
+            else if (context.Exception is AggregateException ae &&
+                 ae.InnerExceptions.FirstOrDefault(c => c is SqlException) is SqlException { Number: >= 50000 } se)
             {
                 context.Result = new ObjectResult(new ResponseDto<dynamic>()
                 {
@@ -59,15 +72,18 @@ namespace BERGER_ONE_PORTAL_API.Filters
                     Data = new UnprocessableEntityObjectResult(context.ModelState).Value
                 };
 
-                _ = await loggerService.InsertExceptionLog(new ExceptionLogInsertModel
+                loggerService.InsertExceptionLog(new ExceptionLogInsertModel
                 {
                     LogRefNo = refNo,
                     ResponseContent = JsonConvert.SerializeObject(responseDto, Formatting.None),
-                    RequestCurl = await GenerateCurl(context.HttpContext.Request).ConfigureAwait(false),
+                    RequestCurl = GenerateCurl(context.HttpContext.Request).Result,
                     ExceptionStackTrace = context.Exception.StackTrace
-                });
+                }).Wait();
 
-                context.Result = new JsonResult(responseDto);
+                context.Result = new ObjectResult(responseDto)
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
                 //context.Result = new JsonResult(new ResponseDto<string> { IsSuccess = false, Message = "Error", Data = context.Exception.Message });
             }
         }

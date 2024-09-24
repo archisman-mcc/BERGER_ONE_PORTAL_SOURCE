@@ -11,6 +11,7 @@ using BERGER_ONE_PORTAL_API.Models.Protecton;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
 {
@@ -224,6 +225,13 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.TlvGetTermDetails(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
+        public async Task<ResponseDto<long>> TlvDetailsSubmit([FromBody] TlvDetailsSubmitRequestDto requestDto)
+        {
+            requestDto.UserId ??= CommonHelper.GetUserDetailsFromClaims(User)?.user_id;
+            return await _ePcaLogic.TlvDetailsSubmit(requestDto);
         }
         #endregion
     }

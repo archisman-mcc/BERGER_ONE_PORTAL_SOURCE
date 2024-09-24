@@ -1,20 +1,12 @@
 ﻿using MSSQL_HELPER.Model;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+
 namespace MSSQL_HELPER.MSSQLHelper;
 public class SqlHelper:ISqlHelper
 {
-    public SqlHelper()
-    {
-
-    }
-    private SqlConnection CreateConnection(MSSQLConnectionModel connection)
+    public SqlConnection CreateConnection(MSSQLConnectionModel connection)
     {
         var connectionObject = new SqlConnection
         {
@@ -189,34 +181,54 @@ public class SqlHelper:ISqlHelper
             throw new ArgumentNullException(Constants.CommandTextIsNull);
         }
 
-        return await ExecuteNonQuery(request.ConnectionProperties, request.CommandText, request.CommandType, request.CommandTimeout, request.Parameters);
+        return await ExecuteNonQuery(request.ConnectionProperties, request.CommandText, request.CommandType, request.CommandTimeout, request.Parameters, request.Transaction);
     }
 
-    public async Task<int> ExecuteNonQuery(MSSQLConnectionModel connectionParams, string commandText, CommandType commandType, int commandTimeout, params IDbDataParameter[]? parameters)
+    private async Task<int> ExecuteNonQuery(MSSQLConnectionModel connectionParams, string commandText, CommandType commandType, int commandTimeout,  IDbDataParameter[]? parameters, SqlTransaction? transaction)
     {
         var numRowsAffected = 0;
-        using SqlConnection connectionObject = CreateConnection(connectionParams);
-        try
+        if(transaction==null)
         {
-            using var commandObject = new SqlCommand(commandText, connectionObject);
+            using SqlConnection connectionObject = CreateConnection(connectionParams);
+            try
+            {
+                using var commandObject = new SqlCommand(commandText, connectionObject);
+                commandObject.CommandType = commandType;
+                commandObject.CommandTimeout = commandTimeout;
+                if (parameters != null && parameters.Length > 0)
+                {
+                    commandObject.Parameters.AddRange(parameters);
+                }
+
+                await OpenConnectionAsync(connectionObject);
+
+                numRowsAffected = await commandObject.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                CloseConnection(connectionObject);
+            }
+        }
+        else
+        {
+            var sqlConn = transaction.Connection;
+            await using var commandObject = new SqlCommand(commandText, sqlConn, transaction);
             commandObject.CommandType = commandType;
             commandObject.CommandTimeout = commandTimeout;
+
             if (parameters != null && parameters.Length > 0)
             {
                 commandObject.Parameters.AddRange(parameters);
             }
 
-            await OpenConnectionAsync(connectionObject);
+            if (sqlConn.State != ConnectionState.Open)
+                sqlConn.Open();
 
             numRowsAffected = await commandObject.ExecuteNonQueryAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
-        finally
-        {
-            CloseConnection(connectionObject);
         }
 
         return numRowsAffected;
