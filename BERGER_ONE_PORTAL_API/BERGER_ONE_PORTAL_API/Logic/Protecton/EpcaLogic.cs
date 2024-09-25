@@ -73,12 +73,6 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
 
-        //public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
-        //{
-        //    MSSQLResponse? dataResponse = await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id);
-        //    return EpcaAdapter.MapPcaInsertResponse(dataResponse);
-        //}
-
         public async Task<PcaInsertResponseDto?> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaApprovalDetailsSubmit(request, User_id));
 
         public async Task<EpcaMinRateResponseDto?> GetPcaMinRateBySku_Vr1(GetMinRateBySkuRequestDto request)
@@ -171,6 +165,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _epcaRepo.GetEpcaGpGcRateDtls(request, user_id);
             return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
+
+        public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaHoApprovalDetailsSubmit(request, User_id));
         // ===============================================================================
 
 
