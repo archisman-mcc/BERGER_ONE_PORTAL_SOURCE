@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
+using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
@@ -9,6 +10,7 @@ using BERGER_ONE_PORTAL_API.Enums;
 using BERGER_ONE_PORTAL_API.Exceptions;
 using BERGER_ONE_PORTAL_API.Extensions;
 using BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter;
+using BERGER_ONE_PORTAL_API.Proxy;
 using BERGER_ONE_PORTAL_API.Repository.JWT;
 using BERGER_ONE_PORTAL_API.Repository.Protecton;
 
@@ -18,13 +20,13 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
     {
         public IEpcaRepo _epcaRepo;
         private readonly IJwtManager _jwtManager;
-        private readonly IConfiguration _configuration;
+        private readonly ICommonProxy _commonProxy;
 
-        public EpcaLogic(IEpcaRepo epcaRepo, IJwtManager jwtManager, IConfiguration configuration)
+        public EpcaLogic(IEpcaRepo epcaRepo, IJwtManager jwtManager, ICommonProxy commonProxy)
         {
             _epcaRepo = epcaRepo;
             _jwtManager = jwtManager;
-            _configuration = configuration;
+            _commonProxy = commonProxy;
         }
 
         #region "EPCA MODULE"
@@ -243,38 +245,35 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         {
             if ((requestDto.AadharDoc ?? "").Trim() != "")
                 requestDto.AadharDoc =
-                    requestDto.AadharDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder,
-                        @"TLV_FILES\AADHAR\", _configuration);
+                    requestDto.AadharDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder, @"TLV_FILES\AADHAR\");
             
             if ((requestDto.PanDoc ?? "").Trim() != "")
                 requestDto.PanDoc =
-                    requestDto.PanDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder,
-                        @"TLV_FILES\PAN\", _configuration);
+                    requestDto.PanDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder, @"TLV_FILES\PAN\");
             
             if ((requestDto.LcbgDoc ?? "").Trim() != "")
                 requestDto.LcbgDoc =
-                    requestDto.LcbgDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder,
-                        @"TLV_FILES\LC_BG\", _configuration);
+                    requestDto.LcbgDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder, @"TLV_FILES\LC_BG\");
             
             if ((requestDto.ChequeDoc ?? "").Trim() != "")
                 requestDto.ChequeDoc =
-                    requestDto.ChequeDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder,
-                        @"TLV_FILES\BLANK_CHEQUE\", _configuration);
+                    requestDto.ChequeDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder, @"TLV_FILES\BLANK_CHEQUE\");
             
             if ((requestDto.FileDoc ?? "").Trim() != "")
                 requestDto.FileDoc =
-                    requestDto.FileDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder,
-                        @"TLV_FILES\DOC\", _configuration);
+                    requestDto.FileDoc?.SaveBase64JpegImage(DocPathEnum.ProtectonMobAppDocsFolder, @"TLV_FILES\DOC\");
 
             requestDto.Status = "PENDING_DEPOT";
 
             var res = await _epcaRepo.TlvDetailsSubmit(requestDto);
-            if (long.TryParse(res.OutputParameters?.FirstOrDefault(c => c.ParameterName == "@auto_id")?.Value?.ToString(), out var autoId))
+            if (long.TryParse(
+                    res.OutputParameters?.FirstOrDefault(c => c.ParameterName == "@auto_id")?.Value?.ToString(),
+                    out var autoId))
             {
-                //if ((requestDto.AutoId ?? 0) == 0)
-                //{
-                //    await TlvDetailsSubmit_SendMail(autoId, "NEW_REQUEST", requestDto.UserId);
-                //}
+                if ((requestDto.AutoId ?? 0) == 0)
+                {
+                    await TlvDetailsSubmit_SendMail(autoId, "NEW_REQUEST", requestDto.UserId);
+                }
 
                 return new ResponseDto<long>()
                 {
@@ -290,7 +289,6 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
 
         private async Task TlvDetailsSubmit_SendMail(long autoId, string status, string? userId)
         {
-            //TlvRevisionClass obj = new TlvRevisionClass();
             if (await _epcaRepo.TlvGetEmailId(autoId, status, userId).ContinueWith(r => r.Result.Data as DataSet) is
                 {
                     Tables.Count: > 0
@@ -302,8 +300,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
                 {
                     if (ds.Tables.OfType<DataTable>().ElementAtOrDefault(1) is {} dt1 && dt1.AsEnumerable().Any())
                     {
-                        StringBuilder mailBody = new StringBuilder();
-                        StringBuilder mailBodyTmp1 = new StringBuilder();
+                        var mailBody = new StringBuilder();
+                        var mailBodyTmp1 = new StringBuilder();
 
                         mailBody.Append("Dear Sir,");
                         mailBodyTmp1.Append("<br><br><b>New TLV Request for approval details are follows: <b/>");
@@ -332,38 +330,20 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
                                             + "</td>"
                                             + "</tr>"
                         );
-                        var Style = string.Empty;
-                        var styleCenter = string.Empty;
 
-                        Style = "font-weight:normal;border:1px solid #111111;text-align:left;padding:5px 3px;";
-                        styleCenter = "font-weight:normal;border:1px solid #111111;text-align:center;padding:5px 3px;";
+                        var style = "font-weight:normal;border:1px solid #111111;text-align:left;padding:5px 3px;";
+                        var styleCenter = "font-weight:normal;border:1px solid #111111;text-align:center;padding:5px 3px;";
                         dt.AsEnumerable().ToList().ForEach(dr =>
                         {
-                            mailBodyTmp1.Append("<tr style='font-size:11px;" +
-                                                (dr["mail_type"].ToString() == "REJECTED" ? "color: #bf0000;" : "") +
-                                                "' >"
-                                                + "<td style='" + styleCenter + " ' >"
-                                                + dr["depot_regn"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + Style + " ' >"
-                                                + dr["depot_name"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + Style + " ' >"
-                                                + dr["dealer_name"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + Style + " ' >"
-                                                + dr["customer_name"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + styleCenter + " ' >"
-                                                + dr["proposed_tlv"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + styleCenter + " ' >"
-                                                + dr["created_on"].ToString()
-                                                + "</td>"
-                                                + "<td style=' " + styleCenter + " ' >"
-                                                + dr["status_value"].ToString()
-                                                + "</td>"
-                                                + "</tr>"
+                            mailBodyTmp1.Append($@"<tr style='font-size:11px;{(dr.Field<string?>("mail_type")== "REJECTED" ? " color: #bf0000;" : "")}'>
+                                                        <td style='{styleCenter}' >{dr.Field<string?>("depot_regn")}</td>
+                                                        <td style='{style}' >{dr.Field<string?>("depot_name")}</td>
+                                                        <td style='{style}' >{dr.Field<string>("dealer_name")}</td>
+                                                        <td style='{style}' >{dr.Field<string?>("customer_name")}</td>
+                                                        <td style='{styleCenter}' >{dr.Field<decimal?>("proposed_tlv"):0.00}</td>
+                                                        <td style='{styleCenter}' >{dr.Field<string?>("created_on")}</td>
+                                                        <td style='{styleCenter}' >{dr.Field<string?>("status_value")}</td>
+                                                    </tr>"
                             );
                         });
                             
@@ -375,18 +355,17 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
                                         + "*** This message is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged information. If you have received this message in error, please notify the sender immediately and delete this message from your system ***</div>"
                         );
 
-                        foreach (var dr in dt1.Rows)
+                        var tasks = dt1.AsEnumerable().Select(dr => _commonProxy.SendMail(new MailRequest
                         {
-                            //EmailSMSsender mailobj = new EmailSMSsender();
-                            //MailEntity mailEntity = new MailEntity();
-                            //mailEntity.ToAddress = dr("to_address").ToString();
-                            //mailEntity.CCAddress = dr("cc_address").ToString();
-                            //mailEntity.BCCAddress = dr("bcc_address").ToString();
-                            //mailEntity.MailSubject = "New TLV for Approval as on " + DateTime.Now.ToString("dd/MM/yyyy");
-                            //mailEntity.MailBody = mailBody.ToString();
-                            //mailEntity.Sender_Task = "btnSubmit_Click - TlvRevisionRequestDetails";
-                            //mailobj.sendMail(mailEntity);
-                        }
+                            MailToAddress = dr.Field<string?>("to_address"),
+                            MailCCAddress = dr.Field<string?>("cc_address"),
+                            MailBody = mailBody.ToString(),
+                            MailSubject = $"New TLV for Approval as on {DateTime.Now:dd/MM/yyyy}",
+                            MailBCCAddress = dr.Field<string?>("bcc_address"),
+                            MailFromAddress = "MOBILE APP (PROTECTON) MAIL SERVICE"
+                        })).ToList();
+                        await Task.WhenAll(tasks);
+
                     }
                 }
 

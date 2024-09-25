@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 namespace BERGER_ONE_PORTAL_API.Foundation;
 
-public class HttpHelper
+public class HttpHelper: IHttpHelper
 {
     private HttpClient? _client;
     private readonly IHttpClientFactory _clientFactory;
