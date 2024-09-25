@@ -14,10 +14,13 @@ using BERGER_ONE_PORTAL_API.Repository.JWT;
 using BERGER_ONE_PORTAL_API.Repository.Login;
 using BERGER_ONE_PORTAL_API.Validators;
 using System.Text;
+using BERGER_ONE_PORTAL_API.Extensions;
+using BERGER_ONE_PORTAL_API.Foundation;
 using BERGER_ONE_PORTAL_API.Repository.Common;
 using BERGER_ONE_PORTAL_API.Repository.Utility;
 using BERGER_ONE_PORTAL_API.Repository.Logger;
 using BERGER_ONE_PORTAL_API.Logic.Protecton;
+using BERGER_ONE_PORTAL_API.Proxy;
 using BERGER_ONE_PORTAL_API.Repository.Protecton;
 
 namespace BERGER_ONE_PORTAL_API
@@ -56,14 +59,14 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<ILoginLogic, LoginLogic>();
             builder.Services.AddScoped<ICommonLogic, CommonLogic>();
             builder.Services.AddScoped<ICommonRepo, CommonRepo>();
-
-            //builder.Services.AddScoped<ICommonProxy, CommonProxy>();
+            builder.Services.AddHttpClient();
+            builder.Services.AddScoped<IHttpHelper, HttpHelper>();
+            builder.Services.AddScoped<ICommonProxy, CommonProxy>();
 
             builder.Services.AddScoped<ILoggerService, LoggerService>();
             builder.Services.AddScoped<FluentValidationActionFilterAttribute>();
             builder.Services.AddScoped<ErrorHandlerFilterAttribute>();
             builder.Services.AddScoped<APILogAttribute>();
-            //builder.Services.AddScoped<HttpHelper>();
 
             #region Protecton
             builder.Services.AddScoped<IEpcaLogic, EpcaLogic>();
@@ -125,6 +128,7 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             var app = builder.Build();
 
+            StringExtensions.Configure(app.Services.GetRequiredService<IConfiguration>());
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{

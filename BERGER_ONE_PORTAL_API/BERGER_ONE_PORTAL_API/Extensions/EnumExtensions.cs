@@ -30,7 +30,7 @@ public static class EnumExtensions
         return (T)Enum.Parse(typeof(T), enumValue, true);
     }
 
-    public static string? ToRelPathDescriptionString(this Enum val, IConfiguration configuration)
+    public static string? ToRelPathDescriptionString(this Enum val, IConfiguration? configuration)
     {
         var appSettingKey = val.GetType().GetField(val.ToString())
             ?.GetCustomAttributes(typeof(RelPathDescriptionAttribute), false)
@@ -38,7 +38,7 @@ public static class EnumExtensions
         return (appSettingKey ?? "") == "" ? null : configuration.GetValue<string>(appSettingKey);
     }
 
-    public static string? ToAbsPathDescriptionString(this Enum val, IConfiguration configuration)
+    public static string? ToAbsPathDescriptionString(this Enum val, IConfiguration? configuration)
     {
         var appSettingKey = val.GetType().GetField(val.ToString())
             ?.GetCustomAttributes(typeof(AbsPathDescriptionAttribute), false)
