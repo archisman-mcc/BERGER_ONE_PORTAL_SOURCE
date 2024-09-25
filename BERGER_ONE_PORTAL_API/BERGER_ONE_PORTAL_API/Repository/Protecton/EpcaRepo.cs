@@ -1241,7 +1241,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             };
             return response;
         }
-
+        
         public async Task<MSSQLResponse> PcaApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
         {
             MSSQLResponse? response = null;
@@ -1828,6 +1828,57 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             {
                 throw new Exception(ex.Message, ex);
             }
+            return response;
+        }
+
+        public async Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[4];
+            sqlParams[0] = new SqlParameter
+            {
+                ParameterName = "@user_id",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = User_id
+            };
+            sqlParams[1] = new SqlParameter
+            {
+                ParameterName = "@json_pca_approval_dlt",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(JsonConvert.SerializeObject(request.Pca_Request_Dtl_List))
+            };
+
+            sqlParams[2] = new SqlParameter
+            {
+                ParameterName = "@outputCode",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output
+            };
+            sqlParams[3] = new SqlParameter
+            {
+                ParameterName = "@outputMsg",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Output,
+                Size = -1
+            };
+
+            response = new MSSQLResponse()
+            {
+                RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+                {
+                    CommandText = "[protecton].[PCA_HODetails_Approval_Submit_Portal]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    Parameters = sqlParams
+                }),
+                Data = null,
+                OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+            };
             return response;
         }
 
