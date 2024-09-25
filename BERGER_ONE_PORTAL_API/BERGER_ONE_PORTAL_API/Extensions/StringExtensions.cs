@@ -4,15 +4,17 @@ namespace BERGER_ONE_PORTAL_API.Extensions;
 
 public static class StringExtensions
 {
-    public static string? SaveBase64JpegImage(this string? base64Image, DocPathEnum docPathEnum, string directoryPath, IConfiguration configuration)
+    private static IConfiguration? _configuration;
+
+    public static string? SaveBase64JpegImage(this string? base64Image, DocPathEnum docPathEnum, string directoryPath)
     {
         if ((base64Image ?? "") == "") return null;
-        if (docPathEnum.ToRelPathDescriptionString(configuration) is { } realPath &&
+        if (docPathEnum.ToRelPathDescriptionString(_configuration) is { } realPath &&
             (base64Image ?? "").Contains(realPath))
             return (base64Image ?? "").Replace(realPath, "").TrimStart('/');
 
         var fileName = $"{Guid.NewGuid()}.jpeg";
-        if (docPathEnum.ToAbsPathDescriptionString(configuration) is not { } absPath)
+        if (docPathEnum.ToAbsPathDescriptionString(_configuration) is not { } absPath)
             throw new Exception("abs path is empty");
         if (!directoryPath.Contains(@":\"))
             directoryPath = $"{absPath}/{directoryPath}";
@@ -36,5 +38,10 @@ public static class StringExtensions
             .Replace(@"\","/")
             .Replace("//","/")
             .TrimStart('/');
+    }
+
+    public static void Configure(IConfiguration? configuration)
+    {
+        _configuration = configuration;
     }
 }

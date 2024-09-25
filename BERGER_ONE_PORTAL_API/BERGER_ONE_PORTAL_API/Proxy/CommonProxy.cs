@@ -10,7 +10,7 @@ using BERGER_ONE_PORTAL_API.Models;
 
 namespace BERGER_ONE_PORTAL_API.Proxy;
 
-public class CommonProxy(HttpHelper httpHelper, IConfiguration configuration) : ICommonProxy
+public class CommonProxy(IHttpHelper httpHelper, IConfiguration configuration) : ICommonProxy
 {
     public async Task<MailResponse?> SendMail(MailRequest dto)
     {
@@ -21,11 +21,15 @@ public class CommonProxy(HttpHelper httpHelper, IConfiguration configuration) : 
             dto.MailAttachement ??= string.Empty;
 
             var header = new Dictionary<string, string>
-                {
-                    { "Authorization", "Basic " + Convert.ToString(configuration["AuthenticationKey:MCCWebAPIAuthToken"])}
-                };
-            
-            var response = await httpHelper.PostAsync(nameof(SendMail), MSSQL_HELPER.Model.Constants.Common.BergerEmailAPI, new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json), header, null, new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, MediaTypeNames.Application.Json));
+            {
+                { "Authorization", $"Basic {configuration.GetValue<string?>("AuthenticationKey:MCCWebAPIAuthToken")}" }
+            };
+
+            var response = await httpHelper.PostAsync(nameof(SendMail),
+                    MSSQL_HELPER.Model.Constants.Common.BergerEmailAPI,
+                    new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json), header, null,
+                    new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, MediaTypeNames.Application.Json))
+                .ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
             {
