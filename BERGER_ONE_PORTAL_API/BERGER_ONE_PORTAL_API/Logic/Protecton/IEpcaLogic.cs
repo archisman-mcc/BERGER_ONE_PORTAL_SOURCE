@@ -29,7 +29,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<EpcaResponseDto?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<EpcaResponseDto?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<EpcaResponseDto?> GetEpcaGpGcRateDtls(PcaGpGcRateRequestDto request, string user_id);
-        Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string user_id);
+        Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string user_id);
         Task<EpcaCancellationGetListResponseDto?> PcaCancellationGetList(PcaCancellationRequestDto request, string User_id);
         Task<PcaCancleResponseDto?> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
         #endregion
@@ -46,6 +46,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<EpcaResponseDto?> GetTlvHoCommercialApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<EpcaResponseDto?> TlvGetTermDetails(TlvTermDetailsRequestDto request, string user_id);
         Task<ResponseDto<long>> TlvDetailsSubmit(TlvDetailsSubmitRequestDto requestDto);
+
+        Task<EpcaResponseDto?> GetBillToDetails(TlvTermDetailsRequestDto request);
         #endregion
     }
 }
