@@ -236,6 +236,35 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? OrgCode { get; set; }
     }
 
+    public class PcaHoApprovalInsertRequestDto
+    {
+        public List<PcaHoApprovalRequestModel>? Pca_Request_Dtl_List { get; set; }
+    }
+
+    public class PcaHoApprovalRequestModel
+    {
+        public long AutoId { get; set; }
+        public long BillTo { get; set; }
+        public string SkuCode { get; set; }
+        public string FactoryCode { get; set; }
+        public int Nop { get; set; }
+        public decimal RatePerPack { get; set; }
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTill { get; set; }
+        public string CurrentStatus { get; set; }
+        public string RejectionRemarks { get; set; }
+
+        public string LpoYrMonth { get; set; }
+        public decimal LpoMaterialCost { get; set; }
+        public decimal LpoPackingCost { get; set; }
+        public decimal LpoFreightCost { get; set; }
+        public string WavYrMonth { get; set; }
+        public decimal WavMaterialCost { get; set; }
+        public decimal WavPackingCost { get; set; }
+        public decimal WavOverheadCost { get; set; }
+        public decimal WavFreightCost { get; set; }
+    }
+
 
     public class TlvDetailsSubmitRequestDto
     {

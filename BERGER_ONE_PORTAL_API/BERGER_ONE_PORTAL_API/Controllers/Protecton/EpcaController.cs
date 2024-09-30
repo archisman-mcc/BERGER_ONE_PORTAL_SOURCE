@@ -158,7 +158,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         }
 
         [HttpPost]
-        public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit([FromBody] PcaApprovalInsertRequestDto dto)
+        public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit([FromBody] PcaHoApprovalInsertRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.PcaHoApprovalDetailsSubmit(dto, userDetails.user_id);
@@ -240,6 +240,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             requestDto.UserId ??= CommonHelper.GetUserDetailsFromClaims(User)?.user_id;
             return await _ePcaLogic.TlvDetailsSubmit(requestDto);
         }
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetBillToDetails([FromBody] TlvTermDetailsRequestDto dto) => await _ePcaLogic.GetBillToDetails(dto);
         #endregion
     }
 }
