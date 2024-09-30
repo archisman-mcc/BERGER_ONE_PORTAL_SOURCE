@@ -166,7 +166,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             return EpcaAdapter.MapEpcaDynamicResponse(dataResponse);
         }
 
-        public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaHoApprovalDetailsSubmit(request, User_id));
+        public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string User_id) => EpcaAdapter.MapPcaInsertResponse(await _epcaRepo.PcaHoApprovalDetailsSubmit(request, User_id));
         // ===============================================================================
 
 
@@ -370,6 +370,12 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
                     throw ex;
                 }
             }
+        }
+
+        public async Task<EpcaResponseDto?> GetBillToDetails(TlvTermDetailsRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetBillToDetails(request);
+            return EpcaAdapter.MapTlvRevisionListResponse(dataResponse);
         }
 
         #endregion

@@ -1831,7 +1831,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
-        public async Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaApprovalInsertRequestDto request, string User_id)
+        public async Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string User_id)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[4];
@@ -2739,6 +2739,53 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     .Where(r => r.Direction is ParameterDirection.Output or ParameterDirection.InputOutput)
                     .ToArray()
             };
+        }
+
+        public async Task<MSSQLResponse?> GetBillToDetails(TlvTermDetailsRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.DepotCode)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@bill_to",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.BillToCode)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[TLV_Details_getBillto]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
         }
 
         #endregion
