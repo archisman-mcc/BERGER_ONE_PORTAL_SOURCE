@@ -10,8 +10,6 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
 {
     public class EpcaAdapter
     {
-
-
         public static EpcaStatusResponseDto? MapPcaStatusResponse(MSSQLResponse? data)
         {
             EpcaStatusResponseDto? response = null;
