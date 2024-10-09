@@ -47,6 +47,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse> TlvGetEmailId(long autoId, string status, string? userId);
 
         Task<MSSQLResponse?> GetBillToDetails(TlvTermDetailsRequestDto dto);
+        Task<MSSQLResponse?> GetTlvDetails(GeteTlvDetailsRequestDto request, string user_id);
         #endregion
     }
 }
