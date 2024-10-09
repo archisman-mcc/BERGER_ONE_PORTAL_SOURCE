@@ -2,6 +2,7 @@
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Models;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
 namespace BERGER_ONE_PORTAL_API.Logic
@@ -41,6 +42,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
         #region For Password Encrypt & Decrypt:
         Task<PwdEncryptDecryptResponse?> PasswordEncryptDecrypt(PwdEncryptDecryptRequest request);
+        Task<DynamicResponse?> ValidateIFSC(string IFSC);
         #endregion
     }
 }
