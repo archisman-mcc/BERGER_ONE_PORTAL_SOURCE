@@ -197,6 +197,13 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         public async Task<EpcaStatusResponseDto?> GetTlvStatusList([FromBody] TlvStatusRequestDto dto) => await _ePcaLogic.GetTlvStatusList(dto);
 
         [HttpPost]
+        public async Task<EpcaResponseDto?> GetTlvDepotApprovalList([FromBody] TlvRSMApprovalRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetTlvDepotApprovalList(dto, userDetails.user_id);
+        }
+
+        [HttpPost]
         public async Task<EpcaResponseDto?> GetTlvRSMApprovalList([FromBody] TlvRSMApprovalRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
