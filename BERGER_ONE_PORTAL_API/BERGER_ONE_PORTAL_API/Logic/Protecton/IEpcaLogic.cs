@@ -39,6 +39,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
         Task<EpcaResponseDto?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id);
         Task<EpcaStatusResponseDto?> GetTlvStatusList(TlvStatusRequestDto request);
+        Task<EpcaResponseDto?> GetTlvDepotApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<EpcaResponseDto?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<EpcaResponseDto?> GetTlvRevisionLogDetails(TlvRevisionLogRequestDto request);
         Task<TlvRevisionResponseDto?> TlvRevisionApproval(TlvApprovalRequestDto request, string User_id);
