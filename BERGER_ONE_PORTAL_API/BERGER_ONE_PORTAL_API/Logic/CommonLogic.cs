@@ -1,11 +1,5 @@
-﻿using System.Data;
-using System.Net;
-using BERGER_ONE_PORTAL_API.NotificationSender;
-using Constant = BERGER_ONE_PORTAL_API.Common.Utilty.Constant;
+﻿using System.Net;
 using BERGER_ONE_PORTAL_API.Repository.JWT;
-
-using BERGER_ONE_PORTAL_API.Dtos;
-using BERGER_ONE_PORTAL_API.Repository.Login;
 using BERGER_ONE_PORTAL_API.Models;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
@@ -192,6 +186,55 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         OutputPassword = psw
                     }
                 };
+            }
+            return Task.FromResult(response);
+        }
+
+        public Task<DynamicResponse?> ValidateIFSC(string IFSC)
+        {
+            DynamicResponse? response = new DynamicResponse();
+            if (string.IsNullOrEmpty(IFSC)) throw new NullReferenceException(IFSC);
+            if (!string.IsNullOrEmpty(IFSC))
+            {
+                string url = "http://ifsc.razorpay.com/" + IFSC;
+                try
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Method = "GET";
+
+                    using (HttpWebResponse httpResponse = (HttpWebResponse)request.GetResponse())
+                    {
+                        if (httpResponse.StatusCode == HttpStatusCode.OK)
+                        {
+                            using (StreamReader reader = new StreamReader(httpResponse.GetResponseStream()))
+                            {
+                                string responseBody = reader.ReadToEnd();
+                                BankBranch? _entity = System.Text.Json.JsonSerializer.Deserialize<BankBranch>(responseBody);
+                                response.Data = _entity;
+                                if (response.Data != null)
+                                {
+                                    response.success = true;
+                                    response.message = "Valid IFSC.";
+                                    response.statusCode = HttpStatusCode.OK;
+                                }
+                                else
+                                {
+                                    response.Data = null;
+                                    response.success = false;
+                                    response.message = "Invalid IFSC!";
+                                    response.statusCode = HttpStatusCode.NoContent;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = "Invalid IFSC!";
+                    response.statusCode = HttpStatusCode.InternalServerError;
+                }
             }
             return Task.FromResult(response);
         }

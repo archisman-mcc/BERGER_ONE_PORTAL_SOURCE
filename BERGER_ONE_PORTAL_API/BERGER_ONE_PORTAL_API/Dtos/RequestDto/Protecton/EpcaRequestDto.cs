@@ -647,4 +647,15 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         [JsonIgnore]
         public string? OutputMsg { get; set; }
     }
+
+    public class GeteTlvDetailsRequestDto
+    {
+        public int auto_id { get; set; }
+        public string? DepotCode { get; set; }
+        public string? BillToCode { get; set; }
+        public string? DealerCode { get; set; }
+        public string? SblCode { get; set; }
+        public string? SubmissionType { get; set; }
+        public string? AppName { get; set; }
+    }
 }

@@ -243,6 +243,13 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
 
         [HttpPost]
         public async Task<EpcaResponseDto?> GetBillToDetails([FromBody] TlvTermDetailsRequestDto dto) => await _ePcaLogic.GetBillToDetails(dto);
+
+        [HttpPost]
+        public async Task<EpcaResponseDto?> GetTlvDetails([FromBody] GeteTlvDetailsRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await _ePcaLogic.GetTlvDetails(dto, userDetails.user_id);
+        }
         #endregion
     }
 }

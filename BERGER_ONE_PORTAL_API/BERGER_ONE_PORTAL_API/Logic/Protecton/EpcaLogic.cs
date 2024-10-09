@@ -266,16 +266,15 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
                     res.OutputParameters?.FirstOrDefault(c => c.ParameterName == "@auto_id")?.Value?.ToString(),
                     out var autoId))
             {
-                if ((requestDto.AutoId ?? 0) == 0)
-                {
-                    await TlvDetailsSubmit_SendMail(autoId, "NEW_REQUEST", requestDto.UserId);
-                }
+                if ((requestDto.AutoId ?? 0) == 0) await TlvDetailsSubmit_SendMail(autoId, "NEW_REQUEST", requestDto.UserId);
 
+                string _message = res.OutputParameters?.FirstOrDefault(c => c.ParameterName == "@outputMsg")?.Value?.ToString();
                 return new ResponseDto<long>()
                 {
                     success = true,
                     statusCode = HttpStatusCode.OK,
-                    message = Constant.ResponseMsg.Success,
+                    //message = Constant.ResponseMsg.Success,
+                    message = _message,
                     Data = autoId
                 };
             }
@@ -378,6 +377,11 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             return EpcaAdapter.MapTlvRevisionListResponse(dataResponse);
         }
 
+        public async Task<EpcaResponseDto?> GetTlvDetails(GeteTlvDetailsRequestDto request, string User_id)
+        {
+            MSSQLResponse? dataResponse = await _epcaRepo.GetTlvDetails(request, User_id);
+            return EpcaAdapter.MapTlvRevisionDetailsListResponse(dataResponse);
+        }
         #endregion
     }
 }

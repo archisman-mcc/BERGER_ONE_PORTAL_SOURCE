@@ -48,6 +48,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
         Task<ResponseDto<long>> TlvDetailsSubmit(TlvDetailsSubmitRequestDto requestDto);
 
         Task<EpcaResponseDto?> GetBillToDetails(TlvTermDetailsRequestDto request);
+        Task<EpcaResponseDto?> GetTlvDetails(GeteTlvDetailsRequestDto request, string user_id);
         #endregion
     }
 }
