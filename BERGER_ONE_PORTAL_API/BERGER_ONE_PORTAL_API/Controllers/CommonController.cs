@@ -100,7 +100,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public async Task<PwdEncryptDecryptResponse?> PasswordEncryptDecrypt([FromBody] PwdEncryptDecryptRequest dto) => await _commonLogic.PasswordEncryptDecrypt(dto);
 
         [HttpPost]
-        public async Task<DynamicResponse?> ValidateIFSC([FromBody] string IFSC) => await _commonLogic.ValidateIFSC(IFSC);
+        public async Task<DynamicResponse?> ValidateIFSC([FromBody] CommonRequestDto dto) => await _commonLogic.ValidateIFSC(dto);
         #endregion
     }
 }

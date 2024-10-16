@@ -42,7 +42,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
 
         #region For Password Encrypt & Decrypt:
         Task<PwdEncryptDecryptResponse?> PasswordEncryptDecrypt(PwdEncryptDecryptRequest request);
-        Task<DynamicResponse?> ValidateIFSC(string IFSC);
+        Task<DynamicResponse?> ValidateIFSC(CommonRequestDto dto);
         #endregion
     }
 }
