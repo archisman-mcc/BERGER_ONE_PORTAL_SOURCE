@@ -15,5 +15,8 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 
         [JsonProperty("globalFilter")]
         public string? GlobalFilter { get; set; }
+
+        [JsonProperty("sourceType")]
+        public string? SourceType { get; set; }
     }
 }
