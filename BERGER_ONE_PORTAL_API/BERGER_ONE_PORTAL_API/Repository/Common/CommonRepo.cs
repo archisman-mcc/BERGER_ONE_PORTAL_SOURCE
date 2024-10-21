@@ -978,7 +978,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse?> GetUserApplicableForms(UserAccessFormsRequest dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[6];
+            SqlParameter[] sqlParams = new SqlParameter[7];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -1015,12 +1015,20 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 };
                 sqlParams[4] = new SqlParameter
                 {
+                    ParameterName = "@source_type",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.SourceType)
+                };
+                sqlParams[5] = new SqlParameter
+                {
                     ParameterName = "@outputCode",
                     DbType = DbType.Int32,
                     Size = -1,
                     Direction = ParameterDirection.Output,
                 };
-                sqlParams[5] = new SqlParameter
+                sqlParams[6] = new SqlParameter
                 {
                     ParameterName = "@outputMsg",
                     DbType = DbType.String,
@@ -1046,10 +1054,11 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             catch (Exception ex) { throw new Exception(ex.Message, ex); }
             return response;
         }
+
         public async Task<MSSQLResponse?> GetUserAvailableForms(UserAccessFormsRequest dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[5];
+            SqlParameter[] sqlParams = new SqlParameter[7];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -1078,12 +1087,28 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 };
                 sqlParams[3] = new SqlParameter
                 {
+                    ParameterName = "@source_type",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.SourceType)
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@app_id",
+                    DbType = DbType.Int32,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFIntegerOrDBNull(dto.appId)
+                };
+                sqlParams[5] = new SqlParameter
+                {
                     ParameterName = "@outputCode",
                     DbType = DbType.Int32,
                     Size = -1,
                     Direction = ParameterDirection.Output,
                 };
-                sqlParams[4] = new SqlParameter
+                sqlParams[6] = new SqlParameter
                 {
                     ParameterName = "@outputMsg",
                     DbType = DbType.String,
@@ -1113,7 +1138,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse> UserFormAccessInsert(UserAccessFormsInserRequest request)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[7];
+            SqlParameter[] sqlParams = new SqlParameter[8];
             sqlParams[0] = new SqlParameter
             {
                 ParameterName = "@json_form_id",
@@ -1140,13 +1165,21 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             };
             sqlParams[3] = new SqlParameter
             {
+                ParameterName = "@source_type",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.SourceType)
+            };
+            sqlParams[4] = new SqlParameter
+            {
                 ParameterName = "@app_id",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.Input,
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.AppId)
             };
-            sqlParams[4] = new SqlParameter
+            sqlParams[5] = new SqlParameter
             {
                 ParameterName = "@created_user",
                 SqlDbType = SqlDbType.VarChar,
@@ -1154,13 +1187,13 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Size = -1,
                 Value = Utils.IIFStringOrDBNull(request.created_user)
             };
-            sqlParams[5] = new SqlParameter
+            sqlParams[6] = new SqlParameter
             {
                 ParameterName = "@outputCode",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.Output
             };
-            sqlParams[6] = new SqlParameter
+            sqlParams[7] = new SqlParameter
             {
                 ParameterName = "@outputMsg",
                 SqlDbType = SqlDbType.NVarChar,
