@@ -10,6 +10,9 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         [JsonProperty("userid")]
         public string? UserId { get; set; }
 
+        [JsonProperty("sourceType")]
+        public string? SourceType { get; set; }
+
         [JsonProperty("appid")]
         public string? AppId { get; set; }
 
@@ -27,6 +30,5 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
 
         [JsonProperty("form_code")]
         public string? form_code { get; set; }
-
     }
 }
