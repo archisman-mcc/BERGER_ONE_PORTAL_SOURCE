@@ -46,7 +46,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? terr_code { get; set; }
         public string? dealer_code { get; set; }
         public string? sbl_code { get; set; }
-
+        public string? pd_appl_yn { get; set; }
     }
 
     public class GetMinRateBySkuRequestDto
@@ -207,6 +207,9 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? user_id { get; set; }
         public decimal? mrp { get; set; }
         public long? projectid { get; set; }
+        public string? project_appl_yn { get; set; }
+        public string? end_client_name { get; set; }
+        public string? project_name { get; set; }
     }
 
     public class PcaApprovalInsertRequestDto
