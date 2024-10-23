@@ -138,6 +138,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                         bill_to = dr.Field<decimal?>("bill_to"),
                         bill_to_name = dr.Field<string?>("bill_to_name"),
                         pd_appl_yn = dr.Field<string?>("pd_appl_yn"),
+                        project_appl_yn = dr.Field<string?>("project_appl_yn"),
                     })
                     .ToList(),
                 };

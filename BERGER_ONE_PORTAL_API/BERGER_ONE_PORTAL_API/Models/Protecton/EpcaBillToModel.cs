@@ -12,5 +12,8 @@ namespace BERGER_ONE_PORTAL_API.Models.Protecton
 
         [JsonProperty("pd_appl_yn")]
         public string? pd_appl_yn { get; set; }
+
+        [JsonProperty("project_appl_yn")]
+        public string? project_appl_yn { get; set; }
     }
 }
