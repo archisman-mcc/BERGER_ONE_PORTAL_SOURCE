@@ -210,6 +210,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? project_appl_yn { get; set; }
         public string? end_client_name { get; set; }
         public string? project_name { get; set; }
+        public string? project_type { get; set; }
     }
 
     public class PcaApprovalInsertRequestDto
