@@ -725,7 +725,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         public async Task<MSSQLResponse?> GetPcaBillToList(GetBillToRequestDto dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[4];
+            SqlParameter[] sqlParams = new SqlParameter[5];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -762,6 +762,14 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Direction = ParameterDirection.Input,
                     Size = -1,
                     Value = "4"
+                };
+                sqlParams[4] = new SqlParameter
+                {
+                    ParameterName = "@pd_appl_yn",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.pd_appl_yn)
                 };
 
                 response = new MSSQLResponse()
@@ -1095,11 +1103,10 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
-
         public async Task<MSSQLResponse> InsertePcaDetails_Vr1(PcaInsertRequestDto request, string User_id)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[16];
+            SqlParameter[] sqlParams = new SqlParameter[20];
             sqlParams[0] = new SqlParameter
             {
                 ParameterName = "@auto_id",
@@ -1204,7 +1211,15 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 Size = -1,
                 Value = Utils.IIFDecimalOrDBNull(request.mrp)
             };
-            sqlParams[13] = new SqlParameter
+            sqlParams[14] = new SqlParameter
+            {
+                ParameterName = "@project_appl_yn",
+                SqlDbType = SqlDbType.VarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.project_appl_yn)
+            };
+            sqlParams[15] = new SqlParameter
             {
                 ParameterName = "@projectid",
                 SqlDbType = SqlDbType.BigInt,
@@ -1212,13 +1227,29 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 Size = -1,
                 Value = Utils.IIFLongOrDBNull(request.projectid)
             };
-            sqlParams[14] = new SqlParameter
+            sqlParams[16] = new SqlParameter
+            {
+                ParameterName = "@end_client_name",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.end_client_name)
+            };
+            sqlParams[17] = new SqlParameter
+            {
+                ParameterName = "@project_name",
+                SqlDbType = SqlDbType.NVarChar,
+                Direction = ParameterDirection.Input,
+                Size = -1,
+                Value = Utils.IIFStringOrDBNull(request.project_name)
+            };
+            sqlParams[18] = new SqlParameter
             {
                 ParameterName = "@outputCode",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.Output
             };
-            sqlParams[15] = new SqlParameter
+            sqlParams[19] = new SqlParameter
             {
                 ParameterName = "@outputMsg",
                 SqlDbType = SqlDbType.NVarChar,
@@ -1230,7 +1261,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             {
                 RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
                 {
-                    CommandText = "[protecton].[PCA_Details_Submit_Vr1]",
+                    //CommandText = "[protecton].[PCA_Details_Submit_Vr1]",
+                    CommandText = "[protecton].[PCA_Details_Submit_PortalVr1]",
                     CommandTimeout = Constant.Common.SQLCommandTimeOut,
                     CommandType = CommandType.StoredProcedure,
                     ConnectionProperties = _serviceContext.MSSQLConnectionModel,
