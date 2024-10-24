@@ -135,6 +135,16 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         public string text_col { get; set; }
     }
 
+    public class LeaglStatusRequestDto
+    {
+        [JsonProperty("lov_type")]
+        public string? lov_type { get; set; }
+
+        [JsonProperty("lov_status")]
+        public string? lov_status { get; set; }
+
+    }
+
     public class Filter
     {
         [JsonProperty("id")]

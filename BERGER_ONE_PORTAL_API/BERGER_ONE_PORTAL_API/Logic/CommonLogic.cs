@@ -100,6 +100,12 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return UserAdapter.MapUserApplTerrResponse(dataResponse);
         }
 
+        public async Task<DynamicResponse?> GetLegalStatusList(LeaglStatusRequestDto request)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetLegalStatusList(request);
+            return UserAdapter.MapDynamicResponse(dataResponse);
+        }
+
         #endregion
 
         #region For Form Menu Master:
