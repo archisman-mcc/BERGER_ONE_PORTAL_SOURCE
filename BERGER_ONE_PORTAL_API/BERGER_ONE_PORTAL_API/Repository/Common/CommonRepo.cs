@@ -617,6 +617,55 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             return response;
         }
 
+        public async Task<MSSQLResponse?> GetLegalStatusList(LeaglStatusRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[1];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.lov_type)
+                };
+
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@lov_status",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.lov_status)
+                };
+
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[Lov_Details_Get]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
         public async Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request, string user_id)
         {
             MSSQLResponse? response = null;

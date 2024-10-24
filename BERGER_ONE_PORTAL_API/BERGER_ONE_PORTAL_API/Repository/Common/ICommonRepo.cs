@@ -17,6 +17,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse?> GetTerrDepotWise(UserTerrRequestDto dto);
         Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<MSSQLResponse?> GetApplicableTerrList(UserApplTerrRequestDto dto);
+        Task<MSSQLResponse?> GetLegalStatusList(LeaglStatusRequestDto dto);
         #endregion
 
         #region For Form Menu Master:

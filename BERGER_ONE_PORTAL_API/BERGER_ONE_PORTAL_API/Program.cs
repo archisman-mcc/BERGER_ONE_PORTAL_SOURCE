@@ -71,6 +71,8 @@ namespace BERGER_ONE_PORTAL_API
             #region Protecton
             builder.Services.AddScoped<IEpcaLogic, EpcaLogic>();
             builder.Services.AddScoped<IEpcaRepo, EpcaRepo>();
+            builder.Services.AddScoped<ILegalLogic, LegalLogic>();
+            builder.Services.AddScoped<ILegalRepo, LegalRepo>();
             #endregion
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
