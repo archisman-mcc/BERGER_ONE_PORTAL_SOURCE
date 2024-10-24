@@ -410,7 +410,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
                         {
                             response = new DynamicResponse();
                             response.Data = ds;
-                            if (response != null && response.Data.Rows.Count> 0)
+                            if (response != null && response.Data.Rows.Count > 0)
                             {
                                 response.success = true;
                                 response.message = OutputMsg;
@@ -440,6 +440,48 @@ namespace BERGER_ONE_PORTAL_API.Logic
                     response.message = OutputMsg;
                     response.statusCode = HttpStatusCode.NoContent;
                 }
+            }
+            else throw new ArgumentNullException("Data Access Response is null or empty");
+            return response;
+        }
+
+        public static DynamicResponse? MapDynamicResponse(MSSQLResponse? data)
+        {
+            DynamicResponse? response = null;
+            if (data != null)
+            {
+
+                if (data != null && data.Data != null)
+                {
+                    var ds = (data?.Data as DataTable);
+                    if (ds != null && ds.Rows.Count > 0)
+                    {
+                        response = new DynamicResponse();
+                        response.Data = ds;
+                        if (response != null && response.Data.Rows.Count > 0)
+                        {
+                            response.success = true;
+                            response.message = "Success";
+                            response.statusCode = HttpStatusCode.OK;
+                        }
+                        else
+                        {
+                            response.Data = null;
+                            response.success = false;
+                            response.message = "No Content";
+                            response.statusCode = HttpStatusCode.NoContent;
+                        }
+                    }
+                    else
+                    {
+                        response.Data = null;
+                        response.success = false;
+                        response.message = "No Content";
+                        response.statusCode = HttpStatusCode.NoContent;
+                    }
+                }
+
+
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;

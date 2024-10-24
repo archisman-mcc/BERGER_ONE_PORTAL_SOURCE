@@ -21,6 +21,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<UserTerrResponseDto?> GetTerrDepotWise(UserTerrRequestDto request);
         Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request);
+        Task<DynamicResponse?> GetLegalStatusList(LeaglStatusRequestDto request);
         #endregion
 
         #region For Form Menu Master:
