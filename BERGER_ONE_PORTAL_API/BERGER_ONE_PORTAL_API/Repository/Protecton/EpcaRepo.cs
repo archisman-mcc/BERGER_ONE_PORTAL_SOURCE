@@ -2996,6 +2996,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Direction = ParameterDirection.Input,
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(request.BillToCode)
+                    //Value = !string.IsNullOrEmpty(request.BillToCode) ? request.BillToCode : DBNull.Value
                 };
                 sqlParams[6] = new SqlParameter
                 {

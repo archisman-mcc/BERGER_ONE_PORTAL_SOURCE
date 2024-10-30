@@ -356,7 +356,7 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
             PcaCancleResponseDto? response = new PcaCancleResponseDto();
             if (data != null)
             {
-               response.ResponseMessage = "operation successful";
+                response.ResponseMessage = "operation successful";
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;
@@ -747,7 +747,8 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
         {
             TlvRevisionResponseDto? response = new TlvRevisionResponseDto();
             if (data != null)
-            { response.ResponseMessage = "Successful";
+            {
+                response.ResponseMessage = "Successful";
             }
             else throw new ArgumentNullException("Data Access Response is null or empty");
             return response;
@@ -767,6 +768,12 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                         response.Data = ds;
 
                         if (response != null && response.Data.Tables[0].Rows.Count > 0)
+                        {
+                            response.success = true;
+                            response.message = "Success";
+                            response.statusCode = HttpStatusCode.OK;
+                        }
+                        else if (response != null && response.Data.Tables[4].Rows.Count > 0 || response != null && response.Data.Tables[5].Rows.Count > 0)
                         {
                             response.success = true;
                             response.message = "Success";
