@@ -8,6 +8,7 @@ using BERGER_ONE_PORTAL_API.Repository.Common;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Common;
 using Microsoft.IdentityModel.Tokens;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 
 namespace BERGER_ONE_PORTAL_API.Logic
 {
@@ -100,10 +101,10 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return UserAdapter.MapUserApplTerrResponse(dataResponse);
         }
 
-        public async Task<DynamicResponse?> GetLegalStatusList(LeaglStatusRequestDto request)
+        public async Task<EpcaStatusResponseDto?> GetLegalStatusList(LeaglStatusRequestDto request)
         {
             MSSQLResponse? dataResponse = await _commonRepo.GetLegalStatusList(request);
-            return UserAdapter.MapDynamicResponse(dataResponse);
+            return UserAdapter.MapLegalStatusResponse(dataResponse);
         }
 
         #endregion
