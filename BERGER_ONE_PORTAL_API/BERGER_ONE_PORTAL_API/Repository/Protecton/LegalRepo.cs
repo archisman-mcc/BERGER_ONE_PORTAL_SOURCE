@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
 using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 {
@@ -51,7 +52,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = 2,
-                    Value = Utils.IIFStringOrDBNull(request.CommtMonth)
+                    Value = request.CommtMonth
                 };
 
                 sqlParams[3] = new SqlParameter
@@ -87,7 +88,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = 100,
-                    Value = Utils.IIFStringOrDBNull(request.DealerName)
+                    Value = request.DealerName
                 };
 
                 sqlParams[7] = new SqlParameter
@@ -131,7 +132,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     ParameterName = "@FromValue",
                     DbType = DbType.Decimal,
                     Direction = ParameterDirection.Input,
-                    Value = request.FromValue ?? (object)DBNull.Value
+                    //Value = request.FromValue ?? (object)DBNull.Value
+                    Value = request.FromValue
                 };
 
                 sqlParams[12] = new SqlParameter
@@ -139,7 +141,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     ParameterName = "@ToValue",
                     DbType = DbType.Decimal,
                     Direction = ParameterDirection.Input,
-                    Value = request.ToValue ?? (object)DBNull.Value
+                    //Value = request.ToValue ?? (object)DBNull.Value
+                    Value = !string.IsNullOrEmpty(request.ToValue.ToString()) || request.ToValue > 0 ? request.ToValue: Decimal.MaxValue
                 };
 
                 sqlParams[13] = new SqlParameter
@@ -148,7 +151,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = 20,
-                    Value = Utils.IIFStringOrDBNull(user_id)
+                    Value = user_id
                 };
 
                 sqlParams[14] = new SqlParameter
