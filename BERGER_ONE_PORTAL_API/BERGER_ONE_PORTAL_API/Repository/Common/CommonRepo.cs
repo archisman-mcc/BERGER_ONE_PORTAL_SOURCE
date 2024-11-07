@@ -620,12 +620,12 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse?> GetLegalStatusList(LeaglStatusRequestDto dto)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[1];
+            SqlParameter[] sqlParams = new SqlParameter[2];
             try
             {
                 sqlParams[0] = new SqlParameter
                 {
-                    ParameterName = "@depot_code",
+                    ParameterName = "@lov_type",
                     DbType = DbType.String,
                     Direction = ParameterDirection.Input,
                     Size = -1,

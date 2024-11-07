@@ -1,5 +1,6 @@
 ﻿using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<UserTerrResponseDto?> GetTerrDepotWise(UserTerrRequestDto request);
         Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request);
-        Task<DynamicResponse?> GetLegalStatusList(LeaglStatusRequestDto request);
+        Task<EpcaStatusResponseDto?> GetLegalStatusList(LeaglStatusRequestDto request);
         #endregion
 
         #region For Form Menu Master:

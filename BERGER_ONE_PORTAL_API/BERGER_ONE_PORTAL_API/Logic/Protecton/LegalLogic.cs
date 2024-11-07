@@ -35,6 +35,5 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton
             MSSQLResponse? dataResponse = await _legalRepo.GetLegalOutStandingApprovalList(request, user_id);
             return LegalAdapter.MapLegalOutStandingResponse(dataResponse);
         }
-
     }
 }

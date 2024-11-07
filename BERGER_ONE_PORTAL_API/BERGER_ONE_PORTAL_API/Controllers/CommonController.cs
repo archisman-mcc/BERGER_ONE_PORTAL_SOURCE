@@ -12,6 +12,7 @@ using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using Microsoft.AspNetCore.Cors;
 using BERGER_ONE_PORTAL_API.Models;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
@@ -65,7 +66,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public async Task<UserApplTerrResponseDto?> GetApplicableTerrList([FromBody] UserApplTerrRequestDto dto) => await _commonLogic.GetApplicableTerrList(dto);
 
         [HttpPost]
-        public async Task<DynamicResponse?> GetLegalStatusList([FromBody] LeaglStatusRequestDto dto) => await _commonLogic.GetLegalStatusList(dto);
+        public async Task<EpcaStatusResponseDto?> GetLegalStatusList([FromBody] LeaglStatusRequestDto dto) => await _commonLogic.GetLegalStatusList(dto);
         #endregion
 
         #region For Form Menu Master:  
