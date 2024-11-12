@@ -43,6 +43,12 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return UserAdapter.MapAppResponse(dataResponse);
         }
 
+        public async Task<UserAppsResponseDto?> GetAppList_Vrn1(UserApplicableMenuReqModel dto)
+        {
+            MSSQLResponse? dataResponse = await _commonRepo.GetAppListData_Vrn1(dto);
+            return UserAdapter.MapAppResponse(dataResponse);
+        }
+
         public async Task<DynamicResponse?> GetReportingUser(ReportingUserRequest request)
         {
             MSSQLResponse? dataResponse = await _commonRepo.GetReportingUser(request);

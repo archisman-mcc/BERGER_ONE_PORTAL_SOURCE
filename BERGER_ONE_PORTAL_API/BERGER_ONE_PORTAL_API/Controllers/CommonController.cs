@@ -39,6 +39,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public async Task<UserAppsResponseDto?> GetAppList() => await _commonLogic.GetAppList();
 
         [HttpPost]
+        public async Task<UserAppsResponseDto?> GetAppList_Vrn1([FromBody] UserApplicableMenuReqModel dto) => await _commonLogic.GetAppList_Vrn1(dto);
+
+        [HttpPost]
         public async Task<DynamicResponse?> GetReportingUser([FromBody] ReportingUserRequest dto) => await _commonLogic.GetReportingUser(dto);
 
         [HttpPost]

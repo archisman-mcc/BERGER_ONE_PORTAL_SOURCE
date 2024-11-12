@@ -201,10 +201,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         public async Task<MSSQLResponse?> GetAppListData()
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[3];
+            //SqlParameter[] sqlParams = new SqlParameter[3];
             try
             {
-
                 response = new MSSQLResponse()
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
@@ -215,6 +214,52 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
                         IsMultipleTables = true,
                         //Parameters = sqlParams
+                    }),
+                    //OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetAppListData_Vrn1(UserApplicableMenuReqModel dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@userId",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.user_id)
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@userGroup",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.user_group)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[dbo].[App_List_For_One_Protal_Get_Vrn1]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
                     }),
                     //OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
 

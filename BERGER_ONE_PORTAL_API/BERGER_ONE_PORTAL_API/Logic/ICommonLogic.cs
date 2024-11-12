@@ -14,6 +14,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<JObject?> GetUserList(UserListDto dto);
         Task<UserProfileResponse?> GetUserDetails(UserProfileDetailsRequest dto);
         Task<UserAppsResponseDto?> GetAppList();
+        Task<UserAppsResponseDto?> GetAppList_Vrn1(UserApplicableMenuReqModel dto);
         Task<DynamicResponse?> GetReportingUser(ReportingUserRequest request);
         Task<UserDeptResponseDto?> GetDeptList(UserDeptRequestDto request);
         Task<UserDepotResponseDto?> GetApplicableDepotList(UserDepotRequestDto request);
