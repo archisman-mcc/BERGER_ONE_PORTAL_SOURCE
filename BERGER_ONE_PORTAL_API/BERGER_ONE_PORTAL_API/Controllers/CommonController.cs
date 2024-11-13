@@ -55,6 +55,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<AllUserGroupResponseDto?> GetAllUserGroupList([FromBody] AllUserGroupRequestDto dto) => await _commonLogic.GetAllUserGroupList(dto);
+
         [HttpPost]
         public async Task<UserTerrResponseDto?> GetTerrDepotWise([FromBody] UserTerrRequestDto dto) => await _commonLogic.GetTerrDepotWise(dto);
 
