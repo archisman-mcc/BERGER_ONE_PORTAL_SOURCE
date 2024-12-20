@@ -22,6 +22,7 @@ using BERGER_ONE_PORTAL_API.Repository.Logger;
 using BERGER_ONE_PORTAL_API.Logic.Protecton;
 using BERGER_ONE_PORTAL_API.Proxy;
 using BERGER_ONE_PORTAL_API.Repository.Protecton;
+using BERGER_ONE_PORTAL_API.Repository.Reports;
 
 namespace BERGER_ONE_PORTAL_API
 {
@@ -73,6 +74,9 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<IEpcaRepo, EpcaRepo>();
             builder.Services.AddScoped<ILegalLogic, LegalLogic>();
             builder.Services.AddScoped<ILegalRepo, LegalRepo>();
+
+            builder.Services.AddScoped<IReportLogic, ReportLogic>();
+            builder.Services.AddScoped<IReportRepo, ReportRepo>();
             #endregion
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
