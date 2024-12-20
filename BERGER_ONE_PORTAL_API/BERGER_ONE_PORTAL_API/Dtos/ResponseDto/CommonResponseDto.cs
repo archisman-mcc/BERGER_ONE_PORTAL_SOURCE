@@ -1,17 +1,18 @@
 ﻿using BERGER_ONE_PORTAL_API.Models;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
 {
-    public class ReminderResponse:BaseResponse
+    public class ReminderResponse : BaseResponse
     {
         public dynamic? Data { get; set; }
     }
-    public class FinYesrResponse:BaseResponse
+    public class FinYesrResponse : BaseResponse
     {
         public dynamic? Data { get; set; }
     }
-    public class PromotionalMsgResponseDto:BaseResponse
+    public class PromotionalMsgResponseDto : BaseResponse
     {
         public dynamic? Data { get; set; }
     }
@@ -19,7 +20,7 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
     {
         public dynamic? Data { get; set; }
     }
-    public class CommonResponseDto:BaseResponse
+    public class CommonResponseDto : BaseResponse
     {
         public dynamic? Data { get; set; }
     }
@@ -66,5 +67,23 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
         public string? ResponseMessage { get; set; }
     }
 
+    public class FilePathResponse : BaseResponse
+    {
+        public dynamic? Data { get; set; }
+    }
 
+    public class ReportRequest
+    {
+        [JsonProperty("data")]
+        public DataSet? Data { get; set; }
+
+        [JsonProperty("report_name")]
+        public string? Reportname { get; set; }
+
+        [JsonProperty("file_name")]
+        public string? FileName { get; set; }
+
+        [JsonProperty("table_index")]
+        public int? TableIndex { get; set; }
+    }
 }
