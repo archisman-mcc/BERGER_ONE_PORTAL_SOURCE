@@ -9,6 +9,7 @@ using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
+//using System.Data.SqlClient;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 {
@@ -191,6 +192,24 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             return response;
         }
 
+        public async Task<MSSQLResponse> GetLegalOutStandingApprovalList_V1(GetLegalOutStandingRequest request)
+        {
+            var sqlParams = Utils.ObjectToSqlParams(request);
+            return new MSSQLResponse
+            {
+                Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest
+                {
+                    CommandText = "[BERGER_MOBILE_APP_DB].[dbo].[LegalOutstandingAction_getDealerDtls]",
+                    CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                    CommandType = CommandType.StoredProcedure,
+                    ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                    IsMultipleTables = true,
+                    Parameters = (SqlParameter[])sqlParams.ToArray<IDbDataParameter>()
+                }),
 
+                RowsAffected = null,
+                OutputParameters = sqlParams.Where(r => r.Direction == ParameterDirection.Output).ToArray()
+            };
+        }
     }
 }
