@@ -662,4 +662,27 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? SubmissionType { get; set; }
         public string? AppName { get; set; }
     }
+	public class GetProjectListRequestDto
+	{
+		public int app_id { get; set; }
+		public decimal? billto_code { get; set; }
+		public string? srch_str { get; set; }
+	}
+	public class PotentialTrackingSiteSubmitRequestDto
+	{
+
+		public List<PotentialTrackingSiteMstr> PotentialTrackingSiteMstr { get; set; }
+
+	}
+	public class PotentialTrackingSiteMstr
+	{
+		public string ptm_region { get; set; }
+		public string ptm_depot_code { get; set; }
+		public string ptm_terr_code { get; set; }
+		public string ptm_dealer_code { get; set; }
+		public string ptm_customer_name { get; set; }
+		public string ptm_project_name { get; set; }
+		public string ptm_app_name { get; set; }
+		public int ptm_app_id { get; set; }
+	}
 }

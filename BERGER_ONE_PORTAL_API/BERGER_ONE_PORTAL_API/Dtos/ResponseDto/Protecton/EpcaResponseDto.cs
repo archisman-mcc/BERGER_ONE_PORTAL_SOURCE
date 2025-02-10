@@ -1,6 +1,8 @@
-﻿using BERGER_ONE_PORTAL_API.Models;
+﻿using BERGER_ONE_PORTAL_API.Common;
+using BERGER_ONE_PORTAL_API.Models;
 using BERGER_ONE_PORTAL_API.Models.Protecton;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton
 {
@@ -96,5 +98,14 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton
     {
         [JsonProperty("response_message")]
         public string? ResponseMessage { get; set; }
-    }
+	}
+	public class PotentialTrackingSiteSubmit
+	{
+		[Newtonsoft.Json.JsonConverter(typeof(NumericHttpStatusCodeConverter))]
+		public HttpStatusCode statusCode { get; set; }
+		public string? Project { get; set; }
+		public string? Siteid { get; set; }
+		public string? message { get; set; }
+		public bool success { get; set; }
+	}
 }

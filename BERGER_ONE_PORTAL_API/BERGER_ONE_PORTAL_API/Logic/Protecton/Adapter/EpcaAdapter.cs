@@ -1,4 +1,5 @@
-﻿using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+﻿using Azure;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
 using BERGER_ONE_PORTAL_API.Models;
@@ -553,12 +554,99 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                 response.statusCode = HttpStatusCode.NoContent;
             }
             return response;
-        }
+		}
+		public static EpcaResponseDto? MapProjectListResponse(MSSQLResponse? data)
+		{
+			EpcaResponseDto? response = null;
+			if (data != null)
+			{
 
-        #region "TLV MODULE"
-        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
 
-        public static EpcaResponseDto? MapTlvRevisionListResponse(MSSQLResponse? data)
+				if (data != null && data.Data != null)
+				{
+					var ds = (data?.Data as DataSet);
+					if (ds != null && ds.Tables.Count > 0)
+					{
+						response = new EpcaResponseDto();
+						response.Data = ds;
+
+						if (response != null && response.Data.Tables[0].Rows.Count > 0)
+						{
+							response.success = true;
+							response.message = "Success";
+							response.statusCode = HttpStatusCode.OK;
+						}
+						else
+						{
+							response.Data = null;
+							response.success = false;
+							response.message = "No Content";
+							response.statusCode = HttpStatusCode.NoContent;
+						}
+					}
+					else
+					{
+						response.Data = null;
+						response.success = false;
+						response.message = "No Content";
+						response.statusCode = HttpStatusCode.NoContent;
+					}
+				}
+
+			}
+			else
+			{
+				response.Data = null;
+				response.success = false;
+				response.message = "Data Access Response is null or empty";
+				response.statusCode = HttpStatusCode.NoContent;
+			}
+			return response;
+		}
+
+		public static PotentialTrackingSiteSubmit? MapEPCASiteEntryLead(MSSQLResponse? data)
+		{
+			PotentialTrackingSiteSubmit? response = new PotentialTrackingSiteSubmit();
+			if (data != null)
+			{
+				int outputCode = int.TryParse(Convert.ToString(data.OutputParameters?[0].Value), out _) ? Convert.ToInt32(data.OutputParameters?[0].Value) : -1;
+				string? outputMsg = Convert.ToString(data.OutputParameters?[1].Value);
+
+
+				string? outputProject = Convert.ToString(data.OutputParameters?[2].Value);
+
+				if (outputCode > 0)
+				{
+
+					response.success = true;
+					response.Siteid = outputCode.ToString();
+					response.Project = outputProject;
+					response.message = outputMsg;
+					response.statusCode = HttpStatusCode.OK;
+				}
+				else
+				{
+
+					response.success = false;
+					response.Siteid = "";
+					response.Project = "";
+					response.message = outputMsg;
+					response.statusCode = HttpStatusCode.NoContent;
+				}
+            }
+            else
+            {
+				response.success = false;
+                response.message = "Data Access Response is null or empty";
+				response.statusCode = HttpStatusCode.InternalServerError;
+			}
+			return response;
+		}
+
+		#region "TLV MODULE"
+		// CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+
+		public static EpcaResponseDto? MapTlvRevisionListResponse(MSSQLResponse? data)
         {
             EpcaResponseDto? response = null;
             if (data != null)
