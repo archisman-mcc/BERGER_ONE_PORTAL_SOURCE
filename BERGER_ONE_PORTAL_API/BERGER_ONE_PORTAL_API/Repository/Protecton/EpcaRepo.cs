@@ -2038,12 +2038,131 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
             }
             return response;
         }
-        // ===============================================================================
-        #endregion
 
-        #region "TLV MODULE"
-        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
-        public async Task<MSSQLResponse?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id)
+		public async Task<MSSQLResponse?> GetProjectList(GetProjectListRequestDto? request, string user_id)
+		{
+
+
+			MSSQLResponse? response = null;
+			SqlParameter[] sqlParameters = new SqlParameter[4];
+
+			sqlParameters[0] = new SqlParameter
+			{
+				ParameterName = "@user_id",
+				DbType = DbType.String,
+				Direction = ParameterDirection.Input,
+				Size = -1,
+				Value = Utils.IIFStringOrDBNull(user_id)
+			};
+			sqlParameters[1] = new SqlParameter
+			{
+				ParameterName = "@billto_code",
+				DbType = DbType.String,
+				Direction = ParameterDirection.Input,
+				Size = -1,
+				Value = Utils.IIFDecimalOrDBNull(request.billto_code)
+			};
+
+			sqlParameters[2] = new SqlParameter
+			{
+				ParameterName = "@srch_str",
+				DbType = DbType.String,
+				Direction = ParameterDirection.Input,
+				Size = -1,
+				Value = Utils.IIFStringOrDBNull(request.srch_str)
+			};
+
+			sqlParameters[3] = new SqlParameter
+			{
+				ParameterName = "@app_id",
+				DbType = DbType.String,
+				Direction = ParameterDirection.Input,
+				Size = -1,
+				Value = Utils.IIFIntegerOrDBNull(request.app_id)
+			};
+			response = new MSSQLResponse()
+			{
+				Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+				{
+					CommandText = "[protecton].PCA_Details_getProjectList",
+					CommandTimeout = Constant.Common.SQLCommandTimeOut,
+					CommandType = CommandType.StoredProcedure,
+					ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+					IsMultipleTables = true,
+					Parameters = sqlParameters
+				}),
+				RowsAffected = 0
+
+			};
+			return response;
+
+		}
+
+		public async Task<MSSQLResponse?> EPCASiteEntryLead(PotentialTrackingSiteSubmitRequestDto? request, string user_id)
+		{
+			MSSQLResponse? response = null;
+			SqlParameter[] sqlParams = new SqlParameter[5];
+			sqlParams[0] = new SqlParameter
+			{
+				ParameterName = "@tblPotentialTrackingMstr",
+				SqlDbType = SqlDbType.Structured,
+				Direction = System.Data.ParameterDirection.Input,
+				Size = -1,
+				Value = Utils.ToDataTable(request?.PotentialTrackingSiteMstr)
+			};
+			sqlParams[1] = new SqlParameter
+			{
+				ParameterName = "@created_user",
+				DbType = DbType.String,
+				Direction = System.Data.ParameterDirection.Input,
+				Size = -1,
+				Value = user_id
+			};
+			sqlParams[2] = new SqlParameter
+			{
+				ParameterName = "@OutputCode",
+				DbType = DbType.Int32,
+				Size = -1,
+				Direction = ParameterDirection.Output,
+			};
+			sqlParams[3] = new SqlParameter
+			{
+				ParameterName = "@OutputMsg",
+				DbType = DbType.String,
+				Size = -1,
+				Direction = ParameterDirection.Output,
+			};
+
+			sqlParams[4] = new SqlParameter
+			{
+				ParameterName = "@OutputProject",
+				DbType = DbType.String,
+				Size = -1,
+				Direction = ParameterDirection.Output,
+			};
+			response = new MSSQLResponse()
+			{
+				RowsAffected = await _sqlHelper.ExecuteNonQuery(new ExecuteNonQueryRequest()
+				{
+					CommandText = "[protecton].[Service_Potential_Traking_Site_Submit]",
+					CommandTimeout = Constant.Common.SQLCommandTimeOut,
+					CommandType = CommandType.StoredProcedure,
+					ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+					Parameters = sqlParams
+				}),
+				Data = null,
+				OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+			};
+
+			return response;
+		}
+
+		// ===============================================================================
+		#endregion
+
+		#region "TLV MODULE"
+		// CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+		public async Task<MSSQLResponse?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id)
         {
             MSSQLResponse? response = null;
             SqlParameter[] sqlParams = new SqlParameter[10];
