@@ -180,13 +180,29 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.PcaCancellationUpdate(dto, userDetails.user_id);
         }
-        // ===============================================================================
-        #endregion
-        
+		// ===============================================================================
 
-        #region "TLV MODULE"
-        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
-        [HttpPost]
+
+		[HttpPost]
+		public async Task<EpcaResponseDto?> GetProjectList([FromBody] GetProjectListRequestDto dto)
+		{
+			var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+			return await _ePcaLogic.GetProjectList(dto, userDetails.user_id);
+		}
+
+		[HttpPost]
+		public async Task<PotentialTrackingSiteSubmit?> EPCASiteEntryLead([FromBody] PotentialTrackingSiteSubmitRequestDto dto)
+		{
+			var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+			return await _ePcaLogic.EPCASiteEntryLead(dto, userDetails.user_id);
+		}
+
+		#endregion
+
+
+		#region "TLV MODULE"
+		// CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+		[HttpPost]
         public async Task<EpcaResponseDto?> GetTlvRevisionList([FromBody] GetePCAListRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);

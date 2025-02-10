@@ -30,12 +30,14 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string User_id);
         Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto dto, string User_id);
         Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
-        #endregion
+        Task<MSSQLResponse?> GetProjectList(GetProjectListRequestDto? request, string user_id);
+        Task<MSSQLResponse?> EPCASiteEntryLead(PotentialTrackingSiteSubmitRequestDto? request, string user_id);
+		#endregion
 
 
-        #region "TLV MODULE"
-        // CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
-        Task<MSSQLResponse?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id);
+		#region "TLV MODULE"
+		// CREATED BY SOUMYA SHUBHRA ROY -- 20-08-2024
+		Task<MSSQLResponse?> GetTlvRevisionList(GetePCAListRequestDto request, string user_id);
         Task<MSSQLResponse?> GetTlvStatusList(TlvStatusRequestDto request);
         Task<MSSQLResponse?> GetTlvDepotApprovalList(TlvRSMApprovalRequestDto request, string user_id);
         Task<MSSQLResponse?> GetTlvRSMApprovalList(TlvRSMApprovalRequestDto request, string user_id);
