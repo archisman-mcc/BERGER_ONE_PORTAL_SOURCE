@@ -27,7 +27,8 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         Task<MSSQLResponse?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<MSSQLResponse?> GetePCAHoApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id);
         Task<MSSQLResponse?> GetEpcaGpGcRateDtls(PcaGpGcRateRequestDto request, string user_id);
-        Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string User_id);
+        Task<MSSQLResponse?> GetCalculatedGC(GetCalculatedGCRequestDto request, string user_id);
+		Task<MSSQLResponse> PcaHoApprovalDetailsSubmit(PcaHoApprovalInsertRequestDto request, string User_id);
         Task<MSSQLResponse?> PcaCancellationGetList(PcaCancellationRequestDto dto, string User_id);
         Task<MSSQLResponse> PcaCancellationUpdate(CanclePcaRequestDto request, string User_id);
         Task<MSSQLResponse?> GetProjectList(GetProjectListRequestDto? request, string user_id);

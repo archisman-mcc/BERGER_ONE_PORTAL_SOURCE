@@ -155,9 +155,16 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.GetEpcaGpGcRateDtls(dto, userDetails.user_id);
-        }
+		}
 
-        [HttpPost]
+		[HttpPost]
+		public async Task<EpcaResponseDto?> GetCalculatedGC([FromBody] GetCalculatedGCRequestDto dto)
+		{
+			var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+			return await _ePcaLogic.GetCalculatedGC(dto, userDetails.user_id);
+		}
+
+		[HttpPost]
         public async Task<PcaInsertResponseDto?> PcaHoApprovalDetailsSubmit([FromBody] PcaHoApprovalInsertRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
