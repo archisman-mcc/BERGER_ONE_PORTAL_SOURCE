@@ -2157,6 +2157,84 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 			return response;
 		}
 
+		public async Task<MSSQLResponse?> GetCalculatedGC(GetCalculatedGCRequestDto request, string user_id)
+		{
+			MSSQLResponse? response = null;
+			SqlParameter[] sqlParams = new SqlParameter[6];
+			try
+			{
+				sqlParams[0] = new SqlParameter
+				{
+					ParameterName = "@sku_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.sku_code)
+				};
+				sqlParams[1] = new SqlParameter
+				{
+					ParameterName = "@factory_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.factory_code)
+				};
+				sqlParams[2] = new SqlParameter
+				{
+					ParameterName = "@yr_month_wav",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.yr_month_wav)
+				};
+				sqlParams[3] = new SqlParameter
+				{
+					ParameterName = "@yr_month_lpo",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.yr_month_lpo)
+				};
+				sqlParams[4] = new SqlParameter
+				{
+					ParameterName = "@rate",
+					DbType = DbType.Decimal,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFDecimalOrDBNull(request.rate)
+				};
+				sqlParams[5] = new SqlParameter
+				{
+					ParameterName = "@user_id",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = user_id
+				};
+
+				response = new MSSQLResponse()
+				{
+					Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+					{
+						CommandText = "[protecton].[PCA_getCalculatedGC]",
+						CommandTimeout = Constant.Common.SQLCommandTimeOut,
+						CommandType = CommandType.StoredProcedure,
+						ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+						IsMultipleTables = true,
+						Parameters = sqlParams
+					}),
+					RowsAffected = null,
+					OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+				};
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message, ex);
+			}
+			return response;
+		}
+
+
 		// ===============================================================================
 		#endregion
 

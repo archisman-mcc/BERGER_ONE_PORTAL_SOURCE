@@ -239,8 +239,16 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton
         public string? YrMonthWAV { get; set; }
         public string? OrgCode { get; set; }
     }
+	public class GetCalculatedGCRequestDto
+	{
+		public string? sku_code { get; set; }
+		public string? factory_code { get; set; }
+		public string? yr_month_lpo { get; set; }
+		public string? yr_month_wav { get; set; }
+		public decimal? rate { get; set; }
+	}
 
-    public class PcaHoApprovalInsertRequestDto
+	public class PcaHoApprovalInsertRequestDto
     {
         public List<PcaHoApprovalRequestModel>? Pca_Request_Dtl_List { get; set; }
     }
