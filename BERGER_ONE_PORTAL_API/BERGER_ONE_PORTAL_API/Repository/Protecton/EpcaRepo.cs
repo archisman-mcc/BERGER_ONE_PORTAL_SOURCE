@@ -186,114 +186,131 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         // EPCA RSM LIST AND ENTRY -- (APPROVAL)
         public async Task<MSSQLResponse?> GetPcaRsmList(GetePCAListRequestDto request, string user_id)
         {
-            MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[10];
-            try
-            {
-                sqlParams[0] = new SqlParameter
-                {
-                    ParameterName = "@user_id",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(user_id)
-                };
-                sqlParams[1] = new SqlParameter
-                {
-                    ParameterName = "@depot_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = !string.IsNullOrWhiteSpace(request.DepotCode) ? request.DepotCode : DBNull.Value
-                };
-                sqlParams[2] = new SqlParameter
-                {
-                    ParameterName = "@terr_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = !string.IsNullOrWhiteSpace(request.TerritoryCode) ? request.TerritoryCode : DBNull.Value
-                };
+			MSSQLResponse? response = null;
+			SqlParameter[] sqlParams = new SqlParameter[11];
+			try
+			{
+				sqlParams[0] = new SqlParameter
+				{
+					ParameterName = "@user_id",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(user_id)
+				};
+				sqlParams[1] = new SqlParameter
+				{
+					ParameterName = "@depot_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.DepotCode)
+				};
 
-                sqlParams[3] = new SqlParameter
-                {
-                    ParameterName = "@billto_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = !string.IsNullOrWhiteSpace(request.BillToCode) ? request.BillToCode : DBNull.Value
-                };
-                sqlParams[4] = new SqlParameter
-                {
-                    ParameterName = "@dealer_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = !string.IsNullOrWhiteSpace(request.AcctNo) ? request.AcctNo : DBNull.Value
-                };
-                sqlParams[5] = new SqlParameter
-                {
-                    ParameterName = "@dealer_name",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = request.DealerName
-                };
-                sqlParams[6] = new SqlParameter
-                {
-                    ParameterName = "@main_status",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.MainStatus)
-                };
+				sqlParams[2] = new SqlParameter
+				{
+					ParameterName = "@terr_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.TerritoryCode)
+				};
 
-                sqlParams[7] = new SqlParameter
-                {
-                    ParameterName = "@aprv_status",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.ApprovedStatus)
-                };
-                sqlParams[8] = new SqlParameter
-                {
-                    ParameterName = "@sbl_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.SblCode)
-                };
-                sqlParams[9] = new SqlParameter
-                {
-                    ParameterName = "@app_name",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFIntegerOrDBNull(request.app_id)
-                };
+				sqlParams[3] = new SqlParameter
+				{
+					ParameterName = "@billto_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.BillToCode)
+				};
 
-                response = new MSSQLResponse()
-                {
-                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
-                    {
-                        CommandText = "[protecton].[PCA_getApprovalList_RSM]",
-                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
-                        CommandType = CommandType.StoredProcedure,
-                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
-                        IsMultipleTables = true,
-                        Parameters = sqlParams
-                    }),
-                    RowsAffected = null,
-                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message, ex);
-            }
-            return response;
-        }
+				sqlParams[4] = new SqlParameter
+				{
+					ParameterName = "@dealer_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.AcctNo)
+				};
+
+				sqlParams[5] = new SqlParameter
+				{
+					ParameterName = "@dealer_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.DealerName)
+				};
+
+				sqlParams[6] = new SqlParameter
+				{
+					ParameterName = "@main_status",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.MainStatus)
+				};
+
+				sqlParams[7] = new SqlParameter
+				{
+					ParameterName = "@aprv_status",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.ApprovedStatus)
+				};
+
+				sqlParams[8] = new SqlParameter
+				{
+					ParameterName = "@sbl_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.SblCode)
+				};
+
+				sqlParams[9] = new SqlParameter
+				{
+					ParameterName = "@app_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = "PROTECTON"
+				};
+
+				sqlParams[10] = new SqlParameter
+				{
+					ParameterName = "@page_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = "RSM"
+				};
+
+				response = new MSSQLResponse()
+				{
+					Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+					{
+						CommandText = "[protecton].[PCA_getApprovalList]",
+						CommandTimeout = Constant.Common.SQLCommandTimeOut,
+						CommandType = CommandType.StoredProcedure,
+						ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+						IsMultipleTables = true,
+						Parameters = sqlParams
+					}),
+					RowsAffected = null,
+					OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+				};
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message, ex);
+			}
+
+			return response;
+		}
         // ===============================================================================
 
 
@@ -526,7 +543,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
-                        CommandText = "[protecton].[PCA_getApprovalList_Depot]",
+                        CommandText = "[protecton].[PCA_getApprovalList]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -1053,11 +1070,11 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 
                 sqlParams[3] = new SqlParameter
                 {
-                    ParameterName = "@app_name",
-                    DbType = DbType.String,
+                    ParameterName = "@app_id",
+                    DbType = DbType.Int32,
                     Direction = ParameterDirection.Input,
                     Size = -1,
-                    Value = "PROTECTON"
+                    Value = 15
                 };
 
                 sqlParams[4] = new SqlParameter
@@ -1083,7 +1100,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
-                        CommandText = "[protecton].[PCA_Details_getDtls_Vr1]",
+                        CommandText = "[protecton].[PCA_Details_getDtls]",
                         CommandTimeout = Constant.Common.SQLCommandTimeOut,
                         CommandType = CommandType.StoredProcedure,
                         ConnectionProperties = _serviceContext.MSSQLConnectionModel,
@@ -1576,121 +1593,131 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
 
         public async Task<MSSQLResponse?> GetePCAHoApprovalList(GetePCADepotApprovalDetailsRequestDto request, string user_id)
         {
-            MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[10];
-            try
-            {
-                sqlParams[0] = new SqlParameter
-                {
-                    ParameterName = "@user_id",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(user_id)
-                };
-                sqlParams[1] = new SqlParameter
-                {
-                    ParameterName = "@depot_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DepotCode)
-                };
+			MSSQLResponse? response = null;
+			SqlParameter[] sqlParams = new SqlParameter[11];
+			try
+			{
+				sqlParams[0] = new SqlParameter
+				{
+					ParameterName = "@user_id",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(user_id)
+				};
+				sqlParams[1] = new SqlParameter
+				{
+					ParameterName = "@depot_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.DepotCode)
+				};
 
-                sqlParams[2] = new SqlParameter
-                {
-                    ParameterName = "@terr_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.TerritoryCode)
-                };
+				sqlParams[2] = new SqlParameter
+				{
+					ParameterName = "@terr_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.TerritoryCode)
+				};
 
-                sqlParams[3] = new SqlParameter
-                {
-                    ParameterName = "@billto_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.BillToCode)
-                };
+				sqlParams[3] = new SqlParameter
+				{
+					ParameterName = "@billto_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.BillToCode)
+				};
 
-                sqlParams[4] = new SqlParameter
-                {
-                    ParameterName = "@dealer_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DealerCode)
-                };
+				sqlParams[4] = new SqlParameter
+				{
+					ParameterName = "@dealer_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.DealerCode)
+				};
 
-                sqlParams[5] = new SqlParameter
-                {
-                    ParameterName = "@dealer_name",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.DealerName)
-                };
+				sqlParams[5] = new SqlParameter
+				{
+					ParameterName = "@dealer_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.DealerName)
+				};
 
-                sqlParams[6] = new SqlParameter
-                {
-                    ParameterName = "@main_status",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.MainStatus)
-                };
+				sqlParams[6] = new SqlParameter
+				{
+					ParameterName = "@main_status",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.MainStatus)
+				};
 
-                sqlParams[7] = new SqlParameter
-                {
-                    ParameterName = "@aprv_status",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.ApprovedStatus)
-                };
+				sqlParams[7] = new SqlParameter
+				{
+					ParameterName = "@aprv_status",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.ApprovedStatus)
+				};
 
-                sqlParams[8] = new SqlParameter
-                {
-                    ParameterName = "@sbl_code",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = Utils.IIFStringOrDBNull(request.SblCode)
-                };
+				sqlParams[8] = new SqlParameter
+				{
+					ParameterName = "@sbl_code",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFStringOrDBNull(request.SblCode)
+				};
 
-                sqlParams[9] = new SqlParameter
-                {
-                    ParameterName = "@app_name",
-                    DbType = DbType.String,
-                    Direction = ParameterDirection.Input,
-                    Size = -1,
-                    Value = "PROTECTON"
-                };
+				sqlParams[9] = new SqlParameter
+				{
+					ParameterName = "@app_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = "PROTECTON"
+				};
 
-                response = new MSSQLResponse()
-                {
-                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
-                    {
-                        CommandText = "[protecton].[PCA_getApprovalList_HO]",
-                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
-                        CommandType = CommandType.StoredProcedure,
-                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
-                        IsMultipleTables = true,
-                        Parameters = sqlParams
-                    }),
-                    RowsAffected = null,
-                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message, ex);
-            }
+				sqlParams[10] = new SqlParameter
+				{
+					ParameterName = "@page_name",
+					DbType = DbType.String,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = "HO"
+				};
 
-            return response;
-        }
+				response = new MSSQLResponse()
+				{
+					Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+					{
+						CommandText = "[protecton].[PCA_getApprovalList]",
+						CommandTimeout = Constant.Common.SQLCommandTimeOut,
+						CommandType = CommandType.StoredProcedure,
+						ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+						IsMultipleTables = true,
+						Parameters = sqlParams
+					}),
+					RowsAffected = null,
+					OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+				};
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message, ex);
+			}
+
+			return response;
+		}
 
         public async Task<MSSQLResponse?> GetePCARsmApprovalDetails(GetePCADepotApprovalDetailsRequestDto request, string user_id)
         {
