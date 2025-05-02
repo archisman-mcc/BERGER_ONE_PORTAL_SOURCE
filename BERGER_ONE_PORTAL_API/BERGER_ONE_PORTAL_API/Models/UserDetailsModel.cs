@@ -39,5 +39,5 @@ namespace BERGER_ONE_PORTAL_API.Models
         [JsonProperty("children")]
         public List<UserApplicableMenuModel>? Children { get; set; }
 
-    }
+	}
 }

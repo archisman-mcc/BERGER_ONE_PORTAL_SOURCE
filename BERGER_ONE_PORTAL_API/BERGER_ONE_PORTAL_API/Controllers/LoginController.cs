@@ -47,6 +47,15 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         public string ProtectedResource()
         {
             return "Success";
-        }
-    }
+		}
+
+		[Authorize]
+		[AllowAnonymous]
+		[HttpGet]
+		public async Task<LoginResponseDto?> LoginVr1([FromQuery] LoginRequestDto requestDto) => await _loginLogic.ValidateLoginVr1(requestDto);
+
+		[AllowAnonymous]
+		[HttpGet]
+		public async Task<LoginResponseDto?> RefreshTokenV2([FromQuery] TokenRefreshDtoNew? tokenRefreshNewDto) => await _loginLogic.ValidateRefreshTokenV2(tokenRefreshNewDto);
+	}
 }
