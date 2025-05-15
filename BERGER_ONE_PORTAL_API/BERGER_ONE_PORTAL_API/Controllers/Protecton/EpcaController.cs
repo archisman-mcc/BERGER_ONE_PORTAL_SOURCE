@@ -279,7 +279,10 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _ePcaLogic.GetTlvDetails(dto, userDetails.user_id);
-        }
-        #endregion
-    }
+		}
+
+		[HttpPost]
+		public async Task<EpcaStatusResponseDto?> GetTlvApprovalStatusList() => await _ePcaLogic.GetTlvApprovalStatusList();
+		#endregion
+	}
 }

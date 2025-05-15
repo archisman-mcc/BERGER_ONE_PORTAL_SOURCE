@@ -892,7 +892,46 @@ namespace BERGER_ONE_PORTAL_API.Logic.Protecton.Adapter
                 response.statusCode = HttpStatusCode.NoContent;
             }
             return response;
-        }
-        #endregion
-    }
+		}
+		public static EpcaStatusResponseDto? MapTlvApprovalStatusResponse(MSSQLResponse? data)
+		{
+			EpcaStatusResponseDto? response = null;
+			if (data != null)
+			{
+				response = new EpcaStatusResponseDto()
+				{
+					Data = (data.Data as DataSet)?.Tables.OfType<DataTable>().FirstOrDefault()?.AsEnumerable().Select(dr => new EpcaStatusModel()
+					{
+						LovValue = dr.Field<string?>("lov_value"),
+						LovCode = dr.Field<string?>("lov_code"),
+						LovField1Value = dr.Field<string?>("lov_field1_value"),
+						LovField2Value = dr.Field<string?>("lov_field2_value"),
+					})
+					.ToList(),
+				};
+				if (response != null && response.Data.Count > 0)
+				{
+					response.success = true;
+					response.message = "Success";
+					response.statusCode = HttpStatusCode.OK;
+				}
+				else
+				{
+					response.Data = null;
+					response.success = false;
+					response.message = "No Content";
+					response.statusCode = HttpStatusCode.NoContent;
+				}
+			}
+			else
+			{
+				response.Data = null;
+				response.success = false;
+				response.message = "No Content";
+				response.statusCode = HttpStatusCode.NoContent;
+			}
+			return response;
+		}
+		#endregion
+	}
 }
