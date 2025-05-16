@@ -3169,7 +3169,7 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
         public async Task<MSSQLResponse?> GetTlvDetails(GeteTlvDetailsRequestDto request, string user_id)
         {
             MSSQLResponse? response = null;
-            SqlParameter[] sqlParams = new SqlParameter[6];
+            SqlParameter[] sqlParams = new SqlParameter[7];
             try
             {
                 sqlParams[0] = new SqlParameter
@@ -3222,8 +3222,16 @@ namespace BERGER_ONE_PORTAL_API.Repository.Protecton
                     Size = -1,
                     Value = Utils.IIFStringOrDBNull(user_id)
                 };
+				sqlParams[6] = new SqlParameter
+				{
+					ParameterName = "@auto_id",
+					DbType = DbType.Int64,
+					Direction = ParameterDirection.Input,
+					Size = -1,
+					Value = Utils.IIFLongOrDBNull(request.auto_id)
+				};
 
-                response = new MSSQLResponse()
+				response = new MSSQLResponse()
                 {
                     Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
                     {
