@@ -74,6 +74,8 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<IEpcaRepo, EpcaRepo>();
             builder.Services.AddScoped<ILegalLogic, LegalLogic>();
             builder.Services.AddScoped<ILegalRepo, LegalRepo>();
+            builder.Services.AddScoped<IDSRLogic, DSRLogic>();
+            builder.Services.AddScoped<IDSRRepo, DSRRepo>();
 
             builder.Services.AddScoped<IReportLogic, ReportLogic>();
             builder.Services.AddScoped<IReportRepo, ReportRepo>();
