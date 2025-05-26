@@ -76,6 +76,18 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<ILegalRepo, LegalRepo>();
             builder.Services.AddScoped<IDSRLogic, DSRLogic>();
             builder.Services.AddScoped<IDSRRepo, DSRRepo>();
+            builder.Services.AddScoped<IStockLogic, StockLogic>();
+            builder.Services.AddScoped<IStockRepo, StockRepo>();
+            builder.Services.AddScoped<IUserTrackingLogic, UserTrackingLogic>();
+            builder.Services.AddScoped<IUserTrackingRepo, UserTrackingRepo>();
+            builder.Services.AddScoped<IClientTrackLogic, ClientTrackLogic>();
+            builder.Services.AddScoped<IClientTrackRepo, ClientTrackRepo>();
+            builder.Services.AddScoped<IInvoiceLogic, InvoiceLogic>();
+            builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
+            builder.Services.AddScoped<IDespatchLogic, DespatchLogic>();
+            builder.Services.AddScoped<IDespatchRepo, DespatchRepo>();
+            builder.Services.AddScoped<IBillingLogic, BillingLogic>();
+            builder.Services.AddScoped<IBillingRepo, BillingRepo>();
 
             builder.Services.AddScoped<IReportLogic, ReportLogic>();
             builder.Services.AddScoped<IReportRepo, ReportRepo>();

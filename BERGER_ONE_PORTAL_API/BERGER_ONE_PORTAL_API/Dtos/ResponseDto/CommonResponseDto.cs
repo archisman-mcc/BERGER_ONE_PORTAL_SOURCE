@@ -86,4 +86,28 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
         [JsonProperty("table_index")]
         public int? TableIndex { get; set; }
     }
+
+    public class SMSResponseDto
+    {
+        public string? message { get; set; }
+        public bool success { get; set; }
+    }
+    public class MailResponseDto
+    {
+        public string? message { get; set; }
+        public bool success { get; set; }
+    }
+
+    public class MailRequestDto
+    {
+        public string? mailToAddress { get; set; }
+        public string? mailFromAddress { get; set; }
+        public string? mailCCAddress { get; set; }
+        public string? mailBCCAddress { get; set; }
+        public string? mailSubject { get; set; }
+        public string? mailBody { get; set; }
+        public string? mailAttachement { get; set; }
+        public string? mailSenderApp { get; set; }
+        public string? mailSenderTask { get; set; }
+    }
 }
