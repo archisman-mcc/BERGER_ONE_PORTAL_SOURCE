@@ -1,4 +1,5 @@
-﻿using BERGER_ONE_PORTAL_API.Common.Utilty;
+﻿using BERGER_ONE_PORTAL_API.Common.Utility;
+using BERGER_ONE_PORTAL_API.Common.Utilty;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 using BERGER_ONE_PORTAL_API.Proxy;
