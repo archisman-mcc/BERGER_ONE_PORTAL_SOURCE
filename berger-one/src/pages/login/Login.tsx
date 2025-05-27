@@ -130,7 +130,7 @@ const Login = () => {
                     <div className="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
                         <div className="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
                         <div className="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
-                            <img src={GetProdDevImgRouteBuilder('/assets/images/berger.png')} alt="Logo" className="w-full" />
+                            <img src={GetProdDevImgRouteBuilder('/assets/images/berger.png')} alt="Logo" className="mx-auto mt-20" />
                             <div className="hidden w-full max-w-[430px] lg:block">
                                 <img src={GetProdDevImgRouteBuilder('/assets/images/auth/login.svg')} alt="Cover Image" className="w-full" />
                             </div>
@@ -139,8 +139,8 @@ const Login = () => {
                     <div className="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
                         <div className="w-full max-w-[440px] lg:mt-16">
                             <div className="mb-10">
-                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                                <p className="text-base font-bold leading-normal text-white-dark">Enter your user Id and password to login</p>
+                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl dark:text-white">Sign in</h1>
+                                <p className="text-base font-bold leading-normal text-white-dark dark:text-slate-500">Enter your user Id and password to login</p>
                             </div>
                             <form className="space-y-5 dark:text-white">
                                 <div>
@@ -188,7 +188,7 @@ const Login = () => {
                                 {/* Submit button with loader when loading is true */}
                                 <button
                                     type="submit"
-                                    className="btn btn-gradient !mt-6 flex h-[48px] w-full items-center justify-center border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] disabled:opacity-80"
+                                    className="btn btn-gradient rounded-full bg-pink-500 !mt-6 flex h-[48px] w-full items-center justify-center border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] disabled:opacity-80"
                                     onClick={(e) => handleSubmit(e)}
                                     disabled={loading} // Disable button while loading
                                 >
@@ -205,7 +205,7 @@ const Login = () => {
                                 </button>
                             </form>
                         </div>
-                        <p className="absolute bottom-6 w-full text-center dark:text-white">© {new Date().getFullYear()}.Berger Paints All Rights Reserved.</p>
+                        <p className="absolute text-xs bottom-6 w-full text-center dark:text-white">© {new Date().getFullYear()}.Berger Paints All Rights Reserved.</p>
                     </div>
                 </div>
             </div>
