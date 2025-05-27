@@ -1,0 +1,135 @@
+/* Animate css */
+/* @import './styles/animate.css'; */
+/* tippy css */
+/* @import './styles/tippy.css'; */
+
+/* swiper css */
+/* @import './styles/swiper.css'; */
+
+/* Elements - Progressbar */
+/* @import './styles/progressbar.css'; */
+
+/* Data tables css */
+/* @import './styles/datatables.css'; */
+
+/* scrumboard */
+/* @import './styles/scrumboard.css'; */
+
+/* calendar css */
+/* @import './styles/fullcalendar.css'; */
+
+/* sweetalert css */
+/* @import './styles/sweetalert.css'; */
+
+/* flatpickr css */
+/* @import './styles/flatpickr.css'; */
+
+/* quill-editor css */
+/* @import './styles/quill-editor.css'; */
+
+/* markdown-editor css */
+/* @import './styles/markdown-editor.css'; */
+
+/* file upload with preview */
+/* @import './styles/file-upload-preview.css'; */
+
+/* dragndrop*/
+/* @import './styles/dragndrop.css'; */
+
+/* form element*/
+/* @import './styles/form-elements.css'; */
+
+/* Select2*/
+/* @import './styles/select2.css'; */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[type='text']:focus {
+  box-shadow: none;
+}
+
+/* @layer components {
+  body {
+    @apply bg-blue;
+  }
+} */
+
+
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import url(../src/styles/custom.css);
+@import url(../src/styles/tailwind.css); */
