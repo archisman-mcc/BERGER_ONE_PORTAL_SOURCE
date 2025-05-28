@@ -147,7 +147,7 @@
             public const string AuthKeyBergerSms = "CHFDERTIOMNHGTAALOY";
             public const string NotificationAppname = "ONE_APP";
             public const string SmsSID = "BERSYS";
-
+            public static readonly string MCCWebAPIAuthToken = "764AFD67-0E12-4B9D-83D8-91CDB467C9E6";
 
         }
         public struct NotificationType
