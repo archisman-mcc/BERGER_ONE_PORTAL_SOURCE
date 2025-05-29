@@ -24,6 +24,7 @@ import TLVRevisionRequestDetails from './pages/protecton/TLV/TLVRevisionRequestD
 import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotApproval';
 import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
 import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
+import TransactDsr from './pages/protecton/Transact/TransactDsr';
 
 function App() {
   const user = UseAuthStore((state: any) => state.userDetails);
@@ -92,6 +93,10 @@ function App() {
         {
           path: '/Protecton/TLV/TLVRevisionHoApproval',
           element: <TLVRevisionHoApproval />,
+        },
+        {
+          path: '/Protecton/Transact/TransactDsr',
+          element: <TransactDsr />,
         },
       ],
     },
