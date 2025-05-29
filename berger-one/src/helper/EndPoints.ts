@@ -8,6 +8,7 @@ const BASE_ENDPOINTS = {
     Epca: 'Epca/',
     Legal: 'Legal/',
     Report: 'Report/',
+    ProtectonDsr: 'PROTECTON/DSR/',
 };
 
 
@@ -100,6 +101,10 @@ const ALL_ENDPOINTS = {
     LegalCaseApprovalAsmReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Report + 'GetLegalCaseApprovalAsmReport',
     GetProjectList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetProjectList',
     GetCalculatedGC: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetCalculatedGC',
+
+    // Protecton DSR
+    UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
+    UserApplDlrSalesDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSalesDtls',
 
     //#endregion
 };
