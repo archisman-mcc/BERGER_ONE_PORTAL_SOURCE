@@ -1,5 +1,9 @@
-import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
-import { ENDPOINTS } from '@/src/helper/EndPoints';
+import { HTTP_POST } from "../../../helper/ApiCall";
+import { ENDPOINTS } from "../../../helper/EndPoints";
+
+export function GetProtectonRegion<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.GetProtectonRegion) as Promise<G>;
+}
 
 export function GetReportingUser<P, G>(data: { userId: any; globalFilter: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetReportingUser) as Promise<G>;

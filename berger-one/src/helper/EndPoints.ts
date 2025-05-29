@@ -9,6 +9,7 @@ const BASE_ENDPOINTS = {
     Legal: 'Legal/',
     Report: 'Report/',
     ProtectonDsr: 'PROTECTON/DSR/',
+    ProtectonDespatch: 'PROTECTON/Despatch/',
 };
 
 
@@ -56,6 +57,7 @@ const ALL_ENDPOINTS = {
     GetePCAHoApprovalList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalList',
     GetePCAHoApprovalDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalDetails',
 
+    GetProtectonRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonRegion',
     GetReportingUser: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetReportingUser',
     GetDeptList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetDeptList',
     GetApplicableDepotList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableDepotList',
@@ -106,15 +108,18 @@ const ALL_ENDPOINTS = {
     UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
     UserApplDlrSalesDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSalesDtls',
 
+    //Protecton Despatch
+    GetDespatchDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDespatch + 'GetDespatchDetails',
+
     //#endregion
 };
 
 export const ENDPOINTS = {
-    BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
-    BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
 
-    // BASE_URL_DEV: 'https://localhost:36554/api/',
-    // BASE_URL_PROD: 'https://localhost:36554/api/',
+    BASE_URL_DEV: 'https://localhost:36554/api/',
+    BASE_URL_PROD: 'https://localhost:36554/api/',
     ...ALL_ENDPOINTS,
 };
 
