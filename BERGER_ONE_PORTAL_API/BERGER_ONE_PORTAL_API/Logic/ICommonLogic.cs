@@ -24,6 +24,7 @@ namespace BERGER_ONE_PORTAL_API.Logic
         Task<UserInsertResponseDto?> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<UserApplTerrResponseDto?> GetApplicableTerrList(UserApplTerrRequestDto request);
         Task<EpcaStatusResponseDto?> GetLegalStatusList(LeaglStatusRequestDto request);
+        Task<GetRegionResponseDto?> GetProtectonRegion(GetProtectonRegionRequestDto? request, string userid);
         #endregion
 
         #region For Form Menu Master:

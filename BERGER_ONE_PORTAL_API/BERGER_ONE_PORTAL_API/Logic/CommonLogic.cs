@@ -1,14 +1,16 @@
-﻿using System.Net;
-using BERGER_ONE_PORTAL_API.Repository.JWT;
-using BERGER_ONE_PORTAL_API.Models;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+﻿using BERGER_ONE_PORTAL_API.Common;
+using BERGER_ONE_PORTAL_API.Common.Utilty;
 using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
-using Newtonsoft.Json.Linq;
-using BERGER_ONE_PORTAL_API.Repository.Common;
-using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
-using BERGER_ONE_PORTAL_API.Common;
-using Microsoft.IdentityModel.Tokens;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
 using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
+using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
+using BERGER_ONE_PORTAL_API.Models;
+using BERGER_ONE_PORTAL_API.Repository.Common;
+using BERGER_ONE_PORTAL_API.Repository.JWT;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using System.Data;
+using System.Net;
 
 namespace BERGER_ONE_PORTAL_API.Logic
 {
@@ -111,6 +113,38 @@ namespace BERGER_ONE_PORTAL_API.Logic
         {
             MSSQLResponse? dataResponse = await _commonRepo.GetLegalStatusList(request);
             return UserAdapter.MapLegalStatusResponse(dataResponse);
+        }
+
+        public async Task<GetRegionResponseDto?> GetProtectonRegion(GetProtectonRegionRequestDto? request, string userid)
+        {
+            GetRegionResponseDto response = new GetRegionResponseDto();
+            var dbResponse = await _commonRepo.GetProtectonRegion(request, userid);
+            if (dbResponse != null)
+            {
+                var ds = dbResponse.Data as DataSet;
+                if (ds != null && ds.Tables[0] != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    response.Data = ds;
+                    response.success = true;
+                    response.message = Constant.ResponseMsg.Success;
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = Constant.ResponseMsg.NoData;
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = Constant.ResponseMsg.NoData;
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
         }
 
         #endregion

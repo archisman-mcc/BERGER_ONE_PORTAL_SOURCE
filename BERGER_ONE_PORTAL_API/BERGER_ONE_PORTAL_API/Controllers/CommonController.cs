@@ -1,18 +1,20 @@
 ﻿using BERGER_ONE_PORTAL_API.Common;
 using BERGER_ONE_PORTAL_API.Common.Utilty;
+using BERGER_ONE_PORTAL_API.Dtos;
+using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
+using BERGER_ONE_PORTAL_API.Dtos.RequestDto.Protecton;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
+using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
+using BERGER_ONE_PORTAL_API.Filters;
+using BERGER_ONE_PORTAL_API.Logic;
+using BERGER_ONE_PORTAL_API.Logic.Protecton;
+using BERGER_ONE_PORTAL_API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BERGER_ONE_PORTAL_API.Dtos;
-using BERGER_ONE_PORTAL_API.Logic;
 using Newtonsoft.Json.Linq;
-using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
-using BERGER_ONE_PORTAL_API.Filters;
-using BERGER_ONE_PORTAL_API.Dtos.UserProfileResponse;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
-using Microsoft.AspNetCore.Cors;
-using BERGER_ONE_PORTAL_API.Models;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto.Protecton;
 
 namespace BERGER_ONE_PORTAL_API.Controllers
 {
@@ -71,6 +73,14 @@ namespace BERGER_ONE_PORTAL_API.Controllers
 
         [HttpPost]
         public async Task<EpcaStatusResponseDto?> GetLegalStatusList([FromBody] LeaglStatusRequestDto dto) => await _commonLogic.GetLegalStatusList(dto);
+
+        [HttpPost]
+        public async Task<GetRegionResponseDto?> GetProtectonRegion([FromServices] ICommonLogic commonLogic, [FromBody] GetProtectonRegionRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await commonLogic.GetProtectonRegion(dto, userDetails.user_id);
+        }
+
         #endregion
 
         #region For Form Menu Master:  
