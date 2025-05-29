@@ -8,6 +8,7 @@ const BASE_ENDPOINTS = {
     Epca: 'Epca/',
     Legal: 'Legal/',
     Report: 'Report/',
+    ProtectonDsr: 'PROTECTON/DSR/',
 };
 
 
@@ -101,15 +102,19 @@ const ALL_ENDPOINTS = {
     GetProjectList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetProjectList',
     GetCalculatedGC: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetCalculatedGC',
 
+    // Protecton DSR
+    UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
+    UserApplDlrSalesDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSalesDtls',
+
     //#endregion
 };
 
 export const ENDPOINTS = {
-    BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
-    BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
 
-    // BASE_URL_DEV: 'https://localhost:36554/api/',
-    // BASE_URL_PROD: 'https://localhost:36554/api/',
+    BASE_URL_DEV: 'https://localhost:36554/api/',
+    BASE_URL_PROD: 'https://localhost:36554/api/',
     ...ALL_ENDPOINTS,
 };
 

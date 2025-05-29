@@ -90,6 +90,8 @@ const EPCAHOApprovalList = () => {
             return;
         }
         setLoading(false);
+        console.log("ePCA List Data:", data);
+        
     };
 
     const GetPcaStatusData = async () => {
