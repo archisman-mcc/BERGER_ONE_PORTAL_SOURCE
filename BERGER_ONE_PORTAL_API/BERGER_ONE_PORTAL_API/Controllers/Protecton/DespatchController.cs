@@ -19,7 +19,7 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
     public class DespatchController : ControllerBase
     {
         [HttpGet]
-        public async Task<DespatchResponseDto?> GetDespatchDetails([FromServices] DespatchLogic _despatchLogic, [FromQuery] DespatchDetailsRequestDto dto)
+        public async Task<DespatchResponseDto?> GetDespatchDetails([FromServices] IDespatchLogic _despatchLogic, [FromQuery] DespatchDetailsRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
             return await _despatchLogic.GetDespatchDetails(dto, userDetails.user_id);
