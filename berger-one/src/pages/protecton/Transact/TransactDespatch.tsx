@@ -123,18 +123,23 @@ const TransactDespatch = () => {
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
+        enableRowActions: true,
+        positionActionsColumn: "last",
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
+                overflowX: 'hidden',
             },
-        }
+        },
+        renderRowActions: ({ row }) => (
+            <button
+                onClick={() => console.log("Additional action for:", row.original)}
+                className="bg-blue-500 text-white px-2 py-1 rounded"
+            >
+                View Details
+            </button>
+        ),
     });
-
-    // New function to handle row logging
-    const handleRowAction = (row: any) => {
-        console.log(row);
-    }
 
     useEffect(() => {
         GetRegion();
@@ -236,21 +241,9 @@ const TransactDespatch = () => {
                 </div>
             </div>
 
-            {/* <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
-                <MantineReactTable table={table} />
-            </div> */}
-
             <div className="mb-2 max-h-[55vh] overflow-y-auto">
                 <MantineReactTable
                     table={table}
-                    renderRowActions={({ row }) => (
-                        <button
-                            onClick={() => handleRowAction(row.original)}
-                            className="bg-green-500 text-white px-2 py-1 rounded"
-                        >
-                            Log Row
-                        </button>
-                    )}
                 />
             </div>
 
