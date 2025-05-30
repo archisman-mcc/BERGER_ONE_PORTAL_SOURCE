@@ -240,7 +240,7 @@ const TransactDespatch = () => {
                 <MantineReactTable table={table} />
             </div> */}
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+            <div className="mb-2 max-h-[55vh] overflow-y-auto">
                 <MantineReactTable
                     table={table}
                     renderRowActions={({ row }) => (
