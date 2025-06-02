@@ -10,6 +10,7 @@ const BASE_ENDPOINTS = {
     Report: 'Report/',
     ProtectonDsr: 'PROTECTON/DSR/',
     ProtectonDespatch: 'PROTECTON/Despatch/',
+    ProtectonStock: 'PROTECTON/Stock/',
 };
 
 
@@ -110,6 +111,11 @@ const ALL_ENDPOINTS = {
 
     //Protecton Despatch
     GetDespatchDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDespatch + 'GetDespatchDetails',
+
+    // Protecton Stock
+    GetPrdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetPrdList',
+    GetShdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetShdList',
+    GetSkuList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetSkuList',
 
     //#endregion
 };
