@@ -6,17 +6,21 @@ import Select from 'react-select';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import { CiSearch } from "react-icons/ci"
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
+import { Modal, Button } from '@mantine/core'; // <-- Import Mantine's Modal
 
 const TransactDespatch = () => {
 
     const [loading, setLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [data, setData] = useState<any>({
         regionList: [],
         depotList: [],
         selectedRegion: '',
         selectedDepot: '',
         valueInPage: 7,
-        despatchData: []
+        despatchData: [],
+        despatchDetailsData: [],
+        despatchDetailsDate: ''
     });
 
     const user = UseAuthStore((state: any) => state.userDetails);
@@ -83,13 +87,62 @@ const TransactDespatch = () => {
         setLoading(false);
     }
 
+    const GetDespatchDetailswithTxn = async (trx_id: number) => {
+        setLoading(true);
+        const payload: any = {
+            region: data.selectedRegion,
+            depot_code: data.selectedDepot,
+            days: data.valueInPage,
+            rep_type: 'SKU',
+            pri_sec: 'PRI',
+            trx_id: trx_id,
+        };
+        try {
+            const response: any = await despatch.GetDespatchDetails(payload);
+                        setData((prevData: any) => {
+                const newDespatchDetailsData = (response.data.table || []).map((item: any) => ({
+                    ...item,
+                    skudtl: `${item.sku_desc} (${item.sku_code})`
+                }));
+                return {
+                    ...prevData,
+                    despatchDetailsData: newDespatchDetailsData,
+                };
+            });
+        } catch (error) {
+            return;
+        }
+        setLoading(false);
+    }
+
     type DespatchType = {
-        // set custom column headings
         dealer: string;
         trx_id: number;
         fnl_vol: number;
         status: string;
     };
+
+    type DespatchDetailsType = {
+        skudtl: string;
+        vol: number;
+    };
+
+    const columnsDtls = useMemo<MRT_ColumnDef<DespatchDetailsType>[]>(
+        () => [
+            {
+                accessorKey: 'skudtl',
+                header: 'SKU Details',
+                size: 50,
+            },
+            {
+                accessorKey: 'vol',
+                header: 'Volume',
+                size: 50,
+            },
+        ],
+        []
+    );
+
     const columns = useMemo<MRT_ColumnDef<DespatchType>[]>(
         () => [
             {
@@ -132,23 +185,42 @@ const TransactDespatch = () => {
             },
         },
         renderRowActions: ({ row }) => (
-            <button
-                onClick={() => console.log("Additional action for:", row.original)}
-                className="bg-blue-500 text-white px-2 py-1 rounded"
+            <Button
+                variant="filled"
+                color="blue"
+                size="xs"
+                onClick={() => {
+                    setModalOpen(true);
+                    GetDespatchDetailswithTxn(row.original.trx_id);
+                    setData((prevData: any) => ({
+                        ...prevData,
+                        despatchDetailsDate: row.original.trx_date
+                    }));
+                }}
             >
                 View Details
-            </button>
+            </Button>
         ),
+    });
+
+    const tableDetails = useMantineReactTable({
+        columns: columnsDtls,
+        data: data.despatchDetailsData,
+        enableColumnResizing: true,
+        enableTopToolbar: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        columnResizeMode: 'onChange',
+        mantineTableContainerProps: {
+            style: {
+                overflowX: 'hidden',
+            },
+        },
     });
 
     useEffect(() => {
         GetRegion();
     }, []);
-
-    useEffect(() => {
-        console.log("Despatch Data Updated: ", data.despatchData);
-
-    }, [data.despatchData]);
 
     return (
         <>
@@ -164,12 +236,10 @@ const TransactDespatch = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            // Map to the correct properties from API
                             options={data.regionList.map((d: any) => ({
                                 value: d.depot_regn,
                                 label: d.regn_new,
                             }))}
-                            // Display the currently selectedRegion from state
                             value={
                                 data.selectedRegion
                                     ? { value: data.selectedRegion, label: data.selectedRegion }
@@ -242,10 +312,67 @@ const TransactDespatch = () => {
             </div>
 
             <div className="mb-2 max-h-[55vh] overflow-y-auto">
-                <MantineReactTable
-                    table={table}
-                />
+                <MantineReactTable table={table} />
             </div>
+
+            <Modal
+                opened={modalOpen}
+                onClose={() => {
+                    setModalOpen(false);
+                    setData((prevData: any) => ({
+                        ...prevData,
+                        despatchDetailsData: [],
+                        despatchDetailsDate: ''
+                    }));
+                }}
+                // title="Detail View"
+                size="80vw"
+            >
+                <div className="p-4 min-h-[80vh]">
+
+                    <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
+                        <h5 className="text-lg font-semibold dark:text-white-light">Despatch Details</h5>
+                    </div>
+
+                    <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Dealer:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].dealer : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Region:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].regn : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Depot:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].org : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Ship Id:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].trx_id : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Ship Date:</label>
+                                <input type="text" value={data.despatchDetailsDate} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div className="col-span-2">
+                                <label className="block text-sm font-semibold mb-1">Transporter Name:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].transporter_name : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-1">Vehicle No:</label>
+                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].vehicle_no : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-2 max-h-[55vh] overflow-y-auto">
+                        <MantineReactTable table={tableDetails} />
+                    </div>
+
+                </div>
+            </Modal>
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
