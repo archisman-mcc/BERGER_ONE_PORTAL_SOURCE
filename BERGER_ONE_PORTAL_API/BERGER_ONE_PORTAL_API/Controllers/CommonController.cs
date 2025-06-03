@@ -81,6 +81,13 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             return await commonLogic.GetProtectonRegion(dto, userDetails.user_id);
         }
 
+        [HttpGet]
+        public async Task<GetRegionResponseDto?> GetProtectonApplicableTerr([FromServices] ICommonLogic commonLogic, [FromQuery] GetProtectonApplicableTerrRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await commonLogic.GetProtectonApplicableTerr(dto, userDetails.user_id);
+        }
+
         #endregion
 
         #region For Form Menu Master:  

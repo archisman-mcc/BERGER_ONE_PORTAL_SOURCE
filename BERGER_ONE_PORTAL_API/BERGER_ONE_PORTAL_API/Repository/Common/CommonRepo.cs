@@ -919,6 +919,69 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             return response;
         }
 
+        public async Task<MSSQLResponse?> GetProtectonApplicableTerr(GetProtectonApplicableTerrRequestDto dto, string userid)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[4];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = userid
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@region",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.region)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.depot_code)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@user_appl_yn",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.user_appl_yn)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[get_applicable_terr]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
         #endregion
 
         #region For Form Menu Master:

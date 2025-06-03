@@ -147,6 +147,38 @@ namespace BERGER_ONE_PORTAL_API.Logic
             return response;
         }
 
+        public async Task<GetRegionResponseDto?> GetProtectonApplicableTerr(GetProtectonApplicableTerrRequestDto? request, string userid)
+        {
+            GetRegionResponseDto response = new GetRegionResponseDto();
+            var dbResponse = await _commonRepo.GetProtectonApplicableTerr(request, userid);
+            if (dbResponse != null)
+            {
+                var ds = dbResponse.Data as DataSet;
+                if (ds != null && ds.Tables[0] != null && ds.Tables[0].Rows.Count > 0)
+                {
+                    response.Data = ds;
+                    response.success = true;
+                    response.message = Constant.ResponseMsg.Success;
+                    response.statusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response.Data = null;
+                    response.success = false;
+                    response.message = Constant.ResponseMsg.NoData;
+                    response.statusCode = HttpStatusCode.NoContent;
+                }
+            }
+            else
+            {
+                response.Data = null;
+                response.success = false;
+                response.message = Constant.ResponseMsg.NoData;
+                response.statusCode = HttpStatusCode.NoContent;
+            }
+            return response;
+        }
+
         #endregion
 
         #region For Form Menu Master:

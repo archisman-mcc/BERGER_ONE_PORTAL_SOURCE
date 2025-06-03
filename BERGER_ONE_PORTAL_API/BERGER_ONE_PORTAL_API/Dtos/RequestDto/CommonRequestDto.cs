@@ -200,4 +200,12 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         public long? app_id { get; set; }
         public string? user_appl_yn { get; set; } = "Y";
     }
+
+    public class GetProtectonApplicableTerrRequestDto
+    {
+        public string? region { get; set; }
+        public string? depot_code { get; set; }
+        public long? app_id { get; set; }
+        public string? user_appl_yn { get; set; } = "Y";
+    }
 }
