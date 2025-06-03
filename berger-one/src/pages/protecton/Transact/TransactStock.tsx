@@ -194,13 +194,6 @@ const TransactStock = () => {
         GetProduct();
     }, []);
 
-    useEffect(() => {
-        console.log("List:", data.selectedRegion, data.selectedDepot, data.selectedProduct, data.selectedShade);
-    }, [data.selectedRegion, data.selectedDepot, data.selectedProduct, data.selectedShade]);
-
-    useEffect(() => {
-        console.log("skuList:", data.skuList);
-    }, [data.skuList]);
 
     return (
         <>
