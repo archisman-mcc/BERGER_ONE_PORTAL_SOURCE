@@ -192,11 +192,6 @@ const TransactStock = () => {
         GetProduct();
     }, []);
 
-    useEffect(() => {
-        console.log("Selected:", data.asOn);
-
-    }, [data.asOn]);
-
 
     return (
         <>

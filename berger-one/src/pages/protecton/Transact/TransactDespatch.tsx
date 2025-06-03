@@ -6,7 +6,8 @@ import Select from 'react-select';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import { CiSearch } from "react-icons/ci"
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import { Modal, Button } from '@mantine/core'; 
+import { Modal, Button } from '@mantine/core';
+import AnimateHeight from "react-animate-height";
 
 const TransactDespatch = () => {
 
@@ -22,6 +23,10 @@ const TransactDespatch = () => {
         despatchDetailsData: [],
         despatchDetailsDate: ''
     });
+
+    const [openOrg, setOpenOrg] = useState<string | null>(null);
+    const [openDate, setOpenDate] = useState<string | null>(null);
+
 
     const user = UseAuthStore((state: any) => state.userDetails);
 
@@ -77,10 +82,43 @@ const TransactDespatch = () => {
         };
         try {
             const response: any = await despatch.GetDespatchDetails(payload);
-            setData((prevData: any) => ({
-                ...prevData,
-                despatchData: response.data.table || [],
+            // setData((prevData: any) => ({
+            //     ...prevData,
+            //     despatchData: response.data.table || [],
+            // }));
+
+            const flatArray: any[] = response.data.table || [];
+
+            // 1) First, reduce into a nested object: { [org]: { [trx_date]: [items...] } }
+            const nestedObj = flatArray.reduce((acc, item) => {
+                const { org, trx_date } = item;
+
+                if (!acc[org]) {
+                    acc[org] = {};
+                }
+
+                if (!acc[org][trx_date]) {
+                    acc[org][trx_date] = [];
+                }
+
+                acc[org][trx_date].push(item);
+                return acc;
+            }, {} as Record<string, Record<string, any[]>>);
+
+            // 2) Convert that nested object into an array-of-arrays 
+            const groupedArray = Object.entries(nestedObj).map(([orgName, datesMap]) => ({
+                org: orgName,
+                dates: Object.entries(datesMap).map(([dateStr, itemsHere]) => ({
+                    trx_date: dateStr,
+                    items: itemsHere,
+                })),
             }));
+
+            setData((prev) => ({
+                ...prev,
+                despatchData: groupedArray,
+            }));
+
         } catch (error) {
             return;
         }
@@ -99,7 +137,7 @@ const TransactDespatch = () => {
         };
         try {
             const response: any = await despatch.GetDespatchDetails(payload);
-                        setData((prevData: any) => {
+            setData((prevData: any) => {
                 const newDespatchDetailsData = (response.data.table || []).map((item: any) => ({
                     ...item,
                     skudtl: `${item.sku_desc} (${item.sku_code})`
@@ -115,12 +153,12 @@ const TransactDespatch = () => {
         setLoading(false);
     }
 
-    type DespatchType = {
-        dealer: string;
-        trx_id: number;
-        fnl_vol: number;
-        status: string;
-    };
+    // type DespatchType = {
+    //     dealer: string;
+    //     trx_id: number;
+    //     fnl_vol: number;
+    //     status: string;
+    // };
 
     type DespatchDetailsType = {
         skudtl: string;
@@ -143,65 +181,65 @@ const TransactDespatch = () => {
         []
     );
 
-    const columns = useMemo<MRT_ColumnDef<DespatchType>[]>(
-        () => [
-            {
-                accessorKey: 'dealer',
-                header: 'Source',
-                size: 50,
-            },
-            {
-                accessorKey: 'trx_id',
-                header: 'Ship Id',
-                size: 50,
-            },
-            {
-                accessorKey: 'fnl_vol',
-                header: 'Vol',
-                size: 50,
-            },
-            {
-                accessorKey: 'status',
-                header: 'Status',
-                size: 50,
-            },
-        ],
-        []
-    );
+    // const columns = useMemo<MRT_ColumnDef<DespatchType>[]>(
+    //     () => [
+    //         {
+    //             accessorKey: 'dealer',
+    //             header: 'Source',
+    //             size: 50,
+    //         },
+    //         {
+    //             accessorKey: 'trx_id',
+    //             header: 'Ship Id',
+    //             size: 50,
+    //         },
+    //         {
+    //             accessorKey: 'fnl_vol',
+    //             header: 'Vol',
+    //             size: 50,
+    //         },
+    //         {
+    //             accessorKey: 'status',
+    //             header: 'Status',
+    //             size: 50,
+    //         },
+    //     ],
+    //     []
+    // );
 
-    const table = useMantineReactTable({
-        columns,
-        data: data.despatchData,
-        enableColumnResizing: true,
-        enableTopToolbar: false,
-        enableSorting: false,
-        enableColumnActions: false,
-        enableRowActions: true,
-        positionActionsColumn: "last",
-        columnResizeMode: 'onChange',
-        mantineTableContainerProps: {
-            style: {
-                overflowX: 'hidden',
-            },
-        },
-        renderRowActions: ({ row }) => (
-            <Button
-                variant="filled"
-                color="blue"
-                size="xs"
-                onClick={() => {
-                    setModalOpen(true);
-                    GetDespatchDetailswithTxn(row.original.trx_id);
-                    setData((prevData: any) => ({
-                        ...prevData,
-                        despatchDetailsDate: row.original.trx_date
-                    }));
-                }}
-            >
-                View Details
-            </Button>
-        ),
-    });
+    // const table = useMantineReactTable({
+    //     columns,
+    //     data: data.despatchData,
+    //     enableColumnResizing: true,
+    //     enableTopToolbar: false,
+    //     enableSorting: false,
+    //     enableColumnActions: false,
+    //     enableRowActions: true,
+    //     positionActionsColumn: "last",
+    //     columnResizeMode: 'onChange',
+    //     mantineTableContainerProps: {
+    //         style: {
+    //             overflowX: 'hidden',
+    //         },
+    //     },
+    //     renderRowActions: ({ row }) => (
+    //         <Button
+    //             variant="filled"
+    //             color="blue"
+    //             size="xs"
+    //             onClick={() => {
+    //                 setModalOpen(true);
+    //                 GetDespatchDetailswithTxn(row.original.trx_id);
+    //                 setData((prevData: any) => ({
+    //                     ...prevData,
+    //                     despatchDetailsDate: row.original.trx_date
+    //                 }));
+    //             }}
+    //         >
+    //             View Details
+    //         </Button>
+    //     ),
+    // });
 
     const tableDetails = useMantineReactTable({
         columns: columnsDtls,
@@ -257,10 +295,13 @@ const TransactDespatch = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.depotList.map((d: any) => ({
-                                value: d.depot_code,
-                                label: d.depot_name,
-                            }))}
+                            options={[
+                                { value: '', label: 'ALL' },
+                                ...data.depotList.map((d: any) => ({
+                                    value: d.depot_code,
+                                    label: d.depot_name,
+                                })),
+                            ]}
                             value={
                                 data.selectedDepot
                                     ? { value: data.selectedDepot, label: data.depotList.find((d: any) => d.depot_code === data.selectedDepot)?.depot_name }
@@ -311,9 +352,114 @@ const TransactDespatch = () => {
                 </div>
             </div>
 
-            <div className="mb-2 max-h-[55vh] overflow-y-auto">
+            {/* <div className="mb-2 max-h-[55vh] overflow-y-auto">
                 <MantineReactTable table={table} />
+            </div> */}
+
+            {/* show the despatch data in acordian */}
+
+                  <div className="space-y-2">
+                {data.despatchData.map((group: any) => (
+                    <div key={group.org} className="rounded border border-[#d3d3d3]">
+                        <button
+                            type="button"
+                            className="flex w-full items-center px-3 py-2 text-white-dark font-semibold bg-slate-400"
+                            onClick={() => setOpenOrg(openOrg === group.org ? null : group.org)}
+                        >
+                            <span>{group.org}</span>
+                            <div className="ltr:ml-auto rtl:mr-auto">
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className={openOrg === group.org ? "rotate-180" : ""}
+                                >
+                                    <path
+                                        d="M19 9L12 15L5 9"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <AnimateHeight duration={300} height={openOrg === group.org ? "auto" : 0}>
+                            <div className="p-2">
+                                {group.dates.map((dateGroup: any) => (
+                                    <div key={dateGroup.trx_date} className="mb-2">
+                                        <button
+                                            type="button"
+                                            className="custAccoHead flex w-full items-center px-3 py-2 text-white-dark"
+                                            onClick={() => setOpenDate(openDate === dateGroup.trx_date ? null : dateGroup.trx_date)}
+                                        >
+                                            <span>{dateGroup.trx_date}</span>
+                                            <div className="ltr:ml-auto rtl:mr-auto">
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className={openDate === dateGroup.trx_date ? "rotate-180" : ""}
+                                                >
+                                                    <path
+                                                        d="M19 9L12 15L5 9"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    ></path>
+                                                </svg>
+                                            </div>
+                                        </button>
+                                        <AnimateHeight duration={300} height={openDate === dateGroup.trx_date ? "auto" : 0}>
+                                            <div className="p-2">
+                                                <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
+                                                    <span>Dealer</span>
+                                                    <span>Ship Id</span>
+                                                    <span>Vol</span>
+                                                    <span>Status</span>
+                                                    <span>Action</span>
+                                                </div>
+                                                {dateGroup.items.map((item: any, idx: number) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="grid grid-cols-5 gap-4 py-1 border-b last:border-0"
+                                                    >
+                                                        <span>{item.dealer}</span>
+                                                        <span>{item.trx_id}</span>
+                                                        <span>{item.fnl_vol}</span>
+                                                        <span>{item.status}</span>
+                                                        <span>
+                                                            <button
+                                                                className="text-blue-500 px-2 rounded bg-blue-100"
+                                                                onClick={() => {
+                                                                    setModalOpen(true);
+                                                                    GetDespatchDetailswithTxn(item.trx_id);
+                                                                    setData((prevData: any) => ({
+                                                                        ...prevData,
+                                                                        despatchDetailsDate: item.trx_date,
+                                                                    }));
+                                                                }}
+                                                            >
+                                                                View Details
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </AnimateHeight>
+                                    </div>
+                                ))}
+                            </div>
+                        </AnimateHeight>
+                    </div>
+                ))}
             </div>
+
 
             <Modal
                 opened={modalOpen}

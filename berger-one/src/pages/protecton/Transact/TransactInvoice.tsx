@@ -457,42 +457,50 @@ const TransactInvoice = () => {
             >
                 {data.invoiceDetails.length > 0 ? (
 
-                    <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Dealer:</label>
-                                <input type="text" value={data.invoiceDetails[0].dealer} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Region:</label>
-                                <input type="text" value={data.invoiceDetails[0].regn} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Depot:</label>
-                                <input type="text" value={data.invoiceDetails[0].org} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Invoice Id:</label>
-                                <input type="text" value={data.invoiceDetails[0].trx_number} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Invoice Date:</label>
-                                <input type="text" value={data.invoiceDetails[0].trx_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Vehicle No:</label>
-                                <input type="text" value={data.invoiceDetails[0].vehicle_no} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Despatch Date:</label>
-                                <input type="text" value={data.invoiceDetails[0].despatch_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
+                    <div>
+                        <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
+                            <h5 className="text-lg font-semibold dark:text-white-light">Invoice Details</h5>
                         </div>
 
-                        <div className="mb-2 overflow-y-auto">
-                            <MantineReactTable table={tableDetails} />
-                        </div>
 
+                        <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
+
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Dealer:</label>
+                                    <input type="text" value={data.invoiceDetails[0].dealer} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Region:</label>
+                                    <input type="text" value={data.invoiceDetails[0].regn} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Depot:</label>
+                                    <input type="text" value={data.invoiceDetails[0].org} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Invoice Id:</label>
+                                    <input type="text" value={data.invoiceDetails[0].trx_number} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Invoice Date:</label>
+                                    <input type="text" value={data.invoiceDetails[0].trx_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Vehicle No:</label>
+                                    <input type="text" value={data.invoiceDetails[0].vehicle_no} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Despatch Date:</label>
+                                    <input type="text" value={data.invoiceDetails[0].despatch_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                            </div>
+
+                            <div className="mb-2 overflow-y-auto">
+                                <MantineReactTable table={tableDetails} />
+                            </div>
+
+                        </div>
                     </div>
 
 
