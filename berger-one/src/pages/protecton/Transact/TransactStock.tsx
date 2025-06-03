@@ -317,10 +317,10 @@ const TransactStock = () => {
 
             <div className="space-y-2">
                 {data.skuList.map((item: any) => (
-                    <div key={item.sku} className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                    <div key={item.sku} className="rounded border border-[#d3d3d3]">
                         <button
                             type="button"
-                            className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`}
+                            className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark`}
                             onClick={() => setOpenSku(openSku === item.sku ? null : item.sku)}
                         >
                             <span>({item.descr} - ({item.sku}))</span>

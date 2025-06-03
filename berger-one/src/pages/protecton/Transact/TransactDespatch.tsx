@@ -6,7 +6,7 @@ import Select from 'react-select';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import { CiSearch } from "react-icons/ci"
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import { Modal, Button } from '@mantine/core'; // <-- Import Mantine's Modal
+import { Modal, Button } from '@mantine/core'; 
 
 const TransactDespatch = () => {
 
@@ -325,7 +325,6 @@ const TransactDespatch = () => {
                         despatchDetailsDate: ''
                     }));
                 }}
-                // title="Detail View"
                 size="80vw"
             >
                 <div className="p-4 min-h-[80vh]">
