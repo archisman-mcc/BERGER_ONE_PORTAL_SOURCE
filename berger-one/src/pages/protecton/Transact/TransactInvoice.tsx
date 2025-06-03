@@ -1,32 +1,32 @@
-import { useEffect, useState, useMemo } from "react";
-import * as despatch from '../../../services/api/protectonTransact/TransactDespatch';
-import * as common from '../../../services/api/users/UserProfile';
+import { useEffect, useMemo, useState } from "react";
 import { UseAuthStore } from "../../../services/store/AuthStore";
-import Select from 'react-select';
+import * as common from '../../../services/api/users/UserProfile';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
-import { CiSearch } from "react-icons/ci"
-import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import { Modal } from '@mantine/core';
+import * as Inoice from '../../../services/api/protectonTransact/TransactInvoice';
+import Select from 'react-select';
+import { CiSearch } from "react-icons/ci";
 import AnimateHeight from "react-animate-height";
+import { Modal } from "@mantine/core";
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
 
-const TransactDespatch = () => {
+const TransactInvoice = () => {
 
     const [loading, setLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [data, setData] = useState<any>({
         regionList: [],
         depotList: [],
+        terrList: [],
         selectedRegion: '',
         selectedDepot: '',
+        selectedTerr: '',
         valueInPage: 7,
-        despatchData: [],
-        despatchDetailsData: [],
-        despatchDetailsDate: ''
+        invoiceList: [],
+        invoiceDetails: []
     });
 
     const [openOrg, setOpenOrg] = useState<string | null>(null);
-    const [openDate, setOpenDate] = useState<string | null>(null);
-
+    const [openDealer, setOpenDealer] = useState<string | null>(null);
 
     const user = UseAuthStore((state: any) => state.userDetails);
 
@@ -52,6 +52,7 @@ const TransactDespatch = () => {
 
     const Getdepot = async (region: string) => {
         setLoading(true);
+
         const payload: any = {
             user_id: user.user_id,
             region: region,
@@ -71,98 +72,136 @@ const TransactDespatch = () => {
         setLoading(false);
     }
 
-    const GetDespatchDetails = async () => {
+    const GetTerr = async (region: string) => {
+        setLoading(true);
+
+        const payload: any = {
+            region: region,
+            app_id: '15',
+            user_appl_yn: 'Y'
+        };
+        try {
+            const response: any = await common.GetProtectonApplicableTerr(payload);
+            setData((prevData: any) => ({
+                ...prevData,
+                terrList: response.data.table || [],
+                selectedRegion: region,
+                selectedTerr: ''
+            }));
+        } catch (error) {
+            return;
+        }
+        setLoading(false);
+    }
+
+    const GetInvoice = async () => {
         setLoading(true);
         const payload: any = {
             region: data.selectedRegion,
             depot_code: data.selectedDepot,
+            terr_code: data.selectedTerr,
             days: data.valueInPage,
-            rep_type: 'SRC',
-            pri_sec: 'PRI',
+            rep_type: 'TRX',
         };
+
         try {
-            const response: any = await despatch.GetDespatchDetails(payload);
-            const flatArray: any[] = response.data.table || [];
+            const response: any = await Inoice.GetInvoiceDetails(payload);
+            const rawList: Array<any> = response.data.table || [];
 
-            // 1) First, reduce into a nested object: { [org]: { [trx_date]: [items...] } }
-            const nestedObj = flatArray.reduce((acc, item) => {
-                const { org, trx_date } = item;
+            // 1) First pass: build a nested map { [orgName]: { org, dealers: { [dealerName]: { dealer, items: [] } } } }
+            const orgMap: Record<
+                string,
+                { org: string; dealers: Record<string, { dealer: string; items: any[] }> }
+            > = rawList.reduce((acc, invoice) => {
+                const orgKey = invoice.org;
+                const dealerKey = invoice.dealer;
 
-                if (!acc[org]) {
-                    acc[org] = {};
+                // If we haven't seen this org yet, initialize its entry:
+                if (!acc[orgKey]) {
+                    acc[orgKey] = {
+                        org: orgKey,
+                        dealers: {},
+                    };
                 }
 
-                if (!acc[org][trx_date]) {
-                    acc[org][trx_date] = [];
+                // If we haven't seen this dealer under that org yet, initialize it:
+                if (!acc[orgKey].dealers[dealerKey]) {
+                    acc[orgKey].dealers[dealerKey] = {
+                        dealer: dealerKey,
+                        items: [],
+                    };
                 }
 
-                acc[org][trx_date].push(item);
+                // Push the raw invoice object into that dealer’s item‐list
+                acc[orgKey].dealers[dealerKey].items.push(invoice);
                 return acc;
-            }, {} as Record<string, Record<string, any[]>>);
+            }, {} as typeof orgMap);
 
-            // 2) Convert that nested object into an array-of-arrays 
-            const groupedArray = Object.entries(nestedObj).map(([orgName, datesMap]) => ({
-                org: orgName,
-                dates: Object.entries(datesMap as Record<string, any[]>).map(([dateStr, itemsHere]) => ({
-                    trx_date: dateStr,
-                    items: itemsHere,
+            // 2) Convert that map into an array-of-orgs → array-of-dealers → array-of-items
+            const groupedList = Object.values(orgMap).map(orgEntry => ({
+                org: orgEntry.org,
+                dealers: Object.values(orgEntry.dealers).map(dealerEntry => ({
+                    dealer: dealerEntry.dealer,
+                    items: dealerEntry.items,
                 })),
             }));
 
-            setData((prev: any) => ({
-                ...prev,
-                despatchData: groupedArray,
+            // 3) Save the grouped structure into state
+            setData((prevData: any) => ({
+                ...prevData,
+                invoiceList: groupedList,
             }));
-
         } catch (error) {
+            // Early return—a grouped invoiceList will remain whatever it was before
             return;
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
-    const GetDespatchDetailswithTxn = async (trx_id: number) => {
+    const GetInvoiceDetails = async (trx_id: string) => {
         setLoading(true);
         const payload: any = {
             region: data.selectedRegion,
             depot_code: data.selectedDepot,
-            days: data.valueInPage,
-            rep_type: 'SKU',
-            pri_sec: 'PRI',
+            terr_code: data.selectedTerr,
             trx_id: trx_id,
+            rep_type: 'SKU',
         };
+
         try {
-            const response: any = await despatch.GetDespatchDetails(payload);
-            setData((prevData: any) => {
-                const newDespatchDetailsData = (response.data.table || []).map((item: any) => ({
-                    ...item,
-                    skudtl: `${item.sku_desc} (${item.sku_code})`
-                }));
-                return {
-                    ...prevData,
-                    despatchDetailsData: newDespatchDetailsData,
-                };
-            });
+            const response: any = await Inoice.GetInvoiceDetails(payload);
+            setData((prevData: any) => ({
+                ...prevData,
+                invoiceDetails: response.data.table || [],
+            }));
         } catch (error) {
-            return;
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     type DespatchDetailsType = {
-        skudtl: string;
+        sku_desc: string;
         vol: number;
+        val: number;
     };
 
-    const columnsDtls = useMemo<MRT_ColumnDef<DespatchDetailsType>[]>(
+    const columns = useMemo<MRT_ColumnDef<DespatchDetailsType>[]>(
         () => [
             {
-                accessorKey: 'skudtl',
+                accessorKey: 'sku_desc',
                 header: 'SKU Details',
                 size: 50,
             },
             {
                 accessorKey: 'vol',
-                header: 'Volume',
+                header: 'Vol',
+                size: 50,
+            },
+            {
+                accessorKey: 'val',
+                header: 'Val',
                 size: 50,
             },
         ],
@@ -170,8 +209,8 @@ const TransactDespatch = () => {
     );
 
     const tableDetails = useMantineReactTable({
-        columns: columnsDtls,
-        data: data.despatchDetailsData,
+        columns,
+        data: data.invoiceDetails,
         enableColumnResizing: true,
         enableTopToolbar: false,
         enableSorting: false,
@@ -184,6 +223,7 @@ const TransactDespatch = () => {
         },
     });
 
+
     useEffect(() => {
         GetRegion();
     }, []);
@@ -191,21 +231,23 @@ const TransactDespatch = () => {
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
-                <h5 className="text-lg font-semibold dark:text-white-light">Transact Despatch</h5>
+                <h5 className="text-lg font-semibold dark:text-white-light">Transact Invoice</h5>
             </div>
 
             <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    {/* Region */}
+
                     <div>
                         <label className="block text-sm font-semibold mb-1">Region:</label>
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.regionList.map((d: any) => ({
-                                value: d.depot_regn,
-                                label: d.regn_new,
-                            }))}
+                            options={[
+                                ...data.regionList.map((d: any) => ({
+                                    value: d.depot_regn,
+                                    label: d.regn_new,
+                                })),
+                            ]}
                             value={
                                 data.selectedRegion
                                     ? { value: data.selectedRegion, label: data.selectedRegion }
@@ -213,11 +255,11 @@ const TransactDespatch = () => {
                             }
                             onChange={(event) => {
                                 Getdepot(event?.value);
+                                GetTerr(event?.value);
                             }}
                         />
                     </div>
 
-                    {/* Depot */}
                     <div>
                         <label className="block text-sm font-semibold mb-1">Depot:</label>
                         <Select
@@ -237,6 +279,26 @@ const TransactDespatch = () => {
                             }
                             onChange={(event) => {
                                 setData((pre: any) => ({ ...pre, selectedDepot: event?.value }))
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Territory:</label>
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
+                            options={data.terrList.map((d: any) => ({
+                                value: d.terr_code,
+                                label: d.terr_name,
+                            }))}
+                            value={
+                                data.selectedTerr
+                                    ? { value: data.selectedTerr, label: data.terrList.find((d: any) => d.terr_code === data.selectedTerr)?.terr_name }
+                                    : null
+                            }
+                            onChange={(event) => {
+                                setData((pre: any) => ({ ...pre, selectedTerr: event?.value }))
                             }}
                         />
                     </div>
@@ -265,24 +327,24 @@ const TransactDespatch = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-                    {/* Search Button */}
 
                     <div className="flex items-end space-x-2">
                         <button
                             className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center"
                             onClick={(e) => {
                                 e.preventDefault();
-                                GetDespatchDetails();
+                                GetInvoice();
                             }}>
                             <CiSearch /> <span>Search</span>
                         </button>
                     </div>
+
                 </div>
             </div>
 
-                  <div className="space-y-2">
-                {data.despatchData.map((group: any) => (
-                    <div key={group.org} className="rounded border border-[#d3d3d3]">
+            <div className="space-y-2">
+                {data.invoiceList.map((group: any) => (
+                    <div key={group.org} className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
                         <button
                             type="button"
                             className="flex w-full items-center px-3 py-2 text-white-dark font-semibold bg-slate-400"
@@ -310,14 +372,18 @@ const TransactDespatch = () => {
                         </button>
                         <AnimateHeight duration={300} height={openOrg === group.org ? "auto" : 0}>
                             <div className="p-2">
-                                {group.dates.map((dateGroup: any) => (
-                                    <div key={dateGroup.trx_date} className="mb-2">
+                                {group.dealers.map((dealerGroup: any) => (
+                                    <div key={dealerGroup.dealer} className="mb-2">
                                         <button
                                             type="button"
                                             className="custAccoHead flex w-full items-center px-3 py-2 text-white-dark"
-                                            onClick={() => setOpenDate(openDate === dateGroup.trx_date ? null : dateGroup.trx_date)}
+                                            onClick={() =>
+                                                setOpenDealer(
+                                                    openDealer === dealerGroup.dealer ? null : dealerGroup.dealer
+                                                )
+                                            }
                                         >
-                                            <span>{dateGroup.trx_date}</span>
+                                            <span>{dealerGroup.dealer}</span>
                                             <div className="ltr:ml-auto rtl:mr-auto">
                                                 <svg
                                                     width="16"
@@ -325,7 +391,7 @@ const TransactDespatch = () => {
                                                     viewBox="0 0 24 24"
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
-                                                    className={openDate === dateGroup.trx_date ? "rotate-180" : ""}
+                                                    className={openDealer === dealerGroup.dealer ? "rotate-180" : ""}
                                                 >
                                                     <path
                                                         d="M19 9L12 15L5 9"
@@ -337,37 +403,33 @@ const TransactDespatch = () => {
                                                 </svg>
                                             </div>
                                         </button>
-                                        <AnimateHeight duration={300} height={openDate === dateGroup.trx_date ? "auto" : 0}>
+                                        <AnimateHeight duration={300} height={openDealer === dealerGroup.dealer ? "auto" : 0}>
                                             <div className="p-2">
                                                 <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
-                                                    <span>Dealer</span>
-                                                    <span>Ship Id</span>
+                                                    <span>Inv Dt</span>
+                                                    <span>Inv No</span>
                                                     <span>Vol</span>
-                                                    <span>Status</span>
+                                                    <span>Val</span>
                                                     <span>Action</span>
                                                 </div>
-                                                {dateGroup.items.map((item: any, idx: number) => (
+                                                {dealerGroup.items.map((invoice: any, index: number) => (
                                                     <div
-                                                        key={idx}
+                                                        key={index}
                                                         className="grid grid-cols-5 gap-4 py-1 border-b last:border-0"
                                                     >
-                                                        <span>{item.dealer}</span>
-                                                        <span>{item.trx_id}</span>
-                                                        <span>{item.fnl_vol}</span>
-                                                        <span>{item.status}</span>
+                                                        <span>{invoice.trx_date}</span>
+                                                        <span>{invoice.trx_number}</span>
+                                                        <span>{invoice.fnl_vol}</span>
+                                                        <span>{invoice.val}</span>
                                                         <span>
                                                             <button
                                                                 className="text-blue-500 px-2 rounded bg-blue-100"
                                                                 onClick={() => {
+                                                                    GetInvoiceDetails(invoice.trx_id)
                                                                     setModalOpen(true);
-                                                                    GetDespatchDetailswithTxn(item.trx_id);
-                                                                    setData((prevData: any) => ({
-                                                                        ...prevData,
-                                                                        despatchDetailsDate: item.trx_date,
-                                                                    }));
                                                                 }}
                                                             >
-                                                                View Details
+                                                                View
                                                             </button>
                                                         </span>
                                                     </div>
@@ -382,64 +444,71 @@ const TransactDespatch = () => {
                 ))}
             </div>
 
-
             <Modal
                 opened={modalOpen}
                 onClose={() => {
                     setModalOpen(false);
                     setData((prevData: any) => ({
                         ...prevData,
-                        despatchDetailsData: [],
-                        despatchDetailsDate: ''
+                        invoiceDetails: [],
                     }));
                 }}
                 size="80vw"
             >
-                <div className="p-4 min-h-[80vh]">
+                {data.invoiceDetails.length > 0 ? (
 
-                    <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
-                        <h5 className="text-lg font-semibold dark:text-white-light">Despatch Details</h5>
-                    </div>
+                    <div>
+                        <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
+                            <h5 className="text-lg font-semibold dark:text-white-light">Invoice Details</h5>
+                        </div>
 
-                    <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Dealer:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].dealer : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+
+                        <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
+
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Dealer:</label>
+                                    <input type="text" value={data.invoiceDetails[0].dealer} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Region:</label>
+                                    <input type="text" value={data.invoiceDetails[0].regn} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Depot:</label>
+                                    <input type="text" value={data.invoiceDetails[0].org} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Invoice Id:</label>
+                                    <input type="text" value={data.invoiceDetails[0].trx_number} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Invoice Date:</label>
+                                    <input type="text" value={data.invoiceDetails[0].trx_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Vehicle No:</label>
+                                    <input type="text" value={data.invoiceDetails[0].vehicle_no} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Despatch Date:</label>
+                                    <input type="text" value={data.invoiceDetails[0].despatch_date} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Region:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].regn : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+
+                            <div className="mb-2 overflow-y-auto">
+                                <MantineReactTable table={tableDetails} />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Depot:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].org : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Ship Id:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].trx_id : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Ship Date:</label>
-                                <input type="text" value={data.despatchDetailsDate} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div className="col-span-2">
-                                <label className="block text-sm font-semibold mb-1">Transporter Name:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].transporter_name : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-1">Vehicle No:</label>
-                                <input type="text" value={data.despatchDetailsData.length > 0 ? data.despatchDetailsData[0].vehicle_no : ""} readOnly className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
+
                         </div>
                     </div>
 
-                    <div className="mb-2 max-h-[55vh] overflow-y-auto">
-                        <MantineReactTable table={tableDetails} />
-                    </div>
 
-                </div>
+                ) : (
+                    <div>Invoice Details Loading</div>
+                )}
             </Modal>
+
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
@@ -457,6 +526,6 @@ const TransactDespatch = () => {
             )}
         </>
     );
-};
+}
 
-export default TransactDespatch;
+export default TransactInvoice;

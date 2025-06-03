@@ -11,6 +11,7 @@ const BASE_ENDPOINTS = {
     ProtectonDsr: 'PROTECTON/DSR/',
     ProtectonDespatch: 'PROTECTON/Despatch/',
     ProtectonStock: 'PROTECTON/Stock/',
+    ProtectonInvoice: 'PROTECTON/Invoice/',
 };
 
 
@@ -59,6 +60,7 @@ const ALL_ENDPOINTS = {
     GetePCAHoApprovalDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalDetails',
 
     GetProtectonRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonRegion',
+    GetProtectonApplicableTerr: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonApplicableTerr',
     GetReportingUser: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetReportingUser',
     GetDeptList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetDeptList',
     GetApplicableDepotList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableDepotList',
@@ -116,6 +118,9 @@ const ALL_ENDPOINTS = {
     GetPrdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetPrdList',
     GetShdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetShdList',
     GetSkuList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetSkuList',
+
+    // Protecton Invoice
+    GetInvoiceDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonInvoice + 'GetInvoiceDetails',
 
     //#endregion
 };

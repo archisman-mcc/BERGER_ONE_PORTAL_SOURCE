@@ -21,6 +21,7 @@ const TransactStock = () => {
         selectedProduct: '',
         selectedShade: [],
         skuList: [],
+        asOn: '',
     });
 
     // track which SKU accordion is open
@@ -129,10 +130,6 @@ const TransactStock = () => {
         };
         try {
             const response: any = await stock.GetSkuList(payload);
-            // setData((prevData: any) => ({
-            //     ...prevData,
-            //     skuList: response.data.table || [],
-            // }));
 
             setData((prevData: any) => {
                 const groupedBySku = (response.data.table || []).reduce(
@@ -178,6 +175,7 @@ const TransactStock = () => {
                 return {
                     ...prevData,
                     skuList: skuListArray,
+                    asOn: response.data.table[0]?.asOn || '',
                 };
             });
 
@@ -194,13 +192,6 @@ const TransactStock = () => {
         GetProduct();
     }, []);
 
-    useEffect(() => {
-        console.log("List:", data.selectedRegion, data.selectedDepot, data.selectedProduct, data.selectedShade);
-    }, [data.selectedRegion, data.selectedDepot, data.selectedProduct, data.selectedShade]);
-
-    useEffect(() => {
-        console.log("skuList:", data.skuList);
-    }, [data.skuList]);
 
     return (
         <>
@@ -208,7 +199,7 @@ const TransactStock = () => {
                 <h5 className="text-lg font-semibold dark:text-white-light">Transact Stock</h5>
             </div>
 
-            <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
+            <div className="bg-white rounded-lg px-4 py-2 shadow-md">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 
                     <div>
@@ -326,70 +317,21 @@ const TransactStock = () => {
                 </div>
             </div>
 
-            {/* <div className="space-y-2">
-                {data.skuList.map((item: any) => (
-                    <div key={item.sku} className="border rounded">
-                        <button
-                            className="w-full flex justify-between p-2 bg-gray-100"
-                            onClick={() =>
-                                setOpenSku(openSku === item.sku ? null : item.sku)
-                            }
-                        >
-                            <span>({item.descr} - ({item.sku}))</span>
-                            <span>{openSku === item.sku ? '−' : '+'}</span>
-                        </button>
-                        {openSku === item.sku && (
-                            <div className="p-2">
-
-                                <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
-                                    <span>Depot</span>
-                                    <span className="text-center">On Hand</span>
-                                    <span className="text-center">In Transit</span>
-                                    <span className="text-center">Total</span>
-                                    <span className="text-center">Pending Requisition</span>
-                                </div>
-
-                                <ul>
-                                    {Object.values(item.depotWiseList).map((d: any) => (
-                                        <li key={d.depot} className="grid grid-cols-5 gap-4 py-1">
-                                            <span>{d.depot}</span>
-                                            <span className="text-center">{d.stk}</span>
-                                            <span className="text-center">{d.sit}</span>
-                                            <span className="text-center">{d.sit + d.stk}</span>
-                                            <span className="text-center">{d.sir}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="grid grid-cols-5 gap-4 font-semibold border-t pt-1">
-                                    <span>Total</span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.stk, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit + d.stk, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sir, 0)}
-                                    </span>
-                                </div>
-
-                            </div>
-                        )}
+            {data.asOn && (
+                <div className="flex justify-center items-center">
+                    <div className="w-1/4 bg-white shadow-md px-1 py-1 mb-2 flex items-center justify-center rounded-b-3xl rounded-t-none">
+                        <span className="text-xs font-semibold mr-1">Last Update As On:</span>
+                        <span className="text-xs text-blue-600">{data.asOn}</span>
                     </div>
-                ))}
-            </div> */}
-
+                </div>
+            )}
 
             <div className="space-y-2">
                 {data.skuList.map((item: any) => (
-                    <div key={item.sku} className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                    <div key={item.sku} className="rounded border border-[#d3d3d3]">
                         <button
                             type="button"
-                            className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`}
+                            className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark`}
                             onClick={() => setOpenSku(openSku === item.sku ? null : item.sku)}
                         >
                             <span>({item.descr} - ({item.sku}))</span>
