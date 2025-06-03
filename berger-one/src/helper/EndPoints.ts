@@ -9,6 +9,8 @@ const BASE_ENDPOINTS = {
     Legal: 'Legal/',
     Report: 'Report/',
     ProtectonDsr: 'PROTECTON/DSR/',
+    ProtectonDespatch: 'PROTECTON/Despatch/',
+    ProtectonStock: 'PROTECTON/Stock/',
 };
 
 
@@ -56,6 +58,7 @@ const ALL_ENDPOINTS = {
     GetePCAHoApprovalList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalList',
     GetePCAHoApprovalDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalDetails',
 
+    GetProtectonRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonRegion',
     GetReportingUser: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetReportingUser',
     GetDeptList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetDeptList',
     GetApplicableDepotList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableDepotList',
@@ -105,6 +108,14 @@ const ALL_ENDPOINTS = {
     // Protecton DSR
     UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
     UserApplDlrSalesDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSalesDtls',
+
+    //Protecton Despatch
+    GetDespatchDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDespatch + 'GetDespatchDetails',
+
+    // Protecton Stock
+    GetPrdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetPrdList',
+    GetShdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetShdList',
+    GetSkuList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetSkuList',
 
     //#endregion
 };

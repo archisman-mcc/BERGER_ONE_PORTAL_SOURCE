@@ -24,11 +24,6 @@ const TransactDsr = () => {
 
     }, [])
 
-
-    useEffect(() => {
-        console.log("State `tableData` is now:", tableData);
-    }, [tableData]);
-
     const GetUserApplDlrSales = async () => {
         setLoading(true);
         const payload: any = {
@@ -40,7 +35,6 @@ const TransactDsr = () => {
         try {
             const response: any = await dsr.UserApplDlrSales(payload);
             if (response && response.data != null && response.data != undefined) {
-                console.log("UserApplDlrSales Response:", response.data);
                 setData(response.data.table);
             }
             else setData([]);

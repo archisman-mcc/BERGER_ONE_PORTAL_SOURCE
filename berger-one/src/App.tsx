@@ -25,6 +25,8 @@ import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotAppr
 import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
 import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
 import TransactDsr from './pages/protecton/Transact/TransactDsr';
+import TransactDespatch from './pages/protecton/Transact/TransactDespatch';
+import TransactStock from './pages/protecton/Transact/TransactStock';
 
 function App() {
   const user = UseAuthStore((state: any) => state.userDetails);
@@ -97,6 +99,14 @@ function App() {
         {
           path: '/Protecton/Transact/TransactDsr',
           element: <TransactDsr />,
+        },
+        {
+          path: '/Protecton/Transact/TransactDespatch',
+          element: <TransactDespatch />,
+        },
+        {
+          path: '/Protecton/Transact/TransactStock',
+          element: <TransactStock />,
         },
       ],
     },
