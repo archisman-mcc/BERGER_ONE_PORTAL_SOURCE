@@ -368,25 +368,45 @@ const TransactStock = () => {
                         </button>
                         {openSku === item.sku && (
                             <div className="p-2">
-                                {/* Header row for Depot and Region */}
-                                <div className="flex justify-between font-semibold border-b pb-1 mb-1">
+                                {/* Header */}
+                                <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
                                     <span>Depot</span>
-                                    <span>On Hand</span>
-                                    <span>In Transit</span>
-                                    <span>Total</span>
-                                    <span>Pending Requisition</span>
+                                    <span className="text-center">On Hand</span>
+                                    <span className="text-center">In Transit</span>
+                                    <span className="text-center">Total</span>
+                                    <span className="text-center">Pending Requisition</span>
                                 </div>
+
+                                {/* Rows */}
                                 <ul>
                                     {Object.values(item.depotWiseList).map((d: any) => (
-                                        <li key={d.depot} className="flex justify-between py-1">
+                                        <li key={d.depot} className="grid grid-cols-5 gap-4 py-1">
                                             <span>{d.depot}</span>
-                                            <span>{d.stk}</span>
-                                            <span>{d.sit}</span>
-                                            <span>{d.sit + d.stk}</span>
-                                            <span>{d.sir}</span>
+                                            <span className="text-center">{d.stk}</span>
+                                            <span className="text-center">{d.sit}</span>
+                                            <span className="text-center">{d.sit + d.stk}</span>
+                                            <span className="text-center">{d.sir}</span>
                                         </li>
                                     ))}
                                 </ul>
+
+                                {/* Total Row */}
+                                <div className="grid grid-cols-5 gap-4 font-semibold border-t pt-1">
+                                    <span>Total</span>
+                                    <span className="text-center">
+                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.stk, 0)}
+                                    </span>
+                                    <span className="text-center">
+                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit, 0)}
+                                    </span>
+                                    <span className="text-center">
+                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit + d.stk, 0)}
+                                    </span>
+                                    <span className="text-center">
+                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sir, 0)}
+                                    </span>
+                                </div>
+
                             </div>
                         )}
                     </div>
