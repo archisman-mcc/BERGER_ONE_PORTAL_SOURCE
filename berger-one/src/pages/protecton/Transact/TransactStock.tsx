@@ -21,6 +21,7 @@ const TransactStock = () => {
         selectedProduct: '',
         selectedShade: [],
         skuList: [],
+        asOn: '',
     });
 
     // track which SKU accordion is open
@@ -174,6 +175,7 @@ const TransactStock = () => {
                 return {
                     ...prevData,
                     skuList: skuListArray,
+                    asOn: response.data.table[0]?.asOn || '',
                 };
             });
 
@@ -190,6 +192,11 @@ const TransactStock = () => {
         GetProduct();
     }, []);
 
+    useEffect(() => {
+        console.log("Selected:", data.asOn);
+
+    }, [data.asOn]);
+
 
     return (
         <>
@@ -197,7 +204,7 @@ const TransactStock = () => {
                 <h5 className="text-lg font-semibold dark:text-white-light">Transact Stock</h5>
             </div>
 
-            <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
+            <div className="bg-white rounded-lg px-4 py-2 shadow-md">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 
                     <div>
@@ -314,6 +321,15 @@ const TransactStock = () => {
 
                 </div>
             </div>
+
+            {data.asOn && (
+                <div className="flex justify-center items-center">
+                    <div className="w-1/4 bg-white shadow-md px-1 py-1 mb-2 flex items-center justify-center rounded-b-3xl rounded-t-none">
+                        <span className="text-xs font-semibold mr-1">Last Update As On:</span>
+                        <span className="text-xs text-blue-600">{data.asOn}</span>
+                    </div>
+                </div>
+            )}
 
             <div className="space-y-2">
                 {data.skuList.map((item: any) => (
