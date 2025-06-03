@@ -6,7 +6,7 @@ import Select from 'react-select';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import { CiSearch } from "react-icons/ci"
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import { Modal, Button } from '@mantine/core';
+import { Modal } from '@mantine/core';
 import AnimateHeight from "react-animate-height";
 
 const TransactDespatch = () => {
@@ -82,11 +82,6 @@ const TransactDespatch = () => {
         };
         try {
             const response: any = await despatch.GetDespatchDetails(payload);
-            // setData((prevData: any) => ({
-            //     ...prevData,
-            //     despatchData: response.data.table || [],
-            // }));
-
             const flatArray: any[] = response.data.table || [];
 
             // 1) First, reduce into a nested object: { [org]: { [trx_date]: [items...] } }
@@ -108,13 +103,13 @@ const TransactDespatch = () => {
             // 2) Convert that nested object into an array-of-arrays 
             const groupedArray = Object.entries(nestedObj).map(([orgName, datesMap]) => ({
                 org: orgName,
-                dates: Object.entries(datesMap).map(([dateStr, itemsHere]) => ({
+                dates: Object.entries(datesMap as Record<string, any[]>).map(([dateStr, itemsHere]) => ({
                     trx_date: dateStr,
                     items: itemsHere,
                 })),
             }));
 
-            setData((prev) => ({
+            setData((prev: any) => ({
                 ...prev,
                 despatchData: groupedArray,
             }));
@@ -153,13 +148,6 @@ const TransactDespatch = () => {
         setLoading(false);
     }
 
-    // type DespatchType = {
-    //     dealer: string;
-    //     trx_id: number;
-    //     fnl_vol: number;
-    //     status: string;
-    // };
-
     type DespatchDetailsType = {
         skudtl: string;
         vol: number;
@@ -180,66 +168,6 @@ const TransactDespatch = () => {
         ],
         []
     );
-
-    // const columns = useMemo<MRT_ColumnDef<DespatchType>[]>(
-    //     () => [
-    //         {
-    //             accessorKey: 'dealer',
-    //             header: 'Source',
-    //             size: 50,
-    //         },
-    //         {
-    //             accessorKey: 'trx_id',
-    //             header: 'Ship Id',
-    //             size: 50,
-    //         },
-    //         {
-    //             accessorKey: 'fnl_vol',
-    //             header: 'Vol',
-    //             size: 50,
-    //         },
-    //         {
-    //             accessorKey: 'status',
-    //             header: 'Status',
-    //             size: 50,
-    //         },
-    //     ],
-    //     []
-    // );
-
-    // const table = useMantineReactTable({
-    //     columns,
-    //     data: data.despatchData,
-    //     enableColumnResizing: true,
-    //     enableTopToolbar: false,
-    //     enableSorting: false,
-    //     enableColumnActions: false,
-    //     enableRowActions: true,
-    //     positionActionsColumn: "last",
-    //     columnResizeMode: 'onChange',
-    //     mantineTableContainerProps: {
-    //         style: {
-    //             overflowX: 'hidden',
-    //         },
-    //     },
-    //     renderRowActions: ({ row }) => (
-    //         <Button
-    //             variant="filled"
-    //             color="blue"
-    //             size="xs"
-    //             onClick={() => {
-    //                 setModalOpen(true);
-    //                 GetDespatchDetailswithTxn(row.original.trx_id);
-    //                 setData((prevData: any) => ({
-    //                     ...prevData,
-    //                     despatchDetailsDate: row.original.trx_date
-    //                 }));
-    //             }}
-    //         >
-    //             View Details
-    //         </Button>
-    //     ),
-    // });
 
     const tableDetails = useMantineReactTable({
         columns: columnsDtls,
@@ -351,12 +279,6 @@ const TransactDespatch = () => {
                     </div>
                 </div>
             </div>
-
-            {/* <div className="mb-2 max-h-[55vh] overflow-y-auto">
-                <MantineReactTable table={table} />
-            </div> */}
-
-            {/* show the despatch data in acordian */}
 
                   <div className="space-y-2">
                 {data.despatchData.map((group: any) => (
