@@ -5,6 +5,7 @@ import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import * as stock from '../../../services/api/protectonTransact/TransactStock';
 import Select from 'react-select';
 import { CiSearch } from "react-icons/ci";
+import AnimateHeight from "react-animate-height";
 
 
 const TransactStock = () => {
@@ -325,9 +326,6 @@ const TransactStock = () => {
                 </div>
             </div>
 
-
-
-            {/* accordion view */}
             {/* <div className="space-y-2">
                 {data.skuList.map((item: any) => (
                     <div key={item.sku} className="border rounded">
@@ -341,34 +339,8 @@ const TransactStock = () => {
                             <span>{openSku === item.sku ? '−' : '+'}</span>
                         </button>
                         {openSku === item.sku && (
-                            <ul className="p-2">
-                                {Object.values(item.depotWiseList).map((d: any) => (
-                                    <li key={d.depot} className="flex justify-between">
-                                        <span>{d.depot}</span>
-                                        <span>{d.regn}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                ))}
-            </div> */}
-
-            <div className="space-y-2">
-                {data.skuList.map((item: any) => (
-                    <div key={item.sku} className="border rounded">
-                        <button
-                            className="w-full flex justify-between p-2 bg-gray-100"
-                            onClick={() =>
-                                setOpenSku(openSku === item.sku ? null : item.sku)
-                            }
-                        >
-                            <span>({item.descr} - ({item.sku}))</span>
-                            <span>{openSku === item.sku ? '−' : '+'}</span>
-                        </button>
-                        {openSku === item.sku && (
                             <div className="p-2">
-                                {/* Header */}
+
                                 <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
                                     <span>Depot</span>
                                     <span className="text-center">On Hand</span>
@@ -377,7 +349,6 @@ const TransactStock = () => {
                                     <span className="text-center">Pending Requisition</span>
                                 </div>
 
-                                {/* Rows */}
                                 <ul>
                                     {Object.values(item.depotWiseList).map((d: any) => (
                                         <li key={d.depot} className="grid grid-cols-5 gap-4 py-1">
@@ -390,7 +361,6 @@ const TransactStock = () => {
                                     ))}
                                 </ul>
 
-                                {/* Total Row */}
                                 <div className="grid grid-cols-5 gap-4 font-semibold border-t pt-1">
                                     <span>Total</span>
                                     <span className="text-center">
@@ -411,8 +381,71 @@ const TransactStock = () => {
                         )}
                     </div>
                 ))}
-            </div>
+            </div> */}
 
+
+            <div className="space-y-2">
+                {data.skuList.map((item: any) => (
+                    <div key={item.sku} className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                        <button
+                            type="button"
+                            className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`}
+                            onClick={() => setOpenSku(openSku === item.sku ? null : item.sku)}
+                        >
+                            <span>({item.descr} - ({item.sku}))</span>
+                            <div className={`ltr:ml-auto rtl:mr-auto ${openSku === item.sku ? 'rotate-180' : ''}`}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 9L12 15L5 9" stroke="currentColor" strokeWidth="1.5"
+                                        strokeLinecap="round" strokeLinejoin="round"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <div>
+                            <AnimateHeight duration={300} height={openSku === item.sku ? "auto" : 0}>
+                                <div className="p-2">
+                                    {/* Header */}
+                                    <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
+                                        <span>Depot</span>
+                                        <span className="text-center">On Hand</span>
+                                        <span className="text-center">In Transit</span>
+                                        <span className="text-center">Total</span>
+                                        <span className="text-center">Pending Requisition</span>
+                                    </div>
+                                    {/* Rows */}
+                                    <ul>
+                                        {Object.values(item.depotWiseList).map((d: any) => (
+                                            <li key={d.depot} className="grid grid-cols-5 gap-4 py-1">
+                                                <span>{d.depot}</span>
+                                                <span className="text-center">{d.stk}</span>
+                                                <span className="text-center">{d.sit}</span>
+                                                <span className="text-center">{d.sit + d.stk}</span>
+                                                <span className="text-center">{d.sir}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    {/* Total Row */}
+                                    <div className="grid grid-cols-5 gap-4 font-semibold border-t pt-1">
+                                        <span>Total</span>
+                                        <span className="text-center">
+                                            {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.stk, 0)}
+                                        </span>
+                                        <span className="text-center">
+                                            {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit, 0)}
+                                        </span>
+                                        <span className="text-center">
+                                            {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit + d.stk, 0)}
+                                        </span>
+                                        <span className="text-center">
+                                            {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sir, 0)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </AnimateHeight>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
 
             {loading && (
