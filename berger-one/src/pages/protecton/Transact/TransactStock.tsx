@@ -315,64 +315,6 @@ const TransactStock = () => {
                 </div>
             </div>
 
-            {/* <div className="space-y-2">
-                {data.skuList.map((item: any) => (
-                    <div key={item.sku} className="border rounded">
-                        <button
-                            className="w-full flex justify-between p-2 bg-gray-100"
-                            onClick={() =>
-                                setOpenSku(openSku === item.sku ? null : item.sku)
-                            }
-                        >
-                            <span>({item.descr} - ({item.sku}))</span>
-                            <span>{openSku === item.sku ? '−' : '+'}</span>
-                        </button>
-                        {openSku === item.sku && (
-                            <div className="p-2">
-
-                                <div className="grid grid-cols-5 gap-4 font-semibold border-b pb-1 mb-1">
-                                    <span>Depot</span>
-                                    <span className="text-center">On Hand</span>
-                                    <span className="text-center">In Transit</span>
-                                    <span className="text-center">Total</span>
-                                    <span className="text-center">Pending Requisition</span>
-                                </div>
-
-                                <ul>
-                                    {Object.values(item.depotWiseList).map((d: any) => (
-                                        <li key={d.depot} className="grid grid-cols-5 gap-4 py-1">
-                                            <span>{d.depot}</span>
-                                            <span className="text-center">{d.stk}</span>
-                                            <span className="text-center">{d.sit}</span>
-                                            <span className="text-center">{d.sit + d.stk}</span>
-                                            <span className="text-center">{d.sir}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="grid grid-cols-5 gap-4 font-semibold border-t pt-1">
-                                    <span>Total</span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.stk, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sit + d.stk, 0)}
-                                    </span>
-                                    <span className="text-center">
-                                        {Object.values(item.depotWiseList).reduce((acc: number, d: any) => acc + d.sir, 0)}
-                                    </span>
-                                </div>
-
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div> */}
-
-
             <div className="space-y-2">
                 {data.skuList.map((item: any) => (
                     <div key={item.sku} className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
