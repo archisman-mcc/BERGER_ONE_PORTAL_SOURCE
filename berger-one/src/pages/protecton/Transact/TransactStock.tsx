@@ -129,10 +129,6 @@ const TransactStock = () => {
         };
         try {
             const response: any = await stock.GetSkuList(payload);
-            // setData((prevData: any) => ({
-            //     ...prevData,
-            //     skuList: response.data.table || [],
-            // }));
 
             setData((prevData: any) => {
                 const groupedBySku = (response.data.table || []).reduce(
