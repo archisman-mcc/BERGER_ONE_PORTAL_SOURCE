@@ -10,7 +10,7 @@ import AnimateHeight from "react-animate-height";
 const TransactPaymentReceipt = () => {
 
   const [loading, setLoading] = useState(false);
-    const [openPR, setOpenPR] = useState<string | null>(null);
+  const [openPR, setOpenPR] = useState<string | null>(null);
   const [data, setData] = useState<any>({
     regionList: [],
     depotList: [],

@@ -319,8 +319,8 @@ const TransactStock = () => {
 
             {data.asOn && (
                 <div className="flex justify-center items-center">
-                    <div className="w-1/4 bg-white shadow-md px-1 py-1 mb-2 flex items-center justify-center rounded-b-3xl rounded-t-none">
-                        <span className="text-xs font-semibold mr-1">Last Update As On:</span>
+                    <div className="w-1/4 bg-white shadow-md px-1 py-1 mb-2 flex items-center justify-center rounded-b-3xl rounded-t-none font-semibold">
+                        <span className="text-xs mr-1">Last Update As On:</span>
                         <span className="text-xs text-blue-600">{data.asOn}</span>
                     </div>
                 </div>

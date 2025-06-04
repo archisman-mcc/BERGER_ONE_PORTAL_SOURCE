@@ -13,6 +13,7 @@ const BASE_ENDPOINTS = {
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
     ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
+    TransactOS: 'PROTECTON/OS/'
 };
 
 
@@ -119,12 +120,16 @@ const ALL_ENDPOINTS = {
     GetPrdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetPrdList',
     GetShdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetShdList',
     GetSkuList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetSkuList',
+    GetActionCatList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetActionCatList',
 
     // Protecton Invoice
     GetInvoiceDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonInvoice + 'GetInvoiceDetails',
 
     // Protecton Payment Receipt
     GetPRList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPaymentReceipt + 'GetPRList',
+
+    // Transact OS
+    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'ODbyDateList',
 
     //#endregion
 };
