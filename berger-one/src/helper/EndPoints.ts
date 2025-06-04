@@ -12,6 +12,7 @@ const BASE_ENDPOINTS = {
     ProtectonDespatch: 'PROTECTON/Despatch/',
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
+    ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
 };
 
 
@@ -121,6 +122,9 @@ const ALL_ENDPOINTS = {
 
     // Protecton Invoice
     GetInvoiceDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonInvoice + 'GetInvoiceDetails',
+
+    // Protecton Payment Receipt
+    GetPRList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPaymentReceipt + 'GetPRList',
 
     //#endregion
 };

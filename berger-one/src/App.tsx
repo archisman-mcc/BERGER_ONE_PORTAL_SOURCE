@@ -28,6 +28,7 @@ import TransactDsr from './pages/protecton/Transact/TransactDsr';
 import TransactDespatch from './pages/protecton/Transact/TransactDespatch';
 import TransactStock from './pages/protecton/Transact/TransactStock';
 import TransactInvoice from './pages/protecton/Transact/TransactInvoice';
+import TransactPaymentReceipt from './pages/protecton/Transact/TransactPaymentReceipt';
 
 function App() {
   const user = UseAuthStore((state: any) => state.userDetails);
@@ -112,6 +113,10 @@ function App() {
         {
           path: '/Protecton/Transact/TransactInvoice',
           element: <TransactInvoice />,
+        },
+        {
+          path: '/Protecton/Transact/TransactPaymentReceipt',
+          element: <TransactPaymentReceipt />,
         },
       ],
     },
