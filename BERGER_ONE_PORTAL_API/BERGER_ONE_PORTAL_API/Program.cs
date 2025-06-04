@@ -89,6 +89,8 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<IBillingRepo, BillingRepo>();
             builder.Services.AddScoped<IPaymentReceiptLogic, PaymentReceiptLogic>();
             builder.Services.AddScoped<IPaymentReceiptRepo, PaymentReceiptRepo>();
+            builder.Services.AddScoped<IOSLogic, OSLogic>();
+            builder.Services.AddScoped<IOSRepo, OSRepo>();
 
             //builder.Services.AddScoped<IReportLogic, ReportLogic>();
             //builder.Services.AddScoped<IReportRepo, ReportRepo>();
