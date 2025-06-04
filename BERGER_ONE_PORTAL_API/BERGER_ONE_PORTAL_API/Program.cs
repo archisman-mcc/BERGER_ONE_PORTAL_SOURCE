@@ -1,4 +1,3 @@
-
 using BERGER_ONE_PORTAL_API.Core;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -88,6 +87,8 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<IDespatchRepo, DespatchRepo>();
             builder.Services.AddScoped<IBillingLogic, BillingLogic>();
             builder.Services.AddScoped<IBillingRepo, BillingRepo>();
+            builder.Services.AddScoped<IPaymentReceiptLogic, PaymentReceiptLogic>();
+            builder.Services.AddScoped<IPaymentReceiptRepo, PaymentReceiptRepo>();
 
             //builder.Services.AddScoped<IReportLogic, ReportLogic>();
             //builder.Services.AddScoped<IReportRepo, ReportRepo>();
