@@ -91,6 +91,20 @@ namespace BERGER_ONE_PORTAL_API.Controllers
         [HttpPost]
         public async Task<CommonLovDtlsResponseDto?> CommonLovDetails([FromBody] CommonLovDtlsRequestDto dto) => await _commonLogic.CommonLovDetails(dto);
 
+        [HttpGet]
+        public async Task<DashboardResponseDto?> GetUserGroup([FromServices] ICommonLogic commonLogic, [FromQuery] GetUserGroupRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await commonLogic.GetUserGroup(dto, userDetails.user_id);
+        }
+
+        [HttpGet]
+        public async Task<DashboardResponseDto?> GetApplicableUserList([FromServices] ICommonLogic commonLogic, [FromQuery] GetApplicableUserListRequestDto dto)
+        {
+            var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
+            return await commonLogic.GetApplicableUserList(dto, userDetails.user_id);
+        }
+
         #endregion
 
         #region For Form Menu Master:  

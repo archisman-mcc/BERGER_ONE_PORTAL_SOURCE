@@ -115,4 +115,10 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
     {
         public dynamic? Data { get; set; }
     }
+
+    public class DashboardResponseDto : BaseResponse
+    {
+        [JsonProperty("data")]
+        public dynamic? Data { get; set; }
+    }
 }
