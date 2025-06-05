@@ -12,6 +12,8 @@ const BASE_ENDPOINTS = {
     ProtectonDespatch: 'PROTECTON/Despatch/',
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
+    ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
+    TransactOS: 'PROTECTON/OS/'
 };
 
 
@@ -71,6 +73,9 @@ const ALL_ENDPOINTS = {
     GetPcaList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaList',
     GetPcaRsmList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaRsmList',
     GetApplicableTerrList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableTerrList',
+    CommonLovDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'CommonLovDetails',
+
+
     GetPcaStatusList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaStatusList',
     GetPcaDealersList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaDealersList',
     GetPcaProjectListByDepotTerr: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaProjectListByDepotTerr',
@@ -118,9 +123,16 @@ const ALL_ENDPOINTS = {
     GetPrdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetPrdList',
     GetShdList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetShdList',
     GetSkuList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetSkuList',
+    GetActionCatList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonStock + 'GetActionCatList',
 
     // Protecton Invoice
     GetInvoiceDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonInvoice + 'GetInvoiceDetails',
+
+    // Protecton Payment Receipt
+    GetPRList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPaymentReceipt + 'GetPRList',
+
+    // Transact OS
+    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'ODbyDateList',
 
     //#endregion
 };
