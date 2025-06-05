@@ -1,5 +1,13 @@
-import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
-import { ENDPOINTS } from '@/src/helper/EndPoints';
+import { HTTP_GET, HTTP_POST } from "../../../helper/ApiCall";
+import { ENDPOINTS } from "../../../helper/EndPoints";
+
+export function GetProtectonRegion<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.GetProtectonRegion) as Promise<G>;
+}
+
+export function GetProtectonApplicableTerr<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetProtectonApplicableTerr) as Promise<G>;
+}
 
 export function GetReportingUser<P, G>(data: { userId: any; globalFilter: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetReportingUser) as Promise<G>;
@@ -11,6 +19,10 @@ export function GetDeptList<P, G>(data: { lov_type: any; active: any }): Promise
 
 export function GetApplicableDepotList<P, G>(data: { user_id: any; region: any; app_id: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetApplicableDepotList) as Promise<G>;
+}
+
+export function CommonLovDetails<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.CommonLovDetails) as Promise<G>;
 }
 
 export function GetAppList<P, G>(data: {}): Promise<G> {
