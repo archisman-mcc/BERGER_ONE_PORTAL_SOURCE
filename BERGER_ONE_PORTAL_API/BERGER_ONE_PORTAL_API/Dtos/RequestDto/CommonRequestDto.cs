@@ -208,4 +208,10 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         public long? app_id { get; set; }
         public string? user_appl_yn { get; set; } = "Y";
     }
+
+    public class CommonLovDtlsRequestDto
+    {
+        public string lov_type { get; set; }
+        public string? active { get; set; }
+    }
 }

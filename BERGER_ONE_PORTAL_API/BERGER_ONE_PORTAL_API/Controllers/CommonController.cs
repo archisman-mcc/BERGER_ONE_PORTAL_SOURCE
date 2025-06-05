@@ -88,6 +88,9 @@ namespace BERGER_ONE_PORTAL_API.Controllers
             return await commonLogic.GetProtectonApplicableTerr(dto, userDetails.user_id);
         }
 
+        [HttpPost]
+        public async Task<CommonLovDtlsResponseDto?> CommonLovDetails([FromBody] CommonLovDtlsRequestDto dto) => await _commonLogic.CommonLovDetails(dto);
+
         #endregion
 
         #region For Form Menu Master:  
