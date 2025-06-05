@@ -214,4 +214,16 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         public string lov_type { get; set; }
         public string? active { get; set; }
     }
+
+    public class GetUserGroupRequestDto
+    {
+        public string? user_group { get; set; }
+    }
+
+    public class GetApplicableUserListRequestDto
+    {
+        public string? user_group { get; set; }
+        public string? Regn { get; set; }
+        public string? group_code { get; set; }
+    }
 }

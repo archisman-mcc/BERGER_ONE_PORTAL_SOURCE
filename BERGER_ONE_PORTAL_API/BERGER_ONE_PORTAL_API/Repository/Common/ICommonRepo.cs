@@ -22,6 +22,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse?> GetProtectonRegion(GetProtectonRegionRequestDto? request, string userid);
         Task<MSSQLResponse?> GetProtectonApplicableTerr(GetProtectonApplicableTerrRequestDto? request, string userid);
         Task<MSSQLResponse?> CommonLovDetails(CommonLovDtlsRequestDto? request);
+
+        Task<MSSQLResponse?> GetUserGroup(GetUserGroupRequestDto? request, string userid);
+        Task<MSSQLResponse?> GetApplicableUserList(GetApplicableUserListRequestDto? request, string userid);
         #endregion
 
         #region For Form Menu Master:

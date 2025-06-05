@@ -1029,6 +1029,117 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
             return response;
         }
 
+        public async Task<MSSQLResponse?> GetUserGroup(GetUserGroupRequestDto request, string user_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParameters = new SqlParameter[2];
+            try
+            {
+                sqlParameters[0] = new SqlParameter
+                {
+                    ParameterName = "@appl_user",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = user_id
+                };
+                sqlParameters[1] = new SqlParameter
+                {
+                    ParameterName = "@user_group",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.user_group)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[Common_getUserGroupDash]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParameters
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParameters.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+
+        public async Task<MSSQLResponse?> GetApplicableUserList(GetApplicableUserListRequestDto request, string user_id)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParameters = new SqlParameter[4];
+            try
+            {
+                sqlParameters[0] = new SqlParameter
+                {
+                    ParameterName = "@appl_user",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = user_id
+                };
+                sqlParameters[1] = new SqlParameter
+                {
+                    ParameterName = "@user_group",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.user_group)
+                };
+                sqlParameters[2] = new SqlParameter
+                {
+                    ParameterName = "@regn",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.Regn)
+                };
+                sqlParameters[3] = new SqlParameter
+                {
+                    ParameterName = "@group_code",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(request.group_code)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[Common_getUserList_ByRegion]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParameters
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParameters.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
         #endregion
 
         #region For Form Menu Master:
