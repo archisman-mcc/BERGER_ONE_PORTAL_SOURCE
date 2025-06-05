@@ -1,16 +1,18 @@
-﻿using BERGER_ONE_PORTAL_API.Core;
+﻿using Azure.Core;
+using BERGER_ONE_PORTAL_API.Common;
+using BERGER_ONE_PORTAL_API.Common.Utilty;
+using BERGER_ONE_PORTAL_API.Core;
 using BERGER_ONE_PORTAL_API.Dtos;
+using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
+using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
+using Microsoft.Data.SqlClient;
+using Microsoft.VisualBasic;
 using MSSQL_HELPER.Model;
 using MSSQL_HELPER.MSSQLHelper;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using BERGER_ONE_PORTAL_API.Common.Utilty;
-using BERGER_ONE_PORTAL_API.Dtos.ResponseDto;
-using LoginRequestDto = BERGER_ONE_PORTAL_API.Dtos.LoginRequestDto;
-using BERGER_ONE_PORTAL_API.Common;
-using BERGER_ONE_PORTAL_API.Dtos.RequestDto;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using System.Data;
+//using static NPOI.XSSF.UserModel.Charts.XSSFLineChartData<Tx, Ty>;
+using LoginRequestDto = BERGER_ONE_PORTAL_API.Dtos.LoginRequestDto;
 
 namespace BERGER_ONE_PORTAL_API.Repository.Common
 {
@@ -859,6 +861,171 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
                 Data = null,
                 OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
             };
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetProtectonRegion(GetProtectonRegionRequestDto dto, string userid)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[3];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = userid
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@user_group",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = dto?.user_group
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@user_appl_yn",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.user_appl_yn)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[Get_Region]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+
+        public async Task<MSSQLResponse?> GetProtectonApplicableTerr(GetProtectonApplicableTerrRequestDto dto, string userid)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[4];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@user_id",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = userid
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@region",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.region)
+                };
+                sqlParams[2] = new SqlParameter
+                {
+                    ParameterName = "@depot_code",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.depot_code)
+                };
+                sqlParams[3] = new SqlParameter
+                {
+                    ParameterName = "@user_appl_yn",
+                    DbType = DbType.String,
+                    Direction = System.Data.ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto?.user_appl_yn)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "[protecton].[get_applicable_terr]",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
+            return response;
+        }
+        
+        public async Task<MSSQLResponse?> CommonLovDetails(CommonLovDtlsRequestDto dto)
+        {
+            MSSQLResponse? response = null;
+            SqlParameter[] sqlParams = new SqlParameter[2];
+            try
+            {
+                sqlParams[0] = new SqlParameter
+                {
+                    ParameterName = "@lov_type",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = dto.lov_type
+                };
+                sqlParams[1] = new SqlParameter
+                {
+                    ParameterName = "@active",
+                    DbType = DbType.String,
+                    Direction = ParameterDirection.Input,
+                    Size = -1,
+                    Value = Utils.IIFStringOrDBNull(dto.active)
+                };
+
+                response = new MSSQLResponse()
+                {
+                    Data = await _sqlHelper.FetchData(new ExecuteDataSetRequest()
+                    {
+                        CommandText = "app.common_get_lov_list",
+                        CommandTimeout = Constant.Common.SQLCommandTimeOut,
+                        CommandType = CommandType.StoredProcedure,
+                        ConnectionProperties = _serviceContext.MSSQLConnectionModel,
+                        IsMultipleTables = true,
+                        Parameters = sqlParams
+                    }),
+                    RowsAffected = null,
+                    OutputParameters = sqlParams.AsEnumerable().Where(r => r.Direction == ParameterDirection.Output)?.ToArray()
+
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+
             return response;
         }
 

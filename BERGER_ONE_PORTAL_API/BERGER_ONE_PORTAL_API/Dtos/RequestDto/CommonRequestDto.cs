@@ -192,4 +192,26 @@ namespace BERGER_ONE_PORTAL_API.Dtos.RequestDto
         [JsonIgnore, CustomSqlParameterName("@orderJSON")]
         public string? OrderSerializeValue => JsonConvert.SerializeObject(Sorting ?? new());
     }
+
+    public class GetProtectonRegionRequestDto
+    {
+        public string? user_group { get; set; }
+
+        public long? app_id { get; set; }
+        public string? user_appl_yn { get; set; } = "Y";
+    }
+
+    public class GetProtectonApplicableTerrRequestDto
+    {
+        public string? region { get; set; }
+        public string? depot_code { get; set; }
+        public long? app_id { get; set; }
+        public string? user_appl_yn { get; set; } = "Y";
+    }
+
+    public class CommonLovDtlsRequestDto
+    {
+        public string lov_type { get; set; }
+        public string? active { get; set; }
+    }
 }

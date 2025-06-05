@@ -1,4 +1,3 @@
-
 using BERGER_ONE_PORTAL_API.Core;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -22,7 +21,7 @@ using BERGER_ONE_PORTAL_API.Repository.Logger;
 using BERGER_ONE_PORTAL_API.Logic.Protecton;
 using BERGER_ONE_PORTAL_API.Proxy;
 using BERGER_ONE_PORTAL_API.Repository.Protecton;
-using BERGER_ONE_PORTAL_API.Repository.Reports;
+//using BERGER_ONE_PORTAL_API.Repository.Reports;
 
 namespace BERGER_ONE_PORTAL_API
 {
@@ -88,9 +87,13 @@ namespace BERGER_ONE_PORTAL_API
             builder.Services.AddScoped<IDespatchRepo, DespatchRepo>();
             builder.Services.AddScoped<IBillingLogic, BillingLogic>();
             builder.Services.AddScoped<IBillingRepo, BillingRepo>();
+            builder.Services.AddScoped<IPaymentReceiptLogic, PaymentReceiptLogic>();
+            builder.Services.AddScoped<IPaymentReceiptRepo, PaymentReceiptRepo>();
+            builder.Services.AddScoped<IOSLogic, OSLogic>();
+            builder.Services.AddScoped<IOSRepo, OSRepo>();
 
-            builder.Services.AddScoped<IReportLogic, ReportLogic>();
-            builder.Services.AddScoped<IReportRepo, ReportRepo>();
+            //builder.Services.AddScoped<IReportLogic, ReportLogic>();
+            //builder.Services.AddScoped<IReportRepo, ReportRepo>();
             #endregion
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>

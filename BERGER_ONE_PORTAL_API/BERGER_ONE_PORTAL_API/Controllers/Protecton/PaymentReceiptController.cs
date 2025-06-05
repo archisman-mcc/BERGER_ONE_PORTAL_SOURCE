@@ -15,14 +15,14 @@ namespace BERGER_ONE_PORTAL_API.Controllers.Protecton
     [Route(Constant.Common.APIPrefix + Constant.ProjectName.PROTECTON + "/[controller]/[action]")]
     [ServiceFilter(typeof(FluentValidationActionFilterAttribute))]
     [ServiceFilter(typeof(ErrorHandlerFilterAttribute))]
-    [ServiceFilter(typeof(APILogAttribute))]    
-    public class DespatchController : ControllerBase
+    [ServiceFilter(typeof(APILogAttribute))]
+    public class PaymentReceiptController : ControllerBase
     {
-        [HttpGet]
-        public async Task<DespatchResponseDto?> GetDespatchDetails([FromServices] IDespatchLogic _despatchLogic, [FromQuery] DespatchDetailsRequestDto dto)
+        [HttpPost]
+        public async Task<PaymentReceiptResponseDto?> GetPRList([FromServices] IPaymentReceiptLogic _paymentReceiptLogic, [FromBody] PaymentReceiptRequestDto dto)
         {
             var userDetails = CommonHelper.GetUserDetailsFromClaims(User);
-            return await _despatchLogic.GetDespatchDetails(dto, userDetails.user_id);
+            return await _paymentReceiptLogic.GetPRList(dto, userDetails.user_id);
         }
     }
 }

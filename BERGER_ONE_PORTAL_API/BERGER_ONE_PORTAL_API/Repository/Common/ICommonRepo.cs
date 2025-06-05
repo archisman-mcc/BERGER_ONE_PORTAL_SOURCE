@@ -19,6 +19,9 @@ namespace BERGER_ONE_PORTAL_API.Repository.Common
         Task<MSSQLResponse> UserProfileInsert(UserInsertRequestDto request, string user_id);
         Task<MSSQLResponse?> GetApplicableTerrList(UserApplTerrRequestDto dto);
         Task<MSSQLResponse?> GetLegalStatusList(LeaglStatusRequestDto dto);
+        Task<MSSQLResponse?> GetProtectonRegion(GetProtectonRegionRequestDto? request, string userid);
+        Task<MSSQLResponse?> GetProtectonApplicableTerr(GetProtectonApplicableTerrRequestDto? request, string userid);
+        Task<MSSQLResponse?> CommonLovDetails(CommonLovDtlsRequestDto? request);
         #endregion
 
         #region For Form Menu Master:

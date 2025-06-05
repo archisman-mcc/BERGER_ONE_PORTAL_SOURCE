@@ -110,4 +110,9 @@ namespace BERGER_ONE_PORTAL_API.Dtos.ResponseDto
         public string? mailSenderApp { get; set; }
         public string? mailSenderTask { get; set; }
     }
+
+    public class CommonLovDtlsResponseDto : BaseResponse
+    {
+        public dynamic? Data { get; set; }
+    }
 }
