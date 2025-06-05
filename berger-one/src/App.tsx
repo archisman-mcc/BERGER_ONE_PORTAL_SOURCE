@@ -25,6 +25,12 @@ import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotAppr
 import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
 import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
 import TransactDsr from './pages/protecton/Transact/TransactDsr';
+import TransactDespatch from './pages/protecton/Transact/TransactDespatch';
+import TransactStock from './pages/protecton/Transact/TransactStock';
+import TransactInvoice from './pages/protecton/Transact/TransactInvoice';
+import TransactPaymentReceipt from './pages/protecton/Transact/TransactPaymentReceipt';
+import TransactOdByDate from './pages/protecton/Transact/TransactOdByDate';
+import TransactDefaulterList from './pages/protecton/Transact/TransactDefaulterList';
 
 function App() {
   const user = UseAuthStore((state: any) => state.userDetails);
@@ -97,6 +103,30 @@ function App() {
         {
           path: '/Protecton/Transact/TransactDsr',
           element: <TransactDsr />,
+        },
+        {
+          path: '/Protecton/Transact/TransactDespatch',
+          element: <TransactDespatch />,
+        },
+        {
+          path: '/Protecton/Transact/TransactStock',
+          element: <TransactStock />,
+        },
+        {
+          path: '/Protecton/Transact/TransactInvoice',
+          element: <TransactInvoice />,
+        },
+        {
+          path: '/Protecton/Transact/TransactPaymentReceipt',
+          element: <TransactPaymentReceipt />,
+        },
+        {
+          path: '/Protecton/Transact/TransactOdByDate',
+          element: <TransactOdByDate />,
+        },
+        {
+          path: '/Protecton/Transact/TransactDefaulterList',
+          element: <TransactDefaulterList />,
         },
       ],
     },
