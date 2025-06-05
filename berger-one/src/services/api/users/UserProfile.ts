@@ -21,6 +21,10 @@ export function GetApplicableDepotList<P, G>(data: { user_id: any; region: any; 
     return HTTP_POST<P, G>(data, ENDPOINTS.GetApplicableDepotList) as Promise<G>;
 }
 
+export function CommonLovDetails<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.CommonLovDetails) as Promise<G>;
+}
+
 export function GetAppList<P, G>(data: {}): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetAppList) as Promise<G>;
 }

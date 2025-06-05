@@ -73,6 +73,9 @@ const ALL_ENDPOINTS = {
     GetPcaList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaList',
     GetPcaRsmList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaRsmList',
     GetApplicableTerrList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableTerrList',
+    CommonLovDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'CommonLovDetails',
+
+
     GetPcaStatusList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaStatusList',
     GetPcaDealersList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaDealersList',
     GetPcaProjectListByDepotTerr: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaProjectListByDepotTerr',
