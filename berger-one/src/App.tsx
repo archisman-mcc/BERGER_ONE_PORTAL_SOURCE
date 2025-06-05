@@ -21,82 +21,92 @@ import TLVRevisionRequestDetails from './pages/protecton/TLV/TLVRevisionRequestD
 import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotApproval';
 import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
 import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
+import TransactDsr from './pages/protecton/Transact/TransactDsr';
+import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 
 function App() {
-  const router = createBrowserRouter(
-    [
-      {
-        path: '/',
-        element: <FixedLayout />,
-        children: [
-          {
-            path: '/',
-            element: <Dashboard />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCAList',
-            element: <EPCAList />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCADetails',
-            element: <EPCADetails />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCADepotApprovalList',
-            element: <EPCADepotApprovalList />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCADepotApprovalDetails',
-            element: <EPCADepotApprovalDetails />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCARsmApprovalList',
-            element: <EPCARsmApprovalList />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCARsmApprovalDetails',
-            element: <EPCARsmApprovalDetails />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCAHOApprovalList',
-            element: <EPCAHOApprovalList />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCAHoApprovalDetails',
-            element: <EPCAHoApprovalDetails />,
-          },
-          {
-            path: '/Protecton/ePCA/EPCACancellation',
-            element: <EPCACancellation />,
-          },
-          {
-            path: '/Protecton/TLV/TLVRevisionRequestList',
-            element: <TLVRevisionRequestList />,
-          },
-          {
-            path: '/Protecton/TLV/TLVRevisionRequestDetails',
-            element: <TLVRevisionRequestDetails />,
-          },
-          {
-            path: '/Protecton/TLV/TLVRevisionDepotApproval',
-            element: <TLVRevisionDepotApproval />,
-          },
-          {
-            path: '/Protecton/TLV/TLVRevisionRSMApproval',
-            element: <TLVRevisionRSMApproval />,
-          },
-          {
-            path: '/Protecton/TLV/TLVRevisionHoApproval',
-            element: <TLVRevisionHoApproval />,
-          },
-        ],
-      },
-      {
-        path: '/login/cover-login/',
-        element: <Login />,
-      },
-    ]
-  );
+  // const user = UseAuthStore((state: any) => state.userDetails);
+  // console.log(user?.user_id)
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <FixedLayout />,
+      children: [
+        {
+          path: '/',
+          element: <Dashboard />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCAList',
+          element: <EPCAList />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCADetails',
+          element: <EPCADetails />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCADepotApprovalList',
+          element: <EPCADepotApprovalList />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCADepotApprovalDetails',
+          element: <EPCADepotApprovalDetails />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCARsmApprovalList',
+          element: <EPCARsmApprovalList />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCARsmApprovalDetails',
+          element: <EPCARsmApprovalDetails />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCAHOApprovalList',
+          element: <EPCAHOApprovalList />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCAHoApprovalDetails',
+          element: <EPCAHoApprovalDetails />,
+        },
+        {
+          path: '/Protecton/ePCA/EPCACancellation',
+          element: <EPCACancellation />,
+        },
+        {
+          path: '/Protecton/TLV/TLVRevisionRequestList',
+          element: <TLVRevisionRequestList />,
+        },
+        {
+          path: '/Protecton/TLV/TLVRevisionRequestDetails',
+          element: <TLVRevisionRequestDetails />,
+        },
+        {
+          path: '/Protecton/TLV/TLVRevisionDepotApproval',
+          element: <TLVRevisionDepotApproval />,
+        },
+        {
+          path: '/Protecton/TLV/TLVRevisionRSMApproval',
+          element: <TLVRevisionRSMApproval />,
+        },
+        {
+          path: '/Protecton/TLV/TLVRevisionHoApproval',
+          element: <TLVRevisionHoApproval />,
+        },
+        {
+          path: '/Protecton/Transact/TransactDsr',
+          element: <TransactDsr />,
+        },
+        {
+          path: '/Protecton/Transact/TransactUserTracking',
+          element: <TransactUserTracking />,
+        },
+      ],
+    },
+    {
+      path: '/login/cover-login/',
+      element: <Login />,
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-blue-300 text-black">
