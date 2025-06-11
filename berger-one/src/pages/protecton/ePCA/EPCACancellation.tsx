@@ -416,7 +416,7 @@ const EPCACancellation = () => {
                     {/* Buttons */}
                     <div className="flex items-end space-x-2">
                         <button
-                            className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center" onClick={handleSearch}>
+                            className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center" onClick={handleSearch}>
                             <CiSearch />  <span>Search</span>
                         </button>
                     </div>
