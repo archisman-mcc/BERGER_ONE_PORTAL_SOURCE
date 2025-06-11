@@ -141,6 +141,8 @@ function App() {
         {
           path: '/Protecton/Transact/TransactBillingCreate',
           element: <TransactBillingCreate />,
+        },
+        {
           path: '/Protecton/Transact/TransactUserTracking',
           element: <TransactUserTracking />,
         },

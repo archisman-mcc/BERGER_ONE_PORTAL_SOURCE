@@ -16,7 +16,8 @@ const BASE_ENDPOINTS = {
     ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
     ProtectonOS: 'PROTECTON/OS/',
     ProtectonBilling: 'PROTECTON/Billing/',
-    ProtectonPotentialLead: 'PROTECTON/PotentialLead/'
+    ProtectonPotentialLead: 'PROTECTON/PotentialLead/',
+    TransactOS: 'PROTECTON/OS/'
 };
 
 
