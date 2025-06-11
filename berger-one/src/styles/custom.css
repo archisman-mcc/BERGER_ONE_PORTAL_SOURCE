@@ -1,3 +1,33 @@
+/* new added css by sayan */
+[type='text']:focus {
+  box-shadow: none;
+}
+
+.custTableView tbody tr td .mantine-Input-input,
+table tbody tr td .mantine-Input-input {
+    height: 2rem;
+    min-height: 2rem;
+    border-radius: 5px;
+    border-color: #cac9c9;
+}
+
+.mantine-1es4wzm>tbody>tr>td {
+    font-size: x-small;
+    padding: 8px;
+}
+
+.mantine-1uskmy4 {
+    font-size: x-small;
+}
+
+.mantine-1es4wzm>thead>tr>th,
+.mantine-1es4wzm>tfoot>tr>th,
+.mantine-1es4wzm>tbody>tr>th {
+    padding: 5px 10px;
+}
+/* ======================== */
+
+
 /* Panel */
 .panel {
     @apply relative rounded-md bg-white p-5 shadow dark:bg-black;
@@ -193,30 +223,7 @@ table tbody tr td .mantine-ActionIcon-root svg {
     padding: 0.6rem 0.8rem !important;
 }
 
-/* new added sayan */
-.custTableView tbody tr td .mantine-Input-input,
-table tbody tr td .mantine-Input-input {
-    height: 2rem;
-    min-height: 2rem;
-    border-radius: 5px;
-    border-color: #cac9c9;
-}
 
-.mantine-1es4wzm>tbody>tr>td {
-    font-size: x-small;
-    padding: 8px;
-}
-
-.mantine-1uskmy4 {
-    font-size: x-small;
-}
-
-.mantine-1es4wzm>thead>tr>th,
-.mantine-1es4wzm>tfoot>tr>th,
-.mantine-1es4wzm>tbody>tr>th {
-    padding: 5px 10px;
-}
-/* =============================== */
 
 /* .mantine-1es4wzm>tbody>tr>td {
     padding: 8px;
