@@ -2,12 +2,13 @@ import { CiSearch } from "react-icons/ci";
 import { useState, useRef } from "react";
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
-import TableComponent from "./TableComponent";
+import TableComponent from "./Components/TableComponent";
 
 const TransactDsr = () => {
     const childRef = useRef<any>(null);
 
-    const [filterData, setFilterData] = useState({ dsrDate: new Date(), viewBy: "MTD", selected_user: '' });
+    const [tableData, settableData] = useState<any>([]);
+    const [filterData, setFilterData] = useState({ dsrDate: new Date().toISOString().split('T')[0], viewBy: "MTD", usp_user_id: '' });
     const [loading, setLoading] = useState(false);
 
     const handleSearch = (e: any) => {
@@ -32,7 +33,7 @@ const TransactDsr = () => {
                         <label htmlFor="dsr-date" className="block text-sm font-semibold mb-1">DSR Date:</label>
                         <Flatpickr
                             value={filterData.dsrDate || ''}
-                            onChange={(dates: Date[]) => setFilterData((pre: any) => ({ ...pre, dsrDate: dates[0] || '' }))}
+                            onChange={(dates: any) => setFilterData((pre: any) => ({ ...pre, dsrDate: dates[0].slice(0, 10) || '' }))}
                             options={{
                                 dateFormat: 'd/m/Y',
                             }}
@@ -78,7 +79,7 @@ const TransactDsr = () => {
                 </div>
             </div>
 
-            <TableComponent ref={childRef} setLoading={setLoading} filterData={filterData} />
+            <TableComponent ref={childRef} tableData={tableData} settableData={settableData} setLoading={setLoading} filterData={filterData} form="TransactDsr" />
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">

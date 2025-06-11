@@ -1,19 +1,18 @@
-import { CiSearch } from "react-icons/ci";
+// import { CiSearch } from "react-icons/ci";
 import { useEffect, useState, useMemo, useRef, forwardRef, useImperativeHandle } from "react";
-import Flatpickr from 'react-flatpickr';
-import 'flatpickr/dist/themes/material_green.css';
-import * as dsr from '../../../services/api/protectonTransact/TransactDsr';
+// import Flatpickr from 'react-flatpickr';
+// import 'flatpickr/dist/themes/material_green.css';
+import * as dsr from '../../../../services/api/protectonTransact/TransactDsr';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import { Button } from '@mantine/core';
 import { FiEye } from "react-icons/fi";
 import ModalComponent from "./ModalComponent";
 
 
-const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
+const TableComponent = forwardRef(({ tableData, settableData, setLoading, filterData, form }: any, ref) => {
 
     const dataRef = useRef<any>(null);
 
-    const [tableData, settableData] = useState<any>([]);
     const [territoryModalTableData, setTerritoryModalTableData] = useState<any>([]);
     const [categoryModalTableData, setCategoryModalTableData] = useState<any>([]);
     const [contractorDealerModalTableData, setContractorDealerModalTableData] = useState<any>([]);
@@ -40,17 +39,27 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
             terr: terr,
             asOnDate: filterData?.dsrDate,
             repType: filterData?.viewBy,
-            selected_user: filterData?.selected_user
+            selected_user: filterData?.usp_user_id
         };
         try {
             const response: any = await dsr.UserApplDlrSales(payload);
             if (response.data) {
-                report_grp_level === "REGION" ? settableData(response.data.table) :
-                    report_grp_level === "REGION_CAT" || report_grp_level === "TERR_OTHER" || report_grp_level === "CAT_OTHER" ? setCategorywiseProductModalTableData(response.data.table) :
-                        report_grp_level === "OTHER_DTLS" ? setTransactionReportModalTableData(response.data.table) :
-                            report_grp_level === "TERR" ? setTerritoryModalTableData(response.data.table) :
-                                report_grp_level === "CAT" || report_grp_level === "CAT_SMRY" ? setCategoryModalTableData(response.data.table) :
-                                    setContractorDealerModalTableData(response.data.table)
+                const roundVal = (number: any) => Math.round(parseFloat(number))
+                const tableData = response.data.table.map((t: any) => ({
+                    ...t,
+                    gr_val: roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100),
+                    gr_vol: roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100),
+                    gr_val_other: roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100),
+                    gr_vol_other: roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100),
+                    ach_val: ((t?.ty_val / t?.tg_val) * 100).toFixed(2),
+                    ach_vol: ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2),
+                }))
+                report_grp_level === "REGION" ? settableData(tableData) :
+                    report_grp_level === "REGION_CAT" || report_grp_level === "TERR_OTHER" || report_grp_level === "CAT_OTHER" ? setCategorywiseProductModalTableData(tableData) :
+                        report_grp_level === "OTHER_DTLS" ? setTransactionReportModalTableData(tableData) :
+                            report_grp_level === "TERR" ? setTerritoryModalTableData(tableData) :
+                                report_grp_level === "CAT" || report_grp_level === "CAT_SMRY" ? setCategoryModalTableData(tableData) :
+                                    setContractorDealerModalTableData(tableData)
             }
             else settableData([]);
         } catch (error) {
@@ -65,52 +74,67 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
             columns: [
                 {
                     accessorKey: 'ly_val_fm',
-                    header: 'LY(ME) (IN LACS)',
+                    header: 'LY(ME)',
                     size: 50,
                 },
                 {
                     accessorKey: 'ly_val',
-                    header: 'LY(MTD) (IN LACS)',
+                    header: 'LY(MTD)',
                     size: 50,
                 },
                 {
                     accessorKey: 'ty_val',
-                    header: 'TY (IN LACS)',
+                    header: 'TY',
                     size: 50,
                 },
                 {
                     accessorKey: 'gr_val',
-                    header: 'VALUE GROWTH (%)',
-                    size: 50,
+                    header: 'GRW% (MTD)',
+                    size: 50
                 },
                 {
                     accessorKey: 'tg_val',
-                    header: 'BUDGET (IN LACS)',
+                    header: 'BUDGET',
+                    size: 50,
+                },
+                {
+                    accessorKey: 'ach_val',
+                    header: 'ACH% TO BUDGET',
                     size: 50,
                 },
             ]
         },
         {
-            header: 'VOLUME (IN KL)', // 🟡 Main header (group)
+            header: 'VOLUME (IN KL)',
             columns: [
                 {
                     accessorKey: 'ly_vol_fm',
-                    header: 'LY(ME) (IN KL)',
+                    header: 'LY(ME)',
                     size: 50,
                 },
                 {
                     accessorKey: 'ly_vol',
-                    header: 'LY(MTD) (IN KL)',
+                    header: 'LY(MTD)',
                     size: 50,
                 },
                 {
                     accessorKey: 'ty_vol',
-                    header: 'TY (IN KL)',
+                    header: 'TY',
+                    size: 50,
+                },
+                {
+                    accessorKey: 'gr_vol',
+                    header: 'GRW% (MTD)',
                     size: 50,
                 },
                 {
                     accessorKey: 'tg_vol',
-                    header: 'BUDGET (IN KL)',
+                    header: 'BUDGET',
+                    size: 50,
+                },
+                {
+                    accessorKey: 'ach_vol',
+                    header: 'ACH% TO BUDGET',
                     size: 50,
                 },
             ]
@@ -128,6 +152,11 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
                     header: 'TY',
                     size: 50,
                 },
+                {
+                    accessorKey: 'gr_val_other',
+                    header: 'GRW% (MTD)',
+                    size: 50,
+                },
             ]
         },
         {
@@ -141,6 +170,11 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
                 {
                     accessorKey: 'ty_vol_other',
                     header: 'TY',
+                    size: 50,
+                },
+                {
+                    accessorKey: 'gr_vol_other',
+                    header: 'GRW% (MTD)',
                     size: 50,
                 },
             ]
@@ -791,7 +825,7 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
     }
 
     useEffect(() => {
-        GetUserApplDlrSales({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '' });
+        form === 'TransactDsr' && GetUserApplDlrSales({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '' });
     }, [])
 
     // Expose functions to parent
@@ -801,13 +835,13 @@ const TableComponent = forwardRef(({ setLoading, filterData }: any, ref) => {
 
     return (
         <>
-            <div className="mb-2 max-h-[58vh] overflow-y-auto">
+            <div className="max-h-[50vh] overflow-y-auto">
                 <MantineReactTable table={table} />
             </div>
 
             {/* Territory Modal */}
             {isTerritoryModalOpen && (
-                <ModalComponent modalHeader={`Territory Report: ${filterData?.viewBy}`} tableName={territoryModalTableData[0]?.regn} tableData={territoryModal} onCloseModal={onCloseModal} />
+                <ModalComponent modalHeader={`Territory Report: ${filterData?.viewBy}`} tableName={`${territoryModalTableData[0]?.regn} >`} tableData={territoryModal} onCloseModal={onCloseModal} />
             )}
 
             {/* Category Modal */}
