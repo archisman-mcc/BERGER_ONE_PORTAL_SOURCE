@@ -46,9 +46,7 @@
 @tailwind components;
 @tailwind utilities;
 
-[type='text']:focus {
-  box-shadow: none;
-}
+
 
 /* @layer components {
   body {

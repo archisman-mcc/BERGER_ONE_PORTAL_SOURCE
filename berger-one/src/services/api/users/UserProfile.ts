@@ -4,6 +4,12 @@ import { ENDPOINTS } from "../../../helper/EndPoints";
 export function GetProtectonRegion<P, G>(data: { lov_type: any; active: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetProtectonRegion) as Promise<G>;
 }
+export function GetUserGroup<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetUserGroup) as Promise<G>;
+}
+export function GetApplicableUserList<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetApplicableUserList) as Promise<G>;
+}
 
 export function GetProtectonApplicableTerr<P, G>(data: { lov_type: any; active: any }): Promise<G> {
     return HTTP_GET<P, G>(data, ENDPOINTS.GetProtectonApplicableTerr) as Promise<G>;
