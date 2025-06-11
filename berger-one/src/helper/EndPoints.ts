@@ -13,7 +13,9 @@ const BASE_ENDPOINTS = {
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
     ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
-    TransactOS: 'PROTECTON/OS/'
+    ProtectonOS: 'PROTECTON/OS/',
+    ProtectonBilling: 'PROTECTON/Billing/',
+    ProtectonPotentialLead: 'PROTECTON/PotentialLead/'
 };
 
 
@@ -111,6 +113,7 @@ const ALL_ENDPOINTS = {
     LegalCaseApprovalAsmReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Report + 'GetLegalCaseApprovalAsmReport',
     GetProjectList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetProjectList',
     GetCalculatedGC: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetCalculatedGC',
+    GetUserApplicableDealer: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetUserApplicableDealer',
 
     // Protecton DSR
     UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
@@ -134,17 +137,25 @@ const ALL_ENDPOINTS = {
     GetPRList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPaymentReceipt + 'GetPRList',
 
     // Transact OS
-    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'ODbyDateList',
+    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonOS + 'ODbyDateList',
+
+    // Transact Billing
+    GetBillingList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingList',
+    GetBillingDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingDetails',
+    GetBillingTLVBalance: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingTLVBalance',
+
+    // Transact Potential Lead
+    PCADtlsBillto: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'PCADtlsBillto',
 
     //#endregion
 };
 
 export const ENDPOINTS = {
-    BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
-    BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    // BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
 
-    // BASE_URL_DEV: 'https://localhost:36554/api/',
-    // BASE_URL_PROD: 'https://localhost:36554/api/',
+    BASE_URL_DEV: 'https://localhost:36554/api/',
+    BASE_URL_PROD: 'https://localhost:36554/api/',
     ...ALL_ENDPOINTS,
 };
 

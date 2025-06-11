@@ -32,6 +32,8 @@ import TransactPaymentReceipt from './pages/protecton/Transact/TransactPaymentRe
 import TransactOdByDate from './pages/protecton/Transact/TransactOdByDate';
 import TransactDefaulterList from './pages/protecton/Transact/TransactDefaulterList';
 import TransactReturnCheque from './pages/protecton/Transact/TransactReturnCheque';
+import TransactBilling from './pages/protecton/Transact/TransactBilling';
+import TransactBillingCreate from './pages/protecton/Transact/TransactBillingCreate';
 
 function App() {
   const user = UseAuthStore((state: any) => state.userDetails);
@@ -132,6 +134,14 @@ function App() {
         {
           path: '/Protecton/Transact/TransactReturnCheque',
           element: <TransactReturnCheque />,
+        },
+        {
+          path: '/Protecton/Transact/TransactBilling',
+          element: <TransactBilling />,
+        },
+        {
+          path: '/Protecton/Transact/TransactBillingCreate',
+          element: <TransactBillingCreate />,
         },
       ],
     },
