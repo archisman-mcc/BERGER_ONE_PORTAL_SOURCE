@@ -6,8 +6,15 @@ import * as Epca from "../../../services/api/protectonEpca/EpcaList";
 import * as EpcaDtl from "../../../services/api/protectonEpca/EpcaDetails";
 import * as PotentialLead from "../../../services/api/protectonTransact/TransactPotentialLead";
 import * as Billing from "../../../services/api/protectonTransact/TransactBilling";
+import AsyncSelectBox from "./Components/AsyncSelectBox";
+import { FiTrash2 } from "react-icons/fi";
+import { FaRegPaperPlane } from "react-icons/fa";
+import { IoMdAdd } from "react-icons/io";
+import { commonErrorToast, commonSuccessToast } from "../../../services/functions/commonToast";
+import { useNavigate } from 'react-router-dom';
 
 const TransactBillingCreate = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>({
     regionList: [],
@@ -24,31 +31,32 @@ const TransactBillingCreate = () => {
     project_appl_yn: "",
     TlvBal: [],
     projectList: [],
-    selectedProject: "",
-    skuList: [],
-    selectedSku: "",
+    selectedProject: 0,
   });
 
-  const [billingPayload, setBillingPayload] = useState<any>(null);
-  const [billingSkuPayload, setBillingSkuPayload] = useState<any>(null);
+  const [billingPayload, setBillingPayload] = useState<any>({
+    bill_to_code: '',
+    project_id: '',
+    billing_sku: [],
+  });
 
-  // billingPayload:
-  //  {
-  //   "bill_to_code": 0,
-  //   "project_id": 0,
-  //   "billing_sku": [
-  //     {
-  //       "bpd_sku_id": "string",
-  //       "bpd_stock": 0,
-  //       "bpd_declared_rate": 0,
-  //       "bpd_approved_rate": 0,
-  //       "bpd_no_of_pack": 0,
-  //       "bpd_total_amount": 0
-  //     }
-  //   ]
-  // }
+  const [billingSkuPayload, setBillingSkuPayload] = useState<any>({
+    bpd_sku_id: '',
+    bpd_stock: '',
+    bpd_declared_rate: '',
+    bpd_approved_rate: '',
+    bpd_no_of_pack: 1,
+    bpd_total_amount: '',
+    remarks: '', // current api does not have this field - just for handeling the reamrks input
+    sku_label: '', // for displaying the sku name in the table - not using in API
+    pack_size: '' // for displaying the in the table - not using in API
+  });
 
+  const [asyncSelectBoxData, setAsyncSelectBoxData] = useState<any>(null);
 
+  const [PCASkuBillingDetails, setPCASkuBillingDetails] = useState<any>(null);
+
+  const [showRestBasedOnProject, setShowRestBasedOnProject] = useState<boolean>(false);
 
   const user = UseAuthStore((state: any) => state.userDetails);
 
@@ -77,8 +85,9 @@ const TransactBillingCreate = () => {
         project_appl_yn: "",
         TlvBal: [],
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+      setAsyncSelectBoxData(null)
     } catch (error) {
       return;
     }
@@ -110,8 +119,10 @@ const TransactBillingCreate = () => {
         project_appl_yn: "",
         TlvBal: "",
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+      setAsyncSelectBoxData(null)
+      setPCASkuBillingDetails(null)
     } catch (error) {
       return;
     }
@@ -141,8 +152,10 @@ const TransactBillingCreate = () => {
         project_appl_yn: "",
         TlvBal: "",
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+      setAsyncSelectBoxData(null)
+      setPCASkuBillingDetails(null)
     } catch (error) {
       return;
     }
@@ -171,8 +184,10 @@ const TransactBillingCreate = () => {
         project_appl_yn: "",
         TlvBal: "",
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+      setAsyncSelectBoxData(null)
+      setPCASkuBillingDetails(null)
     } catch (error) {
       return;
     }
@@ -198,8 +213,16 @@ const TransactBillingCreate = () => {
         TlvBal: "",
         project_appl_yn: "",
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+      setAsyncSelectBoxData(null)
+      setPCASkuBillingDetails(null)
+      setBillingPayload({
+        bill_to_code: '',
+        project_id: '',
+        billing_sku: [],
+      })
+
     } catch (error) {
       return;
     }
@@ -213,7 +236,7 @@ const TransactBillingCreate = () => {
       setData((prevData: any) => ({
         ...prevData,
         projectList: response.data.table || [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
     } catch (error) {
       return;
@@ -223,6 +246,13 @@ const TransactBillingCreate = () => {
 
   const GetBillingTLVBalance = async (selectedBillToItem: any) => {
     setLoading(true);
+    if (selectedBillToItem.project_appl_yn == 'N') {
+      setShowRestBasedOnProject(true)
+    }
+    else {
+      setShowRestBasedOnProject(false)
+    }
+
     const payload: any = {
       bill_to: selectedBillToItem.bill_to,
       app_id: "15",
@@ -240,8 +270,11 @@ const TransactBillingCreate = () => {
         project_appl_yn: selectedBillToItem.project_appl_yn,
         selectedBillTo: selectedBillToItem.bill_to,
         projectList: [],
-        selectedProject: "",
+        selectedProject: 0,
       }));
+
+      setAsyncSelectBoxData(null)
+      setPCASkuBillingDetails(null)
 
       setBillingPayload(() => ({
         bill_to_code: billToValue,
@@ -249,57 +282,100 @@ const TransactBillingCreate = () => {
         billing_sku: [],
       }))
 
-      if (selectedBillToItem.project_appl_yn === "Y") {
-        const projectPayload: any = {
-          billto_code: billToValue,
-          app_id: "15",
-        };
-        await GetProjectList(projectPayload);
-      }
+      const projectPayload: any = {
+        billto_code: billToValue,
+        app_id: "15",
+      };
+      await GetProjectList(projectPayload);
     } catch (error) {
       return;
     }
     setLoading(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const txt = e.target.value;
-    GetSKUList(txt);
+  const GetPCASkuBillingDetails = async (asyncSelectBoxData: any) => {
+    if (!asyncSelectBoxData) {
+      return;
+    }
+    const payload: any = {
+      billto_code: data.selectedBillTo,
+      sku_code: asyncSelectBoxData.selectedOption.value,
+      depot_code: data.selectedDepot,
+      project_id: data.selectedProject,
+    };
+
+    try {
+      const response: any = await PotentialLead.GetPCASkuBillingDetails(payload);
+      setPCASkuBillingDetails(response.data.table[0] || []);
+      setBillingSkuPayload((pre: any) => ({
+        ...pre, bpd_approved_rate: response.data.table[0].min_rate, bpd_stock: response.data.table[0].stock, pack_size: asyncSelectBoxData.selectedObj[0].sku_pack_size,
+        bpd_declared_rate: response.data.table[0].min_rate, bpd_sku_id: response.data.table[0].sku, sku_label: asyncSelectBoxData.selectedOption.label,
+        bpd_total_amount: response.data.table[0].min_rate * asyncSelectBoxData.selectedObj[0].sku_pack_size * pre.bpd_no_of_pack,
+      }))
+    } catch (error) {
+      return;
+    }
+  }
+
+  const handleAdd = () => {
+
+    // check if billingSkuPayload.bpd_sku_id already exists in billingPayload - if already exist, show alert and return
+    const existingSku = billingPayload.billing_sku.find((item: any) => item.bpd_sku_id === billingSkuPayload.bpd_sku_id);
+    if (existingSku) {
+      commonErrorToast('Duplicate entry not allowed');
+      return;
+    }
+
+
+    // 1. Update billingPayload.billing_sku by appending billingSkuPayload
+    setBillingPayload((prev: { billing_sku: any; }) => ({
+      ...prev,
+      billing_sku: [...prev.billing_sku, billingSkuPayload],
+    }));
+
+    // 2. (Optional) Reset your SKU form payload back to its initial shape
+    setBillingSkuPayload({
+      bpd_sku_id: '',
+      bpd_stock: '',
+      bpd_declared_rate: '',
+      bpd_approved_rate: '',
+      bpd_no_of_pack: 1,
+      bpd_total_amount: '',
+      remarks: '',
+      sku_label: '',
+      pack_size: ''
+    });
+    setAsyncSelectBoxData(null)
+    setPCASkuBillingDetails(null)
+  }
+
+  const handleRemove = (indexToRemove: number) => {
+    setBillingPayload((prev: { billing_sku: any[]; }) => ({
+      ...prev,
+      billing_sku: prev.billing_sku.filter((_, i) => i !== indexToRemove),
+    }));
   };
 
-  const GetSKUList = async (prefixText: string) => {
-    const payload: any = {
-      app_id: "15",
-      prefixText: prefixText,
-    };
-    if (prefixText.length > 2) {
-      try {
-        const response: any = await EpcaDtl.GetSKUList(payload);
-        // safely pull out the table (or default to an empty array)
-        const table = response.data?.table ?? [];
-        setData((prevData: any) => ({
-          ...prevData,
-          skuList: table,
-        }));
-      } catch (error) {
-        return;
-      }
+  const handleSubmit = async () => {
+    const response: any = await Billing.InsertBillingSKU(billingPayload);
+    if (response.success) {
+      commonSuccessToast('Billing Request Submitted Successfully');
+      navigate('/Protecton/Transact/TransactBilling');
     }
     else {
-      setData((prevData: any) => ({
-        ...prevData,
-        skuList: [],
-      }))
+      commonErrorToast('Billing Request Failed');
     }
-  };
+  }
+
 
   useEffect(() => {
     GetRegion();
   }, []);
 
   useEffect(() => {
-    console.log('billing payload: ', billingPayload);
-  }, [billingPayload]);
+    GetPCASkuBillingDetails(asyncSelectBoxData)
+  }, [asyncSelectBoxData]);
+
 
   return (
     <>
@@ -477,7 +553,6 @@ const TransactBillingCreate = () => {
 
       <div>
         {data.TlvBal != "" && (
-        // {data.TlvBal && (
           <>
             <div className=" mt-4 bg-white rounded-lg px-4 py-2 shadow-md ">
               <div className="grid grid-cols-5 gap-4 items-center">
@@ -539,143 +614,237 @@ const TransactBillingCreate = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-4 mt-2 pt-2 border-t-2 gap-4 mb-4">
-                {data.project_appl_yn === "Y" && (
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">
-                      Search Project:
-                    </label>
-                    <Select
-                      className="text-sm"
-                      isSearchable={true}
-                      options={[
-                        ...data.projectList.map((d: any) => ({
-                          value: d.projectId,
-                          label: d.projectName,
-                        })),
-                      ]}
-                      value={
-                        data.selectedProject
-                          ? {
-                            value: data.projectId,
-                            label: data.projectName,
-                          }
-                          : null
-                      }
-                      onChange={(event) => {
-                        setData((prevData: any) => ({
-                          ...prevData,
-                          selectedProject: event?.value,
-                        }));
-                        setBillingPayload((prevData: any) => ({
-                          ...prevData,
-                          project_id: event?.value,
-                        }))
-                      }}
-                    />
-                  </div>
-                )}
 
                 <div>
                   <label className="block text-sm font-semibold mb-1">
-                    Search SKU:
+                    Search Project:
+                    {data.project_appl_yn == 'Y' && (
+                      <span className="text-red-600 font-bold">*</span>)}
                   </label>
-
-                  <input type="text"
-                    onChange={handleChange}
+                  <Select
+                    className="text-sm"
+                    isSearchable={true}
+                    isDisabled={data.selectedProject != 0}
+                    options={[
+                      ...data.projectList.map((d: any) => ({
+                        value: d.projectId,
+                        label: d.projectName,
+                      })),
+                    ]}
+                    value={
+                      data.selectedProject
+                        ? {
+                          value: data.selectedProject,
+                          label:
+                            data.projectList.find((d: any) => d.projectId === data.selectedProject)
+                              ?.projectName || "—",
+                        }
+                        : null
+                    }
+                    onChange={(event) => {
+                      setData((prevData: any) => ({
+                        ...prevData,
+                        selectedProject: event?.value,
+                      }));
+                      setBillingPayload((prevData: any) => ({
+                        ...prevData,
+                        project_id: event?.value,
+                      }))
+                      setShowRestBasedOnProject(true)
+                    }}
                   />
-
-                  {data.skuList.length > 0 && (
-                    <ul className="border rounded mt-1 bg-white max-h-40 overflow-auto">
-                      {data.skuList.map((sku: any) => (
-                        <li
-                          key={sku.sku_code}
-                          className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
-                          onClick={() =>
-                            setData((prev: any) => ({
-                              ...prev,
-                              skuList: [],
-                            }))
-                          }
-                        >
-                          {sku.sku_desc} ({sku.sku_code})
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </div>
 
-                <div
-                  className={
-                    data.project_appl_yn === "Y"
-                      ? "col-span-2 h-full rounded-lg"
-                      : "col-span-3 h-full rounded-lg"
-                  }
-                >
+                {showRestBasedOnProject && (
                   <div>
-                    <div className="flex flex-wrap gap-2 p-3">
-                      <div className="bg-cyan-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-cyan-950 mr-2">
-                          SKU:
-                        </span>
-                        <span className="text-xs text-cyan-950 font-semibold">
-                          1,234
-                        </span>
-                      </div>
+                    <label className="block text-sm font-semibold mb-1">
+                      Search SKU:<span className="text-red-600 font-bold">*</span>
+                    </label>
+                    <AsyncSelectBox data={asyncSelectBoxData} setData={setAsyncSelectBoxData} api={EpcaDtl.GetSKUList} apiPayload={{ app_id: 15 }} label="sku_desc"
+                      value="sku_code" />
+                  </div>
+                )}
 
-                      <div className="bg-red-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-red-950 mr-2">
-                          UOM:
-                        </span>
-                        <span className="text-xs text-red-950 font-semibold">
-                          98.5%
-                        </span>
-                      </div>
+                {PCASkuBillingDetails && showRestBasedOnProject && (
+                  <div className="col-span-2 h-full rounded-lg">
+                    <div>
+                      <div className="flex flex-wrap gap-2 p-3">
+                        <div className="bg-cyan-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-cyan-950 mr-2">
+                            SKU:
+                          </span>
+                          <span className="text-xs text-cyan-950 font-semibold">
+                            {PCASkuBillingDetails.sku}
+                          </span>
+                        </div>
 
-                      <div className="bg-stone-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-stone-950 mr-2">
-                          Pack Size:
-                        </span>
-                        <span className="text-xs text-stone-950 font-semibold">
-                          856
-                        </span>
-                      </div>
+                        <div className="bg-red-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-red-950 mr-2">
+                            UOM:
+                          </span>
+                          <span className="text-xs text-red-950 font-semibold">
+                            {PCASkuBillingDetails.sku_uom}
+                          </span>
+                        </div>
 
-                      <div className="bg-indigo-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-indigo-950 mr-2">
-                          DNP (Rate/L):
-                        </span>
-                        <span className="text-xs text-indigo-950 font-semibold">
-                          2.3 hrs
-                        </span>
-                      </div>
+                        <div className="bg-stone-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-stone-950 mr-2">
+                            Pack Size:
+                          </span>
+                          <span className="text-xs text-stone-950 font-semibold">
+                            {PCASkuBillingDetails.pack_size}
+                          </span>
+                        </div>
 
-                      <div className="bg-green-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-green-950 mr-2">
-                          Declared PCA (Rate/L):
-                        </span>
-                        <span className="text-xs text-green-950 font-semibold">
-                          45
-                        </span>
-                      </div>
+                        <div className="bg-indigo-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-indigo-950 mr-2">
+                            DNP (Rate/L):
+                          </span>
+                          <span className="text-xs text-indigo-950 font-semibold">
+                            {PCASkuBillingDetails.sku_dnp}
+                          </span>
+                        </div>
 
-                      <div className="bg-gray-100 rounded-full px-4 py-1 flex items-center">
-                        <span className="text-xs font-semibold text-gray-950 mr-2">
-                          Special PCA (Rate/L):
-                        </span>
-                        <span className="text-xs text-gray-950 font-semibold">
-                          $12.4K
-                        </span>
+                        <div className="bg-green-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-green-950 mr-2">
+                            Declared PCA (Rate/L):
+                          </span>
+                          <span className="text-xs text-green-950 font-semibold">
+                            {PCASkuBillingDetails.sku_mrp}
+                          </span>
+                        </div>
+
+                        <div className="bg-gray-100 rounded-full px-4 py-1 flex items-center">
+                          <span className="text-xs font-semibold text-gray-950 mr-2">
+                            Special PCA (Rate/L):
+                          </span>
+                          <span className="text-xs text-gray-950 font-semibold">
+                            {PCASkuBillingDetails.pd_rate}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              <div>gg</div>
+              {showRestBasedOnProject && asyncSelectBoxData && (
+                <div className="grid grid-cols-1 md:grid-cols-6 mt-2 pt-2 border-t-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Billing Price/L:<span className="text-red-600 font-bold">*</span></label>
+                    <input type="number" autoComplete="off" placeholder="Billing Price/L" className="w-full border rounded form-input text-sm"
+                      min={PCASkuBillingDetails?.min_rate} disabled={PCASkuBillingDetails?.min_rate == null}
+                      value={billingSkuPayload?.bpd_declared_rate}
+                      onChange={(e) => setBillingSkuPayload((pre: any) => ({
+                        ...pre, bpd_declared_rate: e.target.value,
+                        bpd_total_amount: Number(e.target.value) * pre.bpd_no_of_pack * PCASkuBillingDetails.pack_size
+                      }))} />
+                    {billingSkuPayload?.bpd_declared_rate < PCASkuBillingDetails?.min_rate && (
+                      <span className="text-xs text-red-600 font-semibold">Billing Price must be equal to or greater than {PCASkuBillingDetails?.min_rate}</span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">NOP:<span className="text-red-600 font-bold">*</span></label>
+                    <input type="number" autoComplete="off" placeholder="Enter Here" className="w-full border rounded form-input text-sm"
+                      min={0} disabled={PCASkuBillingDetails?.min_rate == null} value={billingSkuPayload?.bpd_no_of_pack}
+                      onChange={(e) => setBillingSkuPayload((pre: any) => ({
+                        ...pre, bpd_no_of_pack: e.target.value,
+                        bpd_total_amount: Number(e.target.value) * pre.bpd_declared_rate * PCASkuBillingDetails.pack_size
+                      }))} />
+                  </div>
+
+                  <div className="col-span-3">
+                    <label className="block text-sm font-semibold mb-1">Remarks:</label>
+                    <input type="text" autoComplete="off" placeholder="Enter Here" className="w-full border rounded form-input text-sm"
+                      disabled={PCASkuBillingDetails?.min_rate == null} value={billingSkuPayload?.remarks}
+                      onChange={(e) => setBillingSkuPayload((pre: any) => ({ ...pre, remarks: e.target.value }))}
+                    />
+                  </div>
+
+                  {billingSkuPayload.bpd_no_of_pack > 0 && PCASkuBillingDetails && billingSkuPayload?.bpd_declared_rate >= PCASkuBillingDetails?.min_rate && (
+                    <div className='flex items-center justify-end'>
+                      <button className='py-2 px-4 bg-gradient-to-b from-blue-500 to-blue-950 rounded-md text-white font-semibold flex items-center' type="button"
+                        onClick={handleAdd} disabled={billingSkuPayload.bpd_no_of_pack < 1}>
+                        <span>ADD</span>
+                        <IoMdAdd />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}
       </div>
+
+      {billingPayload.billing_sku.length > 0 && (
+        <div className="flex justify-center">
+          <span className="px-6 py-0.5 bg-slate-900 text-slate-200 mt-4 rounded-t-lg">Already Selected SKU</span>
+        </div>
+      )}
+
+      {billingPayload.billing_sku.length > 0 &&
+        billingPayload.billing_sku.map((sku: any, idx: number) => (
+          <div key={sku.bpd_sku_id || idx} className="p-4 bg-white rounded-md mb-4">
+            <div className="flex justify-between px-2">
+              <div className="text-md text-slate-900 font-semibold border-b-2 border-dotted">
+                {sku.sku_label} <span className="text-slate-700">({sku.bpd_sku_id})</span>
+              </div>
+              <div className="px-4 text-green-800 bg-green-200 rounded-full border-green-300 border-2">
+                Stock: <span className="font-semibold text-green-950"> {sku.bpd_stock} </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-5 gap-4 px-2 pt-2 items-center">
+              <div className="text-slate-700">
+                Billing Price (Rate/L):
+                <span className="font-semibold text-slate-900"> {sku.bpd_declared_rate}</span>
+              </div>
+              <div className="text-slate-700">
+                Pack Size (L):
+                <span className="font-semibold text-slate-900"> {sku.pack_size}</span>
+              </div>
+              <div className="text-slate-700">
+                No of Pack:
+                <span className="font-semibold text-slate-900"> {sku.bpd_no_of_pack}</span>
+              </div>
+              <div className="text-slate-700">
+                Total Amount:
+                <span className="font-semibold text-slate-900"> {sku.bpd_total_amount}</span>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => handleRemove(idx)}
+                  className="px-2 py-0.5 text-red-600 font-semibold border-2 border-red-600 rounded-md hover:bg-red-600 hover:text-white transition duration-300"
+                >
+                  <div className="flex items-center">
+                    <FiTrash2 className="mr-1 text-sm" />
+                    Remove
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+      {billingPayload.billing_sku.length > 0 && (
+        <>
+          <div className="flex justify-between py-2 px-4 items-center bg-white rounded-md">
+            <div className="text-lg">
+              <span className="text-slate-700">Total Price:</span>
+              <span className="font-semibold text-slate-900"> {billingPayload.billing_sku.reduce((acc: any, cur: any) => acc + cur.bpd_total_amount, 0)}</span>
+
+            </div>
+            <button className="bg-gradient-to-b from-blue-500 to-blue-950 px-4 py-2 rounded-lg text-white font-semibold flex items-center"
+              onClick={handleSubmit}
+            >
+              <FaRegPaperPlane />
+              <span className="ml-2">Submit</span>
+            </button>
+          </div>
+        </>
+      )}
 
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">

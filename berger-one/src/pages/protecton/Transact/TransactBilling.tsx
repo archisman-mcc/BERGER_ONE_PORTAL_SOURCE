@@ -8,7 +8,7 @@ import Flatpickr from 'react-flatpickr';
 import { CiSearch } from "react-icons/ci";
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
 import { Button, Group, Modal } from "@mantine/core";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const TransactBilling = () => {
 
@@ -330,9 +330,6 @@ const TransactBilling = () => {
         }));
     }, []);
 
-    // useEffect(() => {
-    //     console.log('Billing:', data.billingDetailsList);
-    // }, [data.billingDetailsList]);
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">

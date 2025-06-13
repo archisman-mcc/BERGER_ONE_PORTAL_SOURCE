@@ -153,19 +153,21 @@ const ALL_ENDPOINTS = {
     GetBillingList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingList',
     GetBillingDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingDetails',
     GetBillingTLVBalance: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingTLVBalance',
+    InsertBillingSKU: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'InsertBillingSKU',
 
     // Transact Potential Lead
     PCADtlsBillto: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'PCADtlsBillto',
+    GetPCASkuBillingDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPCASkuBillingDetails',
 
     //#endregion
 };
 
 export const ENDPOINTS = {
-    // BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
-    // BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    BASE_URL_DEV: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
+    BASE_URL_PROD: 'https://bpilmobile.bergerindia.com/ONE_PORTAL_API/api/',
 
-    BASE_URL_DEV: 'https://localhost:36554/api/',
-    BASE_URL_PROD: 'https://localhost:36554/api/',
+    // BASE_URL_DEV: 'https://localhost:36554/api/',
+    // BASE_URL_PROD: 'https://localhost:36554/api/',
     ...ALL_ENDPOINTS,
 };
 
