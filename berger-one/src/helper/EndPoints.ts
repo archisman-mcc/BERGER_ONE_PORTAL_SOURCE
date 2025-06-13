@@ -9,10 +9,14 @@ const BASE_ENDPOINTS = {
     Legal: 'Legal/',
     Report: 'Report/',
     ProtectonDsr: 'PROTECTON/DSR/',
+    ProtectonUserTracking: 'PROTECTON/UserTracking/',
     ProtectonDespatch: 'PROTECTON/Despatch/',
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
     ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
+    ProtectonOS: 'PROTECTON/OS/',
+    ProtectonBilling: 'PROTECTON/Billing/',
+    ProtectonPotentialLead: 'PROTECTON/PotentialLead/',
     TransactOS: 'PROTECTON/OS/'
 };
 
@@ -49,8 +53,6 @@ const ALL_ENDPOINTS = {
     PasswordEncryptDecrypt: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'PasswordEncryptDecrypt',
     ValidateIFSC: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'ValidateIFSC',
 
-    GetUserGroup: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Dashboard + 'GetUserGroup',
-    GetApplicableUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Dashboard + 'GetApplicableUserList',
     GetMWAStatus: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Dashboard + 'GetMWAStatus',
 
     GetTlvRevisionList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetTlvRevisionList',
@@ -61,7 +63,6 @@ const ALL_ENDPOINTS = {
     GetePCAHoApprovalList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalList',
     GetePCAHoApprovalDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalDetails',
 
-    GetProtectonRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonRegion',
     GetProtectonApplicableTerr: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonApplicableTerr',
     GetReportingUser: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetReportingUser',
     GetDeptList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetDeptList',
@@ -111,10 +112,22 @@ const ALL_ENDPOINTS = {
     LegalCaseApprovalAsmReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Report + 'GetLegalCaseApprovalAsmReport',
     GetProjectList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetProjectList',
     GetCalculatedGC: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetCalculatedGC',
+    GetUserApplicableDealer: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetUserApplicableDealer',
 
     // Protecton DSR
     UserApplDlrSales: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSales',
     UserApplDlrSalesDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDsr + 'UserApplDlrSalesDtls',
+    
+    // Protecton user tracking
+    GetProtectonRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonRegion', //
+    GetUserGroup: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetUserGroup', //
+    GetApplicableUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableUserList', //
+    GetUserCollectionList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonUserTracking + 'GetUserCollectionList',
+    GetVisitHistoryUserwise: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonUserTracking + 'GetVisitHistoryUserwise',
+
+    // Protecton Outstanding
+    UserApplDlrOSDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'UserApplDlrOSDtls',
+
 
     //Protecton Despatch
     GetDespatchDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDespatch + 'GetDespatchDetails',
@@ -134,7 +147,17 @@ const ALL_ENDPOINTS = {
     GetPRList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPaymentReceipt + 'GetPRList',
 
     // Transact OS
-    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'ODbyDateList',
+    ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonOS + 'ODbyDateList',
+
+    // Transact Billing
+    GetBillingList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingList',
+    GetBillingDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingDetails',
+    GetBillingTLVBalance: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'GetBillingTLVBalance',
+    InsertBillingSKU: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonBilling + 'InsertBillingSKU',
+
+    // Transact Potential Lead
+    PCADtlsBillto: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'PCADtlsBillto',
+    GetPCASkuBillingDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPCASkuBillingDetails',
 
     //#endregion
 };

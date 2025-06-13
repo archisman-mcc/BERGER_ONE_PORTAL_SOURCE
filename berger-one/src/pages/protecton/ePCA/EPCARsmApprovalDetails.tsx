@@ -837,7 +837,7 @@ const EPCARsmApprovalDetails = () => {
                     {/* Buttons */}
                     <div className="flex items-end space-x-2">
                         <button
-                            className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center" onClick={handleSearch}>
+                            className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center" onClick={handleSearch}>
                             <CiSearch /> <span>Search</span>
                         </button>
                     </div>
@@ -848,7 +848,7 @@ const EPCARsmApprovalDetails = () => {
                 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', background: '#fff', paddingTop: '8px', paddingBottom: '8px', paddingLeft: '4px', paddingRight: '4px' }}>
                     <div className="mx-2" style={{ display: 'inline-block' }}>
                         <div style={{ float: 'left', width: '20px', height: '20px', margin: '0px', border: '1px solid rgba(0, 0, 0, .2)', backgroundColor: '#ABEBC6' }}></div>
-                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`GOOD(GC >= 30)`}</span>
+                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`GOOD (GC >= 30)`}</span>
                     </div>
 
                     <div className="mx-2">
@@ -858,11 +858,11 @@ const EPCARsmApprovalDetails = () => {
 
                     <div className="mx-2">
                         <div style={{ float: 'left', width: '20px', height: '20px', margin: '0px', border: '1px solid rgba(0, 0, 0, .2)', backgroundColor: '#ffd9d5' }}></div>
-                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`LOW(GC <= 24)`}</span>
+                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`LOW (GC <= 24)`}</span>
                     </div>
                     <div className="mx-2">
                         <div style={{ float: 'left', width: '20px', height: '20px', margin: '0px', border: '1px solid rgba(0, 0, 0, .2)', backgroundColor: '#ffd9d5' }}></div>
-                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`NA(GC NA)`}</span>
+                        <span style={{ float: 'left', height: '20px', lineHeight: '22px', paddingLeft: '6px', display: 'inline-block' }}>{`NA (GC NA)`}</span>
                     </div>
                 </div>
                 {data.length > 0 && (

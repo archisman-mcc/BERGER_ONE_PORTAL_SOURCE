@@ -4,6 +4,12 @@ import { ENDPOINTS } from "../../../helper/EndPoints";
 export function GetProtectonRegion<P, G>(data: { lov_type: any; active: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetProtectonRegion) as Promise<G>;
 }
+export function GetUserGroup<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetUserGroup) as Promise<G>;
+}
+export function GetApplicableUserList<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetApplicableUserList) as Promise<G>;
+}
 
 export function GetProtectonApplicableTerr<P, G>(data: { lov_type: any; active: any }): Promise<G> {
     return HTTP_GET<P, G>(data, ENDPOINTS.GetProtectonApplicableTerr) as Promise<G>;
@@ -45,6 +51,6 @@ export function GetTerrDepotWise<P, G>(data: { depot_code: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetTerrDepotWise) as Promise<G>;
 }
 
-export function UserProfileInsert<P, G>(data): Promise<G> {
+export function UserProfileInsert<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.UserProfileInsert) as Promise<G>;
 }

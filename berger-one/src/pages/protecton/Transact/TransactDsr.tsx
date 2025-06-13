@@ -1,178 +1,25 @@
 import { CiSearch } from "react-icons/ci";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useRef } from "react";
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
-import * as dsr from '../../../services/api/protectonTransact/TransactDsr';
-import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
+import TableComponent from "./Components/TableComponent";
 
 const TransactDsr = () => {
-    const [dsrDate, setDsrDate] = useState<Date | null>(null);
-    const [viewBy, setViewBy] = useState("YTD");
-    const [loading, setLoading] = useState(false);
-    const [tableData, setData] = useState<any>([]);
+    const childRef = useRef<any>(null);
 
-    let auth = JSON.parse(localStorage.getItem('auth'));
-    let user_id = auth.state.userDetails.user_id;
+    const [tableData, settableData] = useState<any>([]);
+    const [filterData, setFilterData] = useState({ dsrDate: new Date().toISOString().split('T')[0], viewBy: "MTD", usp_user_id: '' });
+    const [loading, setLoading] = useState(false);
 
     const handleSearch = (e: any) => {
         e.preventDefault();
-        GetUserApplDlrSales();
+        childRef.current.triggerAPI({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '', selected_user: '' });
     };
 
-    useEffect(() => {
-        // GetUserApplDlrSales();
 
-    }, [])
-
-    const GetUserApplDlrSales = async () => {
-        setLoading(true);
-        const payload: any = {
-            asOnDate: dsrDate,
-            repType: viewBy,
-            report_grp_level: "Summary",
-            selected_user: user_id,
-        };
-        try {
-            const response: any = await dsr.UserApplDlrSales(payload);
-            if (response && response.data != null && response.data != undefined) {
-                setData(response.data.table);
-            }
-            else setData([]);
-        } catch (error) {
-            return;
-        }
-        setLoading(false);
-    }
-
-    type dsrType = {
-        regn: string;
-    }
-
-    const columns = useMemo<MRT_ColumnDef<dsrType>[]>(
-        () => [
-            {
-                accessorKey: 'regn',
-                header: 'Region',
-                size: 50,
-            },
-            {
-                accessorKey: 'gr_val',
-                header: 'gr_val',
-                size: 50,
-            },
-            {
-                accessorKey: 'gr_vol',
-                header: 'gr_vol',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_val',
-                header: 'ly_val',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_val_fm',
-                header: 'ly_val_fm',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_val_other',
-                header: 'ly_val_other',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_val_tiger',
-                header: 'ly_val_tiger',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_vol',
-                header: 'ly_vol',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_vol_fm',
-                header: 'ly_vol_fm',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_vol_other',
-                header: 'ly_vol_other',
-                size: 50,
-            },
-            {
-                accessorKey: 'ly_vol_tiger',
-                header: 'ly_vol_tiger',
-                size: 50,
-            },
-            {
-                accessorKey: 'tg_val',
-                header: 'tg_val',
-                size: 50,
-            },
-            {
-                accessorKey: 'tg_val_other',
-                header: 'tg_val_other',
-                size: 50,
-            },
-            {
-                accessorKey: 'tg_val_tiger',
-                header: 'tg_val_tiger',
-                size: 50,
-            },
-            {
-                accessorKey: 'tg_vol',
-                header: 'tg_vol',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_val',
-                header: 'ty_val',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_val_other',
-                header: 'ty_val_other',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_val_tiger',
-                header: 'ty_val_tiger',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_vol',
-                header: 'ty_vol',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_vol_other',
-                header: 'ty_vol_other',
-                size: 50,
-            },
-            {
-                accessorKey: 'ty_vol_tiger',
-                header: 'ty_vol_tiger',
-                size: 50,
-            }
-        ],
-        []
-    );
-
-    const table = useMantineReactTable<dsrType>({
-        columns,
-        data: tableData,
-        enableColumnResizing: true,
-        enableTopToolbar: false,
-        enableSorting: false,
-        enableColumnActions: false,
-        columnResizeMode: 'onChange',
-        mantineTableContainerProps: {
-            style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
-            },
-        }
-    });
+    // useEffect(() => {
+    //     console.log(tableData)
+    // }, [tableData])
 
     return (
         <>
@@ -185,8 +32,8 @@ const TransactDsr = () => {
                     <div>
                         <label htmlFor="dsr-date" className="block text-sm font-semibold mb-1">DSR Date:</label>
                         <Flatpickr
-                            value={dsrDate ? [dsrDate] : []}
-                            onChange={(dates: Date[]) => setDsrDate(dates[0] || null)}
+                            value={filterData.dsrDate || ''}
+                            onChange={(dates: any) => setFilterData((pre: any) => ({ ...pre, dsrDate: dates[0].slice(0, 10) || '' }))}
                             options={{
                                 dateFormat: 'd/m/Y',
                             }}
@@ -200,8 +47,8 @@ const TransactDsr = () => {
                                 type="radio"
                                 name="viewBy"
                                 value="YTD"
-                                checked={viewBy === "YTD"}
-                                onChange={e => setViewBy(e.target.value)}
+                                checked={filterData?.viewBy === "YTD"}
+                                onChange={e => setFilterData((pre: any) => ({ ...pre, viewBy: e.target.value }))}
                                 className="mr-1"
                             />
                             YTD
@@ -211,8 +58,8 @@ const TransactDsr = () => {
                                 type="radio"
                                 name="viewBy"
                                 value="MTD"
-                                checked={viewBy === "MTD"}
-                                onChange={e => setViewBy(e.target.value)}
+                                checked={filterData?.viewBy === "MTD"}
+                                onChange={e => setFilterData((pre: any) => ({ ...pre, viewBy: e.target.value }))}
                                 className="mr-1"
                             />
                             MTD
@@ -232,9 +79,7 @@ const TransactDsr = () => {
                 </div>
             </div>
 
-            <div className="mb-2 max-h-[45vh] overflow-y-auto">
-                <MantineReactTable table={table} />
-            </div>
+            <TableComponent ref={childRef} tableData={tableData} settableData={settableData} setLoading={setLoading} filterData={filterData} form="TransactDsr" />
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
