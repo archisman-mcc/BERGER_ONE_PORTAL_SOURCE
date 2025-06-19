@@ -166,6 +166,7 @@ const ALL_ENDPOINTS = {
     ProtectonGetMWAStatus: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDashboard + 'GetMWAStatus',
     GetUserGroup: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDashboard + 'GetUserGroup',
     GetApplicableUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDashboard + 'GetApplicableUserList',
+    GetDashboardLeadData: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonDashboard + 'GetDashboardLeadData',
 
     //#endregion
 };

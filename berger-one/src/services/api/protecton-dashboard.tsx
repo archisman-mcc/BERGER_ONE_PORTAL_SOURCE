@@ -20,3 +20,7 @@ export function GetUserGroup<P, G>(data: any): Promise<G> {
 export function GetApplicableUserList<P, G>(data: any): Promise<G> {
     return HTTP_GET<P, G>(data, ENDPOINTS.GetApplicableUserList) as Promise<G>;
 }
+
+export function GetDashboardLeadData<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetDashboardLeadData) as Promise<G>;
+}

@@ -5,6 +5,8 @@ import * as dashboard from '../../services/api/protecton-dashboard';
 import { UseAuthStore } from '../../services/store/AuthStore';
 import * as common from '../../services/api/users/UserProfile';
 import Select from 'react-select';
+import addButton from '../../assets/images/add-button.svg'
+import { Modal } from '@mantine/core';
 
 const Dashboard = () => {
 
@@ -22,10 +24,13 @@ const Dashboard = () => {
         selectedUserGroup: '',
         applicableUserList: [],
         selectedApplicableUser: '',
+        leadData: [],
     });
 
     const user = UseAuthStore((state: any) => state.userDetails);
-    console.log(user);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
 
     const GetDashboardLeadFunnel = async () => {
         try {
@@ -74,6 +79,19 @@ const Dashboard = () => {
             return;
         } finally {
             setIsMWALoading(false);
+        }
+    }
+
+    const GetDashboardLeadData = async () => {
+        try {
+            const response: any = await dashboard.GetDashboardLeadData({});
+            setData((prevData: any) => ({
+                ...prevData,
+                leadData: response.data || [],
+            }));
+        } catch (error) {
+            return;
+        } finally {
         }
     }
 
@@ -142,8 +160,7 @@ const Dashboard = () => {
     const handleMWAOptionChange = (event: { target: { value: string } }) => {
         const value = event.target.value;
         setSelectedMWAOption(value);
-        if(value == 'self')
-        {
+        if (value == 'self') {
             setData((pre: any) => ({ ...pre, selectedRegion: '', selectedUserGroup: '', selectedApplicableUser: '' }))
             GetMWAStatus(user.user_id);
         }
@@ -154,25 +171,29 @@ const Dashboard = () => {
         GetMWAStatus(selectedUser);
     }
 
+    const handleCardClick = (title: string) => {
+        setModalTitle(title);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
     useEffect(() => {
         GetDashboardLeadFunnel();
         GetDashboardSales();
         GetMWAStatus(user.user_id);
         GetRegion();
         GetUserGroup();
+        GetDashboardLeadData();
     }, []);
 
     useEffect(() => {
-        if(data.selectedRegion && data.selectedUserGroup)
-        {
+        if (data.selectedRegion && data.selectedUserGroup) {
             GetApplicableUserList();
         }
     }, [data.selectedUserGroup, data.selectedRegion]);
-
-    useEffect(() => {
-        console.log(data.applicableUserList);
-    }, [data.applicableUserList]);
-
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
@@ -181,10 +202,12 @@ const Dashboard = () => {
 
             <div className="grid grid-cols-12 gap-4 mt-4">
                 <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
-                    <h5 className="text-lg font-semibold">Business Funnel</h5>
-                    <div className="flex justify-end items-center mb-4 gap-2">
-                        <img src={rupee} alt="" className='w-4 h-4' />
-                        <p className="text-sm font-semibold">Value in Lakhs</p>
+                    <div className="flex justify-between items-center">
+                        <h5 className="text-lg font-semibold">Business Funnel</h5>
+                        <div className="flex justify-end items-center mb-4 gap-2">
+                            <img src={rupee} alt="" className='w-4 h-4' />
+                            <p className="text-sm font-semibold">Value in Lakhs</p>
+                        </div>
                     </div>
 
                     <div className="flex flex-col items-center space-y-2">
@@ -207,7 +230,7 @@ const Dashboard = () => {
                                     fill="none"
                                 >
                                     <path
-                                        d="M14.393 32.107h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.368h2.214a.37.37 0 00.369-.368v-2.215a.37.37 0 00-.37-.369zm0 2.584h-2.214v-2.215h2.214v2.215zm3.69-2.584H15.87a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.368h2.213a.37.37 0 00.37-.368v-2.215a.37.37 0 00-.37-.369zm0 2.584H15.87v-2.215h2.214v2.215zm-3.69 1.107h-2.214a.37.37 0 00-.37.369v2.214a.37.37 0 00.37.369h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.369v2.214a.37.37 0 00.37.369h2.213a.37.37 0 00.37-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583H15.87v-2.214h2.214v2.214zm-3.69 1.107h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37h2.214a.37.37 0 00.369-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37h2.213a.37.37 0 00.37-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583H15.87v-2.214h2.214v2.214zm-3.69 1.108h-2.214a.37.37 0 00-.37.369v2.214a.37.37 0 00.37.369h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.369v2.214a.37.37 0 00.37.369h2.213a.37.37 0 00.37-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583H15.87v-2.214h2.214v2.214zm-3.69 1.107h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37h2.214a.37.37 0 00.369-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37h2.213a.37.37 0 00.37-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583H15.87v-2.214h2.214v2.214zM43.917 35.06h2.214a.37.37 0 00.369-.37v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.368zm0-2.584h2.214v2.215h-2.214v-2.215zm3.69 2.584h2.215a.37.37 0 00.368-.37v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.368zm0-2.584h2.215v2.215h-2.215v-2.215zm-3.69 6.274h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.369-.37h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.369zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.213a.37.37 0 00-.368-.37h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.369zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.369v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.369-.37h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.369zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.213a.37.37 0 00-.368-.37h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.369zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.369v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.369v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37zm0-2.583h2.215v2.214h-2.215v-2.214zM35.368 9.768c.14.471.333.924.576 1.35.167.3.312.612.435.934a2.498 2.498 0 01-.191 2.152.367.367 0 00.128.507.37.37 0 00.506-.13 3.27 3.27 0 00.253-2.777 8.075 8.075 0 00-.477-1.028 5.746 5.746 0 01-.516-1.194 2.236 2.236 0 01.755-2.282.37.37 0 00-.462-.577 2.986 2.986 0 00-1.007 3.046z"
+                                        d="M14.393 32.107h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.368h2.214a.37.37 0 00.369-.368v-2.215a.37.37 0 00-.37-.369zm0 2.584h-2.214v-2.215h2.214v2.215zm3.69-2.584H15.87a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.368h2.213a.37.37 0 00.37-.368v-2.215a.37.37 0 00-.37-.369zm0 2.584H15.87v-2.215h2.214v2.215zm-3.69 1.107h-2.214a.37.37 0 00-.37.369v2.214a.37.37 0 00.37.369h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.369v2.214a.37.37 0 00.37.369h2.213a.37.37 0 00.37-.37v-2.213a.37.37 0 00-.37-.37zm0 2.583H15.87v-2.214h2.214v2.214zm-3.69 1.107h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37h2.214a.37.37 0 00.369-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583h-2.214v-2.214h2.214v2.214zm3.69-2.583H15.87a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37h2.213a.37.37 0 00.37-.37v-2.214a.37.37 0 00-.37-.369zm0 2.583H15.87v-2.214h2.214v2.214zM43.917 35.06h2.214a.37.37 0 00.369-.37v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.368zm0-2.584h2.214v2.215h-2.214v-2.215zm3.69 2.584h2.215a.37.37 0 00.368-.37v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.368zm0-2.584h2.215v2.215h-2.215v-2.215zm-3.69 6.274h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.369-.37h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.369zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.213a.37.37 0 00-.368-.37h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.369zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.369v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.37v-2.213a.37.37 0 00-.369-.37h-2.214a.37.37 0 00-.37.37v2.214a.37.37 0 00.37.369zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.37v-2.213a.37.37 0 00-.368-.37h-2.215a.37.37 0 00-.369.37v2.214a.37.37 0 00.37.369zm0-2.583h2.215v2.214h-2.215v-2.214zm-3.69 6.273h2.214a.37.37 0 00.369-.369v-2.214a.37.37 0 00-.369-.369h-2.214a.37.37 0 00-.37.37v2.213a.37.37 0 00.37.37zm0-2.583h2.214v2.214h-2.214v-2.214zm3.69 2.583h2.215a.37.37 0 00.368-.369v-2.214a.37.37 0 00-.368-.369h-2.215a.37.37 0 00-.369.37v2.213a.37.37 0 00.37.37zm0-2.583h2.215v2.214h-2.215v-2.214zM35.368 9.768c.14.471.333.924.576 1.35.167.3.312.612.435.934a2.498 2.498 0 01-.191 2.152.367.367 0 00.128.507.37.37 0 00.506-.13 3.27 3.27 0 00.253-2.777 8.075 8.075 0 00-.477-1.028 5.746 5.746 0 01-.516-1.194 2.236 2.236 0 01.755-2.282.37.37 0 00-.462-.577 2.986 2.986 0 00-1.007 3.046z"
                                         fill="#2D4356"
                                     />
                                     <path
@@ -239,10 +262,11 @@ const Dashboard = () => {
                 </div>
 
                 <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
-                    <h5 className="text-lg font-semibold">Sales Review</h5>
-
-                    <div className="flex justify-end items-center mb-4 gap-2">
-                        <p className="text-xs font-semibold bg-green-200 px-4 py-1 rounded-full">As on: {data.dashboardSaleReviewData.as_on_date}</p>
+                    <div className="flex justify-between items-center">
+                        <h5 className="text-lg font-semibold">Sales Review</h5>
+                        <div className="flex justify-end items-center mb-4 gap-2">
+                            <p className="text-xs font-semibold bg-green-200 px-4 py-1 rounded-full">As on: {data.dashboardSaleReviewData.as_on_date}</p>
+                        </div>
                     </div>
 
                     <div className="overflow-x-auto">
@@ -331,16 +355,16 @@ const Dashboard = () => {
 
                 </div>
 
-            </div>
 
+            </div>
             <div className="grid grid-cols-12 gap-4 mt-4">
                 <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
-                    <h5 className="text-lg font-semibold">Overdues</h5>
+                    <div className="flex justify-between items-center">
+                        <h5 className="text-lg font-semibold">Overdues</h5>
 
-                    <div className="flex justify-end items-center mb-4 gap-2">
-                        {!isOverduesLoading && (
+                        <div className="flex justify-end items-center mb-4 gap-2">
                             <p className="text-xs font-semibold bg-green-200 px-4 py-1 rounded-full">As on: {data.dashboardOverduesData[0]?.as_on_date}</p>
-                        )}
+                        </div>
                     </div>
 
                     {isOverduesLoading ? (
@@ -378,118 +402,122 @@ const Dashboard = () => {
                 </div>
 
 
-                <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
-                    <h5 className="text-lg font-semibold">MWA</h5>
+                <div className="col-span-6 bg-white rounded-lg shadow-md p-2">
+                    <div className="flex justify-between items-center">
+                        <h5 className="text-lg font-semibold">MWA</h5>
 
-                    <div className="flex justify-end items-center mb-4 gap-2">
-                        <p
-                            className={`text-xs font-semibold px-4 py-1 rounded-full 
-                                        ${data.dashboardMWAData?.table1?.[0]?.status_txt === "Q"
-                                    ? "bg-green-200 text-green-600"
-                                    : "bg-red-200 text-red-600"
-                                }`}
-                        >
-                            Qualification Status: {data.dashboardMWAData?.table1?.[0]?.status_txt === "Q" ? "▲" : "▼"}
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-6 mb-2">
-                      <div className="flex bg-white rounded-full shadow px-1 py-1 w-fit">
-                        <button
-                          type="button"
-                          onClick={() => handleMWAOptionChange({ target: { value: 'self' } })}
-                          className={`px-8 py-2 rounded-full font-medium focus:outline-none transition-all duration-150
+                        <div className="flex items-center gap-6 mb-2">
+                            <div className="flex bg-white rounded-full shadow px-1 py-0 w-fit">
+                                <button
+                                    type="button"
+                                    onClick={() => handleMWAOptionChange({ target: { value: 'self' } })}
+                                    className={`px-8 py-2 rounded-full font-medium focus:outline-none transition-all duration-150
                             ${selectedMWAOption === 'self'
-                              ? 'bg-blue-600 text-white shadow'
-                              : 'bg-white text-gray-700'
-                            }`}
-                          style={{ border: 'none' }}
-                        >
-                          Self
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleMWAOptionChange({ target: { value: 'other' } })}
-                          className={`px-8 py-2 rounded-full font-medium focus:outline-none transition-all duration-150
+                                            ? 'bg-blue-600 text-white shadow'
+                                            : 'bg-white text-gray-700'
+                                        }`}
+                                    style={{ border: 'none' }}
+                                >
+                                    Self
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleMWAOptionChange({ target: { value: 'other' } })}
+                                    className={`px-8 py-2 rounded-full font-medium focus:outline-none transition-all duration-150
                             ${selectedMWAOption === 'other'
-                              ? 'bg-blue-600 text-white shadow'
-                              : 'bg-white text-gray-700'
-                            }`}
-                          style={{ border: 'none' }}
-                        >
-                          Other
-                        </button>
-                      </div>
+                                            ? 'bg-blue-600 text-white shadow'
+                                            : 'bg-white text-gray-700'
+                                        }`}
+                                    style={{ border: 'none' }}
+                                >
+                                    Other
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end items-center mb-4 gap-2">
+                            <p
+                                className={`text-xs font-semibold px-4 py-1 rounded-full 
+                                        ${data.dashboardMWAData?.table1?.[0]?.status_txt === "Q"
+                                        ? "bg-green-200 text-green-600"
+                                        : "bg-red-200 text-red-600"
+                                    }`}
+                            >
+                                Qualification Status: {data.dashboardMWAData?.table1?.[0]?.status_txt === "Q" ? "▲" : "▼"}
+                            </p>
+                        </div>
                     </div>
+
+
 
                     {selectedMWAOption == 'other' && (
-                    <div className="grid grid-cols-12 gap-2 mb-2">
-                        <div className='col-span-4'>
-                            <label className="block text-sm font-semibold mb-1">Region:</label>
-                            <Select
-                                className="text-sm"
-                                isSearchable={true}
-                                options={[
-                                    ...data.regionList.map((d: any) => ({
-                                        value: d.depot_regn,
-                                        label: d.regn_new,
-                                    })),
-                                ]}
-                                value={
-                                    data.selectedRegion
-                                        ? { value: data.selectedRegion, label: data.selectedRegion }
-                                        : null
-                                }
-                                onChange={(event: any) => {
-                                    setData((pre: any) => ({ ...pre, selectedRegion: event?.value }))
-                                }}
-                            />
-                        </div>
-                        <div className='col-span-4'>
-                            <label className="block text-sm font-semibold mb-1">User Group:</label>
-                            <Select
-                                className="text-sm"
-                                isSearchable={true}
-                                options={[
-                                    ...data.userGroupList.map((d: any) => ({
-                                        value: d.grp_user_group_code,
-                                        label: d.grp_user_group_desc,
-                                    })),
-                                ]}
-                                value={
-                                    data.selectedUserGroup
-                                        ? { value: data.selectedUserGroup, label: data.selectedUserGroup }
-                                        : null
-                                }
-                                onChange={(event: any) => {
-                                    setData((pre: any) => ({ ...pre, selectedUserGroup: event?.value }))
-                                }}
-                            />
-                        </div>
-                        {data.selectedRegion && data.selectedUserGroup && data.applicableUserList.length > 0 && (
+                        <div className="grid grid-cols-12 gap-2 mb-2">
                             <div className='col-span-4'>
-                                <label className="block text-sm font-semibold mb-1">User:</label>
+                                <label className="block text-sm font-semibold mb-1">Region:</label>
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
                                     options={[
-                                        ...data.applicableUserList.map((d: any) => ({
-                                            value: d.usp_user_id,
-                                            label: d.usp_user_name,
+                                        ...data.regionList.map((d: any) => ({
+                                            value: d.depot_regn,
+                                            label: d.regn_new,
                                         })),
                                     ]}
                                     value={
-                                        data.selectedApplicableUser
-                                            ? { value: data.selectedApplicableUser, label: data.selectedApplicableUser }
+                                        data.selectedRegion
+                                            ? { value: data.selectedRegion, label: data.selectedRegion }
                                             : null
                                     }
                                     onChange={(event: any) => {
-                                        handleUserChange(event?.value)
+                                        setData((pre: any) => ({ ...pre, selectedRegion: event?.value }))
                                     }}
                                 />
                             </div>
-                        )}
-                    </div>
+                            <div className='col-span-4'>
+                                <label className="block text-sm font-semibold mb-1">User Group:</label>
+                                <Select
+                                    className="text-sm"
+                                    isSearchable={true}
+                                    options={[
+                                        ...data.userGroupList.map((d: any) => ({
+                                            value: d.grp_user_group_code,
+                                            label: d.grp_user_group_desc,
+                                        })),
+                                    ]}
+                                    value={
+                                        data.selectedUserGroup
+                                            ? { value: data.selectedUserGroup, label: data.selectedUserGroup }
+                                            : null
+                                    }
+                                    onChange={(event: any) => {
+                                        setData((pre: any) => ({ ...pre, selectedUserGroup: event?.value }))
+                                    }}
+                                />
+                            </div>
+                            {data.selectedRegion && data.selectedUserGroup && data.applicableUserList.length > 0 && (
+                                <div className='col-span-4'>
+                                    <label className="block text-sm font-semibold mb-1">User:</label>
+                                    <Select
+                                        className="text-sm"
+                                        isSearchable={true}
+                                        options={[
+                                            ...data.applicableUserList.map((d: any) => ({
+                                                value: d.usp_user_id,
+                                                label: d.usp_user_name,
+                                            })),
+                                        ]}
+                                        value={
+                                            data.selectedApplicableUser
+                                                ? { value: data.selectedApplicableUser, label: data.selectedApplicableUser }
+                                                : null
+                                        }
+                                        onChange={(event: any) => {
+                                            handleUserChange(event?.value)
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {isMWALoading ? (
@@ -550,6 +578,230 @@ const Dashboard = () => {
 
                 </div>
             </div>
+
+            <div className="mt-4 bg-white rounded-lg shadow-md">
+                <div className="grid grid-cols-12 gap-2">
+                    <div className="col-span-6 p-4 flex justify-between items-center">
+                        <h5 className="text-lg font-semibold">Lead Management</h5>
+                        <button className="flex items-center gap-2 font-semibold bg-gradient-to-b from-blue-500 to-blue-950 text-white px-6 py-3 rounded-md"> New <img src={addButton} alt="add" className="w-6 h-6" /></button>
+                    </div>
+
+                    <div className="col-span-2 p-2 flex flex-col justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 m-2 rounded-md text-white">
+                        <p className='font-semibold'>{data.leadData.table?.[0]?.lead_converted || 0}</p>
+                        <label>Converted</label>
+                    </div>
+                    <div className="col-span-2 p-2 flex flex-col justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 m-2 rounded-md text-white">
+                        <p className='font-semibold'>{data.leadData.table?.[0]?.lead_asigned || 0}</p>
+                        <label>Assigned</label>
+                    </div>
+                    <div className="col-span-2 p-2 flex flex-col justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 m-2 rounded-md text-white">
+                        <p className='font-semibold'>{data.leadData.table?.[0]?.lead_convertion_ratio || 0}</p>
+                        <label>Converted ratio</label>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-12 gap-2">
+                    <div className="col-span-3 p-4">
+                        <div className="flex justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 p-4 rounded-md text-white font-semibold">
+                            <label>Lead Creation</label>
+                            <p>100</p>
+                        </div>
+
+                        <div className="rounded-md bg-gradient-to-r from-blue-50 to-blue-100 p-1 mt-2 font-semibold">
+                            <div className="flex justify-between items-center p-1">
+                                <label>By Self</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_self || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>To Other Protecton</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_opl || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>To GI</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_gi || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>To AUTO</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_auto || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>To PROLINKS</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_prolinks || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>To POWDER</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table1?.[0]?.lead_creation_powder || 0}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-span-3 p-4">
+                        <div className="flex justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 p-4 rounded-md text-white font-semibold">
+                            <label>Assign</label>
+                            <p className="text-xs">Visited / Assigned</p>
+                        </div>
+
+                        <div className="rounded-md bg-gradient-to-r from-blue-50 to-blue-100 p-1 mt-2 font-semibold">
+                            <div className="flex justify-between items-center p-1">
+                                <label>From GI</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table2?.[0]?.lead_visited_gi || 0} / {data.leadData.table2?.[0]?.lead_asigned_gi || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>From AUTO</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table2?.[0]?.lead_visited_auto || 0} / {data.leadData.table2?.[0]?.lead_asigned_auto || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>From PROLINKS</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table2?.[0]?.lead_visited_prolinks || 0} / {data.leadData.table2?.[0]?.lead_asigned_prolinks || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>From Protecton</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table2?.[0]?.lead_visited_protecton || 0} / {data.leadData.table2?.[0]?.lead_asigned_protecton || 0}</p>
+                            </div>
+                            <div className="flex justify-between items-center p-1">
+                                <label>From POWDER</label>
+                                <p className="bg-blue-800 px-2 rounded-full text-white">{data.leadData.table2?.[0]?.lead_visited_powder || 0} / {data.leadData.table2?.[0]?.lead_asigned_powder || 0}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-span-6 p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+                            {/* Card 1 */}
+                            <div
+                                className="bg-gradient-to-b from-white to-blue-100 rounded-lg shadow-md flex flex-col justify-center items-center aspect-square w-full border-t-4 border-blue-800 cursor-pointer"
+                                onClick={() => handleCardClick('New Leads')}
+                            >
+                                <h3 className="text-lg font-semibold mb-2 text-blue-900">New Lead Assigned</h3>
+                                <p className="text-3xl font-bold text-blue-800 mb-1">{data.leadData.table3?.length || 0}</p>
+                                <span className="text-gray-500 text-sm">View all</span>
+                            </div>
+                            {/* Card 2 */}
+                            <div
+                                className="bg-gradient-to-b from-white to-blue-100 rounded-lg shadow-md flex flex-col justify-center items-center aspect-square w-full border-t-4 border-blue-800 cursor-pointer"
+                                onClick={() => handleCardClick('Lead Status Updates')}
+                            >
+                                <h3 className="text-lg font-semibold mb-2 text-blue-900">Lead Status Update</h3>
+                                <p className="text-3xl font-bold text-blue-800 mb-1">{data.leadData.table4?.length || 0}</p>
+                                <span className="text-gray-500 text-sm">View all</span>
+                            </div>
+                            {/* Card 3 */}
+                            <div
+                                className="bg-gradient-to-b from-white to-blue-100 rounded-lg shadow-md flex flex-col justify-center items-center aspect-square w-full border-t-4 border-blue-800 cursor-pointer"
+                                onClick={() => handleCardClick('Lead Due Date Intimations')}
+                            >
+                                <h3 className="text-lg font-semibold mb-2 text-blue-900">Lead Working Due Date</h3>
+                                <p className="text-3xl font-bold text-blue-800 mb-1">{data.leadData.table5?.length || 0}</p>
+                                <span className="text-gray-500 text-sm">View all</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <Modal
+                opened={isModalOpen}
+                onClose={closeModal}
+                centered
+                size="80vw"
+            >
+                <div className="">
+                    <h2 className="text-xl font-bold mb-4">{modalTitle}</h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {(modalTitle === 'New Leads' && data.leadData.table3?.length > 0) && data.leadData.table3.map((lead: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="bg-white rounded-2xl shadow-md p-5 pb-3 relative border border-gray-100 flex flex-col 
+                                hover:bg-blue-50 transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-200 hover:scale-105"
+                            >
+                                <span className="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-medium px-2 py-[2px] rounded">
+                                    Assigned: {lead.assigned_date}
+                                </span>
+                                <h4 className="text-lg font-semibold text-blue-700 my-2">
+                                    {lead.project_name}
+                                </h4>
+
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Lead Source:</span> {lead.lead_vertical}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Region:</span> {lead.region}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Status:</span> {lead.work_status_disp}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {lead.project_city}, {lead.project_pin}
+                                </p>
+                            </div>
+                        ))}
+                        {(modalTitle === 'Lead Status Updates' && data.leadData.table4?.length > 0) && data.leadData.table4.map((lead: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="bg-white rounded-2xl shadow-md p-5 pb-3 relative border border-gray-100 flex flex-col
+                                hover:bg-blue-50 transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-200 hover:scale-105"
+                            >
+                                <span className="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-medium px-2 py-[2px] rounded">
+                                    Modified: {lead.modified_date}
+                                </span>
+                                <h4 className="text-lg font-semibold text-blue-700 my-2">
+                                    {lead.project_name}
+                                </h4>
+
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Lead Source:</span> {lead.lead_vertical}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Region:</span> {lead.region}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Status:</span> {lead.work_status_disp}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {lead.project_city}, {lead.project_pin}
+                                </p>
+                            </div>
+                        ))}
+                        {(modalTitle === 'Lead Due Date Intimations' && data.leadData.table5?.length > 0) && data.leadData.table5.map((lead: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="bg-white rounded-2xl shadow-md p-5 pb-3 relative border border-gray-100 flex flex-col
+                                hover:bg-blue-50 transition-all duration-200 cursor-pointer hover:shadow-lg hover:border-blue-200 hover:scale-105"
+                            >
+                                <span className="absolute top-4 right-4 bg-blue-600 text-white text-[10px] font-medium px-2 py-[2px] rounded">
+                                    Next Follow Up: {lead.follow_up_date}
+                                </span>
+                                <h4 className="text-lg font-semibold text-blue-700 my-2">
+                                    {lead.project_name}
+                                </h4>
+
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Lead Source:</span> {lead.lead_vertical}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Region:</span> {lead.region}
+                                </p>
+                                <p className="text-sm mb-1">
+                                    <span className="font-medium">Status:</span> {lead.work_status_disp}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {lead.project_city}, {lead.project_pin}
+                                </p>
+                            </div>
+                        ))}
+                        {/* Show message if no data */}
+                        {((modalTitle === 'New Leads' && (!data.leadData.table3 || data.leadData.table3.length === 0)) ||
+                            (modalTitle === 'Lead Status Updates' && (!data.leadData.table4 || data.leadData.table4.length === 0)) ||
+                            (modalTitle === 'Lead Due Date Intimations' && (!data.leadData.table5 || data.leadData.table5.length === 0))) && (
+                                <div className="col-span-3 text-center text-gray-500 py-8">
+                                    No data available.
+                                </div>
+                            )}
+                    </div>
+                </div>
+            </Modal>
         </>
     )
 }
