@@ -167,7 +167,7 @@ const Dashboard = () => {
     };
 
     const handleUserChange = (selectedUser: string) => {
-        setData((pre: any) => ({ ...pre, selectedApplicableUser: selectedUser }))
+        // setData((pre: any) => ({ ...pre, selectedApplicableUser: selectedUser }))
         GetMWAStatus(selectedUser);
     }
 
@@ -513,6 +513,7 @@ const Dashboard = () => {
                                         }
                                         onChange={(event: any) => {
                                             handleUserChange(event?.value)
+                                            setData((pre: any) => ({ ...pre, selectedApplicableUser: event?.label }))
                                         }}
                                     />
                                 </div>
@@ -604,7 +605,7 @@ const Dashboard = () => {
                     <div className="col-span-3 p-4">
                         <div className="flex justify-between items-center bg-gradient-to-r from-blue-800 to-blue-900 p-4 rounded-md text-white font-semibold">
                             <label>Lead Creation</label>
-                            <p>100</p>
+                            <p>{data.leadData.table?.[0]?.lead_created || 0}</p>
                         </div>
 
                         <div className="rounded-md bg-gradient-to-r from-blue-50 to-blue-100 p-1 mt-2 font-semibold">
