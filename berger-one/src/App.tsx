@@ -30,6 +30,7 @@ import TransactOdByDate from './pages/protecton/Transact/TransactOdByDate';
 import TransactDefaulterList from './pages/protecton/Transact/TransactDefaulterList';
 import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 import TransactOutstanding from './pages/protecton/Transact/TransactOutstanding';
+import TransactClientTracking from './pages/protecton/Transact/TransactClientTracking';
 
 function App() {
   // const user = UseAuthStore((state: any) => state.userDetails);
@@ -130,6 +131,10 @@ function App() {
         {
           path: '/Protecton/Transact/TransactUserTracking',
           element: <TransactUserTracking />,
+        },
+        {
+          path: '/Protecton/Transact/TransactClientTracking',
+          element: <TransactClientTracking />,
         },
         {
           path: '/Protecton/Transact/TransactOutstanding',
