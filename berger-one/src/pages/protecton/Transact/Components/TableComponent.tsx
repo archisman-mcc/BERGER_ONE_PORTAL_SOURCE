@@ -841,35 +841,71 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
 
             {/* Territory Modal */}
             {isTerritoryModalOpen && (
-                <ModalComponent modalHeader={`Territory Report: ${filterData?.viewBy}`} tableName={`${territoryModalTableData[0]?.regn} >`} tableData={territoryModal} onCloseModal={onCloseModal} />
+                <ModalComponent
+                    modalHeader={`Territory Report: ${filterData?.viewBy}`}
+                    tableName={`${territoryModalTableData[0]?.regn} >`}
+                    onCloseModal={onCloseModal} >
+                    <MantineReactTable table={territoryModal} />
+                </ModalComponent>
             )}
 
             {/* Category Modal */}
             {isCategoryModalOpen && (
-                <ModalComponent modalHeader={`Category Report: ${filterData?.viewBy}`} tableName={categoryModalTableData[0]?.regn === "Summary" ? `${categoryModalTableData[0]?.regn} >` : `${categoryModalTableData[0]?.regn} > ${categoryModalTableData[0]?.terr_code} >`} tableData={categoryModal} onCloseModal={onCloseCategoryModal} />
+                <ModalComponent
+                    modalHeader={`Category Report: ${filterData?.viewBy}`}
+                    tableName={categoryModalTableData[0]?.regn === "Summary" ? `${categoryModalTableData[0]?.regn} >` : `${categoryModalTableData[0]?.regn} > ${categoryModalTableData[0]?.terr_code} >`}
+                    onCloseModal={onCloseCategoryModal} >
+                    <MantineReactTable table={categoryModal} />
+                </ModalComponent>
             )}
 
             {/* contractor / dealer Modal */}
             {isContractorDealerModalOpen && (
-                <ModalComponent modalHeader={`${contractorDealerModalTableData[0]?.cat_cust_desc} Report: ${filterData?.viewBy}`} tableName={`${contractorDealerModalTableData[0]?.regn} > ${contractorDealerModalTableData[0]?.terr_code} > ${contractorDealerModalTableData[0]?.cat_cust_desc} >`} tableData={contractorDealerModal} onCloseModal={onCloseContractorDealerModal} />
+                <ModalComponent
+                    modalHeader={`${contractorDealerModalTableData[0]?.cat_cust_desc} Report: ${filterData?.viewBy}`
+                    }
+                    tableName={`${contractorDealerModalTableData[0]?.regn} > ${contractorDealerModalTableData[0]?.terr_code} > ${contractorDealerModalTableData[0]?.cat_cust_desc} >`}
+                    onCloseModal={onCloseContractorDealerModal} >
+                    <MantineReactTable table={contractorDealerModal} />
+                </ModalComponent>
             )}
 
             {/* category wise product modal */}
             {isCategorywiseProductModalOpen && (
-                <ModalComponent modalHeader='Category Wise Product' tableName={`${dataRef.current.regn} >`} tableData={categorywiseProductModal} onCloseModal={onCloseCategorywiseProductModal} />
+                <ModalComponent
+                    modalHeader='Category Wise Product'
+                    tableName={`${dataRef.current.regn} >`}
+                    onCloseModal={onCloseCategorywiseProductModal} >
+                    <MantineReactTable table={categorywiseProductModal} />
+                </ModalComponent>
             )}
 
             {isCategorywiseProductModalOpen_terr && (
-                <ModalComponent modalHeader='Category Wise Product' tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} >`} tableData={categorywiseProductModal_Terr} onCloseModal={onCloseCategorywiseProductModal} />
+                <ModalComponent
+                    modalHeader='Category Wise Product'
+                    tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} >`}
+                    onCloseModal={onCloseCategorywiseProductModal} >
+                    <MantineReactTable table={categorywiseProductModal_Terr} />
+                </ModalComponent>
             )}
 
             {isCategorywiseProductModalOpen_contractor_Dealer && (
-                <ModalComponent modalHeader='Category Wise Product' tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`} tableData={categorywiseProductModal_Terr} onCloseModal={onCloseCategorywiseProductModal} />
+                <ModalComponent
+                    modalHeader='Category Wise Product'
+                    tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`}
+                    onCloseModal={onCloseCategorywiseProductModal} >
+                    <MantineReactTable table={categorywiseProductModal_Terr} />
+                </ModalComponent>
             )}
 
             {/* Transaction Report modal */}
             {isTransactionReportModalOpen && (
-                <ModalComponent modalHeader='Transaction Report' tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`} tableData={transactionReportModal} onCloseModal={onCloseTransactionReportModal} />
+                <ModalComponent
+                    modalHeader='Transaction Report'
+                    tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`}
+                    onCloseModal={onCloseTransactionReportModal} >
+                    <MantineReactTable table={transactionReportModal} />
+                </ModalComponent>
             )}
         </>
     )

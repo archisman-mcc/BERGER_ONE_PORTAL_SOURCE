@@ -10,6 +10,7 @@ const BASE_ENDPOINTS = {
     Report: 'Report/',
     ProtectonDsr: 'PROTECTON/DSR/',
     ProtectonUserTracking: 'PROTECTON/UserTracking/',
+    ProtectonClientTracking: 'PROTECTON/ClientTrack/',
     ProtectonDespatch: 'PROTECTON/Despatch/',
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
@@ -120,9 +121,16 @@ const ALL_ENDPOINTS = {
     GetApplicableUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableUserList', //
     GetUserCollectionList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonUserTracking + 'GetUserCollectionList',
     GetVisitHistoryUserwise: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonUserTracking + 'GetVisitHistoryUserwise',
+    
+    // Protecton client tracking
+    GetCTDealer: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonClientTracking + 'GetCTDealer',
+    GetCTDetail: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonClientTracking + 'GetCTDetail',
+    
 
     // Protecton Outstanding
     UserApplDlrOSDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'UserApplDlrOSDtls',
+    UserApplDlrOSSingle: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'UserApplDlrOSSingle',
+    UserApplDlrOSTrx: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'UserApplDlrOSTrx',
 
 
     //Protecton Despatch
