@@ -585,367 +585,368 @@ const TLVRevisionRequestDetails = () => {
                     </div>
 
                     {/* accordians */}
-                    {detailsData && <div className="space-y-2 font-semibold">
-                        {/* Aadhar Info accordian */}
-                        <div className="rounded border border-[#d3d3d3] dar k:border-[#1b2e4b]">
-                            <button type="button" className={'custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b] '} onClick={() => setAccordianOpen(accordianOpen === '1' ? '' : '1')}>
-                                Aadhar Info (Optional)
-                                <div className={`${'ltr:ml-auto rtl:mr-auto'}${accordianOpen === '1' ? ' rotate-180' : ''}`}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    </svg>
-                                </div>
-                            </button>
-                            <div>
-                                <AnimateHeight duration={300} height={accordianOpen === '1' ? 'auto' : 0}>
-                                    <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">Aadhar No.:</label>
-                                                <input
-                                                    type="text"
-                                                    autoComplete="off"
-                                                    placeholder="Aadhar No."
-                                                    className="w-full border rounded form-input text-sm"
-                                                    name="aadharNo"
-                                                    onChange={(e) => {
-                                                        const value = e.target.value.replace(/[^0-9]/g, '');
-                                                        if (value.length <= 12) {
-                                                            setTLVDetails((pre: any) => ({ ...pre, aadharNo: value }))
-                                                        }
-                                                    }}
-                                                    value={tlvDetails.aadharNo}
-                                                />
-                                                {/* {error && <div className="error-message">{error}</div>} */}
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">Name as in Addhar:</label>
-                                                <input
-                                                    type="text"
-                                                    autoComplete="off"
-                                                    placeholder="Name as in Addhar"
-                                                    className="w-full border rounded form-input text-sm"
-                                                    name="fullName"
-                                                    value={tlvDetails.fullName}
-                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, fullName: e.target.value }))}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">Upload Aadhar:</label>
-                                                <input
-                                                    // className="w-full border rounded form-input text-sm"
-                                                    type="file"
-                                                    onChange={() => {
-                                                        imageChange(event, 'AADHAR DOC');
-                                                    }}
-                                                    accept="image/*"
-                                                />
-                                            </div>
-                                            {detailsData?.table && detailsData?.table[0]?.aadhar_doc && (
-                                                <div className='mt-6'>
-                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.aadhar_doc)}>
-                                                        <FaDownload />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
+                    {detailsData &&
+                        <div className="space-y-2 font-semibold">
+                            {/* Aadhar Info accordian */}
+                            <div className="rounded border border-[#d3d3d3] dar k:border-[#1b2e4b]">
+                                <button type="button" className={'custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b] '} onClick={() => setAccordianOpen(accordianOpen === '1' ? '' : '1')}>
+                                    Aadhar Info (Optional)
+                                    <div className={`${'ltr:ml-auto rtl:mr-auto'}${accordianOpen === '1' ? ' rotate-180' : ''}`}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
                                     </div>
-                                </AnimateHeight>
-                            </div>
-                        </div>
-
-                        {/* PAN Info accordian */}
-                        <div className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
-                            <button type="button" className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b] `} onClick={() => setAccordianOpen(accordianOpen === '2' ? '' : '2')}>
-                                PAN Info (Optional)
-                                <div className={`${'ltr:ml-auto rtl:mr-auto'}${accordianOpen === '2' ? ' rotate-180' : ''}`}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    </svg>
-                                </div>
-                            </button>
-                            <div>
-                                <AnimateHeight duration={300} height={accordianOpen === '2' ? 'auto' : 0}>
-                                    <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">PAN:</label>
-                                                <input
-                                                    autoComplete="off"
-                                                    type="text"
-                                                    placeholder="PAN"
-                                                    className="w-full border rounded form-input text-sm"
-                                                    name="panNo"
-                                                    value={tlvDetails.panNo}
-                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, panNo: e.target.value }))}
-                                                    maxLength={10}
-                                                    minLength={10}
-                                                />
-                                                {/* <div className="text-red-500">{errorMessage && <span className="error-message">{errorMessage}</span>}</div> */}
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">Name as in PAN:</label>
-                                                <input
-                                                    type="text"
-                                                    autoComplete="off"
-                                                    placeholder="Name as in PAN"
-                                                    className="w-full border rounded form-input text-sm"
-                                                    name="holderName"
-                                                    value={tlvDetails.holderName}
-                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, holderName: e.target.value }))}
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-semibold mb-1">Upload PAN:</label>
-                                                <input
-                                                    // className="fileTypeInput form-input"
-                                                    type="file"
-                                                    onChange={() => {
-                                                        imageChange(event, 'PAN DOC');
-                                                    }}
-                                                    accept="image/*"
-                                                />
-                                            </div>
-                                            {detailsData?.table && detailsData?.table[0]?.pan_doc && (
-                                                <div className='mt-6'>
-                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.pan_doc)}>
-                                                        <FaDownload />
-                                                    </button>
+                                </button>
+                                <div>
+                                    <AnimateHeight duration={300} height={accordianOpen === '1' ? 'auto' : 0}>
+                                        <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">Aadhar No.:</label>
+                                                    <input
+                                                        type="text"
+                                                        autoComplete="off"
+                                                        placeholder="Aadhar No."
+                                                        className="w-full border rounded form-input text-sm"
+                                                        name="aadharNo"
+                                                        onChange={(e) => {
+                                                            const value = e.target.value.replace(/[^0-9]/g, '');
+                                                            if (value.length <= 12) {
+                                                                setTLVDetails((pre: any) => ({ ...pre, aadharNo: value }))
+                                                            }
+                                                        }}
+                                                        value={tlvDetails.aadharNo}
+                                                    />
+                                                    {/* {error && <div className="error-message">{error}</div>} */}
                                                 </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </AnimateHeight>
-                            </div>
-                        </div>
 
-                        {/* LC/BG accordian */}
-                        <div className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
-                            <button type="button" className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`} onClick={() => setAccordianOpen(accordianOpen === '3' ? '' : '3')}>
-                                LC/BG ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}) and Cheque Info ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'})
-                                <div className={`ltr:ml-auto rtl:mr-auto ${accordianOpen === '3' ? 'rotate-180' : ''}`}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M19 9L12 15L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                                    </svg>
-                                </div>
-                            </button>
-                            <div>
-                                <AnimateHeight duration={300} height={accordianOpen === '3' ? 'auto' : 0}>
-                                    <div className="border-t border-[#d3d3d3] p-1 text-[13px] dark:border-[#1b2e4b]">
-                                        <div className="mb-4 border-b border-[#d3d3d3] pb-4">
-                                            <div className="flex items-center">
-                                                <label className="formLabelTx mr-2">
-                                                    Enable LC/BG Fields: {detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
-                                                </label>
-                                                <select disabled={detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y'} value={tlvDetails.lcBg} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcBg: e.target.value }))} className="yesNoTogal form-input ml-2">
-                                                    <option value="Y">Yes</option>
-                                                    <option value="N">No</option>
-                                                </select>
-                                            </div>
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">Name as in Addhar:</label>
+                                                    <input
+                                                        type="text"
+                                                        autoComplete="off"
+                                                        placeholder="Name as in Addhar"
+                                                        className="w-full border rounded form-input text-sm"
+                                                        name="fullName"
+                                                        value={tlvDetails.fullName}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, fullName: e.target.value }))}
+                                                    />
+                                                </div>
 
-                                            {tlvDetails.lcBg === 'Y' && (
-                                                <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
-                                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                LC/BG Opening Date:<span className="reqired">*</span>
-                                                            </label>
-                                                            <Flatpickr
-                                                                className="w-full border rounded form-input text-sm"
-                                                                options={{
-                                                                    dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                                                    altInput: true, // Enables alternative display input
-                                                                    altFormat: 'd/m/Y', // Display format for the user
-                                                                }}
-                                                                value={tlvDetails.frm_date ? convertToDate(tlvDetails.frm_date) : ''}
-                                                                onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, frm_date: date[0] }))}
-                                                            />
-                                                        </div>
-
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                LC/BG Expiry Date:<span className="reqired">*</span>
-                                                            </label>
-                                                            <Flatpickr
-                                                                className="w-full border rounded form-input text-sm"
-                                                                options={{
-                                                                    dateFormat: 'd/m/Y',
-                                                                    position: 'auto left',
-                                                                    // disable: [(date) => isDateDisabled(date)],
-                                                                }}
-                                                                value={tlvDetails.to_date ? convertToDate(tlvDetails.to_date) : ''}
-                                                                onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, to_date: date[0] }))}
-                                                            />
-                                                        </div>
-
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                LC/BG Amount (Lakhs):<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                placeholder="LC/BG Amount"
-                                                                className="w-full border rounded form-input text-sm"
-                                                                name="lcbgAmount"
-                                                                // onChange={handleChange}
-                                                                // value={formsData.lcbgAmount}
-                                                                value={tlvDetails.lcbgAmount}
-                                                                onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcbgAmount: e.target.value }))}
-                                                                onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                    const target = e.target as HTMLInputElement;
-                                                                    target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
-                                                                }}
-                                                            />
-                                                        </div>
-
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                LC/BG Copy:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                // className="fileTypeInput form-input"
-                                                                type="file"
-                                                                onChange={() => {
-                                                                    imageChange(event, 'LCBG DOC');
-                                                                }}
-                                                                accept="image/*"
-                                                            />
-                                                        </div>
-
-                                                        {detailsData?.table && detailsData?.table[0]?.lcbg_doc && (
-                                                            <div className='mt-6'>
-                                                                <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.lcbg_doc)}>
-                                                                    <FaDownload />
-                                                                </button>
-                                                            </div>
-                                                        )}
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">Upload Aadhar:</label>
+                                                    <input
+                                                        // className="w-full border rounded form-input text-sm"
+                                                        type="file"
+                                                        onChange={() => {
+                                                            imageChange(event, 'AADHAR DOC');
+                                                        }}
+                                                        accept="image/*"
+                                                    />
+                                                </div>
+                                                {detailsData?.table && detailsData?.table[0]?.aadhar_doc && (
+                                                    <div className='mt-6'>
+                                                        <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.aadhar_doc)}>
+                                                            <FaDownload />
+                                                        </button>
                                                     </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="">
-                                            <div className="mb-2 flex items-center">
-                                                <label className="formLabelTx mr-2">
-                                                    Enable Blank Cheque Fields: {detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
-                                                </label>
-                                                <select disabled={detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y'} value={tlvDetails.blank_chq} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, blank_chq: e.target.value }))} className="yesNoTogal form-input ml-2">
-                                                    <option value="Y">Yes</option>
-                                                    <option value="N">No</option>
-                                                </select>
+                                                )}
                                             </div>
+                                        </div>
+                                    </AnimateHeight>
+                                </div>
+                            </div>
 
-                                            {tlvDetails.blank_chq === 'Y' && (
-                                                <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
-                                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                Cheque No.:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                name="chequeNo"
-                                                                className="w-full border rounded form-input text-sm"
-                                                                maxLength={10}
-                                                                minLength={6}
-                                                                value={tlvDetails.chequeNo}
-                                                                onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, chequeNo: e.target.value }))}
-                                                                onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                    const target = e.target as HTMLInputElement;
-                                                                    target.value = target.value.replace(/[^0-9]/g, '');
-                                                                }}
-                                                            />
-                                                        </div>
+                            {/* PAN Info accordian */}
+                            <div className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                                <button type="button" className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b] `} onClick={() => setAccordianOpen(accordianOpen === '2' ? '' : '2')}>
+                                    PAN Info (Optional)
+                                    <div className={`${'ltr:ml-auto rtl:mr-auto'}${accordianOpen === '2' ? ' rotate-180' : ''}`}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <div>
+                                    <AnimateHeight duration={300} height={accordianOpen === '2' ? 'auto' : 0}>
+                                        <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">PAN:</label>
+                                                    <input
+                                                        autoComplete="off"
+                                                        type="text"
+                                                        placeholder="PAN"
+                                                        className="w-full border rounded form-input text-sm"
+                                                        name="panNo"
+                                                        value={tlvDetails.panNo}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, panNo: e.target.value }))}
+                                                        maxLength={10}
+                                                        minLength={10}
+                                                    />
+                                                    {/* <div className="text-red-500">{errorMessage && <span className="error-message">{errorMessage}</span>}</div> */}
+                                                </div>
 
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                IFSC:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                autoComplete="off"
-                                                                name="ifsc"
-                                                                value={tlvDetails.ifsc}
-                                                                onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, ifsc: e.target.value }))}
-                                                                className="w-full border rounded form-input text-sm"
-                                                            />
-                                                            <div className={`mt-2 text-sm ${tlvDetails.success ? 'text-green-500' : 'text-red-500'}`}>
-                                                                {tlvDetails.message && <span>{tlvDetails.message}</span>}
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">Name as in PAN:</label>
+                                                    <input
+                                                        type="text"
+                                                        autoComplete="off"
+                                                        placeholder="Name as in PAN"
+                                                        className="w-full border rounded form-input text-sm"
+                                                        name="holderName"
+                                                        value={tlvDetails.holderName}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, holderName: e.target.value }))}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-semibold mb-1">Upload PAN:</label>
+                                                    <input
+                                                        // className="fileTypeInput form-input"
+                                                        type="file"
+                                                        onChange={() => {
+                                                            imageChange(event, 'PAN DOC');
+                                                        }}
+                                                        accept="image/*"
+                                                    />
+                                                </div>
+                                                {detailsData?.table && detailsData?.table[0]?.pan_doc && (
+                                                    <div className='mt-6'>
+                                                        <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.pan_doc)}>
+                                                            <FaDownload />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </AnimateHeight>
+                                </div>
+                            </div>
+
+                            {/* LC/BG accordian */}
+                            <div className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
+                                <button type="button" className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`} onClick={() => setAccordianOpen(accordianOpen === '3' ? '' : '3')}>
+                                    LC/BG ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}) and Cheque Info ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'})
+                                    <div className={`ltr:ml-auto rtl:mr-auto ${accordianOpen === '3' ? 'rotate-180' : ''}`}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 9L12 15L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <div>
+                                    <AnimateHeight duration={300} height={accordianOpen === '3' ? 'auto' : 0}>
+                                        <div className="border-t border-[#d3d3d3] p-1 text-[13px] dark:border-[#1b2e4b]">
+                                            <div className="mb-4 border-b border-[#d3d3d3] pb-4">
+                                                <div className="flex items-center">
+                                                    <label className="formLabelTx mr-2">
+                                                        Enable LC/BG Fields: {detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
+                                                    </label>
+                                                    <select disabled={detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y'} value={tlvDetails.lcBg} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcBg: e.target.value }))} className="yesNoTogal form-input ml-2">
+                                                        <option value="Y">Yes</option>
+                                                        <option value="N">No</option>
+                                                    </select>
+                                                </div>
+
+                                                {tlvDetails.lcBg === 'Y' && (
+                                                    <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
+                                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    LC/BG Opening Date:<span className="reqired">*</span>
+                                                                </label>
+                                                                <Flatpickr
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    options={{
+                                                                        dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                                        altInput: true, // Enables alternative display input
+                                                                        altFormat: 'd/m/Y', // Display format for the user
+                                                                    }}
+                                                                    value={tlvDetails.frm_date ? convertToDate(tlvDetails.frm_date) : ''}
+                                                                    onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, frm_date: date[0] }))}
+                                                                />
                                                             </div>
-                                                        </div>
 
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                Bank Name:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                name="bankName"
-                                                                value={tlvDetails.bankName}
-                                                                className="w-full border rounded form-input text-sm"
-                                                                readOnly
-                                                                style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
-                                                            />
-                                                        </div>
-
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                Branch:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                name="branch"
-                                                                value={tlvDetails.branch}
-                                                                className="w-full border rounded form-input text-sm"
-                                                                readOnly
-                                                                style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
-                                                            />
-                                                        </div>
-
-                                                        <div>
-                                                            <label className="block text-sm font-semibold mb-1">
-                                                                Upload Blank Cheque:<span className="reqired">*</span>
-                                                            </label>
-                                                            <input
-                                                                // className="fileTypeInput form-input"
-                                                                type="file"
-                                                                onChange={(event) => {
-                                                                    imageChange(event, 'CHEQUE DOC');
-                                                                }}
-                                                                accept="image/*"
-                                                            />
-                                                        </div>
-
-                                                        {detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc && (
-                                                            <div className='mt-6'>
-                                                                <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc)}>
-                                                                    <FaDownload />
-                                                                </button>
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    LC/BG Expiry Date:<span className="reqired">*</span>
+                                                                </label>
+                                                                <Flatpickr
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    options={{
+                                                                        dateFormat: 'd/m/Y',
+                                                                        position: 'auto left',
+                                                                        // disable: [(date) => isDateDisabled(date)],
+                                                                    }}
+                                                                    value={tlvDetails.to_date ? convertToDate(tlvDetails.to_date) : ''}
+                                                                    onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, to_date: date[0] }))}
+                                                                />
                                                             </div>
-                                                        )}
-                                                        <div>
-                                                            <Button
-                                                                className={`ml-2000 mt-4 rounded px-4 py-2 font-bold text-white ${tlvDetails.chequeNo === '' || tlvDetails.ifsc === '' ? 'bg-lightblue cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
-                                                                    }`}
-                                                                onClick={() => handleIFSCValidate()}
-                                                                disabled={tlvDetails.chequeNo === '' || tlvDetails.ifsc === ''}
-                                                            >
-                                                                Validate
-                                                                {/* 397788000234  Deepak  BNZPM2501F   D MANIKANDAN   1234567890    HDFC0000003 */}
-                                                            </Button>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    LC/BG Amount (Lakhs):<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="LC/BG Amount"
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    name="lcbgAmount"
+                                                                    // onChange={handleChange}
+                                                                    // value={formsData.lcbgAmount}
+                                                                    value={tlvDetails.lcbgAmount}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcbgAmount: e.target.value }))}
+                                                                    onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const target = e.target as HTMLInputElement;
+                                                                        target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
+                                                                    }}
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    LC/BG Copy:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    // className="fileTypeInput form-input"
+                                                                    type="file"
+                                                                    onChange={() => {
+                                                                        imageChange(event, 'LCBG DOC');
+                                                                    }}
+                                                                    accept="image/*"
+                                                                />
+                                                            </div>
+
+                                                            {detailsData?.table && detailsData?.table[0]?.lcbg_doc && (
+                                                                <div className='mt-6'>
+                                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.lcbg_doc)}>
+                                                                        <FaDownload />
+                                                                    </button>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
+                                                )}
+                                            </div>
+                                            <div className="">
+                                                <div className="mb-2 flex items-center">
+                                                    <label className="formLabelTx mr-2">
+                                                        Enable Blank Cheque Fields: {detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
+                                                    </label>
+                                                    <select disabled={detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y'} value={tlvDetails.blank_chq} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, blank_chq: e.target.value }))} className="yesNoTogal form-input ml-2">
+                                                        <option value="Y">Yes</option>
+                                                        <option value="N">No</option>
+                                                    </select>
                                                 </div>
-                                            )}
+
+                                                {tlvDetails.blank_chq === 'Y' && (
+                                                    <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
+                                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    Cheque No.:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="chequeNo"
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    maxLength={10}
+                                                                    minLength={6}
+                                                                    value={tlvDetails.chequeNo}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, chequeNo: e.target.value }))}
+                                                                    onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const target = e.target as HTMLInputElement;
+                                                                        target.value = target.value.replace(/[^0-9]/g, '');
+                                                                    }}
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    IFSC:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    autoComplete="off"
+                                                                    name="ifsc"
+                                                                    value={tlvDetails.ifsc}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, ifsc: e.target.value }))}
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                />
+                                                                <div className={`mt-2 text-sm ${tlvDetails.success ? 'text-green-500' : 'text-red-500'}`}>
+                                                                    {tlvDetails.message && <span>{tlvDetails.message}</span>}
+                                                                </div>
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    Bank Name:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="bankName"
+                                                                    value={tlvDetails.bankName}
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    readOnly
+                                                                    style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    Branch:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="branch"
+                                                                    value={tlvDetails.branch}
+                                                                    className="w-full border rounded form-input text-sm"
+                                                                    readOnly
+                                                                    style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-semibold mb-1">
+                                                                    Upload Blank Cheque:<span className="reqired">*</span>
+                                                                </label>
+                                                                <input
+                                                                    // className="fileTypeInput form-input"
+                                                                    type="file"
+                                                                    onChange={(event) => {
+                                                                        imageChange(event, 'CHEQUE DOC');
+                                                                    }}
+                                                                    accept="image/*"
+                                                                />
+                                                            </div>
+
+                                                            {detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc && (
+                                                                <div className='mt-6'>
+                                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc)}>
+                                                                        <FaDownload />
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                            <div>
+                                                                <Button
+                                                                    className={`ml-2000 mt-4 rounded px-4 py-2 font-bold text-white ${tlvDetails.chequeNo === '' || tlvDetails.ifsc === '' ? 'bg-lightblue cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
+                                                                        }`}
+                                                                    onClick={() => handleIFSCValidate()}
+                                                                    disabled={tlvDetails.chequeNo === '' || tlvDetails.ifsc === ''}
+                                                                >
+                                                                    Validate
+                                                                    {/* 397788000234  Deepak  BNZPM2501F   D MANIKANDAN   1234567890    HDFC0000003 */}
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                </AnimateHeight>
+                                    </AnimateHeight>
+                                </div>
                             </div>
-                        </div>
-                    </div>}
+                        </div>}
                 </form>
             </div>
 

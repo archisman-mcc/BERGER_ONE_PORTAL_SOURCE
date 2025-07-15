@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AsyncSelect from "react-select/async";
 
-const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value }: any) => {
+const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadPrefixText }: any) => {
     const [asyncSelectData, setAsyncSelectData] = useState([]);
 
     const loadOptions = async (inputValue: string) => {
@@ -9,7 +9,7 @@ const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value }: any) =
             return;
         }
         const payload: any = {
-            prefixText: inputValue,
+            [payloadPrefixText]: inputValue,
             ...apiPayload
         }
         try {
@@ -30,6 +30,7 @@ const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value }: any) =
         <>
             <AsyncSelect
                 cacheOptions
+                // isMulti={isMulti}
                 defaultOptions={false}
                 loadOptions={loadOptions}
                 placeholder="Type at least 3 letters to search..."

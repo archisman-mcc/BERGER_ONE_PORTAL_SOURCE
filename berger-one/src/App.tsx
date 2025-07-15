@@ -33,6 +33,7 @@ import TransactBilling from './pages/protecton/Transact/TransactBilling';
 import TransactBillingCreate from './pages/protecton/Transact/TransactBillingCreate';
 import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 import TransactOutstanding from './pages/protecton/Transact/TransactOutstanding';
+import TransactClientTracking from './pages/protecton/Transact/TransactClientTracking';
 
 
 function App() {
@@ -146,6 +147,10 @@ function App() {
         {
           path: '/Protecton/Transact/TransactUserTracking',
           element: <TransactUserTracking />,
+        },
+        {
+          path: '/Protecton/Transact/TransactClientTracking',
+          element: <TransactClientTracking />,
         },
         {
           path: '/Protecton/Transact/TransactOutstanding',
