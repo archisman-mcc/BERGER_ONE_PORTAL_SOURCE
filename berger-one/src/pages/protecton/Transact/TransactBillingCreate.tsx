@@ -660,7 +660,7 @@ const TransactBillingCreate = () => {
                     <label className="block text-sm font-semibold mb-1">
                       Search SKU:<span className="text-red-600 font-bold">*</span>
                     </label>
-                    <AsyncSelectBox data={asyncSelectBoxData} setData={setAsyncSelectBoxData} api={EpcaDtl.GetSKUList} apiPayload={{ app_id: 15 }} label="sku_desc"
+                    <AsyncSelectBox data={asyncSelectBoxData} setData={setAsyncSelectBoxData} api={EpcaDtl.GetSKUList} apiPayload={{ app_id: 15 }} label="sku_desc" payloadPrefixText="prefixText"
                       value="sku_code" />
                   </div>
                 )}
