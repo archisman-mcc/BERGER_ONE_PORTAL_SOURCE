@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 interface I_LeadDetailsStore {
     // store
     selectedLead: any;
@@ -10,6 +9,6 @@ interface I_LeadDetailsStore {
 
 export const LeadDetailsStore = create<I_LeadDetailsStore>((set) => ({
     selectedLead: null,
-    setLeadDetails: (LeadDetails: any) => set((state: any) => ({ selectedLead: LeadDetails })),
+    setLeadDetails: (LeadDetails: any) => set(() => ({ selectedLead: LeadDetails })),
     resetLeadDetails: () => set({ selectedLead: null }),
 }));

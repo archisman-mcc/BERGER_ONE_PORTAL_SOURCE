@@ -31,6 +31,9 @@ import TransactDefaulterList from './pages/protecton/Transact/TransactDefaulterL
 import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 import TransactOutstanding from './pages/protecton/Transact/TransactOutstanding';
 import TransactClientTracking from './pages/protecton/Transact/TransactClientTracking';
+import PotentialLead from './pages/protecton/Lead/PotentialLead';
+import MWAReportDetails from './pages/protecton/HoMarketing/MWAReportDetails';
+import TSRMonitoringReport from './pages/protecton/HoMarketing/TSRMonitoringReport';
 
 function App() {
   // const user = UseAuthStore((state: any) => state.userDetails);
@@ -139,6 +142,18 @@ function App() {
         {
           path: '/Protecton/Transact/TransactOutstanding',
           element: <TransactOutstanding />,
+        },
+        {
+          path: '/Protecton/Lead/PotentialLead',
+          element: <PotentialLead />,
+        },
+        {
+          path: '/Protecton/HoMarketing/MWAReportDetails',
+          element: <MWAReportDetails />,
+        },
+        {
+          path: '/Protecton/HoMarketing/TSRMonitoringReport',
+          element: <TSRMonitoringReport />,
         },
       ],
     },

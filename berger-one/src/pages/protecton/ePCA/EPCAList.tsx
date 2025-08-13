@@ -1,7 +1,7 @@
 'use client';
 import Select from 'react-select';
 import { FaPlus } from "react-icons/fa6";
-import { CiSearch } from "react-icons/ci"
+import { CiSearch } from "react-icons/ci";
 import { useMemo, useState, useEffect } from 'react';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
