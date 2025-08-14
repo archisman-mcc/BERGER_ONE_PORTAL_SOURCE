@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 interface I_EnquriDetailsStore {
     // store
     selectedEnquriDetails: any;
@@ -10,6 +9,6 @@ interface I_EnquriDetailsStore {
 
 export const EnquriDetailsStore = create<I_EnquriDetailsStore>((set) => ({
     selectedEnquriDetails: null,
-    setEnquriDetails: (enquriData: any) => set((state: any) => ({ selectedEnquriDetails: enquriData })),
+    setEnquriDetails: (enquriData: any) => set(() => ({ selectedEnquriDetails: enquriData })),
     resatEnquriDetails: () => set({ selectedEnquriDetails: null }),
 }));

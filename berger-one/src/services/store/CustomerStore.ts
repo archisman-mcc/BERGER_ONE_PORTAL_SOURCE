@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 interface I_CustomerDetailsStore {
     // store
     selectedCustomer: any;
@@ -10,6 +9,6 @@ interface I_CustomerDetailsStore {
 
 export const CustomerDetailsStore = create<I_CustomerDetailsStore>((set) => ({
     selectedCustomer: null,
-    setCustomerDetails: (CustomerDetails: any) => set((state: any) => ({ selectedCustomer: CustomerDetails })),
+    setCustomerDetails: (CustomerDetails: any) => set(() => ({ selectedCustomer: CustomerDetails })),
     resetCustomerDetails: () => set({ selectedCustomer: null }),
 }));

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 interface I_EpcaDepotApprovalStore {
     // store
     selectedCustomerProfile: any;
@@ -10,6 +9,6 @@ interface I_EpcaDepotApprovalStore {
 
 export const EpcaDepotApprovalStore = create<I_EpcaDepotApprovalStore>((set) => ({
     selectedCustomerProfile: null,
-    setCustomerProfile: (customerProfile: any) => set((state: any) => ({ selectedCustomerProfile: customerProfile })),
+    setCustomerProfile: (customerProfile: any) => set(() => ({ selectedCustomerProfile: customerProfile })),
     resetCustomerProfile: () => set({ selectedCustomerProfile: null }),
 }));
