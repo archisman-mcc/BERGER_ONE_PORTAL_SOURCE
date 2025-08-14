@@ -15,6 +15,10 @@ export function GetProtectonApplicableTerr<P, G>(data: { lov_type: any; active: 
     return HTTP_GET<P, G>(data, ENDPOINTS.GetProtectonApplicableTerr) as Promise<G>;
 }
 
+export function GetProtectonApplicableDepot<P, G>(data: { lov_type: any; active: any }): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetProtectonApplicableDepot) as Promise<G>;
+}
+
 export function GetReportingUser<P, G>(data: { userId: any; globalFilter: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetReportingUser) as Promise<G>;
 }
@@ -29,6 +33,18 @@ export function GetApplicableDepotList<P, G>(data: { user_id: any; region: any; 
 
 export function CommonLovDetails<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.CommonLovDetails) as Promise<G>;
+}
+
+export function GetRegion<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetRegion) as Promise<G>;
+}
+
+export function GetStateList<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetStateList) as Promise<G>;
+}
+
+export function GetApplicableDepot<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetApplicableDepot) as Promise<G>;
 }
 
 export function GetAppList<P, G>(data: {}): Promise<G> {
@@ -51,6 +67,6 @@ export function GetTerrDepotWise<P, G>(data: { depot_code: any }): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetTerrDepotWise) as Promise<G>;
 }
 
-export function UserProfileInsert<P, G>(data): Promise<G> {
+export function UserProfileInsert<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.UserProfileInsert) as Promise<G>;
 }

@@ -9,6 +9,6 @@ interface I_EpcaDepotApprovalStore {
 
 export const TlvModuleStore = create<I_EpcaDepotApprovalStore>((set) => ({
     selectedCustomerProfile: null,
-    setCustomerProfile: (customerProfile: any) => set((state: any) => ({ selectedCustomerProfile: customerProfile })),
+    setCustomerProfile: (customerProfile: any) => set(() => ({ selectedCustomerProfile: customerProfile })),
     resetCustomerProfile: () => set({ selectedCustomerProfile: null }),
 }));

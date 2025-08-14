@@ -179,11 +179,11 @@ const EPCADepotApprovalDetails = () => {
     const [applTerr, setApplTerr] = useState<any>([]);
     const [dealer, setDealer] = useState<any>([]);
     const [pdAppl, setPdAppl] = useState<any>('Y');
-    const [projectData, setProjectData] = useState<any>([]);
-    const [skuData, setSkuData] = useState<any>([]);
-    const [projectSearchValue, setProjectSearchValue] = useState('');
+    // const [_, setProjectData] = useState<any>([]);
+    // const [_, setSkuData] = useState<any>([]);
+    const [projectSearchValue] = useState('');
     const [billToData, setbillToData] = useState<any>([]);
-    const [errMsg, setErrMsg] = useState<validationObj>(allErrorMsg);
+    // const [errMsg, setErrMsg] = useState<validationObj>(allErrorMsg);
     const [data, setData] = useState<PcaDetailsType[]>([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [approveStatus, setApproveStatus] = useState<any>([]);
@@ -191,7 +191,7 @@ const EPCADepotApprovalDetails = () => {
     const [pcaBesicData, setPcaBesicData] = useState<PcaBesicViewInit[]>([PcaBesicViewDto]);
     const [pcaDetailData, setPcaDetailData] = useState<PcaDetailViewInit[]>([PcaDetailViewDto]);
     const user = UseAuthStore((state: any) => state.userDetails);
-    const [mainStatus, setMainStatus] = useState([
+    const [mainStatus] = useState([
         { label: 'Pending', value: 'PENDING' },
         { label: 'Approved', value: 'APPROVED' },
         { label: 'Rejected', value: 'REJECTED' },
@@ -364,8 +364,9 @@ const EPCADepotApprovalDetails = () => {
             const response: any = await EpcaDetails.GetPcaProjectListByDepotTerr(data);
             if (response.data != null && response.data != undefined) {
                 const data = transformProjectResults(response.data);
-                setProjectData(data);
-            } else setProjectData([]);
+                // setProjectData(data);
+            } 
+            // else setProjectData([]);
         } catch (error) {
             return;
         }
@@ -382,8 +383,9 @@ const EPCADepotApprovalDetails = () => {
             const response: any = await EpcaDetails.GetSKUList(data);
             if (response.data != null && response.data.table != null && response.data.table != undefined) {
                 const data = transformSKUResults(response.data.table);
-                setSkuData(data);
-            } else setSkuData([]);
+                // setSkuData(data);
+            } 
+            // else setSkuData([]);
         } catch (error) {
             return;
         }
