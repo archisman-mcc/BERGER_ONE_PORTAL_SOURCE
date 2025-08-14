@@ -265,8 +265,8 @@ const TransactDespatch = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-                    {/* Search Button */}
 
+                    {/* Search Button */}
                     <div className="flex items-end space-x-2">
                         <button
                             className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center"
@@ -280,7 +280,7 @@ const TransactDespatch = () => {
                 </div>
             </div>
 
-                  <div className="space-y-2">
+            <div className="space-y-2">
                 {data.despatchData.map((group: any) => (
                     <div key={group.org} className="rounded border border-[#d3d3d3]">
                         <button

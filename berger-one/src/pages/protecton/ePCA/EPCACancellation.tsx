@@ -1,16 +1,14 @@
-import React from 'react';
-import Select from 'react-select';
-import { Button } from '@mantine/core';
-import { useMemo, useState, useEffect } from 'react';
+import 'flatpickr/dist/themes/material_green.css';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
+import moment from 'moment';
+import React, { useEffect, useMemo, useState } from 'react';
+import Flatpickr from 'react-flatpickr';
+import { CiSearch } from "react-icons/ci";
+import Select from 'react-select';
 import * as EpcaCancellation from '../../../services/api/protectonEpca/EpcaCancellation';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
-import Flatpickr from 'react-flatpickr';
-import 'flatpickr/dist/themes/material_green.css';
-import moment from 'moment';
-import { commonSuccessToast } from '../../../services/functions/commonToast';
 import { commonAlert } from '../../../services/functions/commonAlert';
-import { CiSearch } from "react-icons/ci"
+import { commonSuccessToast } from '../../../services/functions/commonToast';
 
 export interface SELECTED_DROPDOWN {
     Userdepot: number;
@@ -61,19 +59,19 @@ const EPCACancellation = () => {
     const [depot, setDepot] = useState<any>([]);
     const [applTerr, setApplTerr] = useState<any>([]);
     //----//
-    const [paginationState, setPaginationState] = useState({
+    const [paginationState, _] = useState({
         pageIndex: 0, // zero-based index
         pageSize: 10, // default page size
     });
     //----//
 
-    const labelValueConverter = (arr: any[], propertyNameLabel: string, propertyNameValue: string) => {
-        arr.forEach((element) => {
-            element['value'] = element[propertyNameValue];
-            element['label'] = element[propertyNameLabel];
-        });
-        return arr;
-    };
+    // const labelValueConverter = (arr: any[], propertyNameLabel: string, propertyNameValue: string) => {
+    //     arr.forEach((element) => {
+    //         element['value'] = element[propertyNameValue];
+    //         element['label'] = element[propertyNameLabel];
+    //     });
+    //     return arr;
+    // };
     const findSelectedTypeValue = (arr: any[], arrPropName: string, checkValue: string) => {
         if (arr && arr.length > 0) {
             const selectedValue = arr.findIndex((item: any) => item[arrPropName] == checkValue);

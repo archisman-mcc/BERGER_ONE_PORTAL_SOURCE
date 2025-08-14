@@ -34,6 +34,9 @@ import TransactBillingCreate from './pages/protecton/Transact/TransactBillingCre
 import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 import TransactOutstanding from './pages/protecton/Transact/TransactOutstanding';
 import TransactClientTracking from './pages/protecton/Transact/TransactClientTracking';
+import PotentialLead from './pages/protecton/Lead/PotentialLead';
+import MWAReportDetails from './pages/protecton/HoMarketing/MWAReportDetails';
+import TSRMonitoringReport from './pages/protecton/HoMarketing/TSRMonitoringReport';
 
 
 function App() {
@@ -155,6 +158,18 @@ function App() {
         {
           path: '/Protecton/Transact/TransactOutstanding',
           element: <TransactOutstanding />,
+        },
+        {
+          path: '/Protecton/Lead/PotentialLead',
+          element: <PotentialLead />,
+        },
+        {
+          path: '/Protecton/HoMarketing/MWAReportDetails',
+          element: <MWAReportDetails />,
+        },
+        {
+          path: '/Protecton/HoMarketing/TSRMonitoringReport',
+          element: <TSRMonitoringReport />,
         },
       ],
     },

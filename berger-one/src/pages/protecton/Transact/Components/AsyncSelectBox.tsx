@@ -26,20 +26,44 @@ const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadP
         }
     };
 
+    const finalPlaceholder = "Type at least 3 letters to search...";
+
+    const customStyles = {
+        control: (provided: any) => ({
+            ...provided,
+            minHeight: '34px',
+            maxHeight: '34px',
+        }),
+        placeholder: (provided: any) => ({
+            ...provided,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '100%',
+        }),
+        input: (provided: any) => ({
+            ...provided,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        }),
+    };
+
     return (
-        <>
-            <AsyncSelect
-                cacheOptions
-                // isMulti={isMulti}
-                defaultOptions={false}
-                loadOptions={loadOptions}
-                placeholder="Type at least 3 letters to search..."
-                value={data?.selectedOption || { label: '', value: '' }}
-                onChange={(e: any) =>
-                    setData({ selectedOption: e, selectedObj: asyncSelectData.filter((s: any) => s[value] === e?.value), asyncSelectData: asyncSelectData })
-                }
-            />
-        </>
+        <AsyncSelect
+            cacheOptions
+            defaultOptions={false}
+            loadOptions={loadOptions}
+            placeholder={finalPlaceholder}
+            value={data?.selectedOption || null}
+            onChange={(e: any) =>
+                setData({ selectedOption: e, selectedObj: asyncSelectData.filter((s: any) => s[value] === e?.value), asyncSelectData: asyncSelectData })
+            }
+            isClearable={true}
+            isSearchable={true}
+            className="text-sm"
+            styles={customStyles}
+        />
     )
 }
 
