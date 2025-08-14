@@ -1,4 +1,4 @@
-const BASE_ENDPOINTS = {
+export const BASE_ENDPOINTS = {
     v1: 'v1.0/',
     login: 'Login/',
     User: 'User/',
@@ -15,6 +15,8 @@ const BASE_ENDPOINTS = {
     ProtectonStock: 'PROTECTON/Stock/',
     ProtectonInvoice: 'PROTECTON/Invoice/',
     ProtectonPaymentReceipt: 'PROTECTON/PaymentReceipt/',
+    ProtectonPotentialLead: 'PROTECTON/PotentialLead/',
+    ProtectonReport: 'PROTECTON/Report/',
     TransactOS: 'PROTECTON/OS/'
 };
 
@@ -62,9 +64,11 @@ const ALL_ENDPOINTS = {
     GetePCAHoApprovalDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetePCAHoApprovalDetails',
 
     GetProtectonApplicableTerr: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonApplicableTerr',
+    GetProtectonApplicableDepot: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetProtectonApplicableDepot',
     GetReportingUser: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetReportingUser',
     GetDeptList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetDeptList',
     GetApplicableDepotList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableDepotList',
+    GetApplicableDepot: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableDepot',
     GetApplicableAppList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableAppList',
     GetAllUserGroupList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetAllUserGroupList',
     GetTerrDepotWise: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetTerrDepotWise',
@@ -73,6 +77,8 @@ const ALL_ENDPOINTS = {
     GetPcaRsmList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaRsmList',
     GetApplicableTerrList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetApplicableTerrList',
     CommonLovDetails: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'CommonLovDetails',
+    GetRegion: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetRegion',
+    GetStateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.common + 'GetStateList',
 
 
     GetPcaStatusList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaStatusList',
@@ -150,6 +156,16 @@ const ALL_ENDPOINTS = {
 
     // Transact OS
     ODbyDateList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.TransactOS + 'ODbyDateList',
+
+    // Potential Lead
+    GetVerticalWisBusinessLine: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetVerticalWisBusinessLine',
+    ProLeadInsert: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'ProLeadInsert',
+    GetDealerSearch: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetDealerSearch',
+    GetStakeHolderList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStakeHolderList',
+    GetStateListPotentialLead: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStateList',
+
+    // 
+    getmwadetailsdatav5: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'getmwadetailsdatav5',
 
     //#endregion
 };

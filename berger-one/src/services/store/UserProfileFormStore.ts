@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 interface I_UserProfileFormStore {
     // store
     selectedUser: any;
@@ -10,6 +9,6 @@ interface I_UserProfileFormStore {
 
 export const UserProfileFormStore = create<I_UserProfileFormStore>((set) => ({
     selectedUser: null,
-    setUserProfileForm: (userdata: any) => set((state: any) => ({ selectedUser: userdata })),
+    setUserProfileForm: (userdata: any) => set(() => ({ selectedUser: userdata })),
     resetUserProfileForm: () => set({ selectedUser: null }),
 }));

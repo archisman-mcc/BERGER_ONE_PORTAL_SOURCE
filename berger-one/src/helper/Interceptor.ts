@@ -49,7 +49,7 @@ AXIOS_HTTP.interceptors.response.use(
                     let postObj: { user_id: string; RefreshToken: string } = { user_id: CacheData.state.userDetails.user_id, RefreshToken: _refreshToken };
                     const response: any = await RefreshTokenV1(postObj);
                     if (response && response.success && response.message && response.token) {
-                        const user = { userDetails: response };
+                        // const user = { userDetails: response };
                         localStorage.setItem('_token', response.token);
                         localStorage.setItem('_refresh_token', response.refresh_token);
                         AXIOS_HTTP.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;

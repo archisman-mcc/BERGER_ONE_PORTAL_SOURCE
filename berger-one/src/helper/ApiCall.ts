@@ -15,7 +15,7 @@ export function Http_Post<G>(endPoint: any): Promise<G> {
     });
 }
 
-export function HTTP_GET<P, G>(formdata: any, endPoint: any): Promise<G> {
+export function HTTP_GET<_, G>(formdata: any, endPoint: any): Promise<G> {
     const url = API_ENDPOINT(endPoint);
     return AXIOS_HTTP.get(url, {
         headers: {},

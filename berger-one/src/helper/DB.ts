@@ -1,4 +1,4 @@
-import { BASE_URL, ENDPOINTS } from './EndPoints';
+import { BASE_URL } from './EndPoints';
 
 // url parameters for get methods
 export function QUERY_SEARCH_PARAMS<Q>(endPoint: string, queryParams: any): URL {
@@ -12,13 +12,13 @@ export function QUERY_SEARCH_PARAMS<Q>(endPoint: string, queryParams: any): URL 
 }
 
 // endpoint make
-export function API_ENDPOINT<Q>(endPoint: string): string {
+export function API_ENDPOINT<_>(endPoint: string): string {
     const url = BASE_URL + endPoint;
     return url;
 }
 
 // object to formdata request
-export function CREATE_FORMDATA<Q>(formData: any) {
+export function CREATE_FORMDATA<_>(formData: any) {
     const formDataObject = new FormData();
     if (formData && Object.keys(formData).length > 0) {
         for (let key in formData) {
