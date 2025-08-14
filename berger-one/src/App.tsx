@@ -28,12 +28,16 @@ import TransactInvoice from './pages/protecton/Transact/TransactInvoice';
 import TransactPaymentReceipt from './pages/protecton/Transact/TransactPaymentReceipt';
 import TransactOdByDate from './pages/protecton/Transact/TransactOdByDate';
 import TransactDefaulterList from './pages/protecton/Transact/TransactDefaulterList';
+import TransactReturnCheque from './pages/protecton/Transact/TransactReturnCheque';
+import TransactBilling from './pages/protecton/Transact/TransactBilling';
+import TransactBillingCreate from './pages/protecton/Transact/TransactBillingCreate';
 import TransactUserTracking from './pages/protecton/Transact/TransactUserTracking';
 import TransactOutstanding from './pages/protecton/Transact/TransactOutstanding';
 import TransactClientTracking from './pages/protecton/Transact/TransactClientTracking';
 import PotentialLead from './pages/protecton/Lead/PotentialLead';
 import MWAReportDetails from './pages/protecton/HoMarketing/MWAReportDetails';
 import TSRMonitoringReport from './pages/protecton/HoMarketing/TSRMonitoringReport';
+
 
 function App() {
   // const user = UseAuthStore((state: any) => state.userDetails);
@@ -130,6 +134,18 @@ function App() {
         {
           path: '/Protecton/Transact/TransactDefaulterList',
           element: <TransactDefaulterList />,
+        },
+        {
+          path: '/Protecton/Transact/TransactReturnCheque',
+          element: <TransactReturnCheque />,
+        },
+        {
+          path: '/Protecton/Transact/TransactBilling',
+          element: <TransactBilling />,
+        },
+        {
+          path: '/Protecton/Transact/TransactBillingCreate',
+          element: <TransactBillingCreate />,
         },
         {
           path: '/Protecton/Transact/TransactUserTracking',

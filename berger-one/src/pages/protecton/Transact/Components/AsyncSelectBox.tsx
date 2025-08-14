@@ -67,4 +67,4 @@ const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadP
     )
 }
 
-export default AsyncSelectBox
+export default AsyncSelectBox
