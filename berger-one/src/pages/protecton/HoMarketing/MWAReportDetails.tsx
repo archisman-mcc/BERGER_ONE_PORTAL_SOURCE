@@ -24,12 +24,10 @@ interface FormData {
 }
 
 const MWAReportDetails: React.FC = () => {
-    // Get current month and year
     const currentDate = new Date();
     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
     const currentYear = String(currentDate.getFullYear());
 
-    // Define month and year options
     const monthOptions: MonthOption[] = [
         { value: '00', label: 'Select' },
         { value: '01', label: 'January' },

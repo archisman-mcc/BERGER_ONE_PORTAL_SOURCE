@@ -4,3 +4,6 @@ import { ENDPOINTS } from "../../../helper/EndPoints";
 export function getmwadetailsdatav5<P, G>(data: any): Promise<G> {
     return HTTP_GET<P, G>(data, ENDPOINTS.getmwadetailsdatav5) as Promise<G>;
 }
+export function GetTSRMonitoringData<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetTSRMonitoringData) as Promise<G>;
+}

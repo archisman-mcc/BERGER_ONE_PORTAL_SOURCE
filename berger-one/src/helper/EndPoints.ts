@@ -166,6 +166,7 @@ const ALL_ENDPOINTS = {
 
     // 
     getmwadetailsdatav5: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'getmwadetailsdatav5',
+    GetTSRMonitoringData: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetTSRMonitoringData',
 
     //#endregion
 };
