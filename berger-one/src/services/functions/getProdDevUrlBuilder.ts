@@ -1,6 +1,6 @@
 export const GetProdDevRouteBuilder = (path: string) => {
     if (process.env.NODE_ENV === 'production') {
-        return process.env.SUB_DOMAIN_PATH + path;
+        return (process.env.SUB_DOMAIN_PATH || '') + path;
     } else {
         return path;
     }
@@ -8,7 +8,8 @@ export const GetProdDevRouteBuilder = (path: string) => {
 
 export const GetProdDevImgRouteBuilder = (path: string) => {
     if (process.env.NODE_ENV === 'production') {
-        return process.env.SUB_DOMAIN_IMAGE_PATH + path;
+        // In production, use the base path if SUB_DOMAIN_IMAGE_PATH is not defined
+        return (process.env.SUB_DOMAIN_IMAGE_PATH || '') + path;
     } else {
         return path;
     }
