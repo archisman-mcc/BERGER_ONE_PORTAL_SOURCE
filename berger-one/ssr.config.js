@@ -3,7 +3,7 @@ export const ssrConfig = {
     // Development settings
     development: {
         port: 5173,
-        base: '/',
+        base: '/BERGERONE/',
         hotReload: true,
         ssrEnabled: true,
         compression: false,
@@ -13,7 +13,7 @@ export const ssrConfig = {
     // Production settings
     production: {
         port: process.env.PORT || 3000,
-        base: process.env.BASE || '/',
+        base: process.env.BASE || '/BERGERONE/',
         hotReload: false,
         ssrEnabled: true,
         compression: true,
