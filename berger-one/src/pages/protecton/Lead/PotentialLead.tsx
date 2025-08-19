@@ -340,63 +340,6 @@ const PotentialLead = () => {
         // Add your search logic here
     }
 
-    // const downloadTemplate = () => {
-    //     const url = BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.Epca + 'GetPcaList'
-    //     const payloadObj = {
-    //         AcctNo: "",
-    //         ApprovedStatus
-    //             :
-    //             "",
-    //         BillToCode
-    //             :
-    //             "",
-    //         DealerName
-    //             :
-    //             "",
-    //         DepotCode
-    //             :
-    //             "",
-    //         MainStatus
-    //             :
-    //             "PENDING",
-    //         SblCode
-    //             :
-    //             "4",
-    //         TerritoryCode
-    //             :
-    //             "",
-    //         app_id
-    //             :
-    //             15
-    //     }
-    //     axios({
-    //         url: url,
-    //         method: 'POST',
-    //         data: payloadObj,
-    //         responseType: 'blob',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'AuthToken': getAccessToken()
-    //         },
-    //     }).then((res: AxiosResponse<Blob> | any) => {
-    //         if (res) {
-    //             const contentDispositionHeader: string | null = res.headers.get('File-Name');
-    //             if (contentDispositionHeader) {
-    //                 const fileName = contentDispositionHeader;
-    //                 const link = document.createElement('a');
-    //                 link.href = URL.createObjectURL(res.data);
-    //                 link.download = fileName;
-    //                 document.body.appendChild(link);
-    //                 link.click();
-    //                 document.body.removeChild(link);
-    //                 URL.revokeObjectURL(link.href);
-    //             }
-    //         }
-    //     }).catch((err: any) => {
-    //         console.error("Error fetching data", err);
-    //     });
-    // }
-
     const handleDropdownSelect = (action: string) => {
         setShowDropdown(false);
         setPopupOpenData({ open: true, popupHeader: action })
@@ -530,14 +473,11 @@ const PotentialLead = () => {
                             }}
                         />
                     </div>
+                    {/* Dropdown Button */}
                     <div className="flex items-end space-x-2">
                         <button className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center" onClick={handleSearch}>
                             <CiSearch />  <span>Search</span>
                         </button>
-                        {/* <button className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center" onClick={downloadTemplate}>
-                            <CiSearch />  <span>download</span>
-                        </button> */}
-                        {/* Dropdown Button Start */}
                         <div className="relative" style={{ minWidth: '110px' }}>
                             <button
                                 type="button"
@@ -558,7 +498,6 @@ const PotentialLead = () => {
                                 </div>
                             )}
                         </div>
-                        {/* Dropdown Button End */}
                     </div>
                 </div>
             </div>
