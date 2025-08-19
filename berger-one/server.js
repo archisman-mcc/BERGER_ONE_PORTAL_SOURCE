@@ -15,6 +15,9 @@ const __dirname = path.dirname(__filename)
 const config = getCurrentConfig()
 const isProduction = process.env.NODE_ENV === 'production'
 
+// Base URL configuration
+const BASE_URL = '/BERGERONE'
+
 // Cached production assets
 let templateHtml = ''
 if (isProduction) {
@@ -74,7 +77,29 @@ if (!isProduction) {
 // Serve HTML with SSR
 app.use(/(.*)/, async (req, res) => {
   try {
-    const url = req.originalUrl.replace(config.base, '')
+    // Handle the base URL properly
+    let url = req.originalUrl;
+
+    // Check if URL starts with BASE_URL
+    if (!url.startsWith(BASE_URL)) {
+      // If it's a static asset request (favicon.ico, etc.), return 404
+      if (url.includes('.') || url === '/favicon.ico') {
+        return res.status(404).send('Not found');
+      }
+
+      // For all other requests, redirect to add BASE_URL prefix
+      const redirectUrl = `${BASE_URL}${url}`;
+      console.log('Redirecting:', url, '→', redirectUrl);
+      return res.redirect(301, redirectUrl);
+    }
+
+    // Keep the full URL including /BERGERONE for routing
+    // Don't remove the prefix - pass it as is to the router
+
+    // Debug logging
+    console.log('Original URL:', req.originalUrl);
+    console.log('Processed URL:', url);
+    console.log('Config base:', config.base);
 
     /** @type {string} */
     let template
