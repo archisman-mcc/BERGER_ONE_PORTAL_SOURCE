@@ -4,11 +4,24 @@ import { StaticRouter } from "react-router-dom/server";
 
 import App from "./App";
 
+// Base URL configuration
+const BASE_URL = '/BERGERONE';
+
 export function render(url: string) {
   try {
+    // Use the full URL including /BERGERONE prefix
+    let cleanUrl = url || '/';
+
+    // Ensure the URL starts with /
+    if (!cleanUrl.startsWith('/')) {
+      cleanUrl = '/' + cleanUrl;
+    }
+
+    console.log('SSR render called with URL:', cleanUrl);
+
     const html = ReactDOMServer.renderToString(
       <React.StrictMode>
-        <StaticRouter location={url}>
+        <StaticRouter location={cleanUrl} basename={BASE_URL}>
           <App />
         </StaticRouter>
       </React.StrictMode>
