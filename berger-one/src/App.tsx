@@ -45,6 +45,9 @@ import ClientOnly from './components/ClientOnly';
 // Lazy load the MUI component to prevent SSR bundling
 const TLVRevisionRequestDetails = React.lazy(() => import('./pages/protecton/TLV/TLVRevisionRequestDetails'));
 
+// Base URL configuration
+// const BASE_URL = '/BERGERONE';
+
 function App() {
   // Check if we're in a browser environment
   const isBrowser = typeof window !== 'undefined';
@@ -192,7 +195,9 @@ function App() {
         path: '/login/cover-login/',
         element: <Login />,
       },
-    ]);
+    ], {
+      basename: '/BERGERONE'
+    });
 
     return (
       <div className="min-h-screen bg-blue-300 text-black">
