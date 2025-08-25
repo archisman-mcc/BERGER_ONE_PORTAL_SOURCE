@@ -188,8 +188,12 @@ const ALL_ENDPOINTS = {
     GetStakeHolderList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStakeHolderList',
     GetStateListPotentialLead: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStateList',
 
-    // 
+    // Report
     getmwadetailsdatav5: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'getmwadetailsdatav5',
+    GetTSRMonitoringData: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetTSRMonitoringData',
+    GetRegion_report: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetRegion',
+    GetUserGroupApplicable: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetUserGroupApplicable',
+    GetRegnWiseUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetRegnWiseUserList',
 
     //#endregion
 };

@@ -120,3 +120,74 @@ table tr .mantine-Checkbox-root {
 .mantine-ScrollArea-viewport > div:first-child > div {
     @apply bg-none;
 }
+
+/* Fix z-index issues for dropdowns and pagination */
+.mantine-Table-root .mantine-Pagination-root {
+    position: relative;
+    z-index: 1;
+}
+
+.mantine-Table-root .mantine-Pagination-root .mantine-Pagination-item {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure dropdowns appear above table elements */
+.mantine-Select-dropdown,
+.mantine-Menu-dropdown,
+.mantine-Autocomplete-dropdown,
+.mantine-Combobox-dropdown,
+.mantine-MultiSelect-dropdown {
+    z-index: 1000 !important;
+}
+
+/* Fix for table toolbar elements */
+.mantine-Table-root .mantine-Group-root[role='navigation'] {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure proper stacking for table containers */
+.mantine-Table-root .mantine-Paper-root {
+    position: relative;
+    z-index: 1;
+}
+
+/* Compact dropdowns in table contexts */
+.mantine-Table-root .mantine-Select-dropdown,
+.mantine-Table-root .mantine-Menu-dropdown,
+.mantine-Table-root .mantine-Autocomplete-dropdown,
+.mantine-Table-root .mantine-Combobox-dropdown {
+    max-height: 180px !important;
+    max-width: 250px !important;
+}
+
+/* Reduce table dropdown item heights */
+.mantine-Table-root .mantine-Select-item,
+.mantine-Table-root .mantine-Menu-item,
+.mantine-Table-root .mantine-Autocomplete-item {
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    font-size: 0.75rem !important;
+}
+
+/* Compact table form inputs */
+.mantine-Table-root .mantine-Input-wrapper .mantine-Input-input,
+.mantine-Table-root .mantine-Select-wrapper .mantine-Select-input {
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 2px 6px !important;
+    font-size: 0.75rem !important;
+}
+
+/* Reduce spacing in table dropdowns */
+.mantine-Table-root .mantine-Select-dropdown .mantine-Select-item + .mantine-Select-item,
+.mantine-Table-root .mantine-Menu-dropdown .mantine-Menu-item + .mantine-Menu-item {
+    margin-top: 1px !important;
+}
+
+/* Ensure table dropdowns don't interfere with pagination */
+.mantine-Table-root .mantine-Select-dropdown,
+.mantine-Table-root .mantine-Menu-dropdown {
+    z-index: 100 !important;
+}

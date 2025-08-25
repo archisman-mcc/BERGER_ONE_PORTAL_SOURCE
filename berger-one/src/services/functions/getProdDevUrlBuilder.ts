@@ -7,10 +7,11 @@ export const GetProdDevRouteBuilder = (path: string) => {
 };
 
 export const GetProdDevImgRouteBuilder = (path: string) => {
+    const BASE_PATH = '/BERGERONE';
     if (process.env.NODE_ENV === 'production') {
         // In production, use the base path if SUB_DOMAIN_IMAGE_PATH is not defined
-        return (process.env.SUB_DOMAIN_IMAGE_PATH || '') + path;
+        return (process.env.SUB_DOMAIN_IMAGE_PATH || '') + BASE_PATH + path;
     } else {
-        return path;
+        return BASE_PATH + path;
     }
 };
