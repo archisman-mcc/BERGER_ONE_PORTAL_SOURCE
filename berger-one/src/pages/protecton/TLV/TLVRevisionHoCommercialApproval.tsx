@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { type ChangeEvent, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react';
 import Select from 'react-select';
-import { Button, Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
 import { IconDownload, IconPlus, IconCheck, IconX, IconEye, IconRotate, IconEdit } from '@tabler/icons-react';
-import IconSearch from '@/src/components/Icon/IconSearch';
+// import IconSearch from '@/src/components/Icon/IconSearch';
+import { CiSearch } from "react-icons/ci";
 import { useMemo, useState, useEffect } from 'react';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import * as Tlv from '@/src/services/api/protectonEpca/TLVRevisionRSMApproval';
-import * as Epca from '@/src/services/api/protectonEpca/EpcaList';
-import * as TlvHoCom from '@/src/services/api/protectonEpca/TLVRevisionHoCommercialApproval';
-import { EpcaCustomerStore } from '@/src/services/store/Protecton/EpcaCustomerDetailsStore';
-import { useRouter } from 'next/router';
+import * as Tlv from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
+import * as Epca from '../../../services/api/protectonEpca/EpcaList';
+// import * as TlvHo from '../../../services/api/protectonEpca/TLVRevisionHOApproval';
+import * as TlvHoCom from '../../../services/api/protectonEpca/TLVRevisionHoCommercialApproval';
+import { EpcaCustomerStore } from '../../../services/store/Protecton/EpcaCustomerDetailsStore';
+import { useNavigate } from 'react-router-dom';
+// import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { GetProdDevImgRouteBuilder } from '@/src/services/functions/getProdDevUrlBuilder';
-import { commonAlert } from '@/src/services/functions/commonAlert';
-import { commonErrorToast, commonSuccessToast } from '@/src/services/functions/commonToast';
-import { UseAuthStore } from '@/src/services/store/AuthStore';
-import { Select as MantineSelect } from '@mantine/core';
+// import { GetProdDevImgRouteBuilder } from '@/src/services/functions/getProdDevUrlBuilder';
+import { commonAlert } from '../../../services/functions/commonAlert';
+import { commonErrorToast, commonSuccessToast } from '../../../services/functions/commonToast';
+import { UseAuthStore } from '../../../services/store/AuthStore';
+// import { Select as MantineSelect } from '@mantine/core';
 
 export interface SELECTED_DROPDOWN {
     Userdepot: number;
@@ -91,13 +94,14 @@ const TlvLogDto: TlvLogInit = {
 
 const TLVRevisionHoCommercialApproval = () => {
     const [data, setData] = useState<TLVType[]>([]);
-    const [pcaParam, setPcaParam] = useState({
+    const pcaParamInit = {
         acctNo: '',
         customerName: '',
         billTo: '',
         sblcode: '',
-    });
-    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>(selectedDropdownInit);
+    }
+    const [pcaParam, setPcaParam] = useState({ ...pcaParamInit });
+    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>({...selectedDropdownInit});
     const [depot, setDepot] = useState<any>([]);
     const [applTerr, setApplTerr] = useState<any>([]);
     const [approveStatus, setApproveStatus] = useState<any>([]);
@@ -113,9 +117,10 @@ const TLVRevisionHoCommercialApproval = () => {
     const [dropdownOptions, setDropdownOptions] = useState<any>([]);
     const [selectedValue, setSelectedValue] = useState<any>(null);
     const [isEditMode, setIsEditMode] = useState(false);
-    const user = UseAuthStore((state) => state.userDetails);
+    const user = UseAuthStore((state: any) => state.userDetails);
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    // const router = useRouter();
+    const navigate = useNavigate();
 
     // const selectedCustomer = (Lead: any) => {
     //     setLoading(true);
@@ -124,33 +129,28 @@ const TLVRevisionHoCommercialApproval = () => {
     //     setLoading(false);
     // };
 
-    const setValueInSessionStorage = (key, value) => {
+    const setValueInSessionStorage = (key: string, value: string) => {
         const storage = sessionStorage;
         storage.setItem(key, JSON.stringify(value));
+    };
+
+    const clearAllFormFields = () => {
+        // Preserve the current Sub Status value
+        const currentSubStatus = selectedDropdown.UsersubStatus;
+        setSelectedDropdown({
+            ...selectedDropdownInit,
+            UsersubStatus: currentSubStatus
+        });
+        setPcaParam({ ...pcaParamInit });
+        setSelectedValue(null);
+        setDropdownOptions([]);
     };
 
     const selectedCustomer = (Lead: any) => {
         setCustomerProfile(Lead);
         setValueInSessionStorage('epcaTLVDtlList', Lead);
         setValueInSessionStorage('epcaTLVDtlEntryType', 'View');
-        // let data = {
-        //     auto_id: Lead.auto_id,
-        //     DepotCode: Lead.depot_code,
-        //     DealerCode: Lead.dlr_dealer_code,
-        //     SblCode: Lead.dlr_sbl,
-        //     BillToCode: Lead.dlr_bill_to,
-        //     SubmissionType: Lead.td_submission_type,
-        // };
-        // const queryParams = new URLSearchParams(data).toString();
-        // router.push(`/Protecton/TLV/TLVRevisionRequestDetails/${queryParams}`);
-        router.push('/Protecton/TLV/TLVRevisionRequestDetails/');
-    };
-
-    const handleTlvTermDropdownChange = (value: string, rowIndex: number) => {
-        setTlvTermdValues((prevValues) => ({
-            ...prevValues,
-            [rowIndex]: value,
-        }));
+        navigate('/Protecton/TLV/TLVRevisionRequestDetails/');
     };
 
     const findSelectedTypeValue = (arr: any[], arrPropName: string, checkValue: string) => {
@@ -186,7 +186,7 @@ const TLVRevisionHoCommercialApproval = () => {
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
         setPcaParam((prevData) => ({
             ...prevData,
@@ -194,7 +194,7 @@ const TLVRevisionHoCommercialApproval = () => {
         }));
     };
 
-    const handleEditChange = (e, rowIndex, field) => {
+    const handleEditChange = (e: ChangeEvent<HTMLInputElement>, rowIndex: number, field: string) => {
         const { value } = e.target;
         setData((prevData) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
     };
@@ -226,7 +226,7 @@ const TLVRevisionHoCommercialApproval = () => {
         setLoading(false);
     };
 
-    const GetApplicableTerritory = async (depotCode) => {
+    const GetApplicableTerritory = async (depotCode: any) => {
         setLoading(true);
         const data: any = {
             user_id: user.user_id,
@@ -256,11 +256,11 @@ const TLVRevisionHoCommercialApproval = () => {
         setLoading(false);
     };
 
-    const GetPcaStatusData = async (selectedstatus) => {
+    const GetPcaStatusData = async (selectedstatus: any) => {
         setLoading(true);
         const data: any = {
             status: selectedstatus,
-            type: 'HO',
+            type: 'HOCOMMERCIAL',
         };
         try {
             const response: any = await Tlv.GetTlvStatusList(data);
@@ -294,9 +294,7 @@ const TLVRevisionHoCommercialApproval = () => {
         setLoading(false);
     };
 
-    useEffect(() => { }, [selectedDropdown]);
-
-    const GetTlvRevisionLog = async (autoid) => {
+    const GetTlvRevisionLog = async (autoid: string) => {
         setLoading(true);
         const data: any = {
             auto_id: autoid,
@@ -310,7 +308,7 @@ const TLVRevisionHoCommercialApproval = () => {
         setLoading(false);
     };
 
-    async function TlvApprove(data) {
+    async function TlvApprove(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; approved_type?: any; }) {
         setLoading(true);
         commonAlert('Are you sure you want to approve this TLV?', '', 'warning').then(async (result: any) => {
             if (result.value) {
@@ -327,15 +325,16 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Approved Successfully.');
-                    //router.push('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
-                    router.reload();
+                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
+                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
+                    // router.reload();
                 }
             }
         });
         setLoading(false);
     }
 
-    async function TlvReject(data) {
+    async function TlvReject(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; rejected_type?: any; }) {
         setLoading(true);
         commonAlert('Are you sure you want to reject this TLV?', '', 'warning').then(async (result: any) => {
             if (result.value) {
@@ -352,15 +351,16 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Rejected Successfully.');
-                    //router.push('/Protecton/TLV/TLVRevisionHoApproval/');
-                    router.reload();
+                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
+                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
+                    // router.reload();
                 }
             }
         });
         setLoading(false);
     }
 
-    async function TlvRevert(data) {
+    async function TlvRevert(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; reverted_type?: any; }) {
         setLoading(true);
         commonAlert('Are you sure you want to revert this TLV?', '', 'warning').then(async (result: any) => {
             if (result.value) {
@@ -377,15 +377,17 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Reverted Successfully.');
-                    //router.push('/Protecton/TLV/TLVRevisionHoApproval/');
-                    router.reload();
+                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
+                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
+                    // router.reload();
                 }
             }
         });
         setLoading(false);
     }
 
-    const GetTlcHoCommercialApprovalListData = async () => {
+    // list api 
+    const GetTlcHoCommercialApprovalListData = async (onComplete?: () => void) => {
         setLoading(true);
         const data: any = {
             depotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
@@ -407,63 +409,68 @@ const TLVRevisionHoCommercialApproval = () => {
             return;
         }
         setLoading(false);
+        
+        // Execute callback if provided
+        if (onComplete) {
+            onComplete();
+        }
     };
 
-    const BesicDetailTable = ({ data }) => {
+    const BesicDetailTable = ({ data }: any) => {
         return (
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '5%', textAlign: 'center', verticalAlign: 'middle' }}>REGION</th>
-                        <th style={{ width: '23%', textAlign: 'center', verticalAlign: 'middle' }}>DEPOT</th>
-                        <th style={{ width: '7%', textAlign: 'center', verticalAlign: 'middle' }}>TERRITORY</th>
-                        <th style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>ACCT. NO.</th>
-                        <th style={{ width: '50%', textAlign: 'center', verticalAlign: 'middle' }}>DEALER NAME</th>
+                        <th className="w-[5%] text-center align-middle">REGION</th>
+                        <th className="w-[23%] text-center align-middle">DEPOT</th>
+                        <th className="w-[7%] text-center align-middle">TERRITORY</th>
+                        <th className="w-[15%] text-center align-middle">ACCT. NO.</th>
+                        <th className="w-[50%] text-center align-middle">DEALER NAME</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_regn}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_name}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].terr_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_name}</td>
+                        <td className="text-center align-middle">{data[0].depot_regn}</td>
+                        <td className="text-center align-middle">{data[0].depot_name}</td>
+                        <td className="text-center align-middle">{data[0].terr_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_name}</td>
                     </tr>
                 </tbody>
             </table>
         );
     };
 
-    const TLVDetailsGrid = ({ data }) => {
+    const TLVDetailsGrid = ({ data }: any) => {
         return (
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '15%', textAlign: 'center' }}>Date</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Current TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Requested TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Credit Days</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Proposed Credit Days</th>
-                        <th style={{ width: '20%', textAlign: 'center' }}>Status</th>
-                        <th style={{ width: '25%', textAlign: 'center' }}>Remarks</th>
+                        <th className="w-[15%] text-center">Date</th>
+                        <th className="w-[10%] text-center">Current TLV</th>
+                        <th className="w-[10%] text-center">Requested TLV</th>
+                        <th className="w-[10%] text-center">Credit Days</th>
+                        <th className="w-[10%] text-center">Proposed Credit Days</th>
+                        <th className="w-[20%] text-center">Status</th>
+                        <th className="w-[25%] text-center">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.length > 0 ? (
-                        data.map((row, index) => (
+                        data.map((row: { created_date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; current_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; credit_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_cr_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; status_value: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; remarks: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.created_date}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.current_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.credit_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_cr_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.status_value}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.remarks}</td>
+                                <td className="text-center align-middle">{row.created_date}</td>
+                                <td className="text-center align-middle">{row.current_tlv}</td>
+                                <td className="text-center align-middle">{row.proposed_tlv}</td>
+                                <td className="text-center align-middle">{row.credit_days}</td>
+                                <td className="text-center align-middle">{row.proposed_cr_days}</td>
+                                <td className="text-center align-middle">{row.status_value}</td>
+                                <td className="text-center align-middle">{row.remarks}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={Number(7)} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                            <td colSpan={7} className="text-center align-middle">
                                 No record(s) found.
                             </td>
                         </tr>
@@ -486,7 +493,7 @@ const TLVRevisionHoCommercialApproval = () => {
         });
     }, []);
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         GetTlcHoCommercialApprovalListData();
     };
@@ -519,27 +526,26 @@ const TLVRevisionHoCommercialApproval = () => {
             {
                 accessorKey: 'depot_name',
                 header: 'Depot',
-                size: 180,
+                size: 160,
             },
             {
                 accessorKey: 'dlr_terr_code',
                 header: 'Territory',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'dlr_dealer_code',
                 header: 'Acct. No.',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'dlr_dealer_name',
                 header: 'Dealer Name',
-                size: 180,
-
-                Cell: ({ cell, column, renderedCellValue, row, table }) => {
+                size: 100,
+                Cell: ({ cell }) => {
                     return (
                         <span
-                            className={cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? 'cursor-pointer text-primary' : ''}
+                            className='text-blue-600 cursor-pointer'
                             onClick={() => selectedCustomer(cell.row.original)}
                         >
                             {cell.row.original.dlr_dealer_name}
@@ -550,17 +556,17 @@ const TLVRevisionHoCommercialApproval = () => {
             {
                 accessorKey: 'dlr_bill_to',
                 header: 'Bill To',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'current_tlv',
                 header: 'Current TLV',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'td_proposed_tlv',
                 header: 'Requested TLV',
-                size: 50,
+                size: 70,
 
                 Cell: ({ cell, row }) =>
                     row.original.td_proposed_tlv !== null && row.original.td_proposed_tlv !== undefined ? (
@@ -575,19 +581,19 @@ const TLVRevisionHoCommercialApproval = () => {
             {
                 accessorKey: 'td_proposed_cr_days',
                 header: 'Proposed Credit Days',
-                size: 150,
+                size: 140,
 
                 Cell: ({ cell, row }) =>
                     row.original.td_proposed_cr_days !== null && row.original.td_proposed_cr_days !== undefined ? (
                         <input className="tableInput" type="text" value={row.original.td_proposed_cr_days} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_cr_days')} />
                     ) : (
-                        <span style={{ color: '#999' }}>N/A</span>
+                        <span className="text-gray-500">N/A</span>
                     ),
             },
             {
                 accessorKey: 'dropdown_field',
                 header: 'Credit Term',
-                size: 180,
+                size: 140,
 
                 Cell: ({ cell, row }) => {
                     useEffect(() => {
@@ -626,36 +632,41 @@ const TLVRevisionHoCommercialApproval = () => {
                     }, [row.original.depot_code, row.original.dlr_bill_to]);
 
                     return row.original.td_proposed_cr_days > 0 ? (
-                        <MantineSelect
-                            data={dropdownOptions}
+                        // <MantineSelect
+                        //     data={dropdownOptions}
+                        //     value={selectedValue}
+                        //     onChange={(value) => setSelectedValue(value)}
+                        //     placeholder="Select an option"
+                        //     clearable
+                        //     nothingFound="No options"
+                        // />
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
                             value={selectedValue}
+                            options={dropdownOptions}
                             onChange={(value) => setSelectedValue(value)}
-                            placeholder="Select an option"
-                            clearable
-                            nothingFound="No options"
-                        //disabled={dropdownOptions.length === 0}
-                        //disabled={!isEditMode}
                         />
                     ) : (
-                        <span style={{ color: '#999' }}>N/A</span>
+                        <span className="text-gray-500">N/A</span>
                     );
                 },
             },
             {
                 accessorKey: 'status_value',
                 header: 'Status',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'td_remarks',
                 header: 'Remarks',
-                size: 180,
+                size: 140,
                 Cell: ({ cell, row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
             },
             {
                 id: 'action',
                 header: 'Action',
-                size: 300,
+                size: 120,
 
                 Cell: ({ row }) => {
                     const status = row.original.status_value;
@@ -693,46 +704,66 @@ const TLVRevisionHoCommercialApproval = () => {
                     };
 
                     return (
-                        <Group className="tableGroupBtn">
-                            {shouldShowButton && (
-                                <Button variant="outline" color="green" leftIcon={<IconCheck size={16} />} onClick={() => handleApprove(row.original)}>
-                                    Approve
-                                </Button>
-                            )}
-                            {shouldShowButton && (
-                                <Button variant="outline" color="red" leftIcon={<IconX size={16} />} onClick={() => handleReject(row.original)}>
-                                    Reject
-                                </Button>
-                            )}
-                            <Button
-                                variant="outline"
-                                color="blue"
-                                leftIcon={<IconEye size={16} />}
-                                onClick={() => {
-                                    handleView(row.original);
-                                    setShowTlvModal(true);
-                                }}
-                            >
-                                View
-                            </Button>
-                            {downloadLink && (
-                                <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="outline" color="yellow" leftIcon={<IconDownload size={16} />}>
-                                        Download
-                                    </Button>
-                                </a>
-                            )}
-                            {shouldShowButton && (
-                                <Button variant="outline" color="gray" leftIcon={<IconRotate size={16} />} onClick={() => handleRevert(row.original)}>
-                                    Revert
-                                </Button>
-                            )}
-                            {/* {shouldEditShowButton && (
-                                <Button variant="outline" color="violet" leftIcon={<IconEdit size={16} />} onClick={handleEditClick}>
-                                    Edit
-                                </Button>
-                            )} */}
-                        </Group>
+                        <div className="flex justify-end">
+                            <Group className="tableGroupBtn">
+                                <Tooltip label="View" position="top" withArrow>
+                                    <IconEye
+                                        size={20}
+                                        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+                                        onClick={() => {
+                                            handleView(row.original);
+                                            setShowTlvModal(true);
+                                        }}
+                                    />
+                                </Tooltip>
+                                {shouldShowButton && (
+                                    <Tooltip label="Approve" position="top" withArrow>
+                                        <IconCheck
+                                            size={20}
+                                            className="text-green-600 cursor-pointer hover:text-green-800 transition-colors"
+                                            onClick={() => handleApprove(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                {shouldShowButton && (
+                                    <Tooltip label="Reject" position="top" withArrow>
+                                        <IconX
+                                            size={20}
+                                            className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
+                                            onClick={() => handleReject(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                {downloadLink && (
+                                    <Tooltip label="Download" position="top" withArrow>
+                                        <a href={downloadLink} target="_blank" rel="noopener noreferrer">
+                                            <IconDownload
+                                                size={20}
+                                                className="text-yellow-600 cursor-pointer hover:text-yellow-800 transition-colors"
+                                            />
+                                        </a>
+                                    </Tooltip>
+                                )}
+                                {shouldShowButton && (
+                                    <Tooltip label="Revert" position="top" withArrow>
+                                        <IconRotate
+                                            size={20}
+                                            className="text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
+                                            onClick={() => handleRevert(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                {/* {shouldEditShowButton && (
+                                    <Tooltip label="Edit" position="top" withArrow>
+                                        <IconEdit 
+                                            size={20} 
+                                            className="text-violet-600 cursor-pointer hover:text-violet-800 transition-colors"
+                                            onClick={handleEditClick}
+                                        />
+                                    </Tooltip>
+                                )} */}
+                            </Group>
+                        </div>
                     );
                 },
             },
@@ -742,9 +773,12 @@ const TLVRevisionHoCommercialApproval = () => {
 
     const table = useMantineReactTable({
         columns,
-        data,
-        // enableColumnResizing: true,
-        // columnResizeMode: 'onChange',
+        data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+        enableColumnResizing: true,
+        enableTopToolbar: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        columnResizeMode: 'onChange',
         // mantineTableContainerProps: {
         //     style: {
         //         overflowX: 'hidden', // hides horizontal scrollbar
@@ -757,90 +791,82 @@ const TLVRevisionHoCommercialApproval = () => {
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
                 <h5 className="text-lg font-semibold dark:text-white-light">TLV Revision HO Commercial Approval</h5>
             </div>
-            <div className="panel mb-2">
-                <form className=" border-1 space-y-5">
-                    <div className="grid grid-cols-4 grid-rows-1 gap-2">
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Depot:</label>
-                            <Select
-                                isSearchable={true}
-                                value={depot[selectedDropdown.Userdepot]}
-                                options={depot}
-                                onChange={() => {
-                                    handleTypeSelect(event, 'USER_DEPOT');
-                                }}
-                            />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Territory:</label>
-                            <Select
-                                isSearchable={true}
-                                value={applTerr[selectedDropdown.Userterritory]}
-                                options={applTerr}
-                                onChange={() => {
-                                    handleTypeSelect(event, 'USER_TERR');
-                                }}
-                            />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Acct. No.:</label>
-                            {/* <input type="text" placeholder="Search Here" className="form-input" value={inputSearch} onChange={(e) => setSearchDetails(e.target.value)} /> */}
-                            <input type="text" placeholder="Acct. No." className="form-input" name="acctNo" value={pcaParam.acctNo} onChange={handleChange} />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Customer Name:</label>
-                            {/* <input type="text" placeholder="Search Here" className="form-input" value={inputSearch} onChange={(e) => setSearchDetails(e.target.value)} /> */}
-                            <input type="text" placeholder="Customer Name" className="form-input" name="customerName" value={pcaParam.customerName} onChange={handleChange} />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Bill To:</label>
-                            {/* <input type="text" placeholder="Search Here" className="form-input" value={inputSearch} onChange={(e) => setSearchDetails(e.target.value)} /> */}
-                            <input type="text" placeholder="Bill To" className="form-input" name="billTo" value={pcaParam.billTo} onChange={handleChange} />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Status:</label>
-                            <Select
-                                isSearchable={true}
-                                value={mainStatus[selectedDropdown.Userstatus]}
-                                options={mainStatus}
-                                onChange={() => {
-                                    handleTypeSelect(event, 'USER_STATUS');
-                                }}
-                            />
-                        </div>
-
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <label className="formLabelTx">Sub Status:</label>
-                            <Select
-                                isSearchable={true}
-                                value={approveStatus[selectedDropdown.UsersubStatus]}
-                                options={approveStatus}
-                                onChange={() => {
-                                    handleTypeSelect(event, 'USER_SUB_STATUS');
-                                }}
-                            />
-                        </div>
-                        <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <div className="sm-justify-center flex space-x-2">
-                                <Button className="btn btn-info mt-4 w-24 rounded-full" variant="filled" onClick={handleSearch}>
-                                    <IconSearch />
-                                    <span className="whiteTx"> Search</span>
-                                </Button>
-                            </div>
-                        </div>
-                        {/* <div className="col-span-4 sm:col-span-2 md:col-span-1">
-                            <Button className="btn btn-info mt-6 w-24 rounded-full" variant="filled">
-                                <IconSearch />
-                                <span style={{ color: 'rgba(255,255,255,0.6)' }}>Search</span>
-                            </Button>
-                        </div> */}
+            <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-1">
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Depot:</label>
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
+                            value={selectedDropdown.Userdepot !== -1 ? depot[selectedDropdown.Userdepot] : null}
+                            options={depot}
+                            onChange={() => {
+                                handleTypeSelect(event, 'USER_DEPOT');
+                            }}
+                        />
                     </div>
-                </form>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Territory:</label>
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
+                            value={selectedDropdown.Userterritory !== 0 ? applTerr[selectedDropdown.Userterritory] : null}
+                            options={applTerr}
+                            onChange={() => {
+                                handleTypeSelect(event, 'USER_TERR');
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Acct. No.:</label>
+                        <input type="text" placeholder="Acct. No." className="w-full border rounded form-input text-sm" name="acctNo" value={pcaParam.acctNo} onChange={handleChange} autoComplete="off" />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Customer Name:</label>
+                        <input type="text" placeholder="Customer Name" className="w-full border rounded form-input text-sm" name="customerName" value={pcaParam.customerName} onChange={handleChange} autoComplete="off" />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Bill To:</label>
+                        <input type="text" placeholder="Bill To" className="w-full border rounded form-input text-sm" name="billTo" value={pcaParam.billTo} onChange={handleChange} autoComplete="off" />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Status:<span className="text-red-500 ml-0.5">*</span></label>
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
+                            value={selectedDropdown.Userstatus !== -1 ? mainStatus[selectedDropdown.Userstatus] : null}
+                            options={mainStatus}
+                            onChange={() => {
+                                handleTypeSelect(event, 'USER_STATUS');
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold mb-1">Sub Status:<span className="text-red-500 ml-0.5">*</span></label>
+                        <Select
+                            className="text-sm"
+                            isSearchable={true}
+                            value={selectedDropdown.UsersubStatus !== -1 ? approveStatus[selectedDropdown.UsersubStatus] : null}
+                            options={approveStatus}
+                            onChange={() => {
+                                handleTypeSelect(event, 'USER_SUB_STATUS');
+                            }}
+                        />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex items-end space-x-2">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm flex items-center" onClick={handleSearch}>
+                            <CiSearch /> Search
+                        </button>
+                    </div>
+                </div>
             </div>
             <div className="mb-2">
                 <MantineReactTable table={table} />
@@ -864,7 +890,7 @@ const TLVRevisionHoCommercialApproval = () => {
                             <div className="flex min-h-screen items-start justify-center px-4">
                                 <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-7xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                     <div className="grid-cols-12 items-center justify-between bg-secondary-light px-2 py-1 dark:bg-[#121c2c] md:flex">
-                                        <div className="flex items-center justify-between bg-secondary-light px-2" style={{ width: `100%` }}>
+                                        <div className="flex items-center justify-between bg-secondary-light px-2 w-full">
                                             <div className="flex">
                                                 {/* <img className="mr-2 h-8 w-auto" src={GetProdDevImgRouteBuilder('/assets/images/meeting.png')} alt="" /> */}
                                                 <h5 className="text-lg font-bold">View</h5>

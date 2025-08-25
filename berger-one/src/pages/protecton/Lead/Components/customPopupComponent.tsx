@@ -498,7 +498,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Referral Lead:</label>
+                                    <label className="block text-sm font-semibold mb-1">Referral Lead:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
@@ -579,19 +579,19 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div>
-                            <label className="block text-sm font-semibold mb-1">Project Name:</label>
+                            <label className="block text-sm font-semibold mb-1">Project Name:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <input type="text" placeholder="Enter project name" className="w-full border rounded form-input text-sm" name="billTo" value={data?.projectName} onChange={(event: any) => setData((pre: any) => ({ ...pre, projectName: event.target.value }))} autoComplete="off" />
                         </div>
-                        <div>
+                        {popupOpenData?.popupHeader === 'PROLINKS' && <div>
                             <label className="block text-sm font-semibold mb-1">Project Description:</label>
                             <input type="text" placeholder="Enter project description" className="w-full border rounded form-input text-sm" name="billTo" value={data?.projectDescription} onChange={(event: any) => setData((pre: any) => ({ ...pre, projectDescription: event.target.value }))} autoComplete="off" />
-                        </div>
+                        </div>}
                         <div>
-                            <label className="block text-sm font-semibold mb-1">Project Location:</label>
+                            <label className="block text-sm font-semibold mb-1">Project Location:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <input type="text" placeholder="Enter project location" className="w-full border rounded form-input text-sm" name="billTo" value={data?.siteLocation} onChange={(event: any) => setData((pre: any) => ({ ...pre, siteLocation: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold mb-1">Address Line 1:</label>
+                            <label className="block text-sm font-semibold mb-1">Address Line 1:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <input type="text" placeholder="Enter Address 1" className="w-full border rounded form-input text-sm" name="addr1" value={data?.addr1} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr1: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
@@ -1021,7 +1021,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Lead Share:</label>
+                                    <label className="block text-sm font-semibold mb-1">Lead Share:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         menuPlacement="auto"
                                         className="text-sm"
@@ -1034,7 +1034,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Region:</label>
+                                    <label className="block text-sm font-semibold mb-1">Region:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         menuPlacement="auto"
                                         className="text-sm"
@@ -1049,7 +1049,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Depot:</label>
+                                    <label className="block text-sm font-semibold mb-1">Depot:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         menuPlacement="auto"
                                         className="text-sm"
@@ -1063,7 +1063,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Territory:</label>
+                                    <label className="block text-sm font-semibold mb-1">Territory:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         menuPlacement="auto"
                                         className="text-sm"
@@ -1076,7 +1076,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Work In Progress:</label>
+                                    <label className="block text-sm font-semibold mb-1">Work In Progress:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         menuPlacement="auto"
                                         className="text-sm"
@@ -1257,7 +1257,10 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     <h3 className="text-lg font-semibold">Upload Documents</h3>
                                 </div>
                                 <button
-                                    onClick={() => setIsImageUploadPopupOpen(false)}
+                                    onClick={() => {
+                                        setIsImageUploadPopupOpen(false);
+                                        setSelected_doc_type({});
+                                    }}
                                     className="w-8 h-8 bg-white bg-opacity-20 rounded-lg flex items-center justify-center hover:bg-white hover:bg-opacity-30 transition-all duration-200"
                                 >
                                     <MdOutlineClose size={20} />
