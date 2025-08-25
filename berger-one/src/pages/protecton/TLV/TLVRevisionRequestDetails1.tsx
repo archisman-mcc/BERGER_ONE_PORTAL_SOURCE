@@ -1,41 +1,234 @@
-import React, { useEffect, useState } from 'react'
-import Select from 'react-select';
 import { UseAuthStore } from '../../../services/store/AuthStore';
-import { useNavigate } from 'react-router-dom';
-import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
-import { GetApplicableDepotList, GetApplicableTerrList } from '../../../services/api/protectonEpca/EpcaList';
-import { GetPcaBillToList, GetPcaDealersList } from '../../../services/api/protectonEpca/EpcaDetails';
-import { GetBillToDetails } from '../../../services/api/protectonEpca/EPCADepotApproval';
-import { GetTlvDetails } from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
-import { commonErrorToast, commonSuccessToast } from '../../../services/functions/commonToast';
-import { Button } from '@mantine/core';
+import React, { useEffect, useState } from 'react'
+import * as TlvApi from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
+import * as Epca from '../../../services/api/protectonEpca/EpcaList';
+import * as EpcaDetails from '../../../services/api/protectonEpca/EpcaDetails';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Select from 'react-select';
+import * as EPCADepotApproval from '../../../services/api/protectonEpca/EPCADepotApproval';
+import { commonErrorToast, commonSuccessToast, commonWarningToast } from '../../../services/functions/commonToast';
+import { FaDownload } from "react-icons/fa";
 import AnimateHeight from 'react-animate-height';
 import Flatpickr from 'react-flatpickr';
-import { ValidateIFSC } from '../../../services/api/commons/global';
-import { FaDownload } from "react-icons/fa";
+import 'flatpickr/dist/themes/material_green.css';
 import { IoMdSave } from 'react-icons/io';
 import { IoReturnUpBack } from "react-icons/io5";
+import { Button } from '@mantine/core';
 import { commonAlert } from '../../../services/functions/commonAlert';
-import { TlvDetailsSubmit } from '../../../services/api/protectonEpca/TLVRevisionDepotApproval';
 import moment from 'moment';
+import * as Tlv from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
+import * as global from '../../../services/api/commons/global';
+import { useNavigate } from 'react-router-dom';
 
-const TLVRevisionRequestDetails = () => {
+const TLVRevisionRequestDetails1 = () => {
     const user = UseAuthStore((state: any) => state.userDetails);
     const navigate = useNavigate();
 
     const [accordianOpen, setAccordianOpen] = useState<string>('');
-    const [getTlvDetailsCalled, setGetTlvDetailsCalled] = useState<boolean>(false);
-    const [detailsData, setDetailsData] = useState<any>({ auto_id: 0, depot: null, territory: null, dealer: null, billTo: null, file_doc: null, keyParam: [], outstanding: [] });
+    const [detailsData, setDetailsData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [pageType, setPageType] = useState('');
-    const [sessionStorageData, setSessionStorageData] = useState<any>({ td_submission_type: "TLV" });
-    const [selectBoxData, setSelectBoxData] = useState<any>({ depot: [], territory: [], dealer: [], billTo: [], customerAndPaymentType: [] });
+    const [depot, setDepot] = useState<any>([]);
+    const [applTerr, setApplTerr] = useState<any>([]);
+    const [dealer, setDealer] = useState<any>([]);
+    const [billTo, setBillTo] = useState<any>([]);
+    const [customerAndPaymentType, setCustomerAndPaymentType] = useState<any>([]);
     const [tlvBase64JPEG, setTlvBase64JPEG] = useState<any>('');
     const [aadharBase64JPEG, setAadharBase64JPEG] = useState<any>('');
     const [panBase64JPEG, setPanBase64JPEG] = useState<any>('');
     const [lcBase64JPEG, setLcBase64JPEG] = useState<any>('');
     const [chequeBase64JPEG, setChequeBase64JPEG] = useState<any>('');
     const [lcbgBase64JPEG, setlcbgBase64JPEG] = useState<any>('');
+    const [tlvDetails, setTLVDetails] = useState<any>({
+        formSubmitable: 'Y',
+        status: detailsData?.table[0]?.status || 'PENDING_DEPOT',
+        auto_id: 0,
+        td_submission_type: "TLV",
+        depot_code: "",
+        depot_name: "",
+        terr_code: "",
+        terr_name: "",
+        dealer_code: "",
+        dealer_name: "",
+        bill_to: detailsData?.table[0]?.billto_code || '',
+        bill_to_name: "",
+        aadharNo: detailsData?.table[0]?.aadhar_no || '',
+        fullName: detailsData?.table[0]?.full_name || '',
+        panNo: detailsData?.table[0]?.pan_no || '',
+        holderName: '',
+        frm_date: detailsData?.table[0]?.lcbg_opening_date || '',
+        to_date: detailsData?.table[0]?.lcbg_expiry_date || '',
+        chequeNo: detailsData?.table[0]?.td_blank_chq_no || '',
+        ifsc: detailsData?.table[0]?.td_ifsc_code || '',
+        bankName: '',
+        branch: '',
+        message: '',
+        success: null,
+        proposedCreditDays: detailsData?.table[0]?.proposed_cr_days || '',
+        requestedTLV: detailsData?.table[0]?.proposed_tlv || '',
+        billedVol: detailsData?.table[0]?.order_vol || '',
+        billedVal: detailsData?.table[0]?.order_val || '',
+        increaseReason: detailsData?.table[0]?.increase_reason || '',
+        customerName: detailsData?.table[0]?.customer_name || '',
+        collectionAmount1: detailsData?.table[0]?.td_os_collection_amount1 || '',
+        collectionAmount2: detailsData?.table[0]?.td_os_collection_amount2 || '',
+        collectionAmount3: detailsData?.table[0]?.td_os_collection_amount3 || '',
+        collectionAmount4: detailsData?.table[0]?.td_os_collection_amount4 || '',
+        collectionAmount5: detailsData?.table[0]?.td_os_collection_amount5 || '',
+        collectionAmount6: detailsData?.table[0]?.td_os_collection_amount6 || '',
+        collectionAmount7: detailsData?.table[0]?.td_os_collection_amount7 || '',
+        collection1_date: detailsData?.table[0]?.os_collection_date1 || '',
+        collection2_date: detailsData?.table[0]?.os_collection_date2 || '',
+        collection3_date: detailsData?.table[0]?.os_collection_date3 || '',
+        collection4_date: detailsData?.table[0]?.os_collection_date4 || '',
+        collection5_date: detailsData?.table[0]?.os_collection_date5 || '',
+        collection6_date: detailsData?.table[0]?.os_collection_date6 || '',
+        collection7_date: detailsData?.table[0]?.os_collection_date7 || '',
+        // -------
+        lcBg: 'N',
+        lcbgAmount: null,
+        blank_chq: 'N',
+    });
+
+    const handleFormSubmit = () => {
+        const entity = [{
+            appName: 'PROTECTON',
+            userId: user.user_id,
+            autoId: tlvDetails.auto_id,
+            depotCode: tlvDetails.depot_code,
+            dealerCode: tlvDetails.dealer_code,
+            fullName: tlvDetails.fullName,
+            aadharNo: tlvDetails.aadharNo,
+            aadharDoc: aadharBase64JPEG,
+            panNo: tlvDetails.panNo,
+            panDoc: panBase64JPEG,
+            increaseReason: tlvDetails.increaseReason,
+            customerName: tlvDetails.customerName,
+            lcbgApplYn: tlvDetails.lcBg,
+            // blank_chq: tlvDetails.blank_chq
+            lcbgDoc: lcbgBase64JPEG,
+            chequeNo: tlvDetails.chequeNo,
+            ifscCode: tlvDetails.ifsc,
+            bankName: tlvDetails.bankName,
+            branchName: tlvDetails.branch,
+            chequeDoc: chequeBase64JPEG,
+            chequeStatus: 'NA', // ??
+            status: tlvDetails.status,
+            remarks: '',
+            // submissionType: 'Habuji',
+            submissionType: tlvDetails.td_submission_type,
+            fileDoc: tlvBase64JPEG,
+            billtoCode: tlvDetails.bill_to,
+            proposedCrDays: tlvDetails.proposedCreditDays,
+            proposedTlv: tlvDetails.requestedTLV,
+            orderVol: tlvDetails.billedVol,
+            orderVal: tlvDetails.billedVal,
+            lcbgAmount: tlvDetails.lcbgAmount,
+            collectionAmount1: tlvDetails.collectionAmount1 ? Number(tlvDetails.collectionAmount1) : null,
+            collectionAmount2: tlvDetails.collectionAmount2 ? Number(tlvDetails.collectionAmount2) : null,
+            collectionAmount3: tlvDetails.collectionAmount3 ? Number(tlvDetails.collectionAmount3) : null,
+            collectionAmount4: tlvDetails.collectionAmount4 ? Number(tlvDetails.collectionAmount4) : null,
+            collectionAmount5: tlvDetails.collectionAmount5 ? Number(tlvDetails.collectionAmount5) : null,
+            collectionAmount6: tlvDetails.collectionAmount6 ? Number(tlvDetails.collectionAmount6) : null,
+            collectionAmount7: tlvDetails.collectionAmount7 ? Number(tlvDetails.collectionAmount7) : null,
+            lcbgOpeningDate: moment(convertToDate(tlvDetails.frm_date)).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(convertToDate(tlvDetails.frm_date)).format('YYYY-MM-DD'),
+            lcbgExpiryDate: moment(convertToDate(tlvDetails.to_date)).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(convertToDate(tlvDetails.to_date)).format('YYYY-MM-DD'),
+            osCollectionDate1: moment(tlvDetails.collection1_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection1_date).format('YYYY-MM-DD'),
+            osCollectionDate2: moment(tlvDetails.collection2_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection2_date).format('YYYY-MM-DD'),
+            osCollectionDate3: moment(tlvDetails.collection3_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection3_date).format('YYYY-MM-DD'),
+            osCollectionDate4: moment(tlvDetails.collection4_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection4_date).format('YYYY-MM-DD'),
+            osCollectionDate5: moment(tlvDetails.collection5_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection5_date).format('YYYY-MM-DD'),
+            osCollectionDate6: moment(tlvDetails.collection6_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection6_date).format('YYYY-MM-DD'),
+            osCollectionDate7: moment(tlvDetails.collection7_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(tlvDetails.collection7_date).format('YYYY-MM-DD'),
+            outputCode: 0,
+            outputMsg: '',
+            file_doc: tlvBase64JPEG
+        }];
+
+        if (!entity[0].depotCode) {
+            commonWarningToast(`Depot is required!`);
+            return
+        } else if (!entity[0].dealerCode) {
+            commonWarningToast(`Customer is required!`);
+            return
+        } else if (entity[0].submissionType != 'TLV' && !entity[0].billtoCode) {
+            commonWarningToast(`Bill to code is required!`);
+            return
+        }
+        // else if (!entity[0].aadharNo) { commonWarningToast(`Aadhar No is required!`); return }
+        // else if (!entity[0].fullName) { commonWarningToast(`Aadhar Name is required!`); return }
+        // else if (!entity[0].aadharDoc) { commonWarningToast(`Aadhar Document is required!`); return }
+        // else if (!entity[0].panNo) { commonWarningToast(`Aadhar Document is required!`); return }
+        // else if (!entity[0].panDoc) { commonWarningToast(`PAN Document is required!`); return }
+
+        else if (entity[0].lcbgApplYn === 'Y' && !entity[0].lcbgOpeningDate) { commonWarningToast(`Opening date is required!`); return }
+        else if (entity[0].lcbgApplYn === 'Y' && !entity[0].lcbgExpiryDate) { commonWarningToast(`Expiry date is required!`); return }
+        else if (entity[0].lcbgApplYn === 'Y' && !entity[0].lcbgAmount) { commonWarningToast(`LC/BG amount is required!`); return }
+        else if (entity[0].lcbgApplYn === 'Y' && entity[0].lcbgAmount <= 0) { commonWarningToast(`LC/BG amount should be greater than 0`); return }
+        else if (entity[0].lcbgApplYn === 'Y' && !entity[0].lcbgDoc) { commonWarningToast(`LC/BG document is required!`); return }
+
+        else if (tlvDetails.blank_chq === 'Y' && !entity[0].chequeNo) { commonWarningToast(`Cheque No. is required!`); return }
+        else if (tlvDetails.blank_chq === 'Y' && !entity[0].ifscCode) { commonWarningToast(`IFSC code is required!`); return }
+        else if (tlvDetails.blank_chq === 'Y' && !entity[0].bankName) { commonWarningToast(`Bank name is required!`); return }
+        else if (tlvDetails.blank_chq === 'Y' && !entity[0].branchName) { commonWarningToast(`Branch name is required!`); return }
+        else if (tlvDetails.blank_chq === 'Y' && !entity[0].chequeDoc) { commonWarningToast(`Blank cheque document is required!`); return }
+
+        else if (entity[0].submissionType == 'TLV' && !entity[0].proposedTlv) { commonWarningToast(`Requested TLV is required!`); return }
+        else if (entity[0].submissionType == 'TLV' && entity[0].proposedTlv <= 0) { commonWarningToast(`Requested TLV should be greater than 0`); return }
+
+        else if ((entity[0].submissionType == 'CREDIT_DAYS' || entity[0].submissionType == 'TLV_AND_CREDIT_DAYS') && !entity[0].proposedCrDays) { commonWarningToast(`Proposed credit day is required!`); return }
+        else if ((entity[0].submissionType == 'CREDIT_DAYS' || entity[0].submissionType == 'TLV_AND_CREDIT_DAYS') && entity[0].proposedCrDays <= 0) { commonWarningToast(`Proposed credit days should be greater than 0`); return }
+
+        else if (!entity[0].orderVol) { commonWarningToast(`Order to be Billed Volume is required!`); return }
+        else if (entity[0].orderVol <= 0) { commonWarningToast(`Order to be billed volume should be 0`); return }
+
+        else if (!entity[0].orderVal) { commonWarningToast(`Order to be Billed Value is required!`); return }
+        else if (entity[0].orderVal <= 0) { commonWarningToast(`Order to be billed value 0`); return }
+
+        else if (!entity[0].increaseReason) { commonWarningToast(`Reason for Increase is required!`); return }
+        else if (!entity[0].customerName) { commonWarningToast(`End Customer Name is required!`); return }
+        // else console.log(entity)
+        else showSubmitAlert(entity)
+    };
+
+    async function showSubmitAlert(data: any) {
+        commonAlert('Are you want to insert the TLV Revision Request Info?', '', 'warning').then(async (result: any) => {
+            if (result.value) {
+                const response: any = await Tlv.TlvDetailsSubmit(data[0]);
+                if (response) {
+                    if (response.statusCode == 200) {
+                        commonSuccessToast(`TLV Revision Request ` + response.message);
+                        navigate('/Protecton/TLV/TLVRevisionRequestList/');
+                    } else commonErrorToast(response.message);
+                } else commonErrorToast('Error occured while submitting TLV Revision!');
+            }
+        });
+    }
+
+    const GetTLVDetailsData = async ({ auto_id, depot_code, dlr_bill_to, dlr_dealer_code, td_submission_type }: any) => {
+        setLoading(true);
+        const data: any = {
+            auto_id: auto_id,
+            depotCode: depot_code,
+            billToCode: dlr_bill_to,
+            dealerCode: dlr_dealer_code,
+            sblCode: '4',
+            submissionType: td_submission_type,
+            appName: 'PROTECTON',
+        };
+        // console.log(data)
+        try {
+            const response: any = await TlvApi.GetTlvDetails(data);
+            // console.log(response)
+            setDetailsData(response?.data || null);
+            setTLVDetails((pre: any) => ({ ...pre, lcBg: response.data.table2[0]?.lcbg_mandatory_yn, blank_chq: response.data.table2[0]?.blank_chq_mandatory_yn, formSubmitable: response.data.table[0]?.editable_yn }))
+        } catch (error) {
+            console.log(error)
+        }
+        setLoading(false);
+    };
 
     const GetApplicableDepot = async () => {
         setLoading(true);
@@ -45,8 +238,8 @@ const TLVRevisionRequestDetails = () => {
             app_id: '15',
         };
         try {
-            const response: any = await GetApplicableDepotList(data);
-            setSelectBoxData((pre: any) => ({ ...pre, depot: response.data || [] }));
+            const response: any = await Epca.GetApplicableDepotList(data);
+            setDepot(response.data || []);
         } catch (error) {
             return;
         }
@@ -61,8 +254,8 @@ const TLVRevisionRequestDetails = () => {
             app_id: '15',
         };
         try {
-            const response: any = await GetApplicableTerrList(data);
-            setSelectBoxData((pre: any) => ({ ...pre, territory: response.data || [] }));
+            const response: any = await Epca.GetApplicableTerrList(data);
+            setApplTerr(response.data || [])
         } catch (error) {
             return;
         }
@@ -77,8 +270,8 @@ const TLVRevisionRequestDetails = () => {
             sbl_code: '4',
         };
         try {
-            const response: any = await GetPcaDealersList(data);
-            setSelectBoxData((pre: any) => ({ ...pre, dealer: response.data || [] }));
+            const response: any = await EpcaDetails.GetPcaDealersList(data);
+            setDealer(response.data || [])
         } catch (error) {
             return;
         }
@@ -93,8 +286,8 @@ const TLVRevisionRequestDetails = () => {
             dealer_code: dealer_code,
         };
         try {
-            const response: any = await GetPcaBillToList(data);
-            setSelectBoxData((pre: any) => ({ ...pre, billTo: response.data || [] }));
+            const response: any = await EpcaDetails.GetPcaBillToList(data);
+            setBillTo(response.data || [])
         } catch (error) {
             return;
         }
@@ -108,127 +301,10 @@ const TLVRevisionRequestDetails = () => {
             BillToCode: BillToCode,
         };
         try {
-            const response: any = await GetBillToDetails(data);
-            setSelectBoxData((pre: any) => ({ ...pre, customerAndPaymentType: response?.data?.table || [] }));
+            const response: any = await EPCADepotApproval.GetBillToDetails(data);
+            setCustomerAndPaymentType(response.data.table || [])
         } catch (error) {
             return;
-        }
-        setLoading(false);
-    };
-
-    const GetTLVDetailsData = async ({ auto_id, depot_code, dlr_bill_to, dlr_dealer_code, dlr_terr_code, td_submission_type }: any) => {
-        setLoading(true);
-        const entryType: any = (sessionStorage.getItem('epcaTLVDtlEntryType'));
-        const value: any = (sessionStorage.getItem('epcaTLVDtlList'));
-        const parsedValue = JSON.parse(value);
-        const data: any = {
-            auto_id: auto_id,
-            depotCode: depot_code,
-            billToCode: dlr_bill_to,
-            dealerCode: dlr_dealer_code,
-            sblCode: '4',
-            submissionType: td_submission_type,
-            appName: 'PROTECTON',
-        };
-        try {
-            const response: any = await GetTlvDetails(data);
-
-            if (JSON.parse(entryType) === 'View') {
-                const depotdata: any = {
-                    user_id: user.user_id,
-                    region: '',
-                    app_id: '15',
-                };
-                try {
-                    const depotResponse: any = await GetApplicableDepotList(depotdata);
-
-                    const terrdata: any = {
-                        user_id: user.user_id,
-                        depot_code: depot_code,
-                        app_id: '15',
-                    };
-                    try {
-                        const terrResponse: any = await GetApplicableTerrList(terrdata);
-
-                        const dealerdata: any = {
-                            depot_code: depot_code,
-                            terr_code: dlr_terr_code,
-                            sbl_code: '4',
-                        };
-                        try {
-                            const dealerResponse: any = await GetPcaDealersList(dealerdata);
-
-                            const billTodata: any = {
-                                depot_code: depot_code,
-                                terr_code: dlr_terr_code,
-                                dealer_code: dlr_dealer_code,
-                            };
-                            if (parsedValue?.td_submission_type === 'CREDIT_DAYS' || parsedValue?.td_submission_type === 'TLV_AND_CREDIT_DAYS') {
-                                try {
-                                    const billToResponse: any = await GetPcaBillToList(billTodata);
-
-                                    const customerAndPaymentTypedata: any = {
-                                        DepotCode: depot_code,
-                                        BillToCode: dlr_bill_to,
-                                    };
-                                    try {
-                                        const customerAndPaymentTypeResponse: any = await GetBillToDetails(customerAndPaymentTypedata);
-
-                                        setSelectBoxData({
-                                            depot: depotResponse.data || [],
-                                            territory: terrResponse.data || [],
-                                            dealer: dealerResponse.data || [],
-                                            billTo: billToResponse.data || [],
-                                            customerAndPaymentType: customerAndPaymentTypeResponse?.data?.table || []
-                                        })
-                                        console.log(depotResponse.data, terrResponse.data, dealerResponse.data, billToResponse.data, customerAndPaymentTypeResponse?.data?.table)
-
-                                        setDetailsData((pre: any) => ({
-                                            ...pre,
-                                            depot: { value: depotResponse.data.find((d: any) => d.depot_code === parsedValue?.depot_code)?.depot_code, label: depotResponse.data.find((d: any) => d.depot_code === parsedValue?.depot_code)?.depot_name },
-                                            territory: { value: terrResponse.data.find((d: any) => d.terr_code === parsedValue?.dlr_terr_code)?.terr_code, label: terrResponse.data.find((d: any) => d.terr_code === parsedValue?.dlr_terr_code)?.terr_name },
-                                            dealer: { value: dealerResponse?.data.find((d: any) => d.dealer_code === parsedValue?.dlr_dealer_code)?.dealer_code, label: dealerResponse?.data.find((d: any) => d.dealer_code === parsedValue?.dlr_dealer_code)?.dealer_name },
-                                            billTo: { value: billToResponse?.data.find((d: any) => d.bill_to === parsedValue?.dlr_bill_to)?.dealer_code, label: billToResponse?.data.find((d: any) => d.bill_to === parsedValue?.dlr_bill_to)?.bill_to_name },
-                                            ...response.data.table[0], ...response.data.table2[0], keyParam: response.data.table4, outstanding: response.data.table5
-                                        }));
-                                    } catch (error) {
-                                        return;
-                                    }
-                                } catch (error) {
-                                    return;
-                                }
-                            } else {
-                                setSelectBoxData({
-                                    depot: depotResponse.data || [],
-                                    territory: terrResponse.data || [],
-                                    dealer: dealerResponse.data || [],
-                                    billTo: [],
-                                    customerAndPaymentType: []
-                                })
-                                setDetailsData((pre: any) => ({
-                                    ...pre,
-                                    depot: { value: depotResponse.data.find((d: any) => d.depot_code === parsedValue?.depot_code)?.depot_code, label: depotResponse.data.find((d: any) => d.depot_code === parsedValue?.depot_code)?.depot_name },
-                                    territory: { value: terrResponse.data.find((d: any) => d.terr_code === parsedValue?.dlr_terr_code)?.terr_code, label: terrResponse.data.find((d: any) => d.terr_code === parsedValue?.dlr_terr_code)?.terr_name },
-                                    dealer: { value: dealerResponse?.data.find((d: any) => d.dealer_code === parsedValue?.dlr_dealer_code)?.dealer_code, label: dealerResponse?.data.find((d: any) => d.dealer_code === parsedValue?.dlr_dealer_code)?.dealer_name },
-                                    billTo: null,
-                                    ...response.data.table[0], ...response.data.table2[0], keyParam: response.data.table4, outstanding: response.data.table5
-                                }));
-                            }
-                        } catch (error) {
-                            return;
-                        }
-                    } catch (error) {
-                        return;
-                    }
-                } catch (error) {
-                    return;
-                }
-            } else {
-                setDetailsData((pre: any) => ({ ...pre, ...response.data.table[0], ...response.data.table2[0], keyParam: response.data.table4, outstanding: response.data.table5 }));
-            }
-            setGetTlvDetailsCalled(true);
-        } catch (error) {
-            console.log(error)
         }
         setLoading(false);
     };
@@ -256,8 +332,15 @@ const TLVRevisionRequestDetails = () => {
             };
         }
     };
+
     const imageChange = (event: any, flag: 'TLV DOC' | 'AADHAR DOC' | 'PAN DOC' | 'LC/BG DOC' | 'CHEQUE DOC' | 'LCBG DOC') => {
         convertToBase64(event.target.files[0], flag);
+        // if (flag == 'TLV DOC' && event) convertToBase64(event.target.files[0], 'TLV DOC');
+        // if (flag == 'AADHAR DOC') convertToBase64(event.target.files[0], 'AADHAR DOC');
+        // if (flag == 'PAN DOC') convertToBase64(event.target.files[0], 'PAN DOC');
+        // if (flag == 'LC/BG DOC') convertToBase64(event.target.files[0], 'LC/BG DOC');
+        // if (flag == 'CHEQUE DOC') convertToBase64(event.target.files[0], 'CHEQUE DOC');
+        // if (flag == 'LCBG DOC') convertToBase64(event.target.files[0], 'LCBG DOC');
     };
 
     const handleDownload = (event: React.MouseEvent<HTMLButtonElement>, fileUrl: string) => {
@@ -277,91 +360,24 @@ const TLVRevisionRequestDetails = () => {
     };
 
     const handleIFSCValidate = async () => {
+        // console.log("API call")
         setLoading(true);
         const data = {
-            common_request: detailsData.td_ifsc_code,
+            common_request: tlvDetails.ifsc,
         };
         try {
-            const response: any = await ValidateIFSC(data);
+            const response: any = await global.ValidateIFSC(data);
             if (response.statusCode === 200 && response.data != null) {
                 const { bank, branch, message } = response.data;
-                setDetailsData((pre: any) => ({ ...pre, bankName: bank, branch: branch, message: message || 'Valid IFSC.', success: true }))
+                setTLVDetails((pre: any) => ({ ...pre, bankName: bank, branch: branch, message: message || 'Valid IFSC.', success: true }))
             } else {
-                setDetailsData((pre: any) => ({ ...pre, message: response.message || 'Invalid IFSC.', success: false }))
+                setTLVDetails((pre: any) => ({ ...pre, message: response.message || 'Invalid IFSC.', success: false }))
             }
         } catch (error) {
-            setDetailsData((pre: any) => ({ ...pre, message: 'An error occurred during validation!', success: false }))
+            setTLVDetails((pre: any) => ({ ...pre, message: 'An error occurred during validation!', success: false }))
         }
         setLoading(false);
     };
-
-    async function showSubmitAlert(data: any) {
-        commonAlert('Are you want to insert the TLV Revision Request Info?', '', 'warning').then(async (result: any) => {
-            if (result.value) {
-                const response: any = await TlvDetailsSubmit(data[0]);
-                if (response) {
-                    if (response.statusCode == 200) {
-                        commonSuccessToast(`TLV Revision Request ` + response.message);
-                        navigate('/Protecton/TLV/TLVRevisionRequestList/');
-                    } else commonErrorToast(response.message);
-                } else commonErrorToast('Error occured while submitting TLV Revision!');
-            }
-        });
-    }
-    const handleFormSubmit = () => {
-        const entity = [{
-            appName: 'PROTECTON',
-            userId: user.user_id || '',
-            autoId: detailsData?.auto_id || 0,
-            depotCode: detailsData?.depot?.value || '',
-            dealerCode: detailsData?.dealer?.value || '',
-            billtoCode: detailsData?.billTo?.value || '',
-            fullName: detailsData?.fullName || '',
-            aadharNo: detailsData?.aadhar_no || '',
-            aadharDoc: aadharBase64JPEG,
-            panNo: detailsData?.pan_no || '',
-            panDoc: panBase64JPEG,
-            increaseReason: detailsData?.increase_reason || '',
-            customerName: detailsData?.customer_name || '',
-            lcbgApplYn: detailsData?.lcbg_appl_yn || '',
-            lcbgDoc: lcbgBase64JPEG,
-            chequeNo: detailsData?.td_blank_chq_no || '',
-            ifscCode: detailsData?.td_ifsc_code || '',
-            bankName: detailsData?.bankName || '',
-            branchName: detailsData?.branch || '',
-            chequeDoc: chequeBase64JPEG,
-            chequeStatus: 'NA', // ??
-            status: detailsData?.status || '',
-            remarks: '',
-            submissionType: sessionStorageData?.td_submission_type || '',
-            fileDoc: tlvBase64JPEG,
-            proposedCrDays: detailsData?.proposed_cr_days || '',
-            proposedTlv: detailsData?.proposed_tlv || '',
-            orderVol: detailsData?.order_vol || '',
-            orderVal: detailsData?.order_val || '',
-            lcbgAmount: detailsData?.lcbg_amount || '',
-            collectionAmount1: detailsData.collectionAmount1 ? Number(detailsData.collectionAmount1) : null,
-            collectionAmount2: detailsData.collectionAmount2 ? Number(detailsData.collectionAmount2) : null,
-            collectionAmount3: detailsData.collectionAmount3 ? Number(detailsData.collectionAmount3) : null,
-            collectionAmount4: detailsData.collectionAmount4 ? Number(detailsData.collectionAmount4) : null,
-            collectionAmount5: detailsData.collectionAmount5 ? Number(detailsData.collectionAmount5) : null,
-            collectionAmount6: detailsData.collectionAmount6 ? Number(detailsData.collectionAmount6) : null,
-            collectionAmount7: detailsData.collectionAmount7 ? Number(detailsData.collectionAmount7) : null,
-            lcbgOpeningDate: moment(convertToDate(detailsData.frm_date)).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(convertToDate(detailsData.frm_date)).format('YYYY-MM-DD'),
-            lcbgExpiryDate: moment(convertToDate(detailsData.to_date)).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(convertToDate(detailsData.to_date)).format('YYYY-MM-DD'),
-            osCollectionDate1: moment(detailsData.collection1_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection1_date).format('YYYY-MM-DD'),
-            osCollectionDate2: moment(detailsData.collection2_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection2_date).format('YYYY-MM-DD'),
-            osCollectionDate3: moment(detailsData.collection3_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection3_date).format('YYYY-MM-DD'),
-            osCollectionDate4: moment(detailsData.collection4_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection4_date).format('YYYY-MM-DD'),
-            osCollectionDate5: moment(detailsData.collection5_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection5_date).format('YYYY-MM-DD'),
-            osCollectionDate6: moment(detailsData.collection6_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection6_date).format('YYYY-MM-DD'),
-            osCollectionDate7: moment(detailsData.collection7_date).format('YYYY-MM-DD') == 'Invalid date' ? null : moment(detailsData.collection7_date).format('YYYY-MM-DD'),
-            outputCode: 0,
-            outputMsg: '',
-            file_doc: tlvBase64JPEG
-        }];
-        showSubmitAlert(entity)
-    }
 
     const handleBackButton = () => {
         commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
@@ -370,32 +386,62 @@ const TLVRevisionRequestDetails = () => {
     };
 
     useEffect(() => {
+        GetApplicableDepot();
         const entryType: any = (sessionStorage.getItem('epcaTLVDtlEntryType'));
         setPageType(JSON.parse(entryType))
         if (JSON.parse(entryType) === 'View') {
             const value: any = (sessionStorage.getItem('epcaTLVDtlList'));
-            setSessionStorageData(JSON.parse(value));
             const parsedValue = JSON.parse(value);
             if (parsedValue) {
+                // console.log(parsedValue)
                 GetTLVDetailsData({
                     auto_id: parsedValue.auto_id,
                     depot_code: parsedValue.depot_code,
                     dlr_bill_to: parsedValue.dlr_bill_to,
                     dlr_dealer_code: parsedValue.dlr_dealer_code,
-                    dlr_terr_code: parsedValue.dlr_terr_code,
                     td_submission_type: parsedValue.td_submission_type
                 });
+                GetApplicableTerritory({ depot_code: parsedValue.depot_code })
+                GetDealerList({ depot_code: parsedValue.depot_code, terr_code: parsedValue.dlr_terr_code })
+                GetApplicableBillto({ depot_code: parsedValue.depot_code, terr_code: parsedValue.dlr_terr_code, dealer_code: parsedValue.dlr_dealer_code })
+                GetCustomerAndPaymentType({ DepotCode: parsedValue.depot_code, BillToCode: parsedValue.dlr_bill_to });
+                setTLVDetails((pre: any) => ({
+                    ...pre,
+                    auto_id: parsedValue.auto_id,
+                    td_submission_type: parsedValue.td_submission_type,
+                    depot_code: parsedValue.depot_code,
+                    depot_name: parsedValue.depot_name,
+                    dealer_code: parsedValue.dlr_dealer_code,
+                    dealer_name: parsedValue.dlr_dealer_name,
+                    status: parsedValue.status_code,
+                    // formSubmitable: parsedValue.editable_yn,
+                }))
             }
-        } else
-            GetApplicableDepot();
+        }
     }, [])
+
+    useEffect(() => {
+        const entryType: any = (sessionStorage.getItem('epcaTLVDtlEntryType'));
+        if (JSON.parse(entryType) === 'View') {
+            const value: any = (sessionStorage.getItem('epcaTLVDtlList'));
+            const parsedValue = JSON.parse(value);
+            parsedValue && setTLVDetails((pre: any) => ({
+                ...pre,
+                terr_code: parsedValue.dlr_terr_code,
+                terr_name: applTerr.find((terr: { terr_code: any; }) => terr.terr_code === parsedValue.dlr_terr_code)?.terr_name,
+                bill_to: parsedValue.dlr_bill_to,
+                bill_to_name: billTo.find((terr: { bill_to: any; }) => terr.bill_to === parsedValue.dlr_bill_to)?.bill_to_name,
+            }))
+        }
+    }, [applTerr, billTo])
+
 
     useEffect(() => {
         console.log(detailsData)
     }, [detailsData])
-    // useEffect(() => {
-    //     console.log(selectBoxData)
-    // }, [selectBoxData])
+    useEffect(() => {
+        console.log(tlvDetails)
+    }, [tlvDetails])
 
     return (
         <>
@@ -410,8 +456,8 @@ const TLVRevisionRequestDetails = () => {
                             <RadioGroup
                                 className="custRadioGroup"
                                 row
-                                value={sessionStorageData?.td_submission_type || 'TLV'}
-                                onChange={(event) => setSessionStorageData((pre: any) => ({ ...pre, td_submission_type: event.target.value }))}
+                                value={tlvDetails.td_submission_type}
+                                onChange={(event) => setTLVDetails((pre: any) => ({ ...pre, td_submission_type: event.target.value }))}
                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                 name="row-radio-buttons-group"
                             >
@@ -421,72 +467,82 @@ const TLVRevisionRequestDetails = () => {
                             </RadioGroup>
                         </div>
                     </div>
+
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
                         <div>
                             <label className="formLabelTx">Depot:</label>
                             <Select
                                 isSearchable={true}
-                                value={detailsData?.depot}
-                                options={selectBoxData?.depot.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
+                                value={{ value: tlvDetails?.depot_code, label: tlvDetails?.depot_name }}
+                                options={depot.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
-                                    setDetailsData((pre: any) => ({
-                                        ...pre, depot: event, territory: null, dealer: null, billTo: null
-                                    }))
                                     GetApplicableTerritory({ depot_code: event?.value });
+                                    setTLVDetails((pre: any) => ({
+                                        ...pre,
+                                        depot_code: event?.value,
+                                        depot_name: event?.label,
+                                        terr_code: '',
+                                        terr_name: '',
+                                        dealer_code: "",
+                                        dealer_name: "",
+                                        bill_to: null,
+                                        bill_to_name: "",
+                                    }))
                                 }}
                             />
+                            {/* {errMsg.depot && <div className="mt-1 text-danger">{errMsg.depot}</div>} */}
                         </div>
+
                         <div>
                             <label className="formLabelTx">Territory:</label>
                             <Select
                                 isSearchable={true}
-                                value={detailsData?.territory}
-                                options={selectBoxData?.territory.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
+                                value={{ value: tlvDetails?.terr_code, label: tlvDetails?.terr_name }}
+                                options={applTerr.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
-                                    setDetailsData((pre: any) => ({
-                                        ...pre, territory: event, dealer: null, billTo: null
-                                    }))
-                                    GetDealerList({ depot_code: detailsData?.depot?.value, terr_code: event?.value });
+                                    GetDealerList({ depot_code: tlvDetails?.depot_code, terr_code: event?.value })
+                                    setTLVDetails((pre: any) => ({ ...pre, terr_code: event?.value, terr_name: event?.label, dealer_code: '', dealer_name: '', bill_to: null, bill_to_name: "", }))
                                 }}
                             />
+                            {/* {errMsg.terr && <div className="mt-1 text-danger">{errMsg.terr}</div>} */}
                         </div>
+
                         <div>
                             <label className="formLabelTx">Customer:</label>
                             <Select
                                 isSearchable={true}
-                                value={detailsData?.dealer}
-                                options={selectBoxData?.dealer.map((d: any) => ({ value: d.dealer_code, label: d.dealer_name }))}
+                                value={{ value: tlvDetails?.dealer_code, label: tlvDetails?.dealer_name }}
+                                options={dealer.map((d: any) => ({ value: d.dealer_code, label: d.dealer_name }))}
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
-                                    setDetailsData((pre: any) => ({
-                                        ...pre, dealer: event, billTo: null
-                                    }))
-                                    GetApplicableBillto({ depot_code: detailsData?.depot?.value, terr_code: detailsData?.territory?.value, dealer_code: event?.value })
+                                    GetApplicableBillto({ depot_code: tlvDetails?.depot_code, terr_code: tlvDetails?.terr_code, dealer_code: event?.value })
+                                    setTLVDetails((pre: any) => ({ ...pre, dealer_code: event?.value, dealer_name: event?.label, bill_to: null, bill_to_name: "" }))
                                 }}
                             />
+                            {/* {errMsg.dealer && <div className="mt-1 text-danger">{errMsg.dealer}</div>} */}
                         </div>
-                        {(sessionStorageData?.td_submission_type === 'CREDIT_DAYS' || sessionStorageData?.td_submission_type === 'TLV_AND_CREDIT_DAYS') && (
+
+                        {(tlvDetails.td_submission_type === 'CREDIT_DAYS' || tlvDetails.td_submission_type === 'TLV_AND_CREDIT_DAYS') && (
                             <div>
                                 <label className="formLabelTx">Bill To:</label>
                                 <Select
                                     isSearchable={true}
-                                    value={detailsData?.billTo}
-                                    options={selectBoxData?.billTo.map((d: any) => ({ value: d.bill_to, label: d.bill_to_name }))}
+                                    value={{ value: tlvDetails?.bill_to, label: tlvDetails?.bill_to_name }}
+                                    // options={billTo.filter((b: { pd_appl_yn: any; }) => b.pd_appl_yn === tlvDetails?.pdAppl).map((d: any) => ({ value: d.bill_to, label: d.bill_to_name }))}
+                                    options={billTo.map((d: any) => ({ value: d.bill_to, label: d.bill_to_name }))}
                                     isDisabled={pageType === 'View'}
                                     onChange={(event) => {
-                                        setDetailsData((pre: any) => ({
-                                            ...pre, billTo: event
-                                        }))
+                                        setTLVDetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label }))
                                     }}
                                 />
                             </div>
                         )}
 
-                        {(sessionStorageData?.td_submission_type === 'CREDIT_DAYS' || sessionStorageData?.td_submission_type === 'TLV_AND_CREDIT_DAYS') && (
+                        {(tlvDetails.td_submission_type === 'CREDIT_DAYS' || tlvDetails.td_submission_type === 'TLV_AND_CREDIT_DAYS') && (
                             <div>
-                                {selectBoxData?.customerAndPaymentType.length > 0 && selectBoxData?.customerAndPaymentType.map((item: any, index: React.Key | null | undefined) => (
+                                {customerAndPaymentType.length > 0 && customerAndPaymentType.map((item: { dlr_cust_type: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; dlr_payment_term: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }, index: React.Key | null | undefined) => (
                                     <div key={index}>
                                         <span className="mt-2 block">Customer Type: {item.dlr_cust_type}</span>
                                         <span className="mt-1 block">Payment Type: {item.dlr_payment_term}</span>
@@ -498,6 +554,7 @@ const TLVRevisionRequestDetails = () => {
                         <div>
                             <label className="formLabelTx">Upload relevant document as proof of increase in TLV:</label>
                             <input
+                                // className="fileTypeInput form-input"
                                 type="file"
                                 onChange={() => {
                                     imageChange(event, 'TLV DOC');
@@ -506,7 +563,7 @@ const TLVRevisionRequestDetails = () => {
                             />
                         </div>
 
-                        {detailsData?.file_doc && (
+                        {detailsData?.table && detailsData?.table[0]?.file_doc && (
                             <div className='mt-6'>
                                 <button onClick={(event) => handleDownload(event, detailsData?.table[0]?.file_doc)}>
                                     <FaDownload />
@@ -521,15 +578,13 @@ const TLVRevisionRequestDetails = () => {
                             className="btn btn-info w-40 rounded-full"
                             variant="filled"
                             onClick={() => {
-                                setDetailsData({ auto_id: 0, depot: detailsData?.depot, territory: detailsData?.territory, dealer: detailsData?.dealer, billTo: detailsData?.billTo, file_doc: detailsData?.file_doc, keyParam: [], outstanding: [] });
                                 GetTLVDetailsData({
-                                    auto_id: detailsData.auto_id || 0,
-                                    depot_code: detailsData.depot?.value || '',
-                                    dlr_bill_to: detailsData.billTo?.value || '',
-                                    dlr_dealer_code: detailsData.dealer?.value || '',
-                                    td_submission_type: sessionStorageData?.td_submission_type || ''
+                                    auto_id: tlvDetails.auto_id,
+                                    depot_code: tlvDetails.depot_code,
+                                    dlr_bill_to: tlvDetails.bill_to,
+                                    dlr_dealer_code: tlvDetails.dealer_code,
+                                    td_submission_type: tlvDetails.td_submission_type
                                 });
-                                GetCustomerAndPaymentType({ DepotCode: detailsData.depot?.value, BillToCode: detailsData.billTo?.value });
                             }}
                         >
                             <span style={{ color: 'rgba(255,255,255,0.6)' }}>Go</span>
@@ -537,7 +592,7 @@ const TLVRevisionRequestDetails = () => {
                     </div>
 
                     {/* accordians */}
-                    {getTlvDetailsCalled &&
+                    {detailsData &&
                         <div className="space-y-2 font-semibold">
                             {/* Aadhar Info accordian */}
                             <div className="rounded border border-[#d3d3d3] dar k:border-[#1b2e4b]">
@@ -560,17 +615,16 @@ const TLVRevisionRequestDetails = () => {
                                                         autoComplete="off"
                                                         placeholder="Aadhar No."
                                                         className="w-full border rounded form-input text-sm"
-                                                        name="aadhar_no"
-                                                        value={detailsData.aadhar_no || ''}
+                                                        name="aadharNo"
                                                         onChange={(e) => {
                                                             const value = e.target.value.replace(/[^0-9]/g, '');
                                                             if (value.length <= 12) {
-                                                                setDetailsData((pre: any) => ({
-                                                                    ...pre, aadhar_no: value
-                                                                }))
+                                                                setTLVDetails((pre: any) => ({ ...pre, aadharNo: value }))
                                                             }
                                                         }}
+                                                        value={tlvDetails.aadharNo}
                                                     />
+                                                    {/* {error && <div className="error-message">{error}</div>} */}
                                                 </div>
 
                                                 <div>
@@ -580,11 +634,9 @@ const TLVRevisionRequestDetails = () => {
                                                         autoComplete="off"
                                                         placeholder="Name as in Addhar"
                                                         className="w-full border rounded form-input text-sm"
-                                                        name="full_name"
-                                                        value={detailsData.full_name || ''}
-                                                        onChange={(e) => setDetailsData((pre: any) => ({
-                                                            ...pre, full_name: e.target.value
-                                                        }))}
+                                                        name="fullName"
+                                                        value={tlvDetails.fullName}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, fullName: e.target.value }))}
                                                     />
                                                 </div>
 
@@ -599,10 +651,9 @@ const TLVRevisionRequestDetails = () => {
                                                         accept="image/*"
                                                     />
                                                 </div>
-
-                                                {detailsData?.aadhar_doc && (
+                                                {detailsData?.table && detailsData?.table[0]?.aadhar_doc && (
                                                     <div className='mt-6'>
-                                                        <button onClick={(event) => handleDownload(event, detailsData?.aadhar_doc)}>
+                                                        <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.aadhar_doc)}>
                                                             <FaDownload />
                                                         </button>
                                                     </div>
@@ -634,14 +685,13 @@ const TLVRevisionRequestDetails = () => {
                                                         type="text"
                                                         placeholder="PAN"
                                                         className="w-full border rounded form-input text-sm"
-                                                        name="pan_no"
-                                                        value={detailsData.pan_no || ''}
-                                                        onChange={(e) => setDetailsData((pre: any) => ({
-                                                            ...pre, pan_no: e.target.value
-                                                        }))}
+                                                        name="panNo"
+                                                        value={tlvDetails.panNo}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, panNo: e.target.value }))}
                                                         maxLength={10}
                                                         minLength={10}
                                                     />
+                                                    {/* <div className="text-red-500">{errorMessage && <span className="error-message">{errorMessage}</span>}</div> */}
                                                 </div>
 
                                                 <div>
@@ -652,10 +702,8 @@ const TLVRevisionRequestDetails = () => {
                                                         placeholder="Name as in PAN"
                                                         className="w-full border rounded form-input text-sm"
                                                         name="holderName"
-                                                        value={detailsData.holderName || ''}
-                                                        onChange={(e) => setDetailsData((pre: any) => ({
-                                                            ...pre, holderName: e.target.value
-                                                        }))}
+                                                        value={tlvDetails.holderName}
+                                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, holderName: e.target.value }))}
                                                     />
                                                 </div>
 
@@ -670,10 +718,9 @@ const TLVRevisionRequestDetails = () => {
                                                         accept="image/*"
                                                     />
                                                 </div>
-
-                                                {detailsData?.pan_doc && (
+                                                {detailsData?.table && detailsData?.table[0]?.pan_doc && (
                                                     <div className='mt-6'>
-                                                        <button onClick={(event) => handleDownload(event, detailsData?.pan_doc)}>
+                                                        <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.pan_doc)}>
                                                             <FaDownload />
                                                         </button>
                                                     </div>
@@ -687,7 +734,7 @@ const TLVRevisionRequestDetails = () => {
                             {/* LC/BG accordian */}
                             <div className="rounded border border-[#d3d3d3] dark:border-[#1b2e4b]">
                                 <button type="button" className={`custAccoHead flex w-full items-center px-3 py-2 text-white-dark dark:bg-[#1b2e4b]`} onClick={() => setAccordianOpen(accordianOpen === '3' ? '' : '3')}>
-                                    LC/BG ({detailsData?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}) and Cheque Info ({detailsData?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'})
+                                    LC/BG ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}) and Cheque Info ({detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'})
                                     <div className={`ltr:ml-auto rtl:mr-auto ${accordianOpen === '3' ? 'rotate-180' : ''}`}>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M19 9L12 15L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
@@ -700,15 +747,15 @@ const TLVRevisionRequestDetails = () => {
                                             <div className="mb-4 border-b border-[#d3d3d3] pb-4">
                                                 <div className="flex items-center">
                                                     <label className="formLabelTx mr-2">
-                                                        Enable LC/BG Fields: {detailsData?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
+                                                        Enable LC/BG Fields: {detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
                                                     </label>
-                                                    <select disabled={detailsData?.lcbg_mandatory_yn === 'Y'} value={detailsData?.lcbg_appl_yn} onChange={(e) => setDetailsData((pre: any) => ({ ...pre, lcbg_appl_yn: e.target.value }))} className="yesNoTogal form-input ml-2">
+                                                    <select disabled={detailsData?.table2[0]?.lcbg_mandatory_yn === 'Y'} value={tlvDetails.lcBg} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcBg: e.target.value }))} className="yesNoTogal form-input ml-2">
                                                         <option value="Y">Yes</option>
                                                         <option value="N">No</option>
                                                     </select>
                                                 </div>
 
-                                                {detailsData?.lcbg_mandatory_yn === 'Y' && (
+                                                {tlvDetails.lcBg === 'Y' && (
                                                     <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
                                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
                                                             <div>
@@ -722,8 +769,8 @@ const TLVRevisionRequestDetails = () => {
                                                                         altInput: true, // Enables alternative display input
                                                                         altFormat: 'd/m/Y', // Display format for the user
                                                                     }}
-                                                                    value={detailsData.lcbg_opening_date ? convertToDate(detailsData.lcbg_opening_date) : ''}
-                                                                    onChange={(date) => setDetailsData((pre: any) => ({ ...pre, lcbg_opening_date: date[0] }))}
+                                                                    value={tlvDetails.frm_date ? convertToDate(tlvDetails.frm_date) : ''}
+                                                                    onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, frm_date: date[0] }))}
                                                                 />
                                                             </div>
 
@@ -738,8 +785,8 @@ const TLVRevisionRequestDetails = () => {
                                                                         position: 'auto left',
                                                                         // disable: [(date) => isDateDisabled(date)],
                                                                     }}
-                                                                    value={detailsData.lcbg_expiry_date ? convertToDate(detailsData.lcbg_expiry_date) : ''}
-                                                                    onChange={(date) => setDetailsData((pre: any) => ({ ...pre, lcbg_expiry_date: date[0] }))}
+                                                                    value={tlvDetails.to_date ? convertToDate(tlvDetails.to_date) : ''}
+                                                                    onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, to_date: date[0] }))}
                                                                 />
                                                             </div>
 
@@ -751,9 +798,15 @@ const TLVRevisionRequestDetails = () => {
                                                                     type="text"
                                                                     placeholder="LC/BG Amount"
                                                                     className="w-full border rounded form-input text-sm"
-                                                                    name="lcbg_amount"
-                                                                    value={detailsData.lcbg_amount || ''}
-                                                                    onChange={(e) => setDetailsData((pre: any) => ({ ...pre, lcbg_amount: e.target.value }))}
+                                                                    name="lcbgAmount"
+                                                                    // onChange={handleChange}
+                                                                    // value={formsData.lcbgAmount}
+                                                                    value={tlvDetails.lcbgAmount}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, lcbgAmount: e.target.value }))}
+                                                                    onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const target = e.target as HTMLInputElement;
+                                                                        target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
+                                                                    }}
                                                                 />
                                                             </div>
 
@@ -771,9 +824,9 @@ const TLVRevisionRequestDetails = () => {
                                                                 />
                                                             </div>
 
-                                                            {detailsData?.lcbg_doc && (
+                                                            {detailsData?.table && detailsData?.table[0]?.lcbg_doc && (
                                                                 <div className='mt-6'>
-                                                                    <button onClick={(event) => handleDownload(event, detailsData?.lcbg_doc)}>
+                                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.lcbg_doc)}>
                                                                         <FaDownload />
                                                                     </button>
                                                                 </div>
@@ -782,19 +835,18 @@ const TLVRevisionRequestDetails = () => {
                                                     </div>
                                                 )}
                                             </div>
-
                                             <div className="">
                                                 <div className="mb-2 flex items-center">
                                                     <label className="formLabelTx mr-2">
-                                                        Enable Blank Cheque Fields: {detailsData?.blank_chq_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
+                                                        Enable Blank Cheque Fields: {detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y' ? 'Required' : 'Optional'}
                                                     </label>
-                                                    <select disabled={detailsData?.blank_chq_mandatory_yn === 'Y'} value={detailsData.chq_appl_yn} onChange={(e) => setDetailsData((pre: any) => ({ ...pre, chq_appl_yn: e.target.value }))} className="yesNoTogal form-input ml-2">
+                                                    <select disabled={detailsData?.table2[0]?.blank_chq_mandatory_yn === 'Y'} value={tlvDetails.blank_chq} onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, blank_chq: e.target.value }))} className="yesNoTogal form-input ml-2">
                                                         <option value="Y">Yes</option>
                                                         <option value="N">No</option>
                                                     </select>
                                                 </div>
 
-                                                {detailsData.chq_appl_yn === 'Y' && (
+                                                {tlvDetails.blank_chq === 'Y' && (
                                                     <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
                                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
                                                             <div>
@@ -803,12 +855,16 @@ const TLVRevisionRequestDetails = () => {
                                                                 </label>
                                                                 <input
                                                                     type="text"
-                                                                    name="td_blank_chq_no"
+                                                                    name="chequeNo"
                                                                     className="w-full border rounded form-input text-sm"
                                                                     maxLength={10}
                                                                     minLength={6}
-                                                                    value={detailsData.td_blank_chq_no || ''}
-                                                                    onChange={(e) => setDetailsData((pre: any) => ({ ...pre, td_blank_chq_no: e.target.value }))}
+                                                                    value={tlvDetails.chequeNo}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, chequeNo: e.target.value }))}
+                                                                    onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const target = e.target as HTMLInputElement;
+                                                                        target.value = target.value.replace(/[^0-9]/g, '');
+                                                                    }}
                                                                 />
                                                             </div>
 
@@ -819,13 +875,13 @@ const TLVRevisionRequestDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     autoComplete="off"
-                                                                    name="td_ifsc_code"
+                                                                    name="ifsc"
+                                                                    value={tlvDetails.ifsc}
+                                                                    onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, ifsc: e.target.value }))}
                                                                     className="w-full border rounded form-input text-sm"
-                                                                    value={detailsData.td_ifsc_code || ''}
-                                                                    onChange={(e) => setDetailsData((pre: any) => ({ ...pre, td_ifsc_code: e.target.value }))}
                                                                 />
-                                                                <div className={`mt-2 text-sm ${detailsData?.success ? 'text-green-500' : 'text-red-500'}`}>
-                                                                    {detailsData?.message && <span>{detailsData?.message}</span>}
+                                                                <div className={`mt-2 text-sm ${tlvDetails.success ? 'text-green-500' : 'text-red-500'}`}>
+                                                                    {tlvDetails.message && <span>{tlvDetails.message}</span>}
                                                                 </div>
                                                             </div>
 
@@ -836,7 +892,7 @@ const TLVRevisionRequestDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     name="bankName"
-                                                                    value={detailsData.bankName}
+                                                                    value={tlvDetails.bankName}
                                                                     className="w-full border rounded form-input text-sm"
                                                                     readOnly
                                                                     style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
@@ -850,7 +906,7 @@ const TLVRevisionRequestDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     name="branch"
-                                                                    value={detailsData.branch}
+                                                                    value={tlvDetails.branch}
                                                                     className="w-full border rounded form-input text-sm"
                                                                     readOnly
                                                                     style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
@@ -871,19 +927,19 @@ const TLVRevisionRequestDetails = () => {
                                                                 />
                                                             </div>
 
-                                                            {detailsData?.td_blank_chq_doc && (
+                                                            {detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc && (
                                                                 <div className='mt-6'>
-                                                                    <button onClick={(event) => handleDownload(event, detailsData?.td_blank_chq_doc)}>
+                                                                    <button onClick={(event) => handleDownload(event, detailsData?.table && detailsData?.table[0]?.td_blank_chq_doc)}>
                                                                         <FaDownload />
                                                                     </button>
                                                                 </div>
                                                             )}
                                                             <div>
                                                                 <Button
-                                                                    className={`ml-2000 mt-4 rounded px-4 py-2 font-bold text-white ${detailsData.td_blank_chq_no === '' || detailsData.td_ifsc_code === '' ? 'bg-lightblue cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
+                                                                    className={`ml-2000 mt-4 rounded px-4 py-2 font-bold text-white ${tlvDetails.chequeNo === '' || tlvDetails.ifsc === '' ? 'bg-lightblue cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'
                                                                         }`}
                                                                     onClick={() => handleIFSCValidate()}
-                                                                    disabled={detailsData.td_blank_chq_no === '' || detailsData.td_ifsc_code === ''}
+                                                                    disabled={tlvDetails.chequeNo === '' || tlvDetails.ifsc === ''}
                                                                 >
                                                                     Validate
                                                                     {/* 397788000234  Deepak  BNZPM2501F   D MANIKANDAN   1234567890    HDFC0000003 */}
@@ -897,17 +953,16 @@ const TLVRevisionRequestDetails = () => {
                                     </AnimateHeight>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        </div>}
                 </form>
             </div>
 
-            {getTlvDetailsCalled &&
+            {detailsData &&
                 <>
                     <div>
                         <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-                                {sessionStorageData?.td_submission_type === 'CREDIT_DAYS' || sessionStorageData?.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
+                                {tlvDetails.td_submission_type === 'CREDIT_DAYS' || tlvDetails.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
                                     <div>
                                         <label className="block text-sm font-semibold mb-1">
                                             Credit Days:<span style={{ color: 'red', marginLeft: '2px' }}>*</span>
@@ -919,11 +974,12 @@ const TLVRevisionRequestDetails = () => {
                                             name="dlr_due_days"
                                             readOnly
                                             style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
-                                            value={detailsData?.dlr_due_days || null}
-                                        // onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        //     const target = e.target as HTMLInputElement;
-                                        //     target.value = target.value.replace(/[^0-9.]/g, '');
-                                        // }}
+                                            value={detailsData?.table2 ? detailsData?.table2[0]?.dlr_due_days : null}
+                                            // onChange={handledChange}
+                                            onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const target = e.target as HTMLInputElement;
+                                                target.value = target.value.replace(/[^0-9.]/g, '');
+                                            }}
                                         />
                                     </div>
                                 ) : null}
@@ -939,15 +995,16 @@ const TLVRevisionRequestDetails = () => {
                                         name="dlr_credit_limit"
                                         readOnly
                                         style={{ cursor: 'not-allowed', backgroundColor: '#f0f0f0' }}
-                                        value={detailsData?.dlr_credit_limit || null}
-                                    // onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    //     const target = e.target as HTMLInputElement;
-                                    //     target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
-                                    // }}
+                                        value={detailsData?.table2 ? detailsData?.table2[0]?.dlr_credit_limit : null}
+                                        // onChange={handledChange}
+                                        onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            const target = e.target as HTMLInputElement;
+                                            target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
+                                        }}
                                     />
                                 </div>
 
-                                {sessionStorageData?.td_submission_type === 'CREDIT_DAYS' || sessionStorageData?.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
+                                {tlvDetails.td_submission_type === 'CREDIT_DAYS' || tlvDetails.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
                                     <div>
                                         <label className="block text-sm font-semibold mb-1">
                                             Proposed Credit Days:<span style={{ color: 'red', marginLeft: '2px' }}>*</span>
@@ -956,10 +1013,9 @@ const TLVRevisionRequestDetails = () => {
                                             type="text"
                                             placeholder="Proposed Cr Days:"
                                             className="w-full border rounded form-input text-sm"
-                                            name="proposed_cr_days"
-                                            readOnly={detailsData?.editable_yn === 'N'}
-                                            value={detailsData.proposed_cr_days || ''}
-                                            onChange={(e) => setDetailsData((pre: any) => ({ ...pre, proposed_cr_days: e.target.value }))}
+                                            name="proposedCreditDays"
+                                            value={tlvDetails.proposedCreditDays}
+                                            onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, proposedCreditDays: e.target.value }))}
                                             onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                 const target = e.target as HTMLInputElement;
                                                 target.value = target.value.replace(/[^0-9]/g, '');
@@ -968,7 +1024,7 @@ const TLVRevisionRequestDetails = () => {
                                     </div>
                                 ) : null}
 
-                                {sessionStorageData?.td_submission_type === 'TLV' || sessionStorageData?.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
+                                {tlvDetails.td_submission_type === 'TLV' || tlvDetails.td_submission_type === 'TLV_AND_CREDIT_DAYS' ? (
                                     <div>
                                         <label className="block text-sm font-semibold mb-1">
                                             Requested TLV (Lakhs):<span style={{ color: 'red', marginLeft: '2px' }}>*</span>
@@ -977,10 +1033,11 @@ const TLVRevisionRequestDetails = () => {
                                             type="text"
                                             placeholder="Requested TLV (Lakhs)"
                                             className="w-full border rounded form-input text-sm"
-                                            name="proposed_tlv"
-                                            readOnly={detailsData?.editable_yn === 'N'}
-                                            value={detailsData.proposed_tlv || ''}
-                                            onChange={(e) => setDetailsData((pre: any) => ({ ...pre, proposed_tlv: e.target.value }))}
+                                            name="requestedTLV"
+                                            // onChange={handledChange}
+                                            // value={formedData.requestedTLV}
+                                            value={tlvDetails.requestedTLV}
+                                            onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, requestedTLV: e.target.value }))}
                                             onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                 const target = e.target as HTMLInputElement;
                                                 target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
@@ -997,10 +1054,11 @@ const TLVRevisionRequestDetails = () => {
                                         type="text"
                                         placeholder="Order to be Billed Volume (KL)"
                                         className="w-full border rounded form-input text-sm"
-                                        name="order_vol"
-                                        readOnly={detailsData?.editable_yn === 'N'}
-                                        value={detailsData.order_vol || ''}
-                                        onChange={(e) => setDetailsData((pre: any) => ({ ...pre, order_vol: e.target.value }))}
+                                        name="billedVol"
+                                        // onChange={handledChange}
+                                        // value={formedData.billedVol}
+                                        value={tlvDetails.billedVol}
+                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, billedVol: e.target.value }))}
                                         onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                                             const target = e.target as HTMLInputElement;
                                             target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
@@ -1017,10 +1075,11 @@ const TLVRevisionRequestDetails = () => {
                                         type="text"
                                         placeholder="Order to be Billed Value (Lakhs)"
                                         className="w-full border rounded form-input text-sm"
-                                        name="order_val"
-                                        readOnly={detailsData?.editable_yn === 'N'}
-                                        value={detailsData.order_val || ''}
-                                        onChange={(e) => setDetailsData((pre: any) => ({ ...pre, order_val: e.target.value }))}
+                                        name="billedVal"
+                                        // onChange={handledChange}
+                                        // value={formedData.billedVal}
+                                        value={tlvDetails.billedVal}
+                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, billedVal: e.target.value }))}
                                         onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                                             const target = e.target as HTMLInputElement;
                                             target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
@@ -1037,10 +1096,11 @@ const TLVRevisionRequestDetails = () => {
                                         autoComplete="off"
                                         placeholder="Reason for Increase"
                                         className="w-full border rounded form-input text-sm"
-                                        name="increase_reason"
-                                        readOnly={detailsData?.editable_yn === 'N'}
-                                        value={detailsData.increase_reason}
-                                        onChange={(e) => setDetailsData((pre: any) => ({ ...pre, increase_reason: e.target.value }))}
+                                        name="increaseReason"
+                                        // onChange={handledChange}
+                                        // value={formedData.increaseReason}
+                                        value={tlvDetails.increaseReason}
+                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, increaseReason: e.target.value }))}
                                     />
                                 </div>
 
@@ -1053,16 +1113,15 @@ const TLVRevisionRequestDetails = () => {
                                         type="text"
                                         placeholder="End Customer Name"
                                         className="w-full border rounded form-input text-sm"
-                                        name="customer_name"
-                                        readOnly={detailsData?.editable_yn === 'N'}
-                                        value={detailsData.customer_name}
-                                        onChange={(e) => setDetailsData((pre: any) => ({ ...pre, customer_name: e.target.value }))}
+                                        name="customerName"
+                                        // onChange={handledChange}
+                                        // value={formedData.customerName}
+                                        value={tlvDetails.customerName}
+                                        onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, customerName: e.target.value }))}
                                     />
                                 </div>
                             </div>
                         </div>
-
-                        {/* Key Parameters-Account Level(Last 1Yr) & Outstanding Details */}
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                             <div className="panel mb-4">
                                 <table className="custTableView lg-custTableView w-full border-collapse">
@@ -1078,7 +1137,7 @@ const TLVRevisionRequestDetails = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {detailsData?.keyParam.length > 0 && detailsData?.keyParam.map((item: any, itemindexCount: React.Key | null | undefined) =>
+                                        {detailsData?.table4 && detailsData?.table4.map((item: { trd_descr: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; trd_value: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; }, itemindexCount: React.Key | null | undefined) => (
                                             <tr key={itemindexCount}>
                                                 <td className="border-t px-4 py-2" style={{ width: '70%', textAlign: 'left' }}>
                                                     {item.trd_descr !== null ? item.trd_descr : '-'}
@@ -1087,11 +1146,10 @@ const TLVRevisionRequestDetails = () => {
                                                     {item.trd_value !== null ? item.trd_value : '-'}
                                                 </td>
                                             </tr>
-                                        )}
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
-
                             <div className="panel mb-4">
                                 <div className="table-responsive">
                                     <table className="custTableView wrap w-full border-collapse">
@@ -1110,8 +1168,8 @@ const TLVRevisionRequestDetails = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {detailsData?.outstanding.length > 0 &&
-                                                detailsData?.outstanding.map((item: { slab: string; od: any; os: any }, itemindexCount: number) => {
+                                            {detailsData?.table5 &&
+                                                detailsData?.table5.map((item: { slab: string; od: any; os: any }, itemindexCount: number) => {
                                                     if (item.slab === 'Total' || !item.slab) return null;
                                                     const showDynamicFields = item.od !== null && item.od > 0;
                                                     const uniqueId = `${itemindexCount + 1}`;
@@ -1132,11 +1190,11 @@ const TLVRevisionRequestDetails = () => {
                                                                 <>
                                                                     <td style={{ width: '20%', textAlign: 'center' }}>
                                                                         <Flatpickr
-                                                                            value={detailsData[collection_date] || ''}
+                                                                            value={tlvDetails[collection_date] || ''}
                                                                             options={{ dateFormat: 'd/m/Y', position: 'auto left' }}
                                                                             className="form-input"
                                                                             placeholder="Expected Date"
-                                                                            onChange={(date) => setDetailsData((pre: any) => ({ ...pre, [collection_date]: date[0] }))}
+                                                                            onChange={(date) => setTLVDetails((pre: any) => ({ ...pre, [collection_date]: date[0] }))}
                                                                             id={collection_date}
                                                                         />
                                                                     </td>
@@ -1148,8 +1206,8 @@ const TLVRevisionRequestDetails = () => {
                                                                             placeholder="Value (in Lakhs)"
                                                                             className="form-input"
                                                                             name={collectionAmount}
-                                                                            value={detailsData[collectionAmount] || ''}
-                                                                            onChange={(e) => setDetailsData((pre: any) => ({ ...pre, [collectionAmount]: e.target.value }))}
+                                                                            value={tlvDetails[collectionAmount] || ''}
+                                                                            onChange={(e) => setTLVDetails((pre: any) => ({ ...pre, [collectionAmount]: e.target.value }))}
                                                                             onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                                 const target = e.target as HTMLInputElement;
                                                                                 target.value = target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\..*/g, '$1');
@@ -1162,10 +1220,23 @@ const TLVRevisionRequestDetails = () => {
                                                         </tr>
                                                     );
                                                 })
+                                                // :
+                                                // <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
+                                                //     <div role="status" className="animate-spin">
+                                                //         <svg aria-hidden="true" className="h-8 w-8 fill-blue-600 text-gray-200" viewBox="0 0 100 101" fill="none">
+                                                //             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" />
+                                                //             <path
+                                                //                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                //                 fill="currentFill"
+                                                //             />
+                                                //         </svg>
+                                                //         <span className="sr-only text-white">Please Wait...</span>
+                                                //     </div>
+                                                // </div>
                                             }
                                         </tbody>
                                         <tfoot>
-                                            {detailsData?.outstanding.length > 0 && detailsData?.outstanding.map((item: { slab: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; os: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; od: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; }, index: React.Key | null | undefined) =>
+                                            {detailsData?.table5 && detailsData?.table5.map((item: { slab: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; os: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; od: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; }, index: React.Key | null | undefined) =>
                                                 item.slab === 'Total' && <tr key={index}>
                                                     <td className="border-t px-4 py-2" style={{ width: '15%', textAlign: 'center' }}>
                                                         {item.slab}
@@ -1186,9 +1257,8 @@ const TLVRevisionRequestDetails = () => {
                             </div>
                         </div>
                     </div>
-                    {/* {(!detailsData?.editable_yn) || (detailsData?.editable_yn && detailsData?.editable_yn !== 'N')  && */}
-                    {/* {console.log("detailsData")} */}
-                    {detailsData?.editable_yn !== 'N' &&
+
+                    {tlvDetails.formSubmitable === 'Y' &&
                         <div className="flex items-center justify-center gap-1 pb-3">
                             <button
                                 type="button"
@@ -1231,4 +1301,4 @@ const TLVRevisionRequestDetails = () => {
     )
 }
 
-export default TLVRevisionRequestDetails
+export default TLVRevisionRequestDetails1

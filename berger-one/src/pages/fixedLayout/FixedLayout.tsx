@@ -26,10 +26,6 @@ const FixedLayout = () => {
         setOpenMenuDropdown(prev => (prev === index ? null : index));
     };
 
-    // useEffect(() => {
-    //     console.log(userApplicableMenu)
-    // }, [userApplicableMenu])
-
     const onLogout = async () => {
         logout();
         navigate('/login/cover-login');

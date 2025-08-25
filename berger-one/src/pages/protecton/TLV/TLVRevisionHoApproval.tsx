@@ -1,5 +1,5 @@
 import Select from 'react-select';
-import { Button, Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
 import { IconDownload, IconPlus, IconCheck, IconX, IconEye, IconRotate } from '@tabler/icons-react';
 import { CiSearch } from "react-icons/ci";
 import { useMemo, useState, useEffect, type ChangeEvent, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react';
@@ -23,8 +23,8 @@ export interface SELECTED_DROPDOWN {
 }
 const selectedDropdownInit: SELECTED_DROPDOWN = {
     Userdepot: -1,
-    Userterritory: 0,
-    Userstatus: 0,
+    Userterritory: -1,
+    Userstatus: -1,
     UsersubStatus: -1,
 };
 
@@ -86,17 +86,23 @@ const TlvLogDto: TlvLogInit = {
 
 const TLVRevisionHoApproval = () => {
     const [data, setData] = useState<TLVType[]>([]);
-    const [pcaParam, setPcaParam] = useState({
+    const pcaParamInit = {
         acctNo: '',
         customerName: '',
         billTo: '',
         sblcode: '',
-    });
-    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>(selectedDropdownInit);
+    }
+    const [pcaParam, setPcaParam] = useState({ ...pcaParamInit });
+    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>({...selectedDropdownInit});
+    useEffect(() => {
+      console.log(selectedDropdown)
+    }, [selectedDropdown])
+    
     const [depot, setDepot] = useState<any>([]);
     const [applTerr, setApplTerr] = useState<any>([]);
     const [approveStatus, setApproveStatus] = useState<any>([]);
     const [mainStatus, setMainStatus] = useState([
+        { label: 'Select...', value: '' },
         { label: 'Pending', value: 'PENDING' },
         { label: 'Approved', value: 'APPROVED' },
         { label: 'Rejected', value: 'REJECTED' },
@@ -134,8 +140,14 @@ const TLVRevisionHoApproval = () => {
     const handleTypeSelect = (e: any, flag: 'USER_DEPOT' | 'USER_TERR' | 'USER_STATUS' | 'USER_SUB_STATUS') => {
         if (flag == 'USER_DEPOT' && e && e.target.innerText && depot.length > 0) {
             let getIndex = findSelectedTypeValue(depot, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Userdepot: getIndex }));
-            GetApplicableTerritory(depot[getIndex].depot_code);
+            setSelectedDropdown((prev) => ({ ...prev, Userdepot: getIndex, Userterritory: -1 }));
+            
+            // If "Select..." is chosen (index 0), reset territory dropdown
+            if (getIndex === 0) {
+                setApplTerr([{ label: 'Select...', value: '', terr_name: '', terr_code: '' }]);
+            } else {
+                GetApplicableTerritory(depot[getIndex].depot_code);
+            }
         }
 
         if (flag == 'USER_TERR' && e && e.target.innerText && applTerr.length > 0) {
@@ -145,8 +157,14 @@ const TLVRevisionHoApproval = () => {
 
         if (flag == 'USER_STATUS' && e && e.target.innerText && mainStatus.length > 0) {
             let getIndex = findSelectedTypeValue(mainStatus, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Userstatus: getIndex }));
-            GetPcaStatusData(mainStatus[getIndex].value);
+            setSelectedDropdown((prev) => ({ ...prev, Userstatus: getIndex, UsersubStatus: -1 }));
+            
+            // If "Select..." is chosen (index 0), reset approve status dropdown
+            if (getIndex === 0) {
+                setApproveStatus([{ label: 'Select...', value: '' }]);
+            } else {
+                GetPcaStatusData(mainStatus[getIndex].value);
+            }
         }
 
         if (flag == 'USER_SUB_STATUS' && e && e.target.innerText && approveStatus.length > 0) {
@@ -249,14 +267,15 @@ const TLVRevisionHoApproval = () => {
 
             setApproveStatus(updatedTerrList);
 
-            const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
+            // Don't set any default values - let the form clearing handle it
+            // const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
 
-            if (!currentUsersubStatusExists) {
-                setSelectedDropdown((prev) => ({
-                    ...prev,
-                    UsersubStatus: 0,
-                }));
-            }
+            // if (!currentUsersubStatusExists) {
+            //     setSelectedDropdown((prev) => ({
+            //         ...prev,
+            //         UsersubStatus: 0,
+            //     }));
+            // }
         } catch (error) {
             return;
         }
@@ -294,7 +313,10 @@ const TLVRevisionHoApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Approved Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    // navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    GetTlcHoApprovalListData();
+                    // Clear form fields after successful approval
+                    clearFormFields();
                 }
             }
         });
@@ -318,7 +340,10 @@ const TLVRevisionHoApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Rejected Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    // navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    GetTlcHoApprovalListData();
+                    // Clear form fields after successful rejection
+                    clearFormFields();
                 }
             }
         });
@@ -342,22 +367,26 @@ const TLVRevisionHoApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Reverted Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    // navigate('/Protecton/TLV/TLVRevisionHoApproval/');
+                    GetTlcHoApprovalListData();
+                    // Clear form fields after successful revert
+                    clearFormFields();
                 }
             }
         });
         setLoading(false);
     }
 
+    // list api 
     const GetTlcHoApprovalListData = async () => {
         setLoading(true);
         const data: any = {
             depotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
-            terrCode: selectedDropdown.Userterritory != 0 ? applTerr[selectedDropdown.Userterritory].terr_code : '',
+            terrCode: selectedDropdown.Userterritory != -1 ? applTerr[selectedDropdown.Userterritory].terr_code : '',
             billToCode: pcaParam.billTo != '' ? pcaParam.billTo : '',
             dealerCode: pcaParam.acctNo != '' ? pcaParam.acctNo : '',
             dealerName: pcaParam.customerName != '' ? pcaParam.customerName : '',
-            mainStatus: selectedDropdown.Userstatus != -1 ? mainStatus[selectedDropdown.Userstatus].value : 'PENDING',
+            mainStatus: selectedDropdown.Userstatus != -1 && selectedDropdown.Userstatus !== 0 ? mainStatus[selectedDropdown.Userstatus].value : 'PENDING',
             aprvStatus: selectedDropdown.UsersubStatus != -1 ? approveStatus[selectedDropdown.UsersubStatus].lov_code : 'PENDING_HO',
         };
         try {
@@ -373,25 +402,38 @@ const TLVRevisionHoApproval = () => {
         setLoading(false);
     };
 
+    // Function to clear form fields - only called after Approve/Reject/Revert
+    const clearFormFields = () => {
+        // Preserve status and sub-status values while clearing other fields
+        setSelectedDropdown({
+            ...selectedDropdownInit,
+            Userstatus: selectedDropdown.Userstatus,
+            UsersubStatus: selectedDropdown.UsersubStatus
+        }); 
+        setPcaParam({ ...pcaParamInit });
+        // Reset territory dropdown to empty when depot is cleared
+        setApplTerr([{ label: 'Select...', value: '', terr_name: '', terr_code: '' }]);
+    };
+
     const BesicDetailTable = ({ data }: any) => {
         return (
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Region</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Depot</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Territory</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Acct. No.</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Dealer Name</th>
+                        <th className="w-1/5 text-center align-middle">Region</th>
+                        <th className="w-1/5 text-center align-middle">Depot</th>
+                        <th className="w-1/5 text-center align-middle">Territory</th>
+                        <th className="w-1/5 text-center align-middle">Acct. No.</th>
+                        <th className="w-1/5 text-center align-middle">Dealer Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_regn}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_name}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].terr_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_name}</td>
+                        <td className="text-center align-middle">{data[0].depot_regn}</td>
+                        <td className="text-center align-middle">{data[0].depot_name}</td>
+                        <td className="text-center align-middle">{data[0].terr_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_name}</td>
                     </tr>
                 </tbody>
             </table>
@@ -403,31 +445,31 @@ const TLVRevisionHoApproval = () => {
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '15%', textAlign: 'center' }}>Date</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Current TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Requested TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Credit Days</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Proposed Credit Days</th>
-                        <th style={{ width: '15%', textAlign: 'center' }}>Status</th>
-                        <th style={{ width: '30%', textAlign: 'center' }}>Remarks</th>
+                        <th className="w-[15%] text-center">Date</th>
+                        <th className="w-[10%] text-center">Current TLV</th>
+                        <th className="w-[10%] text-center">Requested TLV</th>
+                        <th className="w-[10%] text-center">Credit Days</th>
+                        <th className="w-[10%] text-center">Proposed Credit Days</th>
+                        <th className="w-[15%] text-center">Status</th>
+                        <th className="w-[30%] text-center">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.length > 0 ? (
                         data.map((row: { created_date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; current_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; credit_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_cr_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; status_value: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; remarks: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.created_date}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.current_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.credit_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_cr_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.status_value}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.remarks}</td>
+                                <td className="text-center align-middle">{row.created_date}</td>
+                                <td className="text-center align-middle">{row.current_tlv}</td>
+                                <td className="text-center align-middle">{row.proposed_tlv}</td>
+                                <td className="text-center align-middle">{row.credit_days}</td>
+                                <td className="text-center align-middle">{row.proposed_cr_days}</td>
+                                <td className="text-center align-middle">{row.status_value}</td>
+                                <td className="text-center align-middle">{row.remarks}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={Number(7)} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                            <td colSpan={7} className="text-center align-middle">
                                 No record(s) found.
                             </td>
                         </tr>
@@ -441,11 +483,7 @@ const TLVRevisionHoApproval = () => {
         GetApplicableDepot();
         //GetPcaStatusData('PENDING');
         GetPcaStatusData('PENDING').then(() => {
-            // Set the default value after dropdown data is populated
-            setSelectedDropdown((prev) => ({
-                ...prev,
-                UsersubStatus: 3,
-            }));
+            // Don't set any default values - let the API call handle it
             GetTlcHoApprovalListData();
         });
     }, []);
@@ -485,17 +523,17 @@ const TLVRevisionHoApproval = () => {
             {
                 accessorKey: 'depot_name',
                 header: 'Depot',
-                size: 180,
+                size: 160,
             },
             {
                 accessorKey: 'dlr_terr_code',
                 header: 'Territory',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'dlr_dealer_code',
                 header: 'Acct. No.',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'dlr_dealer_name',
@@ -526,7 +564,7 @@ const TLVRevisionHoApproval = () => {
                     row.original.td_proposed_tlv !== null && row.original.td_proposed_tlv !== undefined ? (
                         <input className="tableInput" type="number" value={row.original.td_proposed_tlv} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_tlv')} />
                     ) : (
-                        <span style={{ color: '#999' }}>N/A</span>
+                        <span className="text-gray-500">N/A</span>
                     ),
             },
             {
@@ -542,65 +580,81 @@ const TLVRevisionHoApproval = () => {
                     row.original.td_proposed_cr_days !== null && row.original.td_proposed_cr_days !== undefined ? (
                         <input className="tableInput" type="text" value={row.original.td_proposed_cr_days} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_cr_days')} />
                     ) : (
-                        <span style={{ color: '#999' }}>N/A</span>
+                        <span className="text-gray-500">N/A</span>
                     ),
             },
             {
                 accessorKey: 'status_value',
                 header: 'Status',
-                size: 50,
+                size: 70,
             },
             {
                 accessorKey: 'td_remarks',
                 header: 'Remarks',
-                size: 180,
+                size: 160,
                 Cell: ({ cell, row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
             },
             {
                 id: 'action',
                 header: 'Action',
-                size: 300,
+                size: 120,
                 Cell: ({ row }) => {
                     const status = row.original.status_value;
                     const downloadLink = row.original.file_doc ? `https://bpilmobile.bergerindia.com/VIRTUAL_DOCS/PROTECTON_MOB_APP/${row.original.file_doc}` : null;
 
                     const shouldShowButton = !status.includes('APPROVED') && !status.includes('REJECTED');
                     return (
-                        <Group className="tableGroupBtn">
-                            {shouldShowButton && (
-                                <Button variant="outline" color="green" leftIcon={<IconCheck size={16} />} onClick={() => handleApprove(row.original)}>
-                                    Approve
-                                </Button>
-                            )}
-                            {shouldShowButton && (
-                                <Button variant="outline" color="red" leftIcon={<IconX size={16} />} onClick={() => handleReject(row.original)}>
-                                    Reject
-                                </Button>
-                            )}
-                            <Button
-                                variant="outline"
-                                color="blue"
-                                leftIcon={<IconEye size={16} />}
-                                onClick={() => {
-                                    handleView(row.original);
-                                    setShowTlvModal(true);
-                                }}
-                            >
-                                View
-                            </Button>
-                            {downloadLink && (
-                                <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="outline" color="teal" leftIcon={<IconDownload size={16} />}>
-                                        Download
-                                    </Button>
-                                </a>
-                            )}
-                            {shouldShowButton && (
-                                <Button variant="outline" color="gray" leftIcon={<IconRotate size={16} />} onClick={() => handleRevert(row.original)}>
-                                    Revert
-                                </Button>
-                            )}
-                        </Group>
+                        <div className="flex justify-end">
+                            <Group className="tableGroupBtn">
+                                {shouldShowButton && (
+                                    <Tooltip label="Approve" position="top" withArrow>
+                                        <IconCheck 
+                                            size={20} 
+                                            className="text-green-600 cursor-pointer hover:text-green-800 transition-colors"
+                                            onClick={() => handleApprove(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                {shouldShowButton && (
+                                    <Tooltip label="Reject" position="top" withArrow>
+                                        <IconX 
+                                            size={20} 
+                                            className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
+                                            onClick={() => handleReject(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                <Tooltip label="View" position="top" withArrow>
+                                    <IconEye 
+                                        size={20} 
+                                        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+                                        onClick={() => {
+                                            handleView(row.original);
+                                            setShowTlvModal(true);
+                                        }}
+                                    />
+                                </Tooltip>
+                                {downloadLink && (
+                                    <Tooltip label="Download" position="top" withArrow>
+                                        <a href={downloadLink} target="_blank" rel="noopener noreferrer">
+                                            <IconDownload 
+                                                size={20} 
+                                                className="text-teal-600 cursor-pointer hover:text-teal-800 transition-colors"
+                                            />
+                                        </a>
+                                    </Tooltip>
+                                )}
+                                {shouldShowButton && (
+                                    <Tooltip label="Revert" position="top" withArrow>
+                                        <IconRotate 
+                                            size={20} 
+                                            className="text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
+                                            onClick={() => handleRevert(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                            </Group>
+                        </div>
                     );
                 },
             },
@@ -613,12 +667,14 @@ const TLVRevisionHoApproval = () => {
         data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
         enableColumnResizing: true,
         enableTopToolbar: false,
+        enableSorting: false,
+        enableColumnActions: false,
         columnResizeMode: 'onChange',
-        mantineTableContainerProps: {
-            style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
-            },
-        }
+        // mantineTableContainerProps: {
+        //     style: {
+        //         overflowX: 'hidden', // hides horizontal scrollbar
+        //     },
+        // }
     });
 
     return (
@@ -634,7 +690,7 @@ const TLVRevisionHoApproval = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            value={depot[selectedDropdown.Userdepot]}
+                            value={selectedDropdown.Userdepot !== -1 ? depot[selectedDropdown.Userdepot] : null}
                             options={depot}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_DEPOT');
@@ -647,7 +703,7 @@ const TLVRevisionHoApproval = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            value={applTerr[selectedDropdown.Userterritory]}
+                            value={selectedDropdown.Userterritory !== -1 ? applTerr[selectedDropdown.Userterritory] : null}
                             options={applTerr}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_TERR');
@@ -671,11 +727,11 @@ const TLVRevisionHoApproval = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            value={mainStatus[selectedDropdown.Userstatus]}
+                            value={selectedDropdown.Userstatus !== -1 ? mainStatus[selectedDropdown.Userstatus] : null}
                             options={mainStatus}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_STATUS');
@@ -684,11 +740,11 @@ const TLVRevisionHoApproval = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Sub Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Sub Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            value={approveStatus[selectedDropdown.UsersubStatus]}
+                            value={selectedDropdown.UsersubStatus !== -1 ? approveStatus[selectedDropdown.UsersubStatus] : null}
                             options={approveStatus}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_SUB_STATUS');
@@ -705,7 +761,7 @@ const TLVRevisionHoApproval = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+            <div className="mb-2 max-h-[50vh] overflow-y-auto">
                 <MantineReactTable table={table} />
             </div>
 
@@ -728,7 +784,7 @@ const TLVRevisionHoApproval = () => {
                             <div className="flex min-h-screen items-start justify-center px-4">
                                 <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-7xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                     <div className="grid-cols-12 items-center justify-between bg-secondary-light px-2 py-1 dark:bg-[#121c2c] md:flex">
-                                        <div className="flex items-center justify-between bg-secondary-light px-2" style={{ width: `100%` }}>
+                                        <div className="flex items-center justify-between bg-secondary-light px-2 w-full">
                                             <div className="flex">
                                                 {/* <img className="mr-2 h-8 w-auto" src={GetProdDevImgRouteBuilder('/assets/images/meeting.png')} alt="" /> */}
                                                 <h5 className="text-lg font-bold">View</h5>

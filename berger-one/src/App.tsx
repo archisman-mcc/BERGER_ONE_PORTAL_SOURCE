@@ -41,9 +41,12 @@ import PotentialLead from './pages/protecton/Lead/PotentialLead';
 import MWAReportDetails from './pages/protecton/HoMarketing/MWAReportDetails';
 import TSRMonitoringReport from './pages/protecton/HoMarketing/TSRMonitoringReport';
 import ClientOnly from './components/ClientOnly';
+import TLVRevisionHoCommercialApproval from './pages/protecton/TLV/TLVRevisionHoCommercialApproval';
+import TLVRevisionRequestDetails from './pages/protecton/TLV/TLVRevisionRequestDetails';
+// import TLVRevisionRequestDetails1 from './pages/protecton/TLV/TLVRevisionRequestDetails';
 
 // Lazy load the MUI component to prevent SSR bundling
-const TLVRevisionRequestDetails = React.lazy(() => import('./pages/protecton/TLV/TLVRevisionRequestDetails'));
+// const TLVRevisionRequestDetails = React.lazy(() => import('./pages/protecton/TLV/TLVRevisionRequestDetails1'));
 
 // Base URL configuration
 // const BASE_URL = '/BERGERONE';
@@ -103,6 +106,10 @@ function App() {
             path: '/Protecton/TLV/TLVRevisionRequestList',
             element: <TLVRevisionRequestList />,
           },
+          // {
+          //   path: '/Protecton/TLV/TLVRevisionRequestDetails1',
+          //   element: <TLVRevisionRequestDetails1 />,
+          // },
           {
             path: '/Protecton/TLV/TLVRevisionRequestDetails',
             element: (
@@ -124,6 +131,10 @@ function App() {
           {
             path: '/Protecton/TLV/TLVRevisionHoApproval',
             element: <TLVRevisionHoApproval />,
+          },
+          {
+            path: '/Protecton/TLV/TLVRevisionHoCommercialApproval',
+            element: <TLVRevisionHoCommercialApproval />,
           },
           {
             path: '/Protecton/Transact/TransactDsr',

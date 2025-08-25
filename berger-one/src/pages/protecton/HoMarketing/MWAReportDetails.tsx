@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import { CiSearch } from 'react-icons/ci';
-import axios, { type AxiosResponse } from 'axios';
-import { getmwadetailsdatav5 } from '../../../services/api/protectonReport/protectonReport';
-import { BASE_ENDPOINTS } from '../../../helper/EndPoints';
+// import axios, { type AxiosResponse } from 'axios';
+// import { getmwadetailsdatav5 } from '../../../services/api/protectonReport/protectonReport';
+// import { BASE_ENDPOINTS } from '../../../helper/EndPoints';
+import { getmwadetailsdatav5 } from '../../../services/api/protectonReport/ProtectonReport';
 
 // Types for the component
 interface MonthOption {
@@ -68,43 +69,6 @@ const MWAReportDetails: React.FC = () => {
     const handleYearChange = (selectedOption: YearOption | null) => {
         setData(prev => ({ ...prev, selectedYear: selectedOption }));
     };
-
-    // const getAccessToken = () => {
-    //     return localStorage.getItem("_token");
-    // }
-    // const downloadTemplate = () => {
-    //     const url = BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'getmwadetailsdatav5'
-    //     const payloadObj = {
-    //         rep_year: Number(data.selectedYear?.value),
-    //         rep_month: Number(data.selectedMonth?.value),
-    //     }
-    //     axios({
-    //         url: url,
-    //         method: 'GET',
-    //         data: payloadObj,
-    //         responseType: 'blob',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'AuthToken': getAccessToken()
-    //         },
-    //     }).then((res: AxiosResponse<Blob> | any) => {
-    //         if (res) {
-    //             const contentDispositionHeader: string | null = res.headers.get('File-Name');
-    //             if (contentDispositionHeader) {
-    //                 const fileName = contentDispositionHeader;
-    //                 const link = document.createElement('a');
-    //                 link.href = URL.createObjectURL(res.data);
-    //                 link.download = fileName;
-    //                 document.body.appendChild(link);
-    //                 link.click();
-    //                 document.body.removeChild(link);
-    //                 URL.revokeObjectURL(link.href);
-    //             }
-    //         }
-    //     }).catch((err: any) => {
-    //         console.error("Error fetching data", err);
-    //     });
-    // }
 
     const downloadTemplate = async () => {
         const payloadObj = {

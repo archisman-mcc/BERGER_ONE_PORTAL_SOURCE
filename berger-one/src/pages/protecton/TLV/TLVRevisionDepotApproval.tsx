@@ -1,6 +1,6 @@
 // import React from 'react';
 import Select from 'react-select';
-import { Button, Group } from '@mantine/core';
+import { Group, Tooltip } from '@mantine/core';
 import { IconDownload, IconCheck, IconX, IconEye } from '@tabler/icons-react';
 import { CiSearch } from "react-icons/ci";
 import { useMemo, useState, useEffect, type ChangeEvent, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react';
@@ -21,15 +21,15 @@ export interface SELECTED_DROPDOWN {
     Userterritory: number;
     Userstatus: number;
     UsersubStatus: number;
-    Applterritory: number;
+    // Applterritory: number;
 }
 
 const selectedDropdownInit: SELECTED_DROPDOWN = {
     Userdepot: -1,
-    Userterritory: 0,
+    Userterritory: -1,
     Userstatus: 0,
     UsersubStatus: -1,
-    Applterritory: -1,
+    // Applterritory: -1,
 };
 
 type TLVType = {
@@ -91,13 +91,14 @@ const TlvLogDto: TlvLogInit = {
 const TLVRevisionDepotApproval = () => {
     const [data, setData] = useState<TLVType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [pcaParam, setPcaParam] = useState({
+    const pcaParamInit = {
         acctNo: '',
         customerName: '',
         billTo: '',
         sblcode: '',
-    });
-    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>(selectedDropdownInit);
+    }
+    const [pcaParam, setPcaParam] = useState({ ...pcaParamInit });
+    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>({...selectedDropdownInit});
     const [depot, setDepot] = useState<any>([]);
     const [applTerr, setApplTerr] = useState<any>([]);
     const [approveStatus, setApproveStatus] = useState<any>([]);
@@ -174,9 +175,10 @@ const TLVRevisionDepotApproval = () => {
     const handleTypeSelect = (e: any, flag: 'USER_DEPOT' | 'USER_TERR' | 'USER_STATUS' | 'USER_SUB_STATUS') => {
         if (flag == 'USER_DEPOT' && e && e.target.innerText && depot.length > 0) {
             let getIndex = findSelectedTypeValue(depot, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Appldepot: getIndex }));
+            // setSelectedDropdown((prev) => ({ ...prev, Appldepot: getIndex }));
+            setSelectedDropdown((prev) => ({ ...prev, Userdepot: getIndex }));
             GetApplicableTerritory(depot[getIndex].depot_code);
-            if (selectedDropdown.Applterritory != -1) GetApplicableProject(depot[getIndex].depot_code, applTerr[selectedDropdown.Applterritory].terr_code, projectSearchValue);
+            // if (selectedDropdown.Applterritory != -1) GetApplicableProject(depot[getIndex].depot_code, applTerr[selectedDropdown.Applterritory].terr_code, projectSearchValue);
         }
 
         if (flag == 'USER_TERR' && e && e.target.innerText && applTerr.length > 0) {
@@ -289,12 +291,11 @@ const TLVRevisionDepotApproval = () => {
 
             setApproveStatus(updatedTerrList);
 
-            const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
-
-            if (!currentUsersubStatusExists) {
+            // Don't reset the Sub Status if it's already set
+            if (selectedDropdown.UsersubStatus === -1) {
                 setSelectedDropdown((prev) => ({
                     ...prev,
-                    UsersubStatus: 1, // or set it to any default value you prefer
+                    UsersubStatus: 1, // only set default if not already set
                 }));
             }
         } catch (error) {
@@ -333,7 +334,33 @@ const TLVRevisionDepotApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Approved Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    // Clear form fields immediately after successful approval, but preserve Sub Status
+                    console.log('Before clearing - selectedDropdown:', selectedDropdown, 'pcaParam:', pcaParam);
+                    const currentSubStatus = selectedDropdown.UsersubStatus;
+                    const currentSubStatusValue = approveStatus[currentSubStatus]?.lov_code || 'PENDING_DEPOT';
+                    
+                    // Clear only specific form fields: Depot, Territory, Acct. No., Customer Name, Bill To
+                    setPcaParam({
+                        ...pcaParam,
+                        acctNo: '',
+                        customerName: '',
+                        billTo: ''
+                    });
+                    setApplTerr([]);
+                    
+                    // Reset only Depot and Territory dropdowns but preserve Sub Status and Status
+                    setTimeout(() => {
+                        setSelectedDropdown({
+                            ...selectedDropdown,
+                            Userdepot: -1,
+                            Userterritory: -1
+                            // Keep Userstatus and UsersubStatus unchanged
+                        });
+                        console.log('After clearing - Sub Status preserved:', currentSubStatus, 'Value:', currentSubStatusValue);
+                    }, 100);
+                    
+                    // navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    GetTlvDepotApprovalListData();
                 }
             }
         });
@@ -357,7 +384,32 @@ const TLVRevisionDepotApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Rejected Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    // Clear form fields immediately after successful rejection, but preserve Sub Status
+                    const currentSubStatus = selectedDropdown.UsersubStatus;
+                    const currentSubStatusValue = approveStatus[currentSubStatus]?.lov_code || 'PENDING_DEPOT';
+                    
+                    // Clear only specific form fields: Depot, Territory, Acct. No., Customer Name, Bill To
+                    setPcaParam({
+                        ...pcaParam,
+                        acctNo: '',
+                        customerName: '',
+                        billTo: ''
+                    });
+                    setApplTerr([]);
+                    
+                    // Reset only Depot and Territory dropdowns but preserve Sub Status and Status
+                    setTimeout(() => {
+                        setSelectedDropdown({
+                            ...selectedDropdown,
+                            Userdepot: -1,
+                            Userterritory: -1
+                            // Keep Userstatus and UsersubStatus unchanged
+                        });
+                        console.log('After rejection - Sub Status preserved:', currentSubStatus, 'Value:', currentSubStatusValue);
+                    }, 100);
+                    
+                    // navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    GetTlvDepotApprovalListData();
                 }
             }
         });
@@ -381,18 +433,45 @@ const TLVRevisionDepotApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Reverted Successfully.');
-                    navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    // Clear form fields immediately after successful revert, but preserve Sub Status
+                    const currentSubStatus = selectedDropdown.UsersubStatus;
+                    const currentSubStatusValue = approveStatus[currentSubStatus]?.lov_code || 'PENDING_DEPOT';
+                    
+                    // Clear only specific form fields: Depot, Territory, Acct. No., Customer Name, Bill To
+                    setPcaParam({
+                        ...pcaParam,
+                        acctNo: '',
+                        customerName: '',
+                        billTo: ''
+                    });
+                    setApplTerr([]);
+                    
+                    // Reset only Depot and Territory dropdowns but preserve Sub Status and Status
+                    setTimeout(() => {
+                        setSelectedDropdown({
+                            ...selectedDropdown,
+                            Userdepot: -1,
+                            Userterritory: -1
+                            // Keep Userstatus and UsersubStatus unchanged
+                        });
+                        console.log('After revert - Sub Status preserved:', currentSubStatus, 'Value:', currentSubStatusValue);
+                    }, 100);
+                    
+                    // navigate('/Protecton/TLV/TLVRevisionDepotApproval/');
+                    GetTlvDepotApprovalListData();
                 }
             }
         });
         setLoading(false);
     }
 
+    // list api 
     const GetTlvDepotApprovalListData = async () => {
         setLoading(true);
+        // console.log(selectedDropdown, pcaParam);
         const data: any = {
             depotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
-            terrCode: selectedDropdown.Userterritory != 0 ? applTerr[selectedDropdown.Userterritory].terr_code : '',
+            terrCode: selectedDropdown.Userterritory != 0 ? applTerr[selectedDropdown.Userterritory]?.terr_code : '',
             billToCode: pcaParam.billTo != '' ? pcaParam.billTo : '',
             dealerCode: pcaParam.acctNo != '' ? pcaParam.acctNo : '',
             dealerName: pcaParam.customerName != '' ? pcaParam.customerName : '',
@@ -412,25 +491,33 @@ const TLVRevisionDepotApproval = () => {
         setLoading(false);
     };
 
+    useEffect(() => {
+        console.log('pcaParam changed:', pcaParam)
+    }, [pcaParam])
+    useEffect(() => {
+        console.log('selectedDropdown changed:', selectedDropdown)
+        console.log('Current Sub Status index:', selectedDropdown.UsersubStatus, 'Value:', approveStatus[selectedDropdown.UsersubStatus]?.lov_code)
+    }, [selectedDropdown, approveStatus])
+
     const BesicDetailTable = ({ data }: any) => {
         return (
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Region</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Depot</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Territory</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Acct. No.</th>
-                        <th style={{ width: '20%', textAlign: 'center', verticalAlign: 'middle' }}>Dealer Name</th>
+                        <th className="w-1/5 text-center align-middle">Region</th>
+                        <th className="w-1/5 text-center align-middle">Depot</th>
+                        <th className="w-1/5 text-center align-middle">Territory</th>
+                        <th className="w-1/5 text-center align-middle">Acct. No.</th>
+                        <th className="w-1/5 text-center align-middle">Dealer Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_regn}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].depot_name}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].terr_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_code}</td>
-                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].dealer_name}</td>
+                        <td className="text-center align-middle">{data[0].depot_regn}</td>
+                        <td className="text-center align-middle">{data[0].depot_name}</td>
+                        <td className="text-center align-middle">{data[0].terr_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_name}</td>
                     </tr>
                 </tbody>
             </table>
@@ -442,31 +529,31 @@ const TLVRevisionDepotApproval = () => {
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
-                        <th style={{ width: '15%', textAlign: 'center' }}>Date</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Current TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Requested TLV</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Credit Days</th>
-                        <th style={{ width: '10%', textAlign: 'center' }}>Proposed Credit Days</th>
-                        <th style={{ width: '15%', textAlign: 'center' }}>Status</th>
-                        <th style={{ width: '30%', textAlign: 'center' }}>Remarks</th>
+                        <th className="w-[15%] text-center">Date</th>
+                        <th className="w-[10%] text-center">Current TLV</th>
+                        <th className="w-[10%] text-center">Requested TLV</th>
+                        <th className="w-[10%] text-center">Credit Days</th>
+                        <th className="w-[10%] text-center">Proposed Credit Days</th>
+                        <th className="w-[15%] text-center">Status</th>
+                        <th className="w-[30%] text-center">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.length > 0 ? (
                         data.map((row: { created_date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; current_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; credit_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_cr_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; status_value: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; remarks: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.created_date}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.current_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_tlv}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.credit_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.proposed_cr_days}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.status_value}</td>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{row.remarks}</td>
+                                <td className="text-center align-middle">{row.created_date}</td>
+                                <td className="text-center align-middle">{row.current_tlv}</td>
+                                <td className="text-center align-middle">{row.proposed_tlv}</td>
+                                <td className="text-center align-middle">{row.credit_days}</td>
+                                <td className="text-center align-middle">{row.proposed_cr_days}</td>
+                                <td className="text-center align-middle">{row.status_value}</td>
+                                <td className="text-center align-middle">{row.remarks}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={Number(7)} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                            <td colSpan={7} className="text-center align-middle">
                                 No record(s) found.
                             </td>
                         </tr>
@@ -479,9 +566,10 @@ const TLVRevisionDepotApproval = () => {
     useEffect(() => {
         GetApplicableDepot();
         GetPcaStatusData('PENDING').then(() => {
+            // Only set Sub Status if it's not already set
             setSelectedDropdown((prev) => ({
                 ...prev,
-                UsersubStatus: 1,
+                UsersubStatus: prev.UsersubStatus === -1 ? 1 : prev.UsersubStatus,
             }));
             GetTlvDepotApprovalListData();
         });
@@ -573,7 +661,7 @@ const TLVRevisionDepotApproval = () => {
                 accessorKey: 'td_proposed_cr_days',
                 header: 'Proposed Credit Days',
                 size: 50,
-                Cell: ({  row }) =>
+                Cell: ({ row }) =>
                     row.original.td_proposed_cr_days !== null && row.original.td_proposed_cr_days !== undefined ? (
                         <input type="text" className="tableInput" value={row.original.td_proposed_cr_days} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_cr_days')} />
                     ) : null,
@@ -587,7 +675,7 @@ const TLVRevisionDepotApproval = () => {
                 accessorKey: 'td_remarks',
                 header: 'Remarks',
                 size: 60,
-                Cell: ({  row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
+                Cell: ({ row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
             },
             {
                 id: 'action',
@@ -599,41 +687,55 @@ const TLVRevisionDepotApproval = () => {
 
                     const shouldShowButton = !status.includes('APPROVED') && !status.includes('REJECTED');
                     return (
-                        <Group className="tableGroupBtn">
-                            {shouldShowButton && (
-                                <Button variant="outline" color="green" leftIcon={<IconCheck size={16} />} onClick={() => handleApprove(row.original)}>
-                                    Approve
-                                </Button>
-                            )}
-                            {shouldShowButton && (
-                                <Button variant="outline" color="red" leftIcon={<IconX size={16} />} onClick={() => handleReject(row.original)}>
-                                    Reject
-                                </Button>
-                            )}
-                            <Button
-                                variant="outline"
-                                color="blue"
-                                leftIcon={<IconEye size={16} />}
-                                onClick={() => {
-                                    handleView(row.original);
-                                    setShowTlvModal(true);
-                                }}
-                            >
-                                View
-                            </Button>
-                            {downloadLink && (
-                                <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="outline" color="yellow" leftIcon={<IconDownload size={16} />}>
-                                        Download
-                                    </Button>
-                                </a>
-                            )}
-                            {/* {shouldShowButton && (
-                                <Button variant="outline" color="gray" leftIcon={<IconRotate size={16} />} onClick={() => handleRevert(row.original)}>
-                                    Revert
-                                </Button>
-                            )} */}
-                        </Group>
+                        <div className="flex justify-end">
+                            <Group className="tableGroupBtn">
+                                {shouldShowButton && (
+                                    <Tooltip label="Approve" position="top" withArrow>
+                                        <IconCheck
+                                            size={20}
+                                            className="text-green-600 cursor-pointer hover:text-green-800 transition-colors"
+                                            onClick={() => handleApprove(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                {shouldShowButton && (
+                                    <Tooltip label="Reject" position="top" withArrow>
+                                        <IconX
+                                            size={20}
+                                            className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
+                                            onClick={() => handleReject(row.original)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                <Tooltip label="View" position="top" withArrow>
+                                    <IconEye
+                                        size={20}
+                                        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+                                        onClick={() => {
+                                            handleView(row.original);
+                                            setShowTlvModal(true);
+                                        }}
+                                    />
+                                </Tooltip>
+                                {downloadLink && (
+                                    <Tooltip label="Download" position="top" withArrow>
+                                        <a href={downloadLink} target="_blank" rel="noopener noreferrer">
+                                            <IconDownload
+                                                size={20}
+                                                className="text-yellow-600 cursor-pointer hover:text-yellow-800 transition-colors"
+                                            />
+                                        </a>
+                                    </Tooltip>
+                                )}
+                                {/* {shouldShowButton && (
+                                     <IconRotate 
+                                         size={20} 
+                                         className="text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
+                                         onClick={() => handleRevert(row.original)}
+                                     />
+                                 )} */}
+                            </Group>
+                        </div>
                     );
                 },
             },
@@ -646,12 +748,14 @@ const TLVRevisionDepotApproval = () => {
         data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
         enableColumnResizing: true,
         enableTopToolbar: false,
+        enableSorting: false,
+        enableColumnActions: false,
         columnResizeMode: 'onChange',
-        mantineTableContainerProps: {
-            style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
-            },
-        }
+        // mantineTableContainerProps: {
+        //     style: {
+        //         overflowX: 'hidden', // hides horizontal scrollbar
+        //     },
+        // }
     });
 
     return (
@@ -665,9 +769,10 @@ const TLVRevisionDepotApproval = () => {
                     <div>
                         <label className="block text-sm font-semibold mb-1">Depot:</label>
                         <Select
+                            key={`depot-${selectedDropdown.Userdepot}`}
                             className="text-sm"
                             isSearchable={true}
-                            value={depot[selectedDropdown.Userdepot]}
+                            value={selectedDropdown.Userdepot !== -1 && depot.length > 0 ? depot[selectedDropdown.Userdepot] : null}
                             options={depot}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_DEPOT');
@@ -678,9 +783,10 @@ const TLVRevisionDepotApproval = () => {
                     <div>
                         <label className="block text-sm font-semibold mb-1">Territory:</label>
                         <Select
+                            key={`territory-${selectedDropdown.Userterritory}`}
                             className="text-sm"
                             isSearchable={true}
-                            value={applTerr[selectedDropdown.Userterritory]}
+                            value={selectedDropdown.Userterritory !== -1 && applTerr.length > 0 ? applTerr[selectedDropdown.Userterritory] : null}
                             options={applTerr}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_TERR');
@@ -704,11 +810,12 @@ const TLVRevisionDepotApproval = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
+                            key={`status-${selectedDropdown.Userstatus}`}
                             className="text-sm"
                             isSearchable={true}
-                            value={mainStatus[selectedDropdown.Userstatus]}
+                            value={selectedDropdown.Userstatus !== -1 && mainStatus.length > 0 ? mainStatus[selectedDropdown.Userstatus] : null}
                             options={mainStatus}
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_STATUS');
@@ -717,14 +824,15 @@ const TLVRevisionDepotApproval = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Sub Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Sub Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
+                            key={`substatus-${selectedDropdown.UsersubStatus}-${approveStatus.length}`}
                             className="text-sm"
                             isSearchable={true}
-                            value={approveStatus[selectedDropdown.UsersubStatus]}
+                            value={selectedDropdown.UsersubStatus !== -1 && approveStatus.length > 0 ? approveStatus[selectedDropdown.UsersubStatus] : null}
                             options={approveStatus}
-                            onChange={() => {
-                                handleTypeSelect(event, 'USER_SUB_STATUS');
+                            onChange={(e) => {
+                                handleTypeSelect(e, 'USER_SUB_STATUS');
                             }}
                         />
                     </div>
@@ -738,7 +846,7 @@ const TLVRevisionDepotApproval = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+            <div className="mb-2 max-h-[50vh] overflow-y-auto">
                 <MantineReactTable table={table} />
             </div>
 
@@ -761,7 +869,7 @@ const TLVRevisionDepotApproval = () => {
                             <div className="flex min-h-screen items-start justify-center px-4">
                                 <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-7xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                     <div className="grid-cols-12 items-center justify-between bg-secondary-light px-2 py-1 dark:bg-[#121c2c] md:flex">
-                                        <div className="flex items-center justify-between bg-secondary-light px-2" style={{ width: `100%` }}>
+                                        <div className="flex items-center justify-between bg-secondary-light px-2 w-full">
                                             <div className="flex">
                                                 {/* <img className="mr-2 h-8 w-auto" src={GetProdDevImgRouteBuilder('/assets/images/meeting.png')} alt="" /> */}
                                                 <h5 className="text-lg font-bold">View</h5>

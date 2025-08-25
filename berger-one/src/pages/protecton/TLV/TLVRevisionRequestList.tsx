@@ -9,6 +9,7 @@ import { TlvModuleStore } from '../../../services/store/Protecton/TlvModuleAllSt
 import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdDownload } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import { selectStyles, statusSelectStyles } from '../../../styles/select-styles';
 
 export interface SELECTED_DROPDOWN {
     Userdepot: number;
@@ -61,6 +62,7 @@ const TLVRevisionRequestList = () => {
         { label: 'Rejected', value: 'REJECTED' },
     ]);
     const [modal, setModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const labelValueConverter = (arr: any[], propertyNameLabel: string, propertyNameValue: string) => {
         arr.forEach((element) => {
@@ -98,7 +100,6 @@ const TLVRevisionRequestList = () => {
             setSelectedDropdown((prev) => ({ ...prev, UsersubStatus: getIndex }));
         }
     };
-    const [loading, setLoading] = useState(false);
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
@@ -163,23 +164,46 @@ const TLVRevisionRequestList = () => {
         setLoading(false);
     };
 
-    const GetPcaStatusData = async () => {
+    const GetPcaStatusData = async (selectedstatus: string) => {
         setLoading(true);
         const data: any = {
             app_id: '15',
         };
         try {
             const response: any = await Epca.GetPcaStatusList(data);
-            labelValueConverter(response.data, 'lov_value', 'lov_code');
-            setApproveStatus(response.data);
+
+            const updatedTerrList = [
+                { label: 'Select...', value: '' },
+                ...response.data.map((item: any) => ({
+                    label: item.lov_value,
+                    value: item.lov_code,
+                    lov_value: item.lov_value,
+                    lov_code: item.lov_code,
+                })),
+            ];
+
+            //labelValueConverter(newStatusList, 'lov_value', 'lov_code');
+
+            setApproveStatus(updatedTerrList);
+
+            const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
+
+            if (!currentUsersubStatusExists) {
+                setSelectedDropdown((prev) => ({
+                    ...prev,
+                    UsersubStatus: 1, // or set it to any default value you prefer
+                }));
+            }
         } catch (error) {
             return;
         }
         setLoading(false);
     };
 
+    // list api 
     const GetTlvRevisionListData = async () => {
         setLoading(true);
+        console.log(selectedDropdown, pcaParam);
         const data: any = {
             app_id: 15,
             DepotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
@@ -188,7 +212,8 @@ const TLVRevisionRequestList = () => {
             AcctNo: pcaParam.acctNo != '' ? pcaParam.acctNo : '',
             DealerName: pcaParam.customerName != '' ? pcaParam.customerName : '',
             SblCode: pcaParam.sblcode != '' ? pcaParam.sblcode : '4',
-            ApprovedStatus: selectedDropdown.UsersubStatus != -1 ? approveStatus[selectedDropdown.UsersubStatus].lov_code : '',
+            // ApprovedStatus: selectedDropdown.UsersubStatus != -1 ? approveStatus[selectedDropdown.UsersubStatus].lov_code : '',
+            ApprovedStatus: selectedDropdown.UsersubStatus != -1 ? approveStatus[selectedDropdown.UsersubStatus].lov_code : 'PENDING_DEPOT',
             MainStatus: selectedDropdown.Userstatus != -1 ? mainStatus[selectedDropdown.Userstatus].value : 'PENDING',
         };
         try {
@@ -201,10 +226,20 @@ const TLVRevisionRequestList = () => {
         setLoading(false);
     };
 
+    // useEffect(() => {
+    //     GetApplicableDepot();
+    //     GetPcaStatusData();
+    //     GetTlvRevisionListData();
+    // }, []);
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData();
-        GetTlvRevisionListData();
+        GetPcaStatusData('PENDING').then(() => {
+            setSelectedDropdown((prev) => ({
+                ...prev,
+                UsersubStatus: 1,
+            }));
+            GetTlvRevisionListData();
+        });
     }, []);
 
     const handleSearch = (e: any) => {
@@ -236,6 +271,29 @@ const TLVRevisionRequestList = () => {
         setValueInSessionStorage('epcaTLVDtlEntryType', 'View');
         navigate('/Protecton/TLV/TLVRevisionRequestDetails/');
     };
+    /*
+    Inline CSS found in the code:
+
+    1. In the MantineReactTable config:
+    mantineTableContainerProps: {
+        style: {
+            overflowX: 'hidden', // hides horizontal scrollbar
+        },
+    },
+
+    2. In the Action column Cell:
+    style={{ fontSize: '20px', marginRight: '10px' }}
+    style={{ fontSize: '20px' }}
+
+    3. In the mainStatus Select label:
+    <span style={{ color: 'red', marginLeft: '2px' }}>*</span>
+
+    4. In the approveStatus Select label:
+    <span style={{ color: 'red', marginLeft: '2px' }}>*</span>
+
+    5. In the MantineReactTable wrapper:
+    <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+    */
 
     const AddNewTLVRevisionRequest = () => {
         setCustomerProfile(null);
@@ -303,7 +361,7 @@ const TLVRevisionRequestList = () => {
             {
                 accessorKey: 'td_proposed_cr_days',
                 header: 'Proposed Credit Days',
-                size: 100,
+                size: 80,
             },
             {
                 accessorKey: 'status_value',
@@ -322,9 +380,8 @@ const TLVRevisionRequestList = () => {
                     return (
                         <>
                             <span
-                                className={cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? 'cursor-pointer text-primary' : ''}
+                                className={`${cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? 'cursor-pointer text-primary' : ''} text-xl mr-2.5`}
                                 onClick={() => selectedCustomer(cell.row.original)}
-                                style={{ fontSize: '20px', marginRight: '10px' }}
                                 title="View"
                             >
                                 {cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? (
@@ -349,10 +406,9 @@ const TLVRevisionRequestList = () => {
                             </span> */}
 
                             <span
-                                className={cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? 'cursor-pointer text-info' : ''}
+                                className={`${cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name != '' ? 'cursor-pointer text-info' : ''} text-xl`}
                                 // onClick={() => selectedCustomer(cell.row.original)}
                                 onClick={() => setModal(true)}
-                                style={{ fontSize: '20px' }}
                                 title="Download"
                             >
                                 {cell.row.original.dlr_dealer_name && cell.row.original.dlr_dealer_name !== '' && cell.row.original.file_doc ? (
@@ -384,22 +440,28 @@ const TLVRevisionRequestList = () => {
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
-            style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
-            },
-        }
+            className: 'overflow-x-hidden', // hides horizontal scrollbar
+        },
+        // mantineTableHeadCellProps: {
+        //     style: {
+        //         fontSize: '0.625rem',
+        //         fontWeight: '600',
+        //         color: '#374151',
+        //         textAlign: 'left',
+        //         padding: '0.5rem 0.65rem',
+        //         whiteSpace: 'nowrap',
+        //         overflow: 'hidden',
+        //         textOverflow: 'ellipsis'
+        //     }
+        // }
     });
 
-    const customStylesForStatusSelect = {
-        option: (base: any, { data }: any) => {
-            return {
-                ...base,
-                fontSize: 12,
-                fontWeight: 'bold',
-                color: data.value == 'PENDING' ? 'orange' : data.value == 'APPROVED' ? 'green' : 'red',
-            };
-        },
-    };
+    useEffect(() => {
+        console.log(pcaParam)
+    }, [pcaParam])
+    useEffect(() => {
+        console.log(selectedDropdown)
+    }, [selectedDropdown])
 
     return (
         <>
@@ -419,6 +481,7 @@ const TLVRevisionRequestList = () => {
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_DEPOT');
                             }}
+                            styles={selectStyles}
                         />
                     </div>
 
@@ -432,6 +495,7 @@ const TLVRevisionRequestList = () => {
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_TERR');
                             }}
+                            styles={selectStyles}
                         />
                     </div>
 
@@ -447,11 +511,11 @@ const TLVRevisionRequestList = () => {
 
                     <div>
                         <label className="block text-sm font-semibold mb-1">Bill To:</label>
-                        <input type="text" placeholder="Bill To" className="w-full border rounded form-input text-sm" name="billTo" value={pcaParam.billTo} onChange={handleChange} autoComplete="off" />
+                        <input type="number" placeholder="Bill To" className="w-full border rounded form-input text-sm" name="billTo" value={pcaParam.billTo} onChange={handleChange} autoComplete="off" />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
                             className="text-sm"
                             isSearchable={true}
@@ -460,12 +524,12 @@ const TLVRevisionRequestList = () => {
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_STATUS');
                             }}
-                            styles={customStylesForStatusSelect}
+                            styles={selectStyles}
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold mb-1">Sub Status:</label>
+                        <label className="block text-sm font-semibold mb-1">Sub Status:<span className="text-red-500 ml-0.5">*</span></label>
                         <Select
                             className="text-sm"
                             isSearchable={true}
@@ -474,6 +538,8 @@ const TLVRevisionRequestList = () => {
                             onChange={() => {
                                 handleTypeSelect(event, 'USER_SUB_STATUS');
                             }}
+                            styles={selectStyles}
+                        // styles={statusSelectStyles}
                         />
                     </div>
 
@@ -489,7 +555,7 @@ const TLVRevisionRequestList = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+            <div className="mb-2 max-h-[50vh] overflow-y-auto">
                 <MantineReactTable table={table} />
             </div>
 
