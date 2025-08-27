@@ -20,10 +20,10 @@ import EPCAHOApprovalList from './pages/protecton/ePCA/EPCAHOApprovalList';
 import EPCAHoApprovalDetails from './pages/protecton/ePCA/EPCAHoApprovalDetails';
 import EPCACancellation from './pages/protecton/ePCA/EPCACancellation';
 import TLVRevisionRequestList from './pages/protecton/TLV/TLVRevisionRequestList';
-// Remove direct import of TLVRevisionRequestDetails to prevent MUI bundling during SSR
-import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotApproval';
-import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
-import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
+// import TLVRevisionDepotApproval from './pages/protecton/TLV/TLVRevisionDepotApproval';
+// import TLVRevisionRSMApproval from './pages/protecton/TLV/TLVRevisionRSMApproval';
+// import TLVRevisionHoApproval from './pages/protecton/TLV/TLVRevisionHoApproval';
+// import TLVRevisionHoCommercialApproval from './pages/protecton/TLV/TLVRevisionHoCommercialApproval';
 import TransactDsr from './pages/protecton/Transact/TransactDsr';
 import TransactDespatch from './pages/protecton/Transact/TransactDespatch';
 import TransactStock from './pages/protecton/Transact/TransactStock';
@@ -41,8 +41,16 @@ import PotentialLead from './pages/protecton/Lead/PotentialLead';
 import MWAReportDetails from './pages/protecton/HoMarketing/MWAReportDetails';
 import TSRMonitoringReport from './pages/protecton/HoMarketing/TSRMonitoringReport';
 import ClientOnly from './components/ClientOnly';
-import TLVRevisionHoCommercialApproval from './pages/protecton/TLV/TLVRevisionHoCommercialApproval';
 import TLVRevisionRequestDetails from './pages/protecton/TLV/TLVRevisionRequestDetails';
+import TLVRevisionDepotApproval1 from './pages/protecton/TLV/TLVRevisionDepotApproval1';
+import FromMenuMaster from './pages/admin/app/FromMenuMaster';
+import UserFormAccess from './pages/admin/UserFormAccess';
+import PasswordHelper from './pages/admin/PasswordHelper';
+import UserProfile from './pages/admin/user-profile/UserProfile';
+import UserListViewNew from './pages/admin/users/UserListViewNew';
+import TLVRevisionRSMApproval1 from './pages/protecton/TLV/TLVRevisionRSMApproval1';
+import TLVRevisionHoApproval1 from './pages/protecton/TLV/TLVRevisionHoApproval1';
+import TLVRevisionHoCommercialApproval1 from './pages/protecton/TLV/TLVRevisionHoCommercialApproval1';
 // import TLVRevisionRequestDetails1 from './pages/protecton/TLV/TLVRevisionRequestDetails';
 
 // Lazy load the MUI component to prevent SSR bundling
@@ -65,6 +73,26 @@ function App() {
           {
             path: '/',
             element: <Dashboard />,
+          },
+          {
+            path: '/admin/FromMenuMaster/',
+            element: <FromMenuMaster />,
+          },
+          {
+            path: '/admin/UserFormAccess/',
+            element: <UserFormAccess />,
+          },
+          {
+            path: '/admin/user-profile/UserProfile/',
+            element: <UserProfile />,
+          },
+          {
+            path: '/admin/users/userListView/',
+            element: <UserListViewNew />,
+          },
+          {
+            path: '/admin/PasswordHelper/',
+            element: <PasswordHelper />,
           },
           {
             path: '/Protecton/ePCA/EPCAList',
@@ -120,21 +148,37 @@ function App() {
               </ClientOnly>
             ),
           },
+          // {
+          //   path: '/Protecton/TLV/TLVRevisionDepotApproval',
+          //   element: <TLVRevisionDepotApproval />,
+          // },
           {
             path: '/Protecton/TLV/TLVRevisionDepotApproval',
-            element: <TLVRevisionDepotApproval />,
+            element: <TLVRevisionDepotApproval1 />,
           },
+          // {
+          //   path: '/Protecton/TLV/TLVRevisionRSMApproval',
+          //   element: <TLVRevisionRSMApproval />,
+          // },
           {
             path: '/Protecton/TLV/TLVRevisionRSMApproval',
-            element: <TLVRevisionRSMApproval />,
+            element: <TLVRevisionRSMApproval1 />,
           },
+          // {
+          //   path: '/Protecton/TLV/TLVRevisionHoApproval',
+          //   element: <TLVRevisionHoApproval />,
+          // },
           {
             path: '/Protecton/TLV/TLVRevisionHoApproval',
-            element: <TLVRevisionHoApproval />,
+            element: <TLVRevisionHoApproval1 />,
           },
+          // {
+          //   path: '/Protecton/TLV/TLVRevisionHoCommercialApproval',
+          //   element: <TLVRevisionHoCommercialApproval />,
+          // },
           {
             path: '/Protecton/TLV/TLVRevisionHoCommercialApproval',
-            element: <TLVRevisionHoCommercialApproval />,
+            element: <TLVRevisionHoCommercialApproval1 />,
           },
           {
             path: '/Protecton/Transact/TransactDsr',
@@ -223,6 +267,11 @@ function App() {
       <Routes>
         <Route path="/" element={<FixedLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="/admin/FromMenuMaster/" element={<FromMenuMaster />} />
+          <Route path="/admin/UserFormAccess/" element={<UserFormAccess />} />
+          <Route path="/admin/user-profile/UserProfile/" element={<UserProfile />} />
+          <Route path="/admin/users/userListView/" element={<UserListViewNew />} />
+          <Route path="/admin/PasswordHelper/" element={<PasswordHelper />} />
           <Route path="/Protecton/ePCA/EPCAList" element={<EPCAList />} />
           <Route path="/Protecton/ePCA/EPCADetails" element={<EPCADetails />} />
           <Route path="/Protecton/ePCA/EPCADepotApprovalList" element={<EPCADepotApprovalList />} />
@@ -240,9 +289,10 @@ function App() {
               </Suspense>
             </ClientOnly>
           } />
-          <Route path="/Protecton/TLV/TLVRevisionDepotApproval" element={<TLVRevisionDepotApproval />} />
-          <Route path="/Protecton/TLV/TLVRevisionRSMApproval" element={<TLVRevisionRSMApproval />} />
-          <Route path="/Protecton/TLV/TLVRevisionHoApproval" element={<TLVRevisionHoApproval />} />
+          <Route path="/Protecton/TLV/TLVRevisionDepotApproval" element={<TLVRevisionDepotApproval1 />} />
+          <Route path="/Protecton/TLV/TLVRevisionRSMApproval" element={<TLVRevisionRSMApproval1 />} />
+          <Route path="/Protecton/TLV/TLVRevisionHoApproval" element={<TLVRevisionHoApproval1 />} />
+          <Route path="/Protecton/TLV/TLVRevisionHoCommercialApproval" element={<TLVRevisionHoCommercialApproval1 />} />
           <Route path="/Protecton/Transact/TransactDsr" element={<TransactDsr />} />
           <Route path="/Protecton/Transact/TransactDespatch" element={<TransactDespatch />} />
           <Route path="/Protecton/Transact/TransactStock" element={<TransactStock />} />
