@@ -39,6 +39,7 @@ const FixedLayout = () => {
     };
 
     const test = (route: string) => {
+        console.log("route", route);
         setValueInSeasonStorage('listRoute', 'Menu');
         setValueInSeasonStorage('leadListRoute', 'Menu');
         navigate(route);
@@ -60,6 +61,7 @@ const FixedLayout = () => {
                 <button
                     className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left text-gray-800 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 rounded-md"
                     onClick={() => {
+                        console.log(item)
                         test(item.form_link);
                         setUserApplicableMenu(prev => [...childHideFunc(prev, item.form_id)]);
                     }}

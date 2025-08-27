@@ -1,38 +1,18 @@
-import React, { type ChangeEvent, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react';
+import { Fragment, useEffect, useMemo, useState, type ChangeEvent, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from 'react'
+import CommonFilterComponent from './CommonFilterComponent'
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table'
+import { UseAuthStore } from '../../../services/store/AuthStore';
+import * as Epca from '../../../services/api/protectonEpca/EpcaList';
+import * as Tlv from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
+import * as TlvHoCom from '../../../services/api/protectonEpca/TLVRevisionHoCommercialApproval';
+import { useNavigate } from 'react-router-dom';
+import { EpcaCustomerStore } from '../../../services/store/Protecton/EpcaCustomerDetailsStore';
 import Select from 'react-select';
 import { Group, Tooltip } from '@mantine/core';
-import { IconDownload, IconPlus, IconCheck, IconX, IconEye, IconRotate, IconEdit } from '@tabler/icons-react';
-// import IconSearch from '@/src/components/Icon/IconSearch';
-import { CiSearch } from "react-icons/ci";
-import { useMemo, useState, useEffect } from 'react';
-import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
-import * as Tlv from '../../../services/api/protectonEpca/TLVRevisionRSMApproval';
-import * as Epca from '../../../services/api/protectonEpca/EpcaList';
-// import * as TlvHo from '../../../services/api/protectonEpca/TLVRevisionHOApproval';
-import * as TlvHoCom from '../../../services/api/protectonEpca/TLVRevisionHoCommercialApproval';
-import { EpcaCustomerStore } from '../../../services/store/Protecton/EpcaCustomerDetailsStore';
-import { useNavigate } from 'react-router-dom';
-// import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-// import { GetProdDevImgRouteBuilder } from '@/src/services/functions/getProdDevUrlBuilder';
+import { IconDownload, IconCheck, IconX, IconEye, IconRotate } from '@tabler/icons-react';
+import { commonSuccessToast } from '../../../services/functions/commonToast';
 import { commonAlert } from '../../../services/functions/commonAlert';
-import { commonErrorToast, commonSuccessToast } from '../../../services/functions/commonToast';
-import { UseAuthStore } from '../../../services/store/AuthStore';
-// import { Select as MantineSelect } from '@mantine/core';
-
-export interface SELECTED_DROPDOWN {
-    Userdepot: number;
-    Userterritory: number;
-    Userstatus: number;
-    UsersubStatus: number;
-}
-const selectedDropdownInit: SELECTED_DROPDOWN = {
-    Userdepot: -1,
-    Userterritory: 0,
-    Userstatus: 0,
-    UsersubStatus: -1,
-};
 
 type TLVType = {
     // set custom column headings
@@ -50,9 +30,6 @@ type TLVType = {
     td_remarks: string;
     auto_id: string;
     file_doc: string;
-    dlr_bill_to: string;
-    depot_code: string;
-    td_term_id: number;
 };
 
 interface TlvLogInit {
@@ -73,6 +50,7 @@ interface TlvLogInit {
     remarks: any;
     td_submission_type: any;
 }
+
 const TlvLogDto: TlvLogInit = {
     depot_regn: '',
     depot_code: '',
@@ -92,112 +70,26 @@ const TlvLogDto: TlvLogInit = {
     td_submission_type: '',
 };
 
-const TLVRevisionHoCommercialApproval = () => {
-    const [data, setData] = useState<TLVType[]>([]);
-    const pcaParamInit = {
-        acctNo: '',
-        customerName: '',
-        billTo: '',
-        sblcode: '',
-    }
-    const [pcaParam, setPcaParam] = useState({ ...pcaParamInit });
-    const [selectedDropdown, setSelectedDropdown] = useState<SELECTED_DROPDOWN>({...selectedDropdownInit});
-    const [depot, setDepot] = useState<any>([]);
-    const [applTerr, setApplTerr] = useState<any>([]);
-    const [approveStatus, setApproveStatus] = useState<any>([]);
-    const [mainStatus, setMainStatus] = useState([
-        { label: 'Pending', value: 'PENDING' },
-        { label: 'Approved', value: 'APPROVED' },
-        { label: 'Rejected', value: 'REJECTED' },
-    ]);
-    const { setCustomerProfile } = EpcaCustomerStore((state) => state);
-    const [showTlvModal, setShowTlvModal] = useState(false);
+const TLVRevisionHoCommercialApproval1 = () => {
+    const [loading, setLoading]: any = useState(false);
+    const [dgData, setDgData]: any = useState([]);
+    const [selectBoxData, setSelectBoxData]: any = useState({
+        depot: [],
+        terr: [],
+        mainStatus: [
+            { label: 'Pending', value: 'PENDING' },
+            { label: 'Approved', value: 'APPROVED' },
+            { label: 'Rejected', value: 'REJECTED' },
+        ],
+        aprvStatus: []
+    });
+    const [filterData, setFilterData]: any = useState({ depotCode: '', terrCode: '', billToCode: '', dealerCode: '', dealerName: '', mainStatus: 'PENDING', aprvStatus: "PENDING_HO_COMMERCIAL" });
     const [tlvLogData, setTlvLogData] = useState<TlvLogInit[]>([TlvLogDto]);
-    const [tlvTermdValues, setTlvTermdValues] = useState<any>({});
+    const [showTlvModal, setShowTlvModal] = useState(false);
     const [dropdownOptions, setDropdownOptions] = useState<any>([]);
     const [selectedValue, setSelectedValue] = useState<any>(null);
-    const [isEditMode, setIsEditMode] = useState(false);
+
     const user = UseAuthStore((state: any) => state.userDetails);
-    const [loading, setLoading] = useState(false);
-    // const router = useRouter();
-    const navigate = useNavigate();
-
-    // const selectedCustomer = (Lead: any) => {
-    //     setLoading(true);
-    //     setCustomerProfile(Lead);
-    //     router.push('/Protecton/ePCA/EPCADetails/');
-    //     setLoading(false);
-    // };
-
-    const setValueInSessionStorage = (key: string, value: string) => {
-        const storage = sessionStorage;
-        storage.setItem(key, JSON.stringify(value));
-    };
-
-    const clearAllFormFields = () => {
-        // Preserve the current Sub Status value
-        const currentSubStatus = selectedDropdown.UsersubStatus;
-        setSelectedDropdown({
-            ...selectedDropdownInit,
-            UsersubStatus: currentSubStatus
-        });
-        setPcaParam({ ...pcaParamInit });
-        setSelectedValue(null);
-        setDropdownOptions([]);
-    };
-
-    const selectedCustomer = (Lead: any) => {
-        setCustomerProfile(Lead);
-        setValueInSessionStorage('epcaTLVDtlList', Lead);
-        setValueInSessionStorage('epcaTLVDtlEntryType', 'View');
-        navigate('/Protecton/TLV/TLVRevisionRequestDetails/');
-    };
-
-    const findSelectedTypeValue = (arr: any[], arrPropName: string, checkValue: string) => {
-        if (arr && arr.length > 0) {
-            const selectedValue = arr.findIndex((item: any) => item[arrPropName] == checkValue);
-            return selectedValue == -1 ? -1 : selectedValue;
-        } else {
-            return -1;
-        }
-    };
-
-    const handleTypeSelect = (e: any, flag: 'USER_DEPOT' | 'USER_TERR' | 'USER_STATUS' | 'USER_SUB_STATUS') => {
-        if (flag == 'USER_DEPOT' && e && e.target.innerText && depot.length > 0) {
-            let getIndex = findSelectedTypeValue(depot, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Userdepot: getIndex }));
-            GetApplicableTerritory(depot[getIndex].depot_code);
-        }
-
-        if (flag == 'USER_TERR' && e && e.target.innerText && applTerr.length > 0) {
-            let getIndex = findSelectedTypeValue(applTerr, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Userterritory: getIndex }));
-        }
-
-        if (flag == 'USER_STATUS' && e && e.target.innerText && mainStatus.length > 0) {
-            let getIndex = findSelectedTypeValue(mainStatus, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, Userstatus: getIndex }));
-            GetPcaStatusData(mainStatus[getIndex].value);
-        }
-
-        if (flag == 'USER_SUB_STATUS' && e && e.target.innerText && approveStatus.length > 0) {
-            let getIndex = findSelectedTypeValue(approveStatus, 'label', e.target.innerText);
-            setSelectedDropdown((prev) => ({ ...prev, UsersubStatus: getIndex }));
-        }
-    };
-
-    const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        const { name, value } = e.target;
-        setPcaParam((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleEditChange = (e: ChangeEvent<HTMLInputElement>, rowIndex: number, field: string) => {
-        const { value } = e.target;
-        setData((prevData) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
-    };
 
     const GetApplicableDepot = async () => {
         setLoading(true);
@@ -208,18 +100,14 @@ const TLVRevisionHoCommercialApproval = () => {
         };
         try {
             const response: any = await Epca.GetApplicableDepotList(data);
-            //labelValueConverter(response.data, 'depot_name', 'depot_code');
             const updatedDepotList = [
-                { label: 'Select...', value: '', depot_name: '', depot_code: '' },
+                { label: 'Select...', value: '' },
                 ...response.data.map((item: any) => ({
                     label: item.depot_name,
-                    value: item.depot_code,
-                    depot_name: item.depot_name,
-                    depot_code: item.depot_code,
+                    value: item.depot_code
                 })),
             ];
-
-            setDepot(updatedDepotList);
+            setSelectBoxData((prevState: any) => ({ ...prevState, depot: updatedDepotList }));
         } catch (error) {
             return;
         }
@@ -235,58 +123,60 @@ const TLVRevisionHoCommercialApproval = () => {
         };
         try {
             const response: any = await Epca.GetApplicableTerrList(data);
-            //labelValueConverter(response.data, 'terr_name', 'terr_code');
-            if (response.data != null && response.data != undefined) {
-                const updatedTerrList = [
-                    { label: 'Select...', value: '', terr_name: '', terr_code: '' },
-                    ...response.data.map((item: any) => ({
-                        label: item.terr_name,
-                        value: item.terr_code,
-                        terr_name: item.terr_name,
-                        terr_code: item.terr_code,
-                    })),
-                ];
-                setApplTerr(updatedTerrList);
-            } else {
-                setApplTerr([]);
-            }
+            const updatedList = [
+                { label: 'Select...', value: '' },
+                ...response.data.map((item: any) => ({
+                    label: item.terr_name,
+                    value: item.terr_code
+                })),
+            ];
+            setSelectBoxData((prevState: any) => ({ ...prevState, terr: updatedList }));
         } catch (error) {
             return;
         }
         setLoading(false);
     };
 
-    const GetPcaStatusData = async (selectedstatus: any) => {
+    const GetPcaStatusData = async () => {
         setLoading(true);
         const data: any = {
-            status: selectedstatus,
+            status: filterData.mainStatus,
             type: 'HOCOMMERCIAL',
         };
         try {
             const response: any = await Tlv.GetTlvStatusList(data);
-            //const newStatusList = response.data;
-
-            const updatedTerrList = [
+            const updatedList = [
                 { label: 'Select...', value: '' },
                 ...response.data.map((item: any) => ({
                     label: item.lov_value,
-                    value: item.lov_code,
-                    lov_value: item.lov_value,
-                    lov_code: item.lov_code,
+                    value: item.lov_code
                 })),
             ];
+            setSelectBoxData((prevState: any) => ({ ...prevState, aprvStatus: updatedList }));
+        } catch (error) {
+            return;
+        }
+        setLoading(false);
+    };
 
-            //labelValueConverter(newStatusList, 'lov_value', 'lov_code');
-
-            setApproveStatus(updatedTerrList);
-
-            const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
-
-            if (!currentUsersubStatusExists) {
-                setSelectedDropdown((prev) => ({
-                    ...prev,
-                    UsersubStatus: 0,
-                }));
+    // list api 
+    const GetTlcHoCommercialApprovalListData = async () => {
+        setLoading(true);
+        const data: any = {
+            depotCode: filterData?.depotCode,
+            terrCode: filterData?.terrCode,
+            billToCode: filterData?.billToCode,
+            dealerCode: filterData?.dealerCode,
+            dealerName: filterData?.dealerName,
+            mainStatus: filterData?.mainStatus,
+            aprvStatus: filterData?.aprvStatus,
+        };
+        try {
+            const response: any = await TlvHoCom.GetTlvHoCommercialApprovalList(data);
+            if (response.data) {
+                setDgData(response.data.table);
+            } else {
+                setDgData([]);
             }
         } catch (error) {
             return;
@@ -294,18 +184,27 @@ const TLVRevisionHoCommercialApproval = () => {
         setLoading(false);
     };
 
-    const GetTlvRevisionLog = async (autoid: string) => {
-        setLoading(true);
-        const data: any = {
-            auto_id: autoid,
-        };
-        try {
-            const response: any = await Tlv.GetTlvRevisionLogDetails(data);
-            setTlvLogData(response.data.table);
-        } catch (error) {
-            return;
-        }
-        setLoading(false);
+    const handleSearch = () => { GetTlcHoCommercialApprovalListData(); };
+
+    const { setCustomerProfile } = EpcaCustomerStore((state) => state);
+
+    const setValueInSessionStorage = (key: string, value: string) => {
+        const storage = sessionStorage;
+        storage.setItem(key, JSON.stringify(value));
+    };
+
+    const navigate = useNavigate();
+
+    const selectedCustomer = (Lead: any) => {
+        setCustomerProfile(Lead);
+        setValueInSessionStorage('epcaTLVDtlList', Lead);
+        setValueInSessionStorage('epcaTLVDtlEntryType', 'View');
+        navigate('/Protecton/TLV/TLVRevisionRequestDetails/');
+    };
+
+    const handleEditChange = (e: ChangeEvent<HTMLInputElement>, rowIndex: number, field: string) => {
+        const { value } = e.target;
+        setDgData((prevData: any[]) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
     };
 
     async function TlvApprove(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; approved_type?: any; }) {
@@ -316,7 +215,7 @@ const TLVRevisionHoCommercialApproval = () => {
                     tlv_id: String(data.auto_id),
                     approval_status: data.approved_type != '' ? data.approved_type : '',
                     remarks: data.td_remarks != '' ? data.td_remarks : '',
-                    term_id: selectedValue != '' ? selectedValue : '',
+                    term_id: '0',
                     Proposed_tlv: String(data.td_proposed_tlv) != '' ? data.td_proposed_tlv : '',
                     proposed_credit_day: String(data.td_proposed_cr_days) != '' ? data.td_proposed_cr_days : '',
                 };
@@ -325,9 +224,8 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Approved Successfully.');
-                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
-                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
-                    // router.reload();
+                    GetTlcHoCommercialApprovalListData();
+                    setFilterData((prevState: any) => ({ ...prevState, depotCode: '', terrCode: '', billToCode: '', dealerCode: '', dealerName: '' }));
                 }
             }
         });
@@ -351,9 +249,8 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Rejected Successfully.');
-                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
-                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
-                    // router.reload();
+                    GetTlcHoCommercialApprovalListData();
+                    setFilterData((prevState: any) => ({ ...prevState, depotCode: '', terrCode: '', billToCode: '', dealerCode: '', dealerName: '' }));
                 }
             }
         });
@@ -377,144 +274,27 @@ const TLVRevisionHoCommercialApproval = () => {
 
                 if (response.response_message) {
                     commonSuccessToast('TLV Revision Request Reverted Successfully.');
-                    // navigate('/Protecton/TLV/TLVRevisionHoCommercialApproval/');
-                    GetTlcHoCommercialApprovalListData(() => clearAllFormFields());
-                    // router.reload();
+                    GetTlcHoCommercialApprovalListData();
+                    setFilterData((prevState: any) => ({ ...prevState, depotCode: '', terrCode: '', billToCode: '', dealerCode: '', dealerName: '' }));
                 }
             }
         });
         setLoading(false);
     }
 
-    // list api 
-    const GetTlcHoCommercialApprovalListData = async (onComplete?: () => void) => {
+    const GetTlvRevisionLog = async (autoid: string) => {
         setLoading(true);
         const data: any = {
-            depotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
-            terrCode: selectedDropdown.Userterritory != 0 ? applTerr[selectedDropdown.Userterritory].terr_code : '',
-            billToCode: pcaParam.billTo != '' ? pcaParam.billTo : '',
-            dealerCode: pcaParam.acctNo != '' ? pcaParam.acctNo : '',
-            dealerName: pcaParam.customerName != '' ? pcaParam.customerName : '',
-            mainStatus: selectedDropdown.Userstatus != -1 ? mainStatus[selectedDropdown.Userstatus].value : 'PENDING',
-            aprvStatus: selectedDropdown.UsersubStatus != -1 ? approveStatus[selectedDropdown.UsersubStatus].lov_code : 'PENDING_HO_COMMERCIAL',
+            auto_id: autoid,
         };
         try {
-            const response: any = await TlvHoCom.GetTlvHoCommercialApprovalList(data);
-            if (response && response.data != null && response.data != undefined) {
-                setData(response.data.table);
-            } else {
-                setData([]);
-            }
+            const response: any = await Tlv.GetTlvRevisionLogDetails(data);
+            setTlvLogData(response.data.table);
         } catch (error) {
             return;
         }
         setLoading(false);
-        
-        // Execute callback if provided
-        if (onComplete) {
-            onComplete();
-        }
     };
-
-    const BesicDetailTable = ({ data }: any) => {
-        return (
-            <table className="custTableView w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th className="w-[5%] text-center align-middle">REGION</th>
-                        <th className="w-[23%] text-center align-middle">DEPOT</th>
-                        <th className="w-[7%] text-center align-middle">TERRITORY</th>
-                        <th className="w-[15%] text-center align-middle">ACCT. NO.</th>
-                        <th className="w-[50%] text-center align-middle">DEALER NAME</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className="text-center align-middle">{data[0].depot_regn}</td>
-                        <td className="text-center align-middle">{data[0].depot_name}</td>
-                        <td className="text-center align-middle">{data[0].terr_code}</td>
-                        <td className="text-center align-middle">{data[0].dealer_code}</td>
-                        <td className="text-center align-middle">{data[0].dealer_name}</td>
-                    </tr>
-                </tbody>
-            </table>
-        );
-    };
-
-    const TLVDetailsGrid = ({ data }: any) => {
-        return (
-            <table className="custTableView w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th className="w-[15%] text-center">Date</th>
-                        <th className="w-[10%] text-center">Current TLV</th>
-                        <th className="w-[10%] text-center">Requested TLV</th>
-                        <th className="w-[10%] text-center">Credit Days</th>
-                        <th className="w-[10%] text-center">Proposed Credit Days</th>
-                        <th className="w-[20%] text-center">Status</th>
-                        <th className="w-[25%] text-center">Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.length > 0 ? (
-                        data.map((row: { created_date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; current_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; credit_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_cr_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; status_value: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; remarks: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
-                            <tr key={index}>
-                                <td className="text-center align-middle">{row.created_date}</td>
-                                <td className="text-center align-middle">{row.current_tlv}</td>
-                                <td className="text-center align-middle">{row.proposed_tlv}</td>
-                                <td className="text-center align-middle">{row.credit_days}</td>
-                                <td className="text-center align-middle">{row.proposed_cr_days}</td>
-                                <td className="text-center align-middle">{row.status_value}</td>
-                                <td className="text-center align-middle">{row.remarks}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={7} className="text-center align-middle">
-                                No record(s) found.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        );
-    };
-
-    useEffect(() => {
-        GetApplicableDepot();
-        //GetPcaStatusData('PENDING');
-        GetPcaStatusData('PENDING').then(() => {
-            // Set the default value after dropdown data is populated
-            setSelectedDropdown((prev) => ({
-                ...prev,
-                UsersubStatus: 4,
-            }));
-            GetTlcHoCommercialApprovalListData();
-        });
-    }, []);
-
-    const handleSearch = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        GetTlcHoCommercialApprovalListData();
-    };
-
-    const handleApprove = (row: TLVType) => {
-        TlvApprove(row);
-    };
-
-    const handleReject = (row: TLVType) => {
-        TlvReject(row);
-    };
-
-    const handleView = (row: TLVType) => {
-        GetTlvRevisionLog(row.auto_id);
-    };
-
-    const handleRevert = (row: TLVType) => {
-        TlvRevert(row);
-    };
-
-
 
     const columns = useMemo<MRT_ColumnDef<TLVType>[]>(
         () => [
@@ -567,8 +347,7 @@ const TLVRevisionHoCommercialApproval = () => {
                 accessorKey: 'td_proposed_tlv',
                 header: 'Requested TLV',
                 size: 70,
-
-                Cell: ({ cell, row }) =>
+                Cell: ({ row }) =>
                     row.original.td_proposed_tlv !== null && row.original.td_proposed_tlv !== undefined ? (
                         <input className="tableInput" type="number" value={row.original.td_proposed_tlv} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_tlv')} />
                     ) : null,
@@ -582,8 +361,7 @@ const TLVRevisionHoCommercialApproval = () => {
                 accessorKey: 'td_proposed_cr_days',
                 header: 'Proposed Credit Days',
                 size: 140,
-
-                Cell: ({ cell, row }) =>
+                Cell: ({ row }) =>
                     row.original.td_proposed_cr_days !== null && row.original.td_proposed_cr_days !== undefined ? (
                         <input className="tableInput" type="text" value={row.original.td_proposed_cr_days} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_cr_days')} />
                     ) : (
@@ -594,8 +372,7 @@ const TLVRevisionHoCommercialApproval = () => {
                 accessorKey: 'dropdown_field',
                 header: 'Credit Term',
                 size: 140,
-
-                Cell: ({ cell, row }) => {
+                Cell: ({ row }: any) => {
                     useEffect(() => {
                         //setLoading(true);
                         if (row.original.depot_code && row.original.dlr_bill_to) {
@@ -661,47 +438,47 @@ const TLVRevisionHoCommercialApproval = () => {
                 accessorKey: 'td_remarks',
                 header: 'Remarks',
                 size: 140,
-                Cell: ({ cell, row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
+                Cell: ({ row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
             },
             {
                 id: 'action',
                 header: 'Action',
                 size: 120,
 
-                Cell: ({ row }) => {
+                Cell: ({ row }: any) => {
                     const status = row.original.status_value;
                     const downloadLink = row.original.file_doc ? `https://bpilmobile.bergerindia.com/VIRTUAL_DOCS/PROTECTON_MOB_APP/${row.original.file_doc}` : null;
 
                     const shouldShowButton = !status.includes('APPROVED') && !status.includes('REJECTED');
 
-                    const shouldEditShowButton = !status.includes('APPROVED') && !status.includes('REJECTED') && row.original.td_proposed_cr_days > 0;
+                    // const shouldEditShowButton = !status.includes('APPROVED') && !status.includes('REJECTED') && row.original.td_proposed_cr_days > 0;
 
-                    const handleEditClick = async () => {
-                        setLoading(true);
-                        setIsEditMode(true);
-                        const data: any = {
-                            DepotCode: row.original.depot_code,
-                            BillToCode: row.original.dlr_bill_to,
-                        };
-                        try {
-                            const response: any = await TlvHoCom.TlvGetTermDetails(data);
-                            if (response.data.table != null && response.data.table != undefined) {
-                                const updatedList = [
-                                    { label: 'Select...', value: '' },
-                                    ...response.data.table.map((item: any) => ({
-                                        label: item.tpt_description,
-                                        value: item.tpt_term_id,
-                                        tpt_description: item.tpt_description,
-                                        tpt_term_id: item.tpt_term_id,
-                                    })),
-                                ];
-                                setDropdownOptions(updatedList);
-                            } else {
-                                setDropdownOptions([]);
-                            }
-                        } catch (error) { }
-                        setLoading(false);
-                    };
+                    // const handleEditClick = async () => {
+                    //     setLoading(true);
+                    //     // setIsEditMode(true);
+                    //     const data: any = {
+                    //         DepotCode: row.original.depot_code,
+                    //         BillToCode: row.original.dlr_bill_to,
+                    //     };
+                    //     try {
+                    //         const response: any = await TlvHoCom.TlvGetTermDetails(data);
+                    //         if (response.data.table != null && response.data.table != undefined) {
+                    //             const updatedList = [
+                    //                 { label: 'Select...', value: '' },
+                    //                 ...response.data.table.map((item: any) => ({
+                    //                     label: item.tpt_description,
+                    //                     value: item.tpt_term_id,
+                    //                     tpt_description: item.tpt_description,
+                    //                     tpt_term_id: item.tpt_term_id,
+                    //                 })),
+                    //             ];
+                    //             setDropdownOptions(updatedList);
+                    //         } else {
+                    //             setDropdownOptions([]);
+                    //         }
+                    //     } catch (error) { }
+                    //     setLoading(false);
+                    // };
 
                     return (
                         <div className="flex justify-end">
@@ -711,7 +488,7 @@ const TLVRevisionHoCommercialApproval = () => {
                                         size={20}
                                         className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
                                         onClick={() => {
-                                            handleView(row.original);
+                                            GetTlvRevisionLog(row.original.auto_id);
                                             setShowTlvModal(true);
                                         }}
                                     />
@@ -721,7 +498,7 @@ const TLVRevisionHoCommercialApproval = () => {
                                         <IconCheck
                                             size={20}
                                             className="text-green-600 cursor-pointer hover:text-green-800 transition-colors"
-                                            onClick={() => handleApprove(row.original)}
+                                            onClick={() => TlvApprove(row.original)}
                                         />
                                     </Tooltip>
                                 )}
@@ -730,7 +507,7 @@ const TLVRevisionHoCommercialApproval = () => {
                                         <IconX
                                             size={20}
                                             className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
-                                            onClick={() => handleReject(row.original)}
+                                            onClick={() => TlvReject(row.original)}
                                         />
                                     </Tooltip>
                                 )}
@@ -749,7 +526,7 @@ const TLVRevisionHoCommercialApproval = () => {
                                         <IconRotate
                                             size={20}
                                             className="text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
-                                            onClick={() => handleRevert(row.original)}
+                                            onClick={() => TlvRevert(row.original)}
                                         />
                                     </Tooltip>
                                 )}
@@ -771,106 +548,104 @@ const TLVRevisionHoCommercialApproval = () => {
         [dropdownOptions, selectedValue]
     );
 
-    const table = useMantineReactTable({
+    const table = useMantineReactTable<TLVType>({
         columns,
-        data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+        data: dgData,
         enableColumnResizing: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
-        columnResizeMode: 'onChange',
-        // mantineTableContainerProps: {
-        //     style: {
-        //         overflowX: 'hidden', // hides horizontal scrollbar
-        //     },
-        // }
+        columnResizeMode: 'onChange'
     });
+
+    const BesicDetailTable = ({ data }: any) => {
+        return (
+            <table className="custTableView w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th className="w-1/5 text-center align-middle">Region</th>
+                        <th className="w-1/5 text-center align-middle">Depot</th>
+                        <th className="w-1/5 text-center align-middle">Territory</th>
+                        <th className="w-1/5 text-center align-middle">Acct. No.</th>
+                        <th className="w-1/5 text-center align-middle">Dealer Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td className="text-center align-middle">{data[0].depot_regn}</td>
+                        <td className="text-center align-middle">{data[0].depot_name}</td>
+                        <td className="text-center align-middle">{data[0].terr_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_code}</td>
+                        <td className="text-center align-middle">{data[0].dealer_name}</td>
+                    </tr>
+                </tbody>
+            </table>
+        );
+    };
+
+    const TLVDetailsGrid = ({ data }: any) => {
+        return (
+            <table className="custTableView w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th className="w-[15%] text-center">Date</th>
+                        <th className="w-[10%] text-center">Current TLV</th>
+                        <th className="w-[10%] text-center">Requested TLV</th>
+                        <th className="w-[10%] text-center">Credit Days</th>
+                        <th className="w-[10%] text-center">Proposed Credit Days</th>
+                        <th className="w-[15%] text-center">Status</th>
+                        <th className="w-[30%] text-center">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.length > 0 ? (
+                        data.map((row: { created_date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; current_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_tlv: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; credit_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; proposed_cr_days: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; status_value: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; remarks: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
+                            <tr key={index}>
+                                <td className="text-center align-middle">{row.created_date}</td>
+                                <td className="text-center align-middle">{row.current_tlv}</td>
+                                <td className="text-center align-middle">{row.proposed_tlv}</td>
+                                <td className="text-center align-middle">{row.credit_days}</td>
+                                <td className="text-center align-middle">{row.proposed_cr_days}</td>
+                                <td className="text-center align-middle">{row.status_value}</td>
+                                <td className="text-center align-middle">{row.remarks}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={7} className="text-center align-middle">
+                                No record(s) found.
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        );
+    };
+
+    useEffect(() => {
+        filterData?.depotCode && GetApplicableTerritory(filterData?.depotCode);
+    }, [filterData?.depotCode]);
+
+    useEffect(() => {
+        GetApplicableDepot();
+        GetPcaStatusData();
+        filterData?.mainStatus && filterData?.aprvStatus && GetTlcHoCommercialApprovalListData();
+    }, []);
 
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
                 <h5 className="text-lg font-semibold dark:text-white-light">TLV Revision HO Commercial Approval</h5>
             </div>
+
             <div className="bg-white rounded-lg px-4 py-1 shadow-md mb-2">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-1">
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Depot:</label>
-                        <Select
-                            className="text-sm"
-                            isSearchable={true}
-                            value={selectedDropdown.Userdepot !== -1 ? depot[selectedDropdown.Userdepot] : null}
-                            options={depot}
-                            onChange={() => {
-                                handleTypeSelect(event, 'USER_DEPOT');
-                            }}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Territory:</label>
-                        <Select
-                            className="text-sm"
-                            isSearchable={true}
-                            value={selectedDropdown.Userterritory !== 0 ? applTerr[selectedDropdown.Userterritory] : null}
-                            options={applTerr}
-                            onChange={() => {
-                                handleTypeSelect(event, 'USER_TERR');
-                            }}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Acct. No.:</label>
-                        <input type="text" placeholder="Acct. No." className="w-full border rounded form-input text-sm" name="acctNo" value={pcaParam.acctNo} onChange={handleChange} autoComplete="off" />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Customer Name:</label>
-                        <input type="text" placeholder="Customer Name" className="w-full border rounded form-input text-sm" name="customerName" value={pcaParam.customerName} onChange={handleChange} autoComplete="off" />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Bill To:</label>
-                        <input type="text" placeholder="Bill To" className="w-full border rounded form-input text-sm" name="billTo" value={pcaParam.billTo} onChange={handleChange} autoComplete="off" />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Status:<span className="text-red-500 ml-0.5">*</span></label>
-                        <Select
-                            className="text-sm"
-                            isSearchable={true}
-                            value={selectedDropdown.Userstatus !== -1 ? mainStatus[selectedDropdown.Userstatus] : null}
-                            options={mainStatus}
-                            onChange={() => {
-                                handleTypeSelect(event, 'USER_STATUS');
-                            }}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-1">Sub Status:<span className="text-red-500 ml-0.5">*</span></label>
-                        <Select
-                            className="text-sm"
-                            isSearchable={true}
-                            value={selectedDropdown.UsersubStatus !== -1 ? approveStatus[selectedDropdown.UsersubStatus] : null}
-                            options={approveStatus}
-                            onChange={() => {
-                                handleTypeSelect(event, 'USER_SUB_STATUS');
-                            }}
-                        />
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex items-end space-x-2">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm flex items-center" onClick={handleSearch}>
-                            <CiSearch /> Search
-                        </button>
-                    </div>
-                </div>
+                <CommonFilterComponent selectBoxData={selectBoxData} filterData={filterData} setFilterData={setFilterData} handleSearch={handleSearch} />
             </div>
-            <div className="mb-2">
+
+            <div className="mb-2 max-h-[50vh] overflow-y-auto">
                 <MantineReactTable table={table} />
             </div>
+
             {/* Modal PopUp */}
             <div>
                 <Transition appear show={showTlvModal} as={Fragment}>
@@ -929,7 +704,7 @@ const TLVRevisionHoCommercialApproval = () => {
                 </div>
             )}
         </>
-    );
-};
+    )
+}
 
-export default TLVRevisionHoCommercialApproval;
+export default TLVRevisionHoCommercialApproval1
