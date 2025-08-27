@@ -1,14 +1,15 @@
-import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
-import { ENDPOINTS } from '@/src/helper/EndPoints';
+import { HTTP_POST } from "../../../helper/ApiCall";
+import { ENDPOINTS } from "../../../helper/EndPoints";
 
-export function GetUserAvailableForm<P, G>(data): Promise<G> {
+
+export function GetUserAvailableForm<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetUserAvailableForm) as Promise<G>;
 }
 
-export function GetUserApplicableForm<P, G>(data): Promise<G> {
+export function GetUserApplicableForm<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetUserApplicableForm) as Promise<G>;
 }
 
-export function UserFormAccessInsert<P, G>(data): Promise<G> {
+export function UserFormAccessInsert<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.UserFormAccessInsert) as Promise<G>;
 }
