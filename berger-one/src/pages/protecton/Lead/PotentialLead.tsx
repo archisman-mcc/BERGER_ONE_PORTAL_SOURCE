@@ -16,12 +16,12 @@ const PotentialLead = () => {
     const [loading, setLoading] = React.useState(false);
     const dataObj = {
         viewBy: "FROM",
-        verticalData: [],
-        protecton_regionList: [],
-        depotList: [],
-        terrList: [],
-        assignStatusList: [],
-        workStatusList: [],
+        // verticalData: [],
+        // protecton_regionList: [],
+        // depotList: [],
+        // terrList: [],
+        // assignStatusList: [],
+        // workStatusList: [],
         selectedvertical: '',
         selectedProtecton_region: '',
         selectedDepot: '',
@@ -108,6 +108,14 @@ const PotentialLead = () => {
         doc_type_List: [], // Upload Documents doc_type
     }
     const [data, setData] = React.useState<any>({ ...dataObj });
+    const [filterdata, setFilterData] = React.useState<any>({
+        verticalData: [],
+        protecton_regionList: [],
+        depotList: [],
+        terrList: [],
+        assignStatusList: [],
+        workStatusList: [],
+    });
 
     const [showDropdown, setShowDropdown] = React.useState(false);
     const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '' });
@@ -119,8 +127,7 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetVerticalWisBusinessLine(data);
-            // console.log(response?.data?.table)
-            setData((prevData: any) => ({
+            setFilterData((prevData: any) => ({
                 ...prevData,
                 verticalData: response.data.table || [],
             }));
@@ -140,7 +147,7 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonRegion(data);
-            setData((prevData: any) => ({
+            setFilterData((prevData: any) => ({
                 ...prevData,
                 protecton_regionList: response.data.table || [],
             }));
@@ -154,7 +161,6 @@ const PotentialLead = () => {
     const Getdepot = async (region: string) => {
         setLoading(true);
         const payload: any = {
-            // user_group: user.group_code,
             app_id: '15',
             region: region,
             terr_code: '',
@@ -162,7 +168,7 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonApplicableDepot(payload);
-            setData((prevData: any) => ({
+            setFilterData((prevData: any) => ({
                 ...prevData,
                 depotList: response.data.table || []
             }));
@@ -183,7 +189,7 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonApplicableTerr(payload);
-            setData((prevData: any) => ({
+            setFilterData((prevData: any) => ({
                 ...prevData,
                 terrList: response?.data?.table || []
             }));
@@ -198,17 +204,16 @@ const PotentialLead = () => {
         try {
             const response: any = await CommonLovDetails(payload);
             if (payload.lov_type === "PT_ASSIGN_STATUS") {
-                setData((prevData: any) => ({
+                setFilterData((prevData: any) => ({
                     ...prevData,
                     assignStatusList: response.data.table || []
                 }));
             }
             else if (payload.lov_type === "PT_WORK_IN_PROGRESS") {
-                setData((prevData: any) => ({
+                setFilterData((prevData: any) => ({
                     ...prevData,
                     workStatusList: response.data.table || []
                 }));
-
             }
             // -----------PROLINKS popup-----------
             else if (payload.lov_type === "PT_LEAD_CATEGORY") {
@@ -400,7 +405,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.verticalData.map((d: any) => ({
+                            options={filterdata.verticalData.map((d: any) => ({
                                 value: d.bm_id,
                                 label: d.bm_name,
                             }))}
@@ -415,7 +420,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
+                            options={filterdata.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
                             value={data.selectedProtecton_region}
                             onChange={(event: any) => {
                                 Getdepot(event.value);
@@ -429,7 +434,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
+                            options={filterdata.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
                             value={data.selectedDepot}
                             onChange={(event: any) => {
                                 Getterr({ region: data.selectedProtecton_region.value, depot: event.value });
@@ -442,7 +447,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
+                            options={filterdata.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
                             value={data.selectedTerr}
                             onChange={(event: any) => {
                                 setData((pre: any) => ({ ...pre, selectedTerr: event }))
@@ -454,7 +459,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.assignStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                            options={filterdata.assignStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                             value={data.selectedAssignStatus}
                             onChange={(event: any) => {
                                 setData((pre: any) => ({ ...pre, selectedAssignStatus: event }))
@@ -466,7 +471,7 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={data.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                            options={filterdata.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                             value={data.selectedWorkStatus}
                             onChange={(event: any) => {
                                 setData((pre: any) => ({ ...pre, selectedWorkStatus: event }))
@@ -490,8 +495,8 @@ const PotentialLead = () => {
                             </button>
                             {showDropdown && (
                                 <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
-                                    {data?.verticalData.length &&
-                                        data?.verticalData.map((vd: any, indx: any) =>
+                                    {filterdata?.verticalData.length &&
+                                        filterdata?.verticalData.map((vd: any, indx: any) =>
                                             <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name)}>{vd?.bm_name}</button>
                                         )
                                     }
