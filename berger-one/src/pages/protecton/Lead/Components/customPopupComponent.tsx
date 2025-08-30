@@ -642,6 +642,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                             />
                         </div>
                     </div>
+                    {/* DG */}
                     {popupOpenData?.popupHeader === 'SELF' &&
                         <div className="mb-2">
                             <div className="mb-1">
@@ -1027,10 +1028,11 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         className="text-sm"
                                         isSearchable={true}
                                         options={data?.lead_share_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                                        value={data.ptm_lead_share}
+                                        value={popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : data.ptm_lead_share}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_lead_share: event }))
                                         }
+                                        isDisabled={popupOpenData?.popupHeader === 'SELF'}
                                     />
                                 </div>
                                 <div>
@@ -1100,6 +1102,28 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                     }
                                 />
                             </div>
+
+                            {data.ptm_business_type && data.ptm_business_type.value === 'BT1' &&
+                                <>
+                                    <div className="mb-2">
+                                        <div className="mb-1">
+                                            <h2 className="text-sm font-semibold text-gray-800">Consultant/Architect:</h2>
+                                        </div>
+                                        <div className="mb-2">
+                                            <PotentialTrackingcontacts data={data} setData={setData} type="Consultant/Architect" />
+                                        </div>
+                                    </div>
+                                    <div className="mb-2">
+                                        <div className="mb-1">
+                                            <h2 className="text-sm font-semibold text-gray-800">Engineering Contractor:</h2>
+                                        </div>
+                                        <div className="mb-2">
+                                            <PotentialTrackingcontacts data={data} setData={setData} type="EngineeringContractor" />
+                                        </div>
+                                    </div>
+                                </>
+                            }
+
                             <div className="mb-1">
                                 <h2 className="text-sm font-semibold text-gray-800">Add a Team Member:</h2>
                             </div>
