@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -51,6 +51,15 @@ import UserListViewNew from './pages/admin/users/UserListViewNew';
 import TLVRevisionRSMApproval1 from './pages/protecton/TLV/TLVRevisionRSMApproval1';
 import TLVRevisionHoApproval1 from './pages/protecton/TLV/TLVRevisionHoApproval1';
 import TLVRevisionHoCommercialApproval1 from './pages/protecton/TLV/TLVRevisionHoCommercialApproval1';
+import LeadGenerationReport from './pages/protecton/HoMarketing/LeadGenerationReport';
+import ProductPromotionReport from './pages/protecton/HoMarketing/ProductPromotionReport';
+import StakeholderReport from './pages/protecton/HoMarketing/StakeholderReport';
+import EpcaReport from './pages/protecton/HoMarketing/EpcaReport';
+import PoSchedulesReport from './pages/protecton/HoMarketing/PoSchedulesReport';
+import CustNotVisitedReport from './pages/protecton/HoMarketing/CustNotVisitedReport';
+import CompetitorActivityReport from './pages/protecton/HoMarketing/CompetitorActivityReport';
+import ComplaintsReport from './pages/protecton/HoMarketing/ComplaintsReport';
+import AppUsageReport from './pages/protecton/HoMarketing/AppUsageReport';
 // import TLVRevisionRequestDetails1 from './pages/protecton/TLV/TLVRevisionRequestDetails';
 
 // Lazy load the MUI component to prevent SSR bundling
@@ -244,6 +253,42 @@ function App() {
             path: '/Protecton/HoMarketing/TSRMonitoringReport',
             element: <TSRMonitoringReport />,
           },
+          {
+            path: '/Protecton/HoMarketing/LeadGenerationReport',
+            element: <LeadGenerationReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/ProductPromotionReport',
+            element: <ProductPromotionReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/StakeholderReport',
+            element: <StakeholderReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/EpcaReport',
+            element: <EpcaReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/PoSchedulesReport',
+            element: <PoSchedulesReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/CustNotVisitedReport',
+            element: <CustNotVisitedReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/CompetitorActivityReport',
+            element: <CompetitorActivityReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/ComplaintsReport',
+            element: <ComplaintsReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/AppUsageReport',
+            element: <AppUsageReport />,
+          },
         ],
       },
       {
@@ -309,6 +354,15 @@ function App() {
           <Route path="/Protecton/Lead/PotentialLead" element={<PotentialLead />} />
           <Route path="/Protecton/HoMarketing/MWAReportDetails" element={<MWAReportDetails />} />
           <Route path="/Protecton/HoMarketing/TSRMonitoringReport" element={<TSRMonitoringReport />} />
+          <Route path="/Protecton/HoMarketing/LeadGenerationReport" element={<LeadGenerationReport />} />
+          <Route path="/Protecton/HoMarketing/ProductPromotionReport" element={<ProductPromotionReport />} />
+          <Route path="/Protecton/HoMarketing/StakeholderReport" element={<StakeholderReport />} />
+          <Route path="/Protecton/HoMarketing/EpcaReport" element={<EpcaReport />} />
+          <Route path="/Protecton/HoMarketing/PoSchedulesReport" element={<PoSchedulesReport />} />
+          <Route path="/Protecton/HoMarketing/CustNotVisitedReport" element={<CustNotVisitedReport />} />
+          <Route path="/Protecton/HoMarketing/CompetitorActivityReport" element={<CompetitorActivityReport />} />
+          <Route path="/Protecton/HoMarketing/ComplaintsReport" element={<ComplaintsReport />} />
+          <Route path="/Protecton/HoMarketing/AppUsageReport" element={<AppUsageReport />} />
         </Route>
         <Route path="/login/cover-login/" element={<Login />} />
       </Routes>

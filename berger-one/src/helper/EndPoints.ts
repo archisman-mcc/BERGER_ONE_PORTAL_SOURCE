@@ -194,6 +194,15 @@ const ALL_ENDPOINTS = {
     GetRegion_report: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetRegion',
     GetUserGroupApplicable: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetUserGroupApplicable',
     GetRegnWiseUserList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetRegnWiseUserList',
+    GetLeadGenReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetLeadGenReport',
+    GetProductPromotionReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetProductPromotionReport',
+    GetStakeholderReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetStakeholderReport',
+    GetEpcaReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetEpcaReport',
+    GetPoSchedulesReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetPoSchedulesReport',
+    GetCustNotVisitedReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetCustNotVisitedReport',
+    GetCompetitorActivityReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetCompetitorActivityReport',
+    GetComplaintsReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetComplaintsReport',
+    GetAppUsageReport: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'GetAppUsageReport',
 
     //#endregion
 };

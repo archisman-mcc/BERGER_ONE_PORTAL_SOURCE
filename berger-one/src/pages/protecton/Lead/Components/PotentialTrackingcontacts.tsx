@@ -14,6 +14,8 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
     React.useEffect(() => {
         type === "ReferralSourceDetails" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "CONTRACTOR") || []);
         type === "ProjectContactPersons" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "Site Contact") || []);
+        type === "Consultant/Architect" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "CONSULTANT") || []);
+        type === "EngineeringContractor" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "ENGINEER") || []);
     }, [data?.potentialTrackingcontacts]);
 
     const handleEditField = (rowIdx: number, field: string, value: string) => {
@@ -44,7 +46,7 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
         }
 
         if (data && Array.isArray(data.potentialTrackingcontacts)) {
-            data.potentialTrackingcontacts[rowIdx] = { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : "" };
+            data.potentialTrackingcontacts[rowIdx] = { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""};
             setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...data.potentialTrackingcontacts] }));
         }
         setEditingRow(null);
