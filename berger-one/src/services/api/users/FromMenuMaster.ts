@@ -1,7 +1,10 @@
-import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
-import { ENDPOINTS } from '@/src/helper/EndPoints';
+// import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
+// import { ENDPOINTS } from '@/src/helper/EndPoints';
 
-export function FormMenuMasterList<P, G>(data): Promise<G> {
+import { HTTP_POST } from "../../../helper/ApiCall";
+import { ENDPOINTS } from "../../../helper/EndPoints";
+
+export function FormMenuMasterList<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.FormMenuMasterList) as Promise<G>;
 }
 

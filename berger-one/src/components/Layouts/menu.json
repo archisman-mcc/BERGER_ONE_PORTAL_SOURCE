@@ -1,0 +1,105 @@
+[
+    {
+        "form_id": 1,
+        "form_name": "Admin",
+        "form_link": "#",
+        "form_icon": "fa fa-user-lock",
+        "form_parent_id": 0,
+        "form_seq": 100,
+        "children": [
+            {
+                "form_id": 3,
+                "form_name": "Form Menu Master",
+                "form_link": "/admin/FromMenuMst",
+                "form_icon": "fa fa-book",
+                "form_parent_id": 1,
+                "form_seq": 100,
+                "children": []
+            },
+            {
+                "form_id": 4,
+                "form_name": "User Form Access",
+                "form_link": "/admin/UserFormAccess",
+                "form_icon": "fa fa-key",
+                "form_parent_id": 1,
+                "form_seq": 200,
+                "children": []
+            },
+            {
+                "form_id": 5,
+                "form_name": "User Profile",
+                "form_link": "/admin/users/userListView",
+                "form_icon": "fa fa-user-friends",
+                "form_parent_id": 1,
+                "form_seq": 300,
+                "children": []
+            },
+
+            {
+                "form_id": 10,
+                "form_name": "Standard Parameter",
+                "form_link": "/admin/StandardParameter",
+                "form_icon": "fa fa-user-edit",
+                "form_parent_id": 1,
+                "form_seq": 500,
+                "children": {}
+            },
+            {
+                "form_id": 11,
+                "form_name": "Lov Details",
+                "form_link": "/admin/LovDetails",
+                "form_icon": "fa fa-edit",
+                "form_parent_id": 1,
+                "form_seq": 600,
+                "children": {}
+            },
+            {
+                "form_id": 12,
+                "form_name": "User Group",
+                "form_link": "/admin/UserGroup",
+                "form_icon": "fa fa-edit",
+                "form_parent_id": 1,
+                "form_seq": 700,
+                "children": {}
+            },
+            {
+                "form_id": 33,
+                "form_name": "Password Helper",
+                "form_link": "/admin/PasswordHelper",
+                "form_icon": "fa fa-key",
+                "form_parent_id": 1,
+                "form_seq": 800,
+                "children": []
+            }
+        ]
+    },
+
+    {
+        "form_id": 65,
+        "form_name": "Followup Log Report",
+        "form_link": "TsiDeskFollowupLogReport.aspx",
+        "form_icon": "fa fa-clipboard-list",
+        "form_parent_id": 51,
+        "form_seq": 400,
+        "children": [
+            {
+                "form_id": 14,
+                "form_name": "Fresh List",
+                "form_link": "/FreshEnquiry/EnquiryList",
+                "form_icon": "fa fa-clipboard-list",
+                "form_parent_id": 13,
+                "form_seq": 100,
+                "children": []
+            },
+            {
+                "form_id": 15,
+                "form_name": "Followup List",
+                "form_link": "/LeadList/LeadList",
+                "form_icon": "fa fa-paste",
+                "form_parent_id": 13,
+                "form_seq": 200,
+                "children": []
+            }
+        ]
+    }
+]

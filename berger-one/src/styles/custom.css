@@ -9,6 +9,8 @@ table tbody tr td .mantine-Input-input {
     min-height: 2rem;
     border-radius: 5px;
     border-color: #cac9c9;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
 }
 
 .mantine-1es4wzm>tbody>tr>td {
@@ -28,13 +30,30 @@ table tbody tr td .mantine-Input-input {
 /* ======================== */
 /* Hide number input spinners for Chrome, Safari, Edge, Opera */
 .no-spinner::-webkit-outer-spin-button,
-.no-spinner::-webkit-inner-spin-button {
+.no-spinner::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Hide number input spinners for Firefox */
-.no-spinner[type="number"] {
+.no-spinner[type="number"],
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Hide number input spinners for all number inputs within tables */
+table input[type="number"]::-webkit-outer-spin-button,
+table input[type="number"]::-webkit-inner-spin-button,
+.mantine-Table-root input[type="number"]::-webkit-outer-spin-button,
+.mantine-Table-root input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+table input[type="number"],
+.mantine-Table-root input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -128,7 +147,7 @@ table tbody tr td .mantine-Input-input {
 
 .custTableView tbody tr td .form-input,
 table tbody tr td .form-input {
-    padding: 0.5rem 0.2rem;
+    padding: 0.5rem 0.5rem;
     font-size: 11px;
     line-height: 14px;
 }
@@ -201,7 +220,7 @@ table tbody tr td .mantine-ActionIcon-root svg {
 }
 
 .fileTypeInput {
-    padding: 0.33rem 0.5rem !important;
+    padding: 0.33rem 0.75rem !important;
 }
 
 .formLabelTx {
@@ -235,14 +254,23 @@ table tbody tr td .mantine-ActionIcon-root svg {
 
 
 
-/* .mantine-1es4wzm>tbody>tr>td {
-    padding: 8px;
-} */
+/* Mantine Table Header Styles - Ensure consistent font sizes */
+.mantine-TableHeadCell-root {
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
 
-/* .mantine-TableHeadCell-Content-Wrapper {
-    font-size: 0.7rem;
-    line-height: 0.75rem;
-    color: #333;
+.mantine-TableHeadCell-Content {
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+.mantine-TableHeadCell-Content-Wrapper {
+    font-size: 0.625rem !important;
+    line-height: 0.9rem !important;
+    color: #374151 !important;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -260,8 +288,8 @@ table.mantine-Table-root>thead>tr>th {
     padding-bottom: 0.5rem !important;
     padding-left: 0.65rem !important;
     padding-right: 0.65rem !important;
-    font-size: 0.7rem;
-    line-height: 0.75rem;
+    font-size: 0.625rem !important;
+    line-height: 0.9rem !important;
 }
 
 table.mantine-Table-root>tbody>tr>td {
@@ -295,7 +323,36 @@ table tr td .mantine-Checkbox-root .mantine-Checkbox-body .mantine-Checkbox-inne
 table tr th .mantine-Checkbox-root .mantine-Checkbox-body .mantine-Checkbox-inner .mantine-Checkbox-icon,
 table tr td .mantine-Checkbox-root .mantine-Checkbox-body .mantine-Checkbox-inner .mantine-Checkbox-icon {
     right: 0.1rem;
-} */
+}
+
+/* Additional Mantine Table Header Consistency */
+.mantine-Table-root .mantine-TableHeadCell-root,
+.mantine-Table-root .mantine-TableHeadCell-Content,
+.mantine-Table-root .mantine-TableHeadCell-Content-Wrapper {
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+/* Ensure all table headers have consistent font size */
+table thead tr th,
+.mantine-Table-root thead tr th,
+.mantine-TableHeadCell-root {
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+}
+
+/* Force consistent header styling for Mantine React Table */
+.mantine-Table-root .mantine-TableHeadCell-root,
+.mantine-Table-root .mantine-TableHeadCell-Content,
+.mantine-Table-root .mantine-TableHeadCell-Content-Wrapper,
+.mantine-Table-root .mantine-TableHeadCell-Content > div,
+.mantine-Table-root .mantine-TableHeadCell-Content > span {
+    font-size: 0.625rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    line-height: 0.9rem !important;
+}
 
 /* table tr td .mantine-InputWrapper-root .mantine-Input-wrapper .mantine-Input-input {
     min-height: 1.9rem;
@@ -372,7 +429,7 @@ table tfoot tr {
 .tableInput {
     border: 1px solid #ddd;
     border-radius: 0.25rem;
-    padding: 0.45rem 0.2rem;
+    padding: 0.45rem 0.5rem;
     /* background: rgba(0, 0, 0, 0.015); */
     outline: 0;
     font-size: 10px;
@@ -466,6 +523,8 @@ table tfoot tr {
 .form-multiselect {
     padding-top: 0.38rem !important;
     padding-bottom: 0.38rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
 }
 
 .fileTypeInput {

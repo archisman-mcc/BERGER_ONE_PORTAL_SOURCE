@@ -1,5 +1,8 @@
-import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
-import { ENDPOINTS } from '@/src/helper/EndPoints';
+// import { HTTP_POST, HTTP_GET } from '@/src/helper/ApiCall';
+// import { ENDPOINTS } from '@/src/helper/EndPoints';
+
+import { HTTP_POST } from "../../../helper/ApiCall";
+import { ENDPOINTS } from "../../../helper/EndPoints";
 
 export function GetUserList<P, G>(data: { user_id: any; password: any; uuid: any }): Promise<G> {
     // return HTTP_GET<P, G>(data, ENDPOINTS.GetUserList) as Promise<G>;
