@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { Menu } from '@mantine/core';
 import { FaRegUserCircle } from "react-icons/fa";
 import { FiUserPlus } from "react-icons/fi";
-import UserScrumBoard from './UserScrumBoard';
-import UserSplitView from './UserSplitView';
+// import UserScrumBoard from './UserScrumBoard';
+// import UserSplitView from './UserSplitView';
 import GridView from '../../../components/Layouts/GridView';
 
 type User = {

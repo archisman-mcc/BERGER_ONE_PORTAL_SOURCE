@@ -184,6 +184,7 @@ const ALL_ENDPOINTS = {
     // Potential Lead
     GetVerticalWisBusinessLine: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetVerticalWisBusinessLine',
     ProLeadInsert: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'ProLeadInsert',
+    potentialTrackingSubmit: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'potentialTrackingSubmit',
     GetDealerSearch: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetDealerSearch',
     GetStakeHolderList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStakeHolderList',
     GetStateListPotentialLead: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStateList',

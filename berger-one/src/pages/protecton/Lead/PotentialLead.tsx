@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Select from 'react-select';
 import { GetVerticalWisBusinessLine } from '../../../services/api/protectonLead/PotentialLead';
 import { CommonLovDetails, GetProtectonApplicableDepot, GetProtectonApplicableTerr, GetProtectonRegion } from '../../../services/api/users/UserProfile';
@@ -14,6 +14,9 @@ const PotentialLead = () => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const [loading, setLoading] = React.useState(false);
+    const [showDropdown, setShowDropdown] = React.useState(false);
+    const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '' });
+
     const dataObj = {
         viewBy: "FROM",
         // verticalData: [],
@@ -89,7 +92,7 @@ const PotentialLead = () => {
         ptm_potential_area_uom: '', // Scope for paints area uom
         ptm_area: '', // service area
         ptm_business_type: '', // Business Type
-        ptm_product_category: '', // Product Category
+        ptm_product_category: [], // Product Category
         ptm_industry_segment: '', // Industry Segment
         ptm_lead_share: '', // Lead Share
         ptm_region: '', // region
@@ -116,9 +119,6 @@ const PotentialLead = () => {
         assignStatusList: [],
         workStatusList: [],
     });
-
-    const [showDropdown, setShowDropdown] = React.useState(false);
-    const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '' });
 
     const VerticalWisBusinessLineAPICall = async () => {
         setLoading(true);
@@ -363,6 +363,10 @@ const PotentialLead = () => {
         VerticalWisBusinessLineAPICall();
     }, []);
 
+    useEffect(() => {
+        setData(((prev: any) => ({ ...prev, ptm_lead_share: popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : '' })));
+    }, [popupOpenData?.popupHeader])
+
     React.useEffect(() => {
         console.log(data)
     }, [data]);
@@ -508,7 +512,7 @@ const PotentialLead = () => {
             </div>
 
             {popupOpenData?.open &&
-                <CustomPopupComponent dataObj={dataObj} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
+                <CustomPopupComponent dataObj={dataObj} filterdata={filterdata} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
             }
 
             {loading && (
