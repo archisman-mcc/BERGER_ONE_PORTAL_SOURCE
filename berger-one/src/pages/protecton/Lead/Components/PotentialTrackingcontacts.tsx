@@ -46,8 +46,8 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
         }
 
         if (data && Array.isArray(data.potentialTrackingcontacts)) {
-            data.potentialTrackingcontacts[rowIdx] = { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""};
-            setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...data.potentialTrackingcontacts] }));
+            // data.potentialTrackingcontacts[rowIdx] = { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""};
+            setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...data.potentialTrackingcontacts, { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""}] }));
         }
         setEditingRow(null);
         setIsAdding(false);

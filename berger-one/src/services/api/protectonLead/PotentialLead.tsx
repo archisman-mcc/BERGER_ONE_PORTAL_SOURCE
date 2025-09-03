@@ -7,6 +7,9 @@ export function GetVerticalWisBusinessLine<P, G>(data: { lov_type: any; active: 
 export function ProLeadInsert<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.ProLeadInsert) as Promise<G>;
 }
+export function potentialTrackingSubmit<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.potentialTrackingSubmit) as Promise<G>;
+}
 export function GetDealerSearch<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetDealerSearch) as Promise<G>;
 }
