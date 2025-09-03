@@ -7,12 +7,12 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
 import SiteContactTable from './SiteContactTable';
 import { Button, Textarea } from '@mantine/core';
-import { GetDealerSearch, GetStateListPotentialLead, ProLeadInsert } from '../../../../services/api/protectonLead/PotentialLead';
+import { GetDealerSearch, GetStateListPotentialLead, potentialTrackingSubmit, ProLeadInsert } from '../../../../services/api/protectonLead/PotentialLead';
 import AsyncSelectBox from '../../Transact/Components/AsyncSelectBox';
 import PotentialTrackingcontacts from './PotentialTrackingcontacts';
 import TeamMemberTable from './TeamMemberTable';
 
-const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
+const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const blankObj = { selectedOption: '', selectedObj: [], asyncSelectData: [] };
@@ -199,52 +199,86 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
             return;
         }
 
+        // const payloadData = {
+        //     lead_gen_id: 0,
+        //     region: data?.selectedRegionList?.value || '',
+        //     depot: data?.selectedApplicableDepotList?.value || '',
+        //     terr: data?.selectedTerr?.value || '',
+        //     lead_category: data?.selectedPaint_admixture?.value || '',
+        //     account_type: data?.selectedAc_type?.value || '',
+        //     key_acc_name: "",
+        //     govtPvt: data?.selectedGovt_pvt?.value || '',
+        //     new_repainting: data?.selectedPainting?.value || '',
+        //     lead_sector: data?.selectedLead_sector?.value || '',
+        //     lead_sub_sector: data?.selectedLead_sub_sector?.value || '',
+        //     inq_lead_potential: data?.selectedLead_potential?.value || '',
+        //     potential_lead: 0,
+        //     project_name: data?.projectName || '',
+        //     project_desc: data?.projectDescription || '',
+        //     site_location: data?.siteLocation || '',
+        //     site_addr: "",
+        //     addr1: data?.addr1 || '',
+        //     addr2: data?.addr2 || '',
+        //     city: data?.city || '',
+        //     pinCode: data?.pinCode || '',
+        //     state: data?.selectedStateList?.value || '',
+        //     pan_no: data?.pan_no || '',
+        //     gstin_no: data?.gstin_no || '',
+        //     lead_stage: data?.selectedKey_lead_stage?.value || '',
+        //     painting_starting_time: data?.selectedKey_painting_start_time?.value || '',
+        //     intPaintableArea: data?.intPaintableArea || '',
+        //     extPaintableArea: data?.extPaintableArea || '',
+        //     painting_remarks: data?.painting_remarks || '',
+        //     leadStatus: data?.leadStatus || '',
+        //     tentativeStartDate: data?.tentativeStartDate ? new Date(data?.tentativeStartDate).toISOString() : '',
+        //     durationInMonth: data?.durationInMonth || '',
+        //     paint_business_potential: data?.paint_business_potential || '',
+        //     businessPotential_cc: data?.businessPotential_cc || '',
+        //     shareOfBusiness: data?.shareOfBusiness || '',
+        //     proLeadContactDtls: data?.siteContactTableData || [],
+        //     documents: data?.documents || [],
+        //     inqRejected: "",
+        //     lead_type: "",
+        //     businessline: popupOpenData?.popupHeader,
+        // }
         const payloadData = {
-            lead_gen_id: 0,
-            region: data?.selectedRegionList?.value || '',
-            depot: data?.selectedApplicableDepotList?.value || '',
-            terr: "",
-            lead_category: data?.selectedPaint_admixture?.value || '',
-            account_type: data?.selectedAc_type?.value || '',
-            key_acc_name: "",
-            govtPvt: data?.selectedGovt_pvt?.value || '',
-            new_repainting: data?.selectedPainting?.value || '',
-            lead_sector: data?.selectedLead_sector?.value || '',
-            lead_sub_sector: data?.selectedLead_sub_sector?.value || '',
-            inq_lead_potential: data?.selectedLead_potential?.value || '',
-            potential_lead: 0,
-            project_name: data?.projectName || '',
-            project_desc: data?.projectDescription || '',
-            site_location: data?.siteLocation || '',
-            site_addr: "",
-            addr1: data?.addr1 || '',
-            addr2: data?.addr2 || '',
-            city: data?.city || '',
-            pinCode: data?.pinCode || '',
-            state: data?.selectedStateList?.value || '',
-            pan_no: data?.pan_no || '',
-            gstin_no: data?.gstin_no || '',
-            lead_stage: data?.selectedKey_lead_stage?.value || '',
-            painting_starting_time: data?.selectedKey_painting_start_time?.value || '',
-            intPaintableArea: data?.intPaintableArea || '',
-            extPaintableArea: data?.extPaintableArea || '',
-            painting_remarks: data?.painting_remarks || '',
-            leadStatus: data?.leadStatus || '',
-            tentativeStartDate: data?.tentativeStartDate ? new Date(data?.tentativeStartDate).toISOString() : '',
-            durationInMonth: data?.durationInMonth || '',
-            paint_business_potential: data?.paint_business_potential || '',
-            businessPotential_cc: data?.businessPotential_cc || '',
-            shareOfBusiness: data?.shareOfBusiness || '',
-            proLeadContactDtls: data?.siteContactTableData || [],
-            documents: data?.documents || [],
-            inqRejected: "",
-            lead_type: "",
-            businessline: popupOpenData?.popupHeader,
+            potentialTrackingMstr: [{
+                ptm_ref_lead_yn: data.ptm_ref_lead_yn?.value || '',
+                ptm_ref_lead_type: data.ptm_ref_lead_type?.value || '',
+                ptm_ref_dealer_code: data.ptm_ref_dealer_code?.value || '',
+                ptm_customer_name: data.ptm_customer_name || '',
+                ptm_contractor_type: data.ptm_contractor_type?.value || '',
+                ptm_project_name: data.projectName || '',
+                ptm_project_location: data.siteLocation || '',
+                ptm_project_address1: data.addr1 || '',
+                ptm_project_address2: data.addr2 || '',
+                ptm_project_city: data.city || '',
+                ptm_project_pin: data.pinCode || '',
+                ptm_project_state: data.selectedStateList?.value || '',
+                ptm_potential_val: data.ptm_potential_val || '',
+                ptm_potential_vol: data.ptm_potential_vol || '',
+                ptm_potential_area: data.ptm_potential_area || '',
+                ptm_potential_area_uom: data.ptm_potential_area_uom?.value || '',
+                ptm_area: data.ptm_area || '',
+                ptm_business_type: data.ptm_business_type?.value || '',
+                ptm_product_category: data.ptm_product_category?.map((ppc: any) => ppc?.value).join(",") || '',
+                ptm_industry_segment: data.ptm_industry_segment?.value || '',
+                ptm_lead_share: data.ptm_lead_share?.value || '',
+                ptm_region: data.ptm_region?.value || '',
+                ptm_depot_code: data.ptm_depot_code?.value || '',
+                ptm_terr_code: data.ptm_terr_code?.value || '',
+                ptm_work_status: data.ptm_work_status?.value || '',
+                ptm_extra_info: data.ptm_extra_info || '',
+            }],
+            potentialTrackingcontacts: data?.potentialTrackingcontacts || [],
+            potentialTrackingDocs: data?.potentialTrackingDocs || [],
+            potentialTrackingActivityLog: [],
         }
         console.log('Payload Data:', payloadData);
         setLoading(true);
         try {
-            const response: any = await ProLeadInsert(payloadData);
+            const response: any = await potentialTrackingSubmit(payloadData);
+            // const response: any = await ProLeadInsert(payloadData);
             // console.log(response?.data?.table)
             // setData((prevData: any) => ({
             //     ...prevData,
@@ -1028,7 +1062,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         className="text-sm"
                                         isSearchable={true}
                                         options={data?.lead_share_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                                        value={popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : data.ptm_lead_share}
+                                        value={data.ptm_lead_share}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_lead_share: event }))
                                         }
@@ -1041,7 +1075,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
+                                        options={filterdata?.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
                                         value={data.ptm_region}
                                         onChange={(event: any) => {
                                             Getdepot(event.value);
@@ -1056,7 +1090,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
+                                        options={filterdata.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
                                         value={data.ptm_depot_code}
                                         onChange={(event: any) => {
                                             Getterr({ region: data.ptm_region.value, depot: event.value });
@@ -1070,7 +1104,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
+                                        options={filterdata.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
                                         value={data.ptm_terr_code}
                                         onChange={(event: any) => {
                                             setData((pre: any) => ({ ...pre, ptm_terr_code: event }))
@@ -1083,7 +1117,7 @@ const CustomPopupComponent = ({ dataObj, data, setData, popupOpenData, setPopupO
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={filterdata.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_work_status}
                                         onChange={(event: any) => {
                                             setData((pre: any) => ({ ...pre, ptm_work_status: event }))
