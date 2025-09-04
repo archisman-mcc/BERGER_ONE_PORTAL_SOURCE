@@ -11,6 +11,7 @@ import { GetDealerSearch, GetStateListPotentialLead, potentialTrackingSubmit, Pr
 import AsyncSelectBox from '../../Transact/Components/AsyncSelectBox';
 import PotentialTrackingcontacts from './PotentialTrackingcontacts';
 import TeamMemberTable from './TeamMemberTable';
+import { commonErrorToast, commonSuccessToast } from '../../../../services/functions/commonToast';
 
 const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
@@ -98,45 +99,55 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
     // Document handling functions
     const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
+
         if (Object.keys(selected_doc_type).length === 0) {
-            alert('Please select Doc Type!');
+            alert("Please select Doc Type!");
             return;
         }
+
         if (files) {
-            // Process files asynchronously to convert to base64
-            Array.from(files).forEach(file => {
+            Array.from(files).forEach((file) => {
                 const reader = new FileReader();
 
                 reader.onload = (e) => {
-                    const base64String = e.target?.result as string;
+                    const result = e.target?.result as string;
+
+                    // Remove the prefix "data:...;base64," if present
+                    const base64String = result.includes(",")
+                        ? result.split(",")[1]
+                        : result;
 
                     const newDocument = {
-                        ptd_doc_desc: '',
+                        ptd_doc_desc: "",
                         ptd_doc_name: file.name,
-                        ptd_doc_path: base64String,
-                        ptd_doc_type: selected_doc_type?.value
+                        ptd_doc_path: base64String, // ✅ pure base64 only
+                        ptd_doc_type: selected_doc_type?.value,
                     };
 
                     setData((prevData: any) => ({
                         ...prevData,
-                        potentialTrackingDocs: [...(prevData.potentialTrackingDocs || []), newDocument]
+                        potentialTrackingDocs: [
+                            ...(prevData.potentialTrackingDocs || []),
+                            newDocument,
+                        ],
                     }));
                 };
 
                 reader.onerror = (error) => {
-                    console.error('Error reading file:', error);
+                    console.error("Error reading file:", error);
                 };
 
-                // Read file as base64
                 reader.readAsDataURL(file);
             });
 
             setIsImageUploadPopupOpen(false);
             setSelected_doc_type({});
         }
-        // Reset input value to allow selecting the same file again
-        event.target.value = '';
+
+        // reset input so the same file can be selected again
+        event.target.value = "";
     };
+
 
     const removeDocument = (index: number) => {
         setData((prevData: any) => ({
@@ -200,7 +211,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
         }
     }
 
-    const selfAlertFunc = () => {}
+    const selfAlertFunc = () => { }
 
     const handleSubmit = async () => {
         popupOpenData?.popupHeader === 'PROLINKS' ? prolinksAlertFunc() : selfAlertFunc();
@@ -283,13 +294,15 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
         setLoading(true);
         try {
             const response: any = await potentialTrackingSubmit(payloadData);
+            // console.log(response)
             // const response: any = await ProLeadInsert(payloadData);
-            // console.log(response?.data?.table)
-            // setData((prevData: any) => ({
-            //     ...prevData,
-            //     verticalData: response.data.table || [],
-            // }));
-
+            if (response?.statusCode !== 200) {
+                commonErrorToast(response?.message || 'Error submitting data');
+                setLoading(false);
+                return;
+            } else {
+                commonSuccessToast(response?.message || 'Data submitted successfully');
+            }
         } catch (error) {
             return;
         }
