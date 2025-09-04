@@ -39,7 +39,7 @@ const FixedLayout = () => {
     };
 
     const test = (route: string) => {
-        console.log("route", route);
+        // console.log("route", route);
         setValueInSeasonStorage('listRoute', 'Menu');
         setValueInSeasonStorage('leadListRoute', 'Menu');
         navigate(route);
@@ -61,7 +61,7 @@ const FixedLayout = () => {
                 <button
                     className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left text-gray-800 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 rounded-md"
                     onClick={() => {
-                        console.log(item)
+                        // console.log(item)
                         test(item.form_link);
                         setUserApplicableMenu(prev => [...childHideFunc(prev, item.form_id)]);
                     }}
@@ -86,7 +86,17 @@ const FixedLayout = () => {
         const menuRec = (uam: any) => {
             return uam.map((u: any) => ({ ...u, childVisibility: u.form_parent_id === 0 ? true : false, children: u.children ? menuRec(u.children) : [] }))
         }
-        if (user) setUserApplicableMenu(menuRec(user.userApplicableMenu));
+
+        const storedObjectString = localStorage.getItem('auth');
+        if (storedObjectString) {
+            const storedObject = JSON.parse(storedObjectString);
+            // console.log(storedObject)
+            if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+                navigate('/login/cover-login');
+            } else {
+                setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));
+            }
+        }
 
         // Close dropdown when clicking outside
         const handleClickOutside = (event: MouseEvent) => {
@@ -100,6 +110,14 @@ const FixedLayout = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // useEffect(() => {
+    //     const menuRec = (uam: any) => {
+    //         return uam.map((u: any) => ({ ...u, childVisibility: u.form_parent_id === 0 ? true : false, children: u.children ? menuRec(u.children) : [] }))
+    //     }
+    //     console.log(user)
+    //     if (user?.userApplicableMenu.length > 0) setUserApplicableMenu(menuRec(user.userApplicableMenu));
+    // }, [user]);
 
     return (
         <div className="min-h-screen w-full overflow-auto">
