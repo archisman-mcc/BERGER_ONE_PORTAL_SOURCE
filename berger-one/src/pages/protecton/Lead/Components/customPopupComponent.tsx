@@ -157,7 +157,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
     //     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     // };
 
-    const handleSubmit = async () => {
+    const prolinksAlertFunc = () => {
         if (data?.selectedRegionList === '') {
             alert('Please select region');
             return;
@@ -198,7 +198,12 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
             alert('Please select state');
             return;
         }
+    }
 
+    const selfAlertFunc = () => {}
+
+    const handleSubmit = async () => {
+        popupOpenData?.popupHeader === 'PROLINKS' ? prolinksAlertFunc() : selfAlertFunc();
         // const payloadData = {
         //     lead_gen_id: 0,
         //     region: data?.selectedRegionList?.value || '',
@@ -767,7 +772,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                     {/* ----------Scope Information------- */}
 
                     {/* ----------Business & Other Information------- */}
-                    <div className="border-b-2 border-blue-400 pb-2">
+                    <div className="border-b-2 border-blue-400 pb-2 mb-6">
                         <h2 className="text-xl font-semibold text-gray-800">Business & Other Information</h2>
                     </div>
                     {popupOpenData?.popupHeader === 'PROLINKS' &&

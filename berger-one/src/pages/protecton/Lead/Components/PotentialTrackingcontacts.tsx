@@ -4,7 +4,7 @@ import React from 'react';
 
 const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
     const [contacts, setContacts] = React.useState<any[]>(data?.potentialTrackingcontacts || []);
-    const [editingRow, setEditingRow] = React.useState<number | null>(null);
+    const [editingRow, setEditingRow]: any = React.useState<number | null>(null);
     const [isAdding, setIsAdding] = React.useState(false);
 
     const emptyRow = { ptc_company_name: '', ptc_name: '', ptc_designation: '', ptc_phone_no: '', ptc_email: '', ptc_city: '', ptc_contact_type: '' };
@@ -17,6 +17,9 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
         type === "Consultant/Architect" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "CONSULTANT") || []);
         type === "EngineeringContractor" && setContacts(data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "ENGINEER") || []);
     }, [data?.potentialTrackingcontacts]);
+    // React.useEffect(() => {
+    //     console.log(contacts)
+    // }, [contacts]);
 
     const handleEditField = (rowIdx: number, field: string, value: string) => {
         setContacts(prev => prev.map((row, idx) => idx === rowIdx ? { ...row, [field]: value } : row));
@@ -46,8 +49,17 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
         }
 
         if (data && Array.isArray(data.potentialTrackingcontacts)) {
-            // data.potentialTrackingcontacts[rowIdx] = { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""};
-            setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...data.potentialTrackingcontacts, { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ?  "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : ""}] }));
+            // console.log(contacts)
+            // console.log(editingRow)
+            // console.log(contacts[editingRow])
+            if (isAdding) {
+                console.log(type)
+                setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...data.potentialTrackingcontacts, { ...contacts[rowIdx], ptc_contact_type: type === "ReferralSourceDetails" ? "CONTRACTOR" : type === "ProjectContactPersons" ? "Site Contact" : type === "Consultant/Architect" ? "CONSULTANT" : type === "EngineeringContractor" ? "ENGINEER" : "" }] }));
+            }
+            else {
+                const updated = data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type !== contacts[editingRow]?.ptc_contact_type);
+                setData((prev: any) => ({ ...prev, potentialTrackingcontacts: [...updated, ...contacts] }));
+            }
         }
         setEditingRow(null);
         setIsAdding(false);
@@ -175,6 +187,7 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
         ],
         [contacts, editingRow, isAdding]
     );
+
     return (
         <div>
             <MantineReactTable
