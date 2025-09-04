@@ -8,9 +8,8 @@ export function commonSuccessToast(msg: string) {
         timer: 3000,
         showCloseButton: true,
         timerProgressBar: true,
-        customClass: {
-            popup: `color-success`,
-        },
+        background: '#10b981', // Green background for success
+        color: '#ffffff', // White text
     });
     return toast.fire({
         icon: 'success',
@@ -28,9 +27,8 @@ export function commonErrorToast(text: string) {
         timerProgressBar: true,
         text: text,
         showCloseButton: true,
-        customClass: {
-            popup: `color-danger`,
-        },
+        background: '#ef4444', // Red background for error
+        color: '#ffffff', // White text
     });
     return toast.fire({
         title: '',
@@ -48,9 +46,8 @@ export async function commonErrorToastMulty(text: string) {
         timer: 0,
         timerProgressBar: true,
         showCloseButton: true,
-        customClass: {
-            popup: 'color-danger',
-        },
+        background: '#ef4444', // Red background for error
+        color: '#ffffff', // White text
     });
 }
 
@@ -64,9 +61,8 @@ export function commonWarningToast(text: string) {
         timerProgressBar: true,
         text: text,
         showCloseButton: true,
-        customClass: {
-            popup: `color-warning`,
-        },
+        background: '#f59e0b', // Amber background for warning
+        color: '#ffffff', // White text
     });
     return toast.fire({
         title: '',

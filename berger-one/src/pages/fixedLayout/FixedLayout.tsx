@@ -23,7 +23,14 @@ const FixedLayout = () => {
     const [openMenuDropdown, setOpenMenuDropdown] = useState<number | null>(null);
 
     const handleMenuDropdownToggle = (index: number) => {
-        setOpenMenuDropdown(prev => (prev === index ? null : index));
+        setOpenMenuDropdown(prev => {
+            // If clicking the same dropdown, close it
+            if (prev === index) {
+                return null;
+            }
+            // If clicking a different dropdown, close the previous one and open the new one
+            return index;
+        });
     };
 
     const onLogout = async () => {
@@ -46,7 +53,19 @@ const FixedLayout = () => {
     };
 
     const childHideFunc = (item: any, id: any) => {
-        return item.map((uam: any) => uam.form_id === id ? { ...uam, childVisibility: !uam.childVisibility } : { ...uam, children: childHideFunc(uam.children, id) })
+        return item.map((uam: any) => {
+            if (uam.form_id === id) {
+                // Toggle the clicked item
+                return { ...uam, childVisibility: !uam.childVisibility };
+            } else {
+                // Close all other items at the same level
+                return { 
+                    ...uam, 
+                    childVisibility: false,
+                    children: uam.children ? childHideFunc(uam.children, id) : []
+                };
+            }
+        });
     }
 
     const multiLevelDropdown = (items: any[]) => {
@@ -63,7 +82,14 @@ const FixedLayout = () => {
                     onClick={() => {
                         // console.log(item)
                         test(item.form_link);
-                        setUserApplicableMenu(prev => [...childHideFunc(prev, item.form_id)]);
+                        
+                        // If item has no children, close the entire dropdown
+                        if (!item.children || item.children.length === 0) {
+                            setOpenMenuDropdown(null);
+                        } else {
+                            // If item has children, toggle its visibility
+                            setUserApplicableMenu(prev => [...childHideFunc(prev, item.form_id)]);
+                        }
                     }}
                 >
                     <div className="flex items-center gap-2">
