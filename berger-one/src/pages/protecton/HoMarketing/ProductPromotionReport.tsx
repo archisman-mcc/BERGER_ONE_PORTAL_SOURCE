@@ -33,7 +33,7 @@ const ProductPromotionReport: React.FC = () => {
         }
         try {
             const response: any = await GetProductPromotionReport(payloadObj);
-            if (!response?.data) {
+            if (response?.statusCode !== 200) {
                 commonErrorToast('No data found for the selected date range');
                 setLoading(false);
                 return;

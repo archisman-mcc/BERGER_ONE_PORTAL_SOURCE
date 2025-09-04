@@ -36,7 +36,7 @@ const AppUsageReport: React.FC = () => {
         }
         try {
             const response: any = await GetAppUsageReport(payloadObj);
-            if (!response?.data) {
+            if (response?.statusCode !== 200) {
                 commonErrorToast('No data found for the selected date range');
                 setLoading(false);
                 return;

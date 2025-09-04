@@ -116,7 +116,7 @@ const TSRMonitoringReport = () => {
         setLoading(true);
         try {
             const response: any = await GetTSRMonitoringData(payloadObj);
-            if (!response?.data) {
+            if (response?.statusCode !== 200) {
                 commonErrorToast('No data found');
                 setLoading(false);
                 return;
@@ -140,9 +140,9 @@ const TSRMonitoringReport = () => {
         navigate('/');
     }
 
-    React.useEffect(() => {
-        console.log(data)
-    }, [data]);
+    // React.useEffect(() => {
+    //     console.log(data)
+    // }, [data]);
 
     React.useEffect(() => {
         GetRegion();
