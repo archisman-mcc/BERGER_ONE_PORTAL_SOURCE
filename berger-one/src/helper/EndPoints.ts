@@ -185,6 +185,8 @@ const ALL_ENDPOINTS = {
     GetVerticalWisBusinessLine: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetVerticalWisBusinessLine',
     ProLeadInsert: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'ProLeadInsert',
     potentialTrackingSubmit: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'potentialTrackingSubmit',
+    GetPotentialTrackingList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingList',
+    GetPotentialTrackingDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingDtls',
     GetDealerSearch: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetDealerSearch',
     GetStakeHolderList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStakeHolderList',
     GetStateListPotentialLead: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStateList',

@@ -10,6 +10,12 @@ export function ProLeadInsert<P, G>(data: any): Promise<G> {
 export function potentialTrackingSubmit<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.potentialTrackingSubmit) as Promise<G>;
 }
+export function GetPotentialTrackingList<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.GetPotentialTrackingList) as Promise<G>;
+}
+export function GetPotentialTrackingDtls<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.GetPotentialTrackingDtls) as Promise<G>;
+}
 export function GetDealerSearch<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetDealerSearch) as Promise<G>;
 }
