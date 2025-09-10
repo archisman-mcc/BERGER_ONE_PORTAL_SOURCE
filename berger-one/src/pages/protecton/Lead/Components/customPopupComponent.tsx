@@ -13,7 +13,7 @@ import PotentialTrackingcontacts from './PotentialTrackingcontacts';
 import TeamMemberTable from './TeamMemberTable';
 import { commonErrorToast, commonSuccessToast } from '../../../../services/functions/commonToast';
 
-const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
+const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const blankObj = { selectedOption: '', selectedObj: [], asyncSelectData: [] };
@@ -26,9 +26,13 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
         setData((pre: any) => ({ ...pre, ptm_ref_dealer_code: existingBusinessContract?.selectedOption }))
     }, [existingBusinessContract])
 
+    useEffect(() => {
+        setexistingBusinessContract({ ...existingBusinessContract, selectedOption: data?.ptm_ref_dealer_code })
+    }, [data?.ptm_ref_dealer_code])
+
 
     const GetRegionAPICALL = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_group: user.group_code,
             app_id: 0
@@ -39,30 +43,28 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                 ...prevData,
                 regionList: response.data.table || [],
             }));
-            setLoading(false);
         } catch (error) {
-            setLoading(false);
             return;
         }
+        // setLoading(false);
     }
 
     const GetStateListAPICALL = async () => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const response: any = await GetStateList({});
             setData((prevData: any) => ({
                 ...prevData,
                 stateList: response.data.table || [],
             }));
-            setLoading(false);
         } catch (error) {
-            setLoading(false);
             return;
         }
+        // setLoading(false);
     }
 
     const GetAddressDtlsAPICALL = async (props: any) => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const response: any = await GetStateListPotentialLead({ pin_code: props });
             if (response.data.table.length) {
@@ -74,26 +76,24 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                     city: response.data.table[0].pm_district,
                 }));
             }
-            setLoading(false);
         } catch (error) {
-            setLoading(false);
             return;
         }
+        // setLoading(false);
     }
 
     const GetApplicableDepotAPICALL = async (props: any) => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const response: any = await GetApplicableDepot(props);
             setData((prevData: any) => ({
                 ...prevData,
                 applicableDepotList: response.data.table || [],
             }));
-            setLoading(false);
         } catch (error) {
-            setLoading(false);
             return;
         }
+        // setLoading(false);
     }
 
     // Document handling functions
@@ -290,7 +290,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
             potentialTrackingDocs: data?.potentialTrackingDocs || [],
             potentialTrackingActivityLog: [],
         }
-        console.log('Payload Data:', payloadData);
+        // console.log('Payload Data:', payloadData);
         setLoading(true);
         try {
             const response: any = await potentialTrackingSubmit(payloadData);
@@ -307,11 +307,13 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
             return;
         }
         setLoading(false);
+        handleSearch();
         setPopupOpenData({ open: false, popupHeader: '' });
         setData({ ...dataObj });
     }
 
     React.useEffect(() => {
+        setLoading(true);
         GetStateListAPICALL();
         if (popupOpenData?.popupHeader === 'PROLINKS') {
             GetRegionAPICALL();
@@ -412,7 +414,14 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                 lov_type: "PT_CONTRACTOR_TYPE",
                 active: "Y"
             });
+
+            setTimeout(() => {
+                setDdlData((prevData: any) => ({ ...prevData, ...commonLovDetailsData.current }));
+            }, 1000);
         }
+        setTimeout(() => {
+            setLoading(false);
+        }, 10000);
     }, []);
 
     return (
@@ -464,7 +473,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.paint_admixture_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.paint_admixture_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedPaint_admixture}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedPaint_admixture: event }))
@@ -476,7 +485,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.ac_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.ac_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedAc_type}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedAc_type: event }))
@@ -488,7 +497,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.govt_pvt_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.govt_pvt_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedGovt_pvt}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedGovt_pvt: event }))
@@ -500,7 +509,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.painting_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.painting_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedPainting}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedPainting: event }))
@@ -512,7 +521,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.lead_sector_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.lead_sector_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedLead_sector}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedLead_sector: event }))
@@ -524,7 +533,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.lead_sub_sector_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.lead_sub_sector_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedLead_sub_sector}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedLead_sub_sector: event }))
@@ -536,7 +545,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.lead_potential_list.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.lead_potential_list.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedLead_potential}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedLead_potential: event }))
@@ -568,7 +577,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         <Select
                                             className="text-sm"
                                             isSearchable={true}
-                                            options={data.refer_from_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                            options={ddlData.refer_from_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                             value={data.ptm_ref_lead_type}
                                             onChange={(event: any) => {
                                                 setexistingBusinessContract({ ...blankObj });
@@ -605,7 +614,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.contractor_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.contractor_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_contractor_type}
                                         onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_contractor_type: event }))}
                                     />
@@ -761,7 +770,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.potential_area_uom_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.potential_area_uom_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_potential_area_uom}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_potential_area_uom: event }))
@@ -817,7 +826,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.key_lead_stage_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.key_lead_stage_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedKey_lead_stage}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedKey_lead_stage: event }))
@@ -829,7 +838,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                 <Select
                                     className="text-sm"
                                     isSearchable={true}
-                                    options={data.key_painting_start_time_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                    options={ddlData.key_painting_start_time_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                     value={data.selectedKey_painting_start_time}
                                     onChange={(event: any) => {
                                         setData((pre: any) => ({ ...pre, selectedKey_painting_start_time: event }))
@@ -980,7 +989,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.business_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.business_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_business_type}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_business_type: event }))
@@ -994,7 +1003,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         isMulti
                                         isSearchable={true}
                                         closeMenuOnSelect={false}
-                                        options={data?.product_category_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.product_category_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_product_category}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_product_category: event }))
@@ -1066,7 +1075,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.industry_segment_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.industry_segment_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_industry_segment}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_industry_segment: event }))
@@ -1079,7 +1088,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.lead_share_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData?.lead_share_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_lead_share}
                                         onChange={(event: any) =>
                                             setData((pre: any) => ({ ...pre, ptm_lead_share: event }))
@@ -1093,7 +1102,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={filterdata?.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
+                                        options={ddlData?.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
                                         value={data.ptm_region}
                                         onChange={(event: any) => {
                                             Getdepot(event.value);
@@ -1108,7 +1117,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={filterdata.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
+                                        options={ddlData.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
                                         value={data.ptm_depot_code}
                                         onChange={(event: any) => {
                                             Getterr({ region: data.ptm_region.value, depot: event.value });
@@ -1122,7 +1131,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={filterdata.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
+                                        options={ddlData.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
                                         value={data.ptm_terr_code}
                                         onChange={(event: any) => {
                                             setData((pre: any) => ({ ...pre, ptm_terr_code: event }))
@@ -1135,7 +1144,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={filterdata.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_work_status}
                                         onChange={(event: any) => {
                                             setData((pre: any) => ({ ...pre, ptm_work_status: event }))
@@ -1351,7 +1360,7 @@ const CustomPopupComponent = ({ dataObj, filterdata, data, setData, popupOpenDat
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data.doc_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={ddlData.doc_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={selected_doc_type}
                                         onChange={(event: any) => setSelected_doc_type(event)}
                                         placeholder="Select document type..."

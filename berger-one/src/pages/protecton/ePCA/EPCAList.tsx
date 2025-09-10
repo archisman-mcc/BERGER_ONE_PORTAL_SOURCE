@@ -131,7 +131,6 @@ const EPCAList = () => {
                         depot_code: item.depot_code,
                     })),
                 ];
-
                 setDepot(updatedDepotList);
             } catch (error) {
                 return;

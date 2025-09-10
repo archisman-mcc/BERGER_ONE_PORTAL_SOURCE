@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Sand_Bucket from '../../assets/images/Sand_Bucket.png'
 import rupee from '../../assets/images/rupee.png'
 import * as dashboard from '../../services/api/protecton-dashboard';
@@ -25,16 +25,6 @@ const Dashboard = () => {
         regionList: [],
         applicableDepotList: [],
         stateList: [],
-        paint_admixture_List: [],
-        ac_type_List: [],
-        govt_pvt_List: [],
-        painting_List: [],
-        lead_sector_List: [],
-        lead_sub_sector_List: [],
-        lead_potential_list: [],
-        key_appl_city_List: [],
-        key_lead_stage_List: [],
-        key_painting_start_time_List: [],
         selectedRegionList: '',
         selectedApplicableDepotList: '',
         selectedStateList: '',
@@ -48,14 +38,6 @@ const Dashboard = () => {
         // selectedKey_appl_city: '', //
         selectedKey_lead_stage: '',
         selectedKey_painting_start_time: '',
-        projectName: '', // Project Information
-        projectDescription: '', // Project Information
-        siteLocation: '', // Project Information
-        addr1: '', // Project Information
-        addr2: '', // Project Information
-        city: '', // Project Information
-        pinCode: '', // Project Information
-        state: '', // Project Information
         pan_no: '',
         gstin_no: '',
         intPaintableArea: '',
@@ -68,6 +50,14 @@ const Dashboard = () => {
         businessPotential_cc: '',
         shareOfBusiness: '',
         siteContactTableData: [],
+        projectName: '', // Project Information
+        projectDescription: '', // Project Information
+        siteLocation: '', // Project Information
+        addr1: '', // Project Information
+        addr2: '', // Project Information
+        city: '', // Project Information
+        pinCode: '', // Project Information
+        state: '', // Project Information
         // for SELF popup
         ptm_ref_lead_yn: '', // Referral Lead
         ptm_ref_lead_type: '', // Refer From
@@ -82,7 +72,6 @@ const Dashboard = () => {
         ptm_potential_area_uom: '', // Scope for paints area uom
         ptm_area: '', // service area
         ptm_business_type: '', // Business Type
-        ptm_product_category: [], // Product Category
         ptm_industry_segment: '', // Industry Segment
         ptm_lead_share: '', // Lead Share
         ptm_region: '', // region
@@ -91,14 +80,8 @@ const Dashboard = () => {
         ptm_work_status: '', // Work In Progress
         ptm_extra_info: '', // Work In Progress
         referralLead: [{ value: 'Y', label: "YES" }, { value: 'N', label: 'NO' }], // Referral Lead DDL
-        refer_from_List: [], // Refer From DDL
-        contractor_type_List: [],// Contractor Type DDL
-        potential_area_uom_List: [], // Scope for paints area uom DDL
-        business_type_List: [], // Business Type DDL
-        product_category_List: [], // Product Category
-        industry_segment_List: [], // Industry Segment
-        lead_share_List: [], // Lead Share
-        doc_type_List: [], // Upload Documents doc_type
+        ptm_product_category: [], // Product Category
+
     }
 
     const [leadData, setleadData] = useState<any>({ ...dataObj });
@@ -121,13 +104,41 @@ const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
     // for lead popup //
-    const [filterdata, setFilterData] = useState<any>({
+    // const [filterdata, setFilterData] = useState<any>({
+    //     verticalData: [],
+    //     protecton_regionList: [],
+    //     depotList: [],
+    //     terrList: [],
+    //     assignStatusList: [],
+    //     workStatusList: [],
+    // });
+    const [ddlData, setDdlData] = React.useState<any>({
         verticalData: [],
         protecton_regionList: [],
         depotList: [],
         terrList: [],
         assignStatusList: [],
         workStatusList: [],
+        // for PROLINKS popup
+        paint_admixture_List: [],
+        ac_type_List: [],
+        govt_pvt_List: [],
+        painting_List: [],
+        lead_sector_List: [],
+        lead_sub_sector_List: [],
+        lead_potential_list: [],
+        key_appl_city_List: [],
+        key_lead_stage_List: [],
+        key_painting_start_time_List: [],
+        // for SELF popup
+        refer_from_List: [], // Refer From DDL
+        contractor_type_List: [],// Contractor Type DDL
+        potential_area_uom_List: [], // Scope for paints area uom DDL
+        business_type_List: [], // Business Type DDL
+        product_category_List: [], // Product Category
+        industry_segment_List: [], // Industry Segment
+        lead_share_List: [], // Lead Share
+        doc_type_List: [], // Upload Documents doc_type
     });
 
     // for lead popup //
@@ -138,7 +149,7 @@ const Dashboard = () => {
         };
         try {
             const response: any = await GetVerticalWisBusinessLine(data);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 verticalData: response.data.table || [],
             }));
@@ -237,6 +248,10 @@ const Dashboard = () => {
                 ...prevData,
                 regionList: response.data.table || [],
             }));
+            setDdlData((prevData: any) => ({
+                ...prevData,
+                protecton_regionList: response.data.table || [],
+            }));
 
         } catch (error) {
             return;
@@ -246,7 +261,7 @@ const Dashboard = () => {
 
     // for lead popup //
     const Getdepot = async (region: string) => {
-        setLoading(true);
+        // setLoading(true);
         const payload: any = {
             app_id: '15',
             region: region,
@@ -255,18 +270,18 @@ const Dashboard = () => {
         };
         try {
             const response: any = await common.GetProtectonApplicableDepot(payload);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 depotList: response.data.table || []
             }));
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
     const Getterr = async (props: any) => {
-        setLoading(true);
+        // setLoading(true);
         const payload: any = {
             // user_group: user.group_code,
             app_id: '15',
@@ -276,141 +291,82 @@ const Dashboard = () => {
         };
         try {
             const response: any = await common.GetProtectonApplicableTerr(payload);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 terrList: response?.data?.table || []
             }));
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
+    var commonLovDetailsData: any = useRef({});
     const OtherAPIcall = async (payload: any) => {
         setLoading(true);
         try {
             const response: any = await common.CommonLovDetails(payload);
             if (payload.lov_type === "PT_ASSIGN_STATUS") {
-                setFilterData((prevData: any) => ({
-                    ...prevData,
-                    assignStatusList: response.data.table || []
-                }));
+                commonLovDetailsData.current["assignStatusList"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_WORK_IN_PROGRESS") {
-                setFilterData((prevData: any) => ({
-                    ...prevData,
-                    workStatusList: response.data.table || []
-                }));
+                commonLovDetailsData.current["workStatusList"] = response.data.table || [];
             }
             // -----------PROLINKS popup-----------
             else if (payload.lov_type === "PT_LEAD_CATEGORY") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    paint_admixture_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["paint_admixture_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "LEAD_ACCOUNT_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    ac_type_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["ac_type_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_GOVT_PVT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    govt_pvt_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["govt_pvt_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_PAINTING") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    painting_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["painting_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_LEAD_SECTOR") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_sector_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["lead_sector_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_LEAD_SUB_SECTOR") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_sub_sector_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["lead_sub_sector_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "LEAD_POTENTIAL") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_potential_list: response.data.table || []
-                }));
+                commonLovDetailsData.current["lead_potential_list"] = response.data.table || [];
             }
             else if (payload.lov_type === "KEY_APPL_CITY") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_appl_city_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["key_appl_city_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_KEY_LEAD_STAGE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_lead_stage_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["key_lead_stage_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_KEY_PAINTING_START_TIME") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_painting_start_time_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["key_painting_start_time_List"] = response.data.table || [];
             }
             // -----------SELF popup-----------
             else if (payload.lov_type === "PT_BUSINESS_CONTACT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    refer_from_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["refer_from_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_CONTRACTOR_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    contractor_type_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["contractor_type_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_AREA_MOU") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    potential_area_uom_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["potential_area_uom_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_BUSINESS_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    business_type_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["business_type_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_PRODUCT_CATEGORY") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    product_category_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["product_category_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_INDUSTRY_SEGMENT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    industry_segment_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["industry_segment_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_LEAD_SHARE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_share_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["lead_share_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_DOC_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    doc_type_List: response.data.table || []
-                }));
+                commonLovDetailsData.current["doc_type_List"] = response.data.table || [];
             }
         } catch (error) {
             return;
@@ -487,10 +443,12 @@ const Dashboard = () => {
         setShowDropdown(false);
         setPopupOpenData({ open: true, popupHeader: action })
     };
+    const handleSearch = () => {}
 
     const closeModal = () => {
         setIsModalOpen(false);
     };
+
 
     useEffect(() => {
         GetDashboardLeadFunnel();
@@ -511,6 +469,11 @@ const Dashboard = () => {
             GetApplicableUserList();
         }
     }, [data.selectedUserGroup, data.selectedRegion]);
+
+    // for lead popup //
+    useEffect(() => {
+        setleadData(((prev: any) => ({ ...prev, ptm_lead_share: popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : '' })));
+    }, [popupOpenData?.popupHeader])
 
     return (
         <>
@@ -925,8 +888,8 @@ const Dashboard = () => {
                             </button>
                             {showDropdown && (
                                 <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
-                                    {filterdata?.verticalData.length &&
-                                        filterdata?.verticalData.map((vd: any, indx: any) =>
+                                    {ddlData?.verticalData.length &&
+                                        ddlData?.verticalData.map((vd: any, indx: any) =>
                                             <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name)}>{vd?.bm_name}</button>
                                         )
                                     }
@@ -1050,7 +1013,7 @@ const Dashboard = () => {
             </div>
             {/* // for lead popup // */}
             {popupOpenData?.open &&
-                <CustomPopupComponent dataObj={dataObj} filterdata={filterdata} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
             }
 
             <Modal
