@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import Select from 'react-select';
-import { GetVerticalWisBusinessLine } from '../../../services/api/protectonLead/PotentialLead';
+import { GetDealerSearch, GetPotentialTrackingDtls, GetPotentialTrackingList, GetVerticalWisBusinessLine } from '../../../services/api/protectonLead/PotentialLead';
 import { CommonLovDetails, GetProtectonApplicableDepot, GetProtectonApplicableTerr, GetProtectonRegion } from '../../../services/api/users/UserProfile';
 import { UseAuthStore } from '../../../services/store/AuthStore';
 import { CiSearch } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa6";
+import { IoEyeSharp } from 'react-icons/io5';
 import CustomPopupComponent from './Components/customPopupComponent';
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 // import axios, { type AxiosResponse } from 'axios';
 // import { GetPcaList } from '../../../services/api/protectonEpca/EpcaList';
 // import { BASE_ENDPOINTS } from '../../../helper/EndPoints';
@@ -14,37 +16,15 @@ const PotentialLead = () => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const [loading, setLoading] = React.useState(false);
+    const [potentialLeadDataList, setPotentialLeadDataList] = React.useState([]);
     const [showDropdown, setShowDropdown] = React.useState(false);
     const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '' });
 
     const dataObj = {
-        viewBy: "FROM",
-        // verticalData: [],
-        // protecton_regionList: [],
-        // depotList: [],
-        // terrList: [],
-        // assignStatusList: [],
-        // workStatusList: [],
-        selectedvertical: '',
-        selectedProtecton_region: '',
-        selectedDepot: '',
-        selectedTerr: '',
-        selectedAssignStatus: '',
-        selectedWorkStatus: '',
         // for PROLINKS popup
         regionList: [],
         applicableDepotList: [],
         stateList: [],
-        paint_admixture_List: [],
-        ac_type_List: [],
-        govt_pvt_List: [],
-        painting_List: [],
-        lead_sector_List: [],
-        lead_sub_sector_List: [],
-        lead_potential_list: [],
-        key_appl_city_List: [],
-        key_lead_stage_List: [],
-        key_painting_start_time_List: [],
         selectedRegionList: '',
         selectedApplicableDepotList: '',
         selectedStateList: '',
@@ -58,14 +38,6 @@ const PotentialLead = () => {
         // selectedKey_appl_city: '', //
         selectedKey_lead_stage: '',
         selectedKey_painting_start_time: '',
-        projectName: '', // Project Information
-        projectDescription: '', // Project Information
-        siteLocation: '', // Project Information
-        addr1: '', // Project Information
-        addr2: '', // Project Information
-        city: '', // Project Information
-        pinCode: '', // Project Information
-        state: '', // Project Information
         pan_no: '',
         gstin_no: '',
         intPaintableArea: '',
@@ -78,6 +50,14 @@ const PotentialLead = () => {
         businessPotential_cc: '',
         shareOfBusiness: '',
         siteContactTableData: [],
+        projectName: '', // Project Information
+        projectDescription: '', // Project Information
+        siteLocation: '', // Project Information
+        addr1: '', // Project Information
+        addr2: '', // Project Information
+        city: '', // Project Information
+        pinCode: '', // Project Information
+        state: '', // Project Information
         // for SELF popup
         ptm_ref_lead_yn: '', // Referral Lead
         ptm_ref_lead_type: '', // Refer From
@@ -92,7 +72,6 @@ const PotentialLead = () => {
         ptm_potential_area_uom: '', // Scope for paints area uom
         ptm_area: '', // service area
         ptm_business_type: '', // Business Type
-        ptm_product_category: [], // Product Category
         ptm_industry_segment: '', // Industry Segment
         ptm_lead_share: '', // Lead Share
         ptm_region: '', // region
@@ -101,6 +80,38 @@ const PotentialLead = () => {
         ptm_work_status: '', // Work In Progress
         ptm_extra_info: '', // Work In Progress
         referralLead: [{ value: 'Y', label: "YES" }, { value: 'N', label: 'NO' }], // Referral Lead DDL
+        ptm_product_category: [], // Product Category
+
+    }
+    const [data, setData] = React.useState<any>({ ...dataObj });
+    const [filter_Data, setFilter_Data] = React.useState<any>({
+        viewBy: "FROM",
+        selectedvertical: '',
+        selectedProtecton_region: '',
+        selectedDepot: '',
+        selectedTerr: '',
+        selectedAssignStatus: '',
+        selectedWorkStatus: '',
+    });
+    const [ddlData, setDdlData] = React.useState<any>({
+        verticalData: [],
+        protecton_regionList: [],
+        depotList: [],
+        terrList: [],
+        assignStatusList: [],
+        workStatusList: [],
+        // for PROLINKS popup
+        paint_admixture_List: [],
+        ac_type_List: [],
+        govt_pvt_List: [],
+        painting_List: [],
+        lead_sector_List: [],
+        lead_sub_sector_List: [],
+        lead_potential_list: [],
+        key_appl_city_List: [],
+        key_lead_stage_List: [],
+        key_painting_start_time_List: [],
+        // for SELF popup
         refer_from_List: [], // Refer From DDL
         contractor_type_List: [],// Contractor Type DDL
         potential_area_uom_List: [], // Scope for paints area uom DDL
@@ -109,25 +120,16 @@ const PotentialLead = () => {
         industry_segment_List: [], // Industry Segment
         lead_share_List: [], // Lead Share
         doc_type_List: [], // Upload Documents doc_type
-    }
-    const [data, setData] = React.useState<any>({ ...dataObj });
-    const [filterdata, setFilterData] = React.useState<any>({
-        verticalData: [],
-        protecton_regionList: [],
-        depotList: [],
-        terrList: [],
-        assignStatusList: [],
-        workStatusList: [],
     });
 
     const VerticalWisBusinessLineAPICall = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15'
         };
         try {
             const response: any = await GetVerticalWisBusinessLine(data);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 verticalData: response.data.table || [],
             }));
@@ -135,11 +137,11 @@ const PotentialLead = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
     const GetProtectonRegionAPICALL = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_group: user.group_code,
             app_id: '15',
@@ -147,7 +149,7 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonRegion(data);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 protecton_regionList: response.data.table || [],
             }));
@@ -155,11 +157,11 @@ const PotentialLead = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
     const Getdepot = async (region: string) => {
-        setLoading(true);
+        // setLoading(true);
         const payload: any = {
             app_id: '15',
             region: region,
@@ -168,18 +170,18 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonApplicableDepot(payload);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 depotList: response.data.table || []
             }));
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
     const Getterr = async (props: any) => {
-        setLoading(true);
+        // setLoading(true);
         const payload: any = {
             // user_group: user.group_code,
             app_id: '15',
@@ -189,140 +191,79 @@ const PotentialLead = () => {
         };
         try {
             const response: any = await GetProtectonApplicableTerr(payload);
-            setFilterData((prevData: any) => ({
+            setDdlData((prevData: any) => ({
                 ...prevData,
                 terrList: response?.data?.table || []
             }));
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
-    const OtherAPIcall = async (payload: any) => {
+    var rowData: any = useRef(null);
+
+    const selectedLeadDetails = async () => {
         setLoading(true);
+        const payload: any = {
+            ptm_id: rowData?.current.ptm_id
+        };
         try {
-            const response: any = await CommonLovDetails(payload);
-            if (payload.lov_type === "PT_ASSIGN_STATUS") {
-                setFilterData((prevData: any) => ({
-                    ...prevData,
-                    assignStatusList: response.data.table || []
+            const response: any = await GetPotentialTrackingDtls(payload);
+            if (response?.statusCode === 200) {
+                // console.log(response);
+                var ptm_ref_dealer_code: any = '';
+                try {
+                    const dealerresponse: any = await GetDealerSearch({ depot: "", terr: "", region: "", srarchstr: response?.data?.table[0]?.ptm_ref_dealer_code });
+                    if (dealerresponse.data) {
+                        ptm_ref_dealer_code = { value: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).dealer_code, label: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).display_name }
+                    }
+                } catch (error) {
+                    return;
+                }
+                const ptm_product_category = ddlData?.product_category_List.filter((item: any) => response?.data?.table[0]?.ptm_product_category.split(",").includes(item?.lov_code)).map((item: any) => ({
+                    value: item.lov_code,
+                    label: item.lov_value
                 }));
-            }
-            else if (payload.lov_type === "PT_WORK_IN_PROGRESS") {
-                setFilterData((prevData: any) => ({
-                    ...prevData,
-                    workStatusList: response.data.table || []
-                }));
-            }
-            // -----------PROLINKS popup-----------
-            else if (payload.lov_type === "PT_LEAD_CATEGORY") {
                 setData((prevData: any) => ({
                     ...prevData,
-                    paint_admixture_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "LEAD_ACCOUNT_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    ac_type_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_GOVT_PVT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    govt_pvt_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_PAINTING") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    painting_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_LEAD_SECTOR") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_sector_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_LEAD_SUB_SECTOR") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_sub_sector_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "LEAD_POTENTIAL") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_potential_list: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "KEY_APPL_CITY") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_appl_city_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_KEY_LEAD_STAGE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_lead_stage_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_KEY_PAINTING_START_TIME") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    key_painting_start_time_List: response.data.table || []
-                }));
-            }
-            // -----------SELF popup-----------
-            else if (payload.lov_type === "PT_BUSINESS_CONTACT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    refer_from_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_CONTRACTOR_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    contractor_type_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_AREA_MOU") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    potential_area_uom_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_BUSINESS_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    business_type_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_PRODUCT_CATEGORY") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    product_category_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_INDUSTRY_SEGMENT") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    industry_segment_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_LEAD_SHARE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    lead_share_List: response.data.table || []
-                }));
-            }
-            else if (payload.lov_type === "PT_DOC_TYPE") {
-                setData((prevData: any) => ({
-                    ...prevData,
-                    doc_type_List: response.data.table || []
+                    ...response?.data?.table[0],
+                    ptm_ref_lead_yn: data?.referralLead?.find((item: any) => item.value === response?.data?.table[0]?.ptm_ref_lead_yn) || '',
+
+                    ptm_ref_lead_type: ddlData?.refer_from_List.length > 0 ? { value: ddlData?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_code, label: ddlData?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_value } : '',
+
+                    ptm_ref_dealer_code: ptm_ref_dealer_code,
+
+                    ptm_contractor_type: ddlData?.contractor_type_List.length > 0 ? { value: ddlData?.contractor_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_contractor_type).lov_code, label: ddlData?.contractor_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_contractor_type).lov_value } : '',
+
+                    projectName: response?.data?.table[0]?.ptm_project_name || '',
+                    siteLocation: response?.data?.table[0]?.ptm_project_location || '',
+                    addr1: response?.data?.table[0]?.ptm_project_address1 || '',
+                    addr2: response?.data?.table[0]?.ptm_project_address2 || '',
+                    city: response?.data?.table[0]?.ptm_project_city || '',
+                    pinCode: response?.data?.table[0]?.ptm_project_pin || '',
+
+                    selectedStateList: data?.stateList.length > 0 ? { value: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_code, label: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_name } : '',
+
+                    ptm_potential_area_uom: ddlData?.potential_area_uom_List.length > 0 ? { value: ddlData?.potential_area_uom_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_potential_area_uom).lov_code, label: ddlData?.potential_area_uom_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_potential_area_uom).lov_value } : '',
+
+                    ptm_business_type: ddlData?.business_type_List.length > 0 ? { value: ddlData?.business_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_business_type).lov_code, label: ddlData?.business_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_business_type).lov_value } : '',
+
+                    ptm_product_category: ptm_product_category || [],
+
+                    ptm_industry_segment: ddlData?.industry_segment_List.length > 0 ? { value: ddlData?.industry_segment_List?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_industry_segment)?.lov_code, label: ddlData?.industry_segment_List?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_industry_segment)?.lov_value } : '',
+
+                    ptm_lead_share: ddlData?.lead_share_List.length > 0 ? { value: ddlData?.lead_share_List?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_lead_share)?.lov_code, label: ddlData?.lead_share_List?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_lead_share)?.lov_value } : '',
+
+                    ptm_region: ddlData?.protecton_regionList.length > 0 ? { value: ddlData?.protecton_regionList?.find((item: any) => item?.depot_regn === response?.data?.table[0]?.ptm_region)?.depot_regn, label: ddlData?.protecton_regionList?.find((item: any) => item?.depot_regn === response?.data?.table[0]?.ptm_region)?.regn_new } : '',
+
+                    ptm_depot_code: ddlData?.depotList.length > 0 ? { value: ddlData?.depotList?.find((item: any) => item?.depot_code === response?.data?.table[0]?.ptm_depot_code)?.depot_code, label: ddlData?.depotList?.find((item: any) => item?.depot_code === response?.data?.table[0]?.ptm_depot_code)?.depot_name } : '',
+
+                    ptm_terr_code: ddlData?.terrList.length > 0 ? { value: ddlData?.terrList?.find((item: any) => item?.terr_code === response?.data?.table[0]?.ptm_terr_code)?.terr_code, label: ddlData?.terrList?.find((item: any) => item?.terr_code === response?.data?.table[0]?.ptm_terr_code)?.terr_name } : '',
+
+                    ptm_work_status: ddlData?.workStatusList.length > 0 ? { value: ddlData?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_code, label: ddlData?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_value } : '',
+
+                    potentialTrackingcontacts: response?.data?.table2 || []
                 }));
             }
         } catch (error) {
@@ -331,24 +272,214 @@ const PotentialLead = () => {
         setLoading(false);
     }
 
-    const handleSearch = () => {
+    var commonLovDetailsData: any = useRef({});
+    const OtherAPIcall = async (payload: any) => {
+        setLoading(true);
+        try {
+            const response: any = await CommonLovDetails(payload);
+            if (payload.lov_type === "PT_ASSIGN_STATUS") {
+                commonLovDetailsData.current["assignStatusList"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_WORK_IN_PROGRESS") {
+                commonLovDetailsData.current["workStatusList"] = response.data.table || [];
+            }
+            // -----------PROLINKS popup-----------
+            else if (payload.lov_type === "PT_LEAD_CATEGORY") {
+                commonLovDetailsData.current["paint_admixture_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "LEAD_ACCOUNT_TYPE") {
+                commonLovDetailsData.current["ac_type_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_GOVT_PVT") {
+                commonLovDetailsData.current["govt_pvt_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_PAINTING") {
+                commonLovDetailsData.current["painting_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_LEAD_SECTOR") {
+                commonLovDetailsData.current["lead_sector_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_LEAD_SUB_SECTOR") {
+                commonLovDetailsData.current["lead_sub_sector_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "LEAD_POTENTIAL") {
+                commonLovDetailsData.current["lead_potential_list"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "KEY_APPL_CITY") {
+                commonLovDetailsData.current["key_appl_city_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_KEY_LEAD_STAGE") {
+                commonLovDetailsData.current["key_lead_stage_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_KEY_PAINTING_START_TIME") {
+                commonLovDetailsData.current["key_painting_start_time_List"] = response.data.table || [];
+            }
+            // -----------SELF popup-----------
+            else if (payload.lov_type === "PT_BUSINESS_CONTACT") {
+                commonLovDetailsData.current["refer_from_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_CONTRACTOR_TYPE") {
+                commonLovDetailsData.current["contractor_type_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_AREA_MOU") {
+                commonLovDetailsData.current["potential_area_uom_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_BUSINESS_TYPE") {
+                commonLovDetailsData.current["business_type_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_PRODUCT_CATEGORY") {
+                commonLovDetailsData.current["product_category_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_INDUSTRY_SEGMENT") {
+                commonLovDetailsData.current["industry_segment_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_LEAD_SHARE") {
+                commonLovDetailsData.current["lead_share_List"] = response.data.table || [];
+            }
+            else if (payload.lov_type === "PT_DOC_TYPE") {
+                commonLovDetailsData.current["doc_type_List"] = response.data.table || [];
+            }
+        } catch (error) {
+            return;
+        }
+        setLoading(false);
+    }
+
+    const handleSearch = async () => {
+        setLoading(true);
         const filterData = {
-            vertical: data.selectedvertical,
-            viewBy: data.viewBy,
-            region: data.selectedRegion,
-            depot: data.selectedDepot,
-            terr: data.selectedTerr,
-            assignStatus: data.selectedAssignStatus,
-            workStatus: data.selectedWorkStatus
+            app_name: "PROTECTON",
+            app_id: 0,
+            searchStr: "",
+            businessline: "PROTECTON",
+            ptm_region: filter_Data.selectedProtecton_region.value,
+            ptm_depot_code: filter_Data.selectedDepot.value,
+            ptm_terr_code: filter_Data.selectedTerr.value,
+            assign_stat: filter_Data.selectedAssignStatus.value,
+            ptm_work_status: filter_Data.selectedWorkStatus.value
         };
-        console.log(filterData);
-        // Add your search logic here
+        try {
+            if (filter_Data.selectedvertical.value === 2) {
+                const response: any = await GetPotentialTrackingList(filterData);
+                if (response?.statusCode !== 200) {
+                    setLoading(false);
+                    return;
+                } else {
+                    setPotentialLeadDataList(response?.data?.table || []);
+                }
+            }
+        } catch (error) {
+            return;
+        }
+        setLoading(false);
     }
 
     const handleDropdownSelect = (action: string) => {
         setShowDropdown(false);
         setPopupOpenData({ open: true, popupHeader: action })
     };
+
+    const columns = useMemo<MRT_ColumnDef<any>[]>(
+        () => [
+            {
+                accessorKey: 'lead_vertical',
+                header: 'Vertical',
+                size: 60,
+            },
+            {
+                accessorKey: 'created_user',
+                header: 'Created By',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_createdon',
+                header: 'Date',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_project_name',
+                header: 'Project Name',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_customer_name',
+                header: 'Customer Name',
+                size: 60,
+            },
+            {
+                accessorKey: 'work_status_disp',
+                header: 'Work Status',
+                size: 60,
+            },
+            {
+                accessorKey: 'region',
+                header: 'Region',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_project_address1',
+                header: 'Address',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_project_city',
+                header: 'City',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_project_pin',
+                header: 'PIN',
+                size: 60,
+            },
+            {
+                accessorKey: 'ptm_project_state_name',
+                header: 'State',
+                size: 60,
+            },
+            {
+                header: 'Action',
+                size: 70,
+                Cell: ({ cell }) => {
+                    return (
+                        <>
+                            <span
+                                className='cursor-pointer text-primary text-xl mr-2.5'
+                                title="View"
+                            >
+                                <div className="flex items-center justify-center">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => {
+                                            handleDropdownSelect(cell.row.original?.lead_vertical.toUpperCase());
+                                            rowData.current = cell.row.original;
+                                        }}
+                                    >
+                                        <IoEyeSharp />
+                                    </button>
+                                </div>
+                            </span>
+                        </>
+                    );
+                },
+            },
+        ],
+        []
+    );
+    const table = useMantineReactTable({
+        columns,
+        data: potentialLeadDataList,
+        enableColumnResizing: true,
+        enableTopToolbar: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        columnResizeMode: 'onChange',
+        mantineTableContainerProps: {
+            style: {
+                overflowX: 'hidden',
+            },
+        }
+    });
 
     React.useEffect(() => {
         GetProtectonRegionAPICALL();
@@ -360,12 +491,22 @@ const PotentialLead = () => {
             lov_type: "PT_WORK_IN_PROGRESS",
             active: "Y"
         });
+        setTimeout(() => {
+            setDdlData((prevData: any) => ({ ...prevData, ...commonLovDetailsData.current }));
+        }, 2000);
         VerticalWisBusinessLineAPICall();
     }, []);
 
     useEffect(() => {
         setData(((prev: any) => ({ ...prev, ptm_lead_share: popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : '' })));
     }, [popupOpenData?.popupHeader])
+
+    React.useEffect(() => {
+        // console.log(ddlData);
+        if (rowData.current) {
+            selectedLeadDetails();
+        }
+    }, [ddlData]);
 
     React.useEffect(() => {
         console.log(data)
@@ -386,8 +527,8 @@ const PotentialLead = () => {
                                 type="radio"
                                 name="viewBy"
                                 value="FROM"
-                                checked={data?.viewBy === "FROM"}
-                                onChange={e => setData((pre: any) => ({ ...pre, viewBy: e.target.value }))}
+                                checked={filter_Data?.viewBy === "FROM"}
+                                onChange={e => setFilter_Data((pre: any) => ({ ...pre, viewBy: e.target.value }))}
                                 className="mr-1"
                             />
                             FROM
@@ -397,8 +538,8 @@ const PotentialLead = () => {
                                 type="radio"
                                 name="viewBy"
                                 value="TO"
-                                checked={data?.viewBy === "TO"}
-                                onChange={e => setData((pre: any) => ({ ...pre, viewBy: e.target.value }))}
+                                checked={filter_Data?.viewBy === "TO"}
+                                onChange={e => setFilter_Data((pre: any) => ({ ...pre, viewBy: e.target.value }))}
                                 className="mr-1"
                             />
                             TO
@@ -409,13 +550,13 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.verticalData.map((d: any) => ({
+                            options={ddlData.verticalData.map((d: any) => ({
                                 value: d.bm_id,
                                 label: d.bm_name,
                             }))}
-                            value={data.selectedvertical}
+                            value={filter_Data.selectedvertical}
                             onChange={(event: any) => {
-                                setData((pre: any) => ({ ...pre, selectedvertical: event }))
+                                setFilter_Data((pre: any) => ({ ...pre, selectedvertical: event }))
                             }}
                         />
                     </div>
@@ -424,12 +565,16 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
-                            value={data.selectedProtecton_region}
+                            options={ddlData.protecton_regionList.map((d: any) => ({ value: d.depot_regn, label: d.regn_new }))}
+                            value={filter_Data.selectedProtecton_region}
                             onChange={(event: any) => {
+                                setLoading(true);
                                 Getdepot(event.value);
                                 Getterr({ region: event.value, depot: '' });
-                                setData((pre: any) => ({ ...pre, selectedProtecton_region: event, selectedDepot: '', selectedTerr: '' }))
+                                setTimeout(() => {
+                                    setLoading(false);
+                                }, 2500);
+                                setFilter_Data((pre: any) => ({ ...pre, selectedProtecton_region: event, selectedDepot: '', selectedTerr: '' }))
                             }}
                         />
                     </div>
@@ -438,11 +583,15 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
-                            value={data.selectedDepot}
+                            options={ddlData.depotList.map((d: any) => ({ value: d.depot_code, label: d.depot_name }))}
+                            value={filter_Data.selectedDepot}
                             onChange={(event: any) => {
-                                Getterr({ region: data.selectedProtecton_region.value, depot: event.value });
-                                setData((pre: any) => ({ ...pre, selectedDepot: event, selectedTerr: '' }))
+                                setLoading(true);
+                                Getterr({ region: filter_Data.selectedProtecton_region.value, depot: event.value });
+                                setTimeout(() => {
+                                    setLoading(false);
+                                }, 2500);
+                                setFilter_Data((pre: any) => ({ ...pre, selectedDepot: event, selectedTerr: '' }))
                             }}
                         />
                     </div>
@@ -451,10 +600,10 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
-                            value={data.selectedTerr}
+                            options={ddlData.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
+                            value={filter_Data.selectedTerr}
                             onChange={(event: any) => {
-                                setData((pre: any) => ({ ...pre, selectedTerr: event }))
+                                setFilter_Data((pre: any) => ({ ...pre, selectedTerr: event }))
                             }}
                         />
                     </div>
@@ -463,10 +612,10 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.assignStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                            value={data.selectedAssignStatus}
+                            options={ddlData.assignStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                            value={filter_Data.selectedAssignStatus}
                             onChange={(event: any) => {
-                                setData((pre: any) => ({ ...pre, selectedAssignStatus: event }))
+                                setFilter_Data((pre: any) => ({ ...pre, selectedAssignStatus: event }))
                             }}
                         />
                     </div>
@@ -475,10 +624,10 @@ const PotentialLead = () => {
                         <Select
                             className="text-sm"
                             isSearchable={true}
-                            options={filterdata.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                            value={data.selectedWorkStatus}
+                            options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                            value={filter_Data.selectedWorkStatus}
                             onChange={(event: any) => {
-                                setData((pre: any) => ({ ...pre, selectedWorkStatus: event }))
+                                setFilter_Data((pre: any) => ({ ...pre, selectedWorkStatus: event }))
                             }}
                         />
                     </div>
@@ -499,8 +648,8 @@ const PotentialLead = () => {
                             </button>
                             {showDropdown && (
                                 <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
-                                    {filterdata?.verticalData.length &&
-                                        filterdata?.verticalData.map((vd: any, indx: any) =>
+                                    {ddlData?.verticalData.length &&
+                                        ddlData?.verticalData.map((vd: any, indx: any) =>
                                             <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name)}>{vd?.bm_name}</button>
                                         )
                                     }
@@ -511,8 +660,12 @@ const PotentialLead = () => {
                 </div>
             </div>
 
+            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+                <MantineReactTable table={table} />
+            </div>
+
             {popupOpenData?.open &&
-                <CustomPopupComponent dataObj={dataObj} filterdata={filterdata} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
             }
 
             {loading && (
