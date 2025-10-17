@@ -4,6 +4,7 @@ import {
   RouterProvider,
   Routes,
   Route,
+  Navigate,
 } from 'react-router-dom';
 import './styles/custom.css';
 // import './App.css';
@@ -68,6 +69,28 @@ import AppUsageReport from './pages/protecton/HoMarketing/AppUsageReport';
 // Base URL configuration
 // const BASE_URL = '/BERGERONE';
 
+// Helper function to check authentication
+const isAuthenticated = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const storedObjectString: any = localStorage.getItem('auth');
+  // return auth !== null && auth !== undefined && auth !== '';
+  const storedObject = JSON.parse(storedObjectString);
+  // console.log(storedObject)
+  if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+    return false;
+  } else return true;
+};
+
+// Protected Route Component - redirects to login if not authenticated
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  return isAuthenticated() ? children : <Navigate to="/login/cover-login/" replace />;
+};
+
+// Public Route Component - redirects to dashboard if already authenticated
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+  return !isAuthenticated() ? children : <Navigate to="/" replace />;
+};
+
 function App() {
   // Check if we're in a browser environment
   const isBrowser = typeof window !== 'undefined';
@@ -77,7 +100,7 @@ function App() {
     const router = createBrowserRouter([
       {
         path: '/',
-        element: <FixedLayout />,
+        element: <ProtectedRoute><FixedLayout /></ProtectedRoute>,
         children: [
           {
             path: '/',
@@ -293,7 +316,11 @@ function App() {
       },
       {
         path: '/login/cover-login/',
-        element: <Login />,
+        element: <PublicRoute><Login /></PublicRoute>,
+      },
+      {
+        path: '*',
+        element: <Navigate to="/" replace />,
       },
     ], {
       basename: '/BERGERONE'
@@ -310,7 +337,7 @@ function App() {
   return (
     <div className="min-h-screen bg-blue-300 text-black">
       <Routes>
-        <Route path="/" element={<FixedLayout />}>
+        <Route path="/" element={<ProtectedRoute><FixedLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="/admin/FromMenuMaster" element={<FromMenuMaster />} />
           <Route path="/admin/UserFormAccess" element={<UserFormAccess />} />
@@ -364,7 +391,8 @@ function App() {
           <Route path="/Protecton/HoMarketing/ComplaintsReport" element={<ComplaintsReport />} />
           <Route path="/Protecton/HoMarketing/AppUsageReport" element={<AppUsageReport />} />
         </Route>
-        <Route path="/login/cover-login/" element={<Login />} />
+        <Route path="/login/cover-login/" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );

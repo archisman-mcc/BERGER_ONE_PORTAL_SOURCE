@@ -62,8 +62,6 @@ const PotentialLead = () => {
         ptm_ref_lead_yn: '', // Referral Lead
         ptm_ref_lead_type: '', // Refer From
         ptm_ref_dealer_code: '', // Existing Business Contract
-        potentialTrackingcontacts: [], // Referral Source Details
-        potentialTrackingDocs: [], // Upload Documents
         ptm_customer_name: '', // Customer
         ptm_contractor_type: '', // Contractor Type
         ptm_potential_val: '', // Value of paints
@@ -79,8 +77,9 @@ const PotentialLead = () => {
         ptm_terr_code: '', // terr
         ptm_work_status: '', // Work In Progress
         ptm_extra_info: '', // Work In Progress
-        referralLead: [{ value: 'Y', label: "YES" }, { value: 'N', label: 'NO' }], // Referral Lead DDL
-        ptm_product_category: [], // Product Category
+        ptm_product_category: '', // Product Category
+        potentialTrackingcontacts: [], // Referral Source Details
+        potentialTrackingDocs: [], // Upload Documents
 
     }
     const [data, setData] = React.useState<any>({ ...dataObj });
@@ -112,6 +111,7 @@ const PotentialLead = () => {
         key_lead_stage_List: [],
         key_painting_start_time_List: [],
         // for SELF popup
+        referralLead: [{ value: 'Y', label: "YES" }, { value: 'N', label: 'NO' }], // Referral Lead DDL
         refer_from_List: [], // Refer From DDL
         contractor_type_List: [],// Contractor Type DDL
         potential_area_uom_List: [], // Scope for paints area uom DDL
@@ -211,16 +211,19 @@ const PotentialLead = () => {
         try {
             const response: any = await GetPotentialTrackingDtls(payload);
             if (response?.statusCode === 200) {
-                // console.log(response);
                 var ptm_ref_dealer_code: any = '';
-                try {
-                    const dealerresponse: any = await GetDealerSearch({ depot: "", terr: "", region: "", srarchstr: response?.data?.table[0]?.ptm_ref_dealer_code });
-                    if (dealerresponse.data) {
-                        ptm_ref_dealer_code = { value: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).dealer_code, label: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).display_name }
+                if (response?.data?.table[0]?.ptm_ref_dealer_code) {
+                    try {
+                        const dealerresponse: any = await GetDealerSearch({ depot: "", terr: "", region: "", srarchstr: response?.data?.table[0]?.ptm_ref_dealer_code });
+                        if (dealerresponse.data) {
+                            ptm_ref_dealer_code = { value: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).dealer_code, label: dealerresponse.data.table?.find((item: any) => item.dealer_code === response?.data?.table[0]?.ptm_ref_dealer_code).display_name }
+                        }
+                    } catch (error) {
+                        console.log(error)
                     }
-                } catch (error) {
-                    return;
                 }
+                console.log("GetPotentialTrackingDtls --", response?.data);
+                console.log("product_category_List --", ddlData?.product_category_List);
                 const ptm_product_category = ddlData?.product_category_List.filter((item: any) => response?.data?.table[0]?.ptm_product_category.split(",").includes(item?.lov_code)).map((item: any) => ({
                     value: item.lov_code,
                     label: item.lov_value
@@ -228,7 +231,7 @@ const PotentialLead = () => {
                 setData((prevData: any) => ({
                     ...prevData,
                     ...response?.data?.table[0],
-                    ptm_ref_lead_yn: data?.referralLead?.find((item: any) => item.value === response?.data?.table[0]?.ptm_ref_lead_yn) || '',
+                    ptm_ref_lead_yn: ddlData?.referralLead?.find((item: any) => item.value === response?.data?.table[0]?.ptm_ref_lead_yn) || '',
 
                     ptm_ref_lead_type: ddlData?.refer_from_List.length > 0 ? { value: ddlData?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_code, label: ddlData?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_value } : '',
 
@@ -263,7 +266,9 @@ const PotentialLead = () => {
 
                     ptm_work_status: ddlData?.workStatusList.length > 0 ? { value: ddlData?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_code, label: ddlData?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_value } : '',
 
-                    potentialTrackingcontacts: response?.data?.table2 || []
+                    potentialTrackingDocs: response?.data?.table1 || [],
+
+                    potentialTrackingcontacts: response?.data?.table2 || [],
                 }));
             }
         } catch (error) {
@@ -351,7 +356,7 @@ const PotentialLead = () => {
             app_name: "PROTECTON",
             app_id: 0,
             searchStr: "",
-            businessline: "PROTECTON",
+            businessline: filter_Data.selectedvertical.value === 1 ? "PROLINKS" : filter_Data.selectedvertical.value === 2 ? "PROTECTON" : filter_Data.selectedvertical.value === 14 ? "OTHER PROTECTON" : "",
             ptm_region: filter_Data.selectedProtecton_region.value,
             ptm_depot_code: filter_Data.selectedDepot.value,
             ptm_terr_code: filter_Data.selectedTerr.value,
@@ -359,15 +364,15 @@ const PotentialLead = () => {
             ptm_work_status: filter_Data.selectedWorkStatus.value
         };
         try {
-            if (filter_Data.selectedvertical.value === 2) {
-                const response: any = await GetPotentialTrackingList(filterData);
-                if (response?.statusCode !== 200) {
-                    setLoading(false);
-                    return;
-                } else {
-                    setPotentialLeadDataList(response?.data?.table || []);
-                }
+            // if (filter_Data.selectedvertical.value === 2) {
+            const response: any = await GetPotentialTrackingList(filterData);
+            if (response?.statusCode !== 200) {
+                setLoading(false);
+                return;
+            } else {
+                setPotentialLeadDataList(response?.data?.table || []);
             }
+            // }
         } catch (error) {
             return;
         }
@@ -502,7 +507,7 @@ const PotentialLead = () => {
     }, [popupOpenData?.popupHeader])
 
     React.useEffect(() => {
-        // console.log(ddlData);
+        console.log(ddlData);
         if (rowData.current) {
             selectedLeadDetails();
         }
@@ -633,7 +638,7 @@ const PotentialLead = () => {
                     </div>
                     {/* Dropdown Button */}
                     <div className="flex items-end space-x-2">
-                        <button className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center" onClick={handleSearch}>
+                        <button onClick={() => handleSearch()} className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-xs flex items-center">
                             <CiSearch />  <span>Search</span>
                         </button>
                         <div className="relative" style={{ minWidth: '110px' }}>

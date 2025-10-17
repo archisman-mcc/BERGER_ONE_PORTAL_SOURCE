@@ -114,16 +114,16 @@ const FixedLayout = () => {
             return uam.map((u: any) => ({ ...u, childVisibility: u.form_parent_id === 0 ? true : false, children: u.children ? menuRec(u.children) : [] }))
         }
 
-        const storedObjectString = localStorage.getItem('auth');
-        if (storedObjectString) {
-            const storedObject = JSON.parse(storedObjectString);
-            // console.log(storedObject)
-            if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
-                navigate('/login/cover-login');
-            } else {
-                setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));
-            }
-        }
+        // const storedObjectString = localStorage.getItem('auth');
+        // if (storedObjectString) {
+        //     const storedObject = JSON.parse(storedObjectString);
+        //     // console.log(storedObject)
+        //     if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+        //         navigate('/login/cover-login');
+        //     } else {
+        //         setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));
+        //     }
+        // }
 
         // Close dropdown when clicking outside
         const handleClickOutside = (event: MouseEvent) => {
