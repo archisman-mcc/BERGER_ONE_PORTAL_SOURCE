@@ -276,6 +276,9 @@ const PotentialLead = () => {
         }
         setLoading(false);
     }
+    const selectedLeadDetails1 = async () => {
+        console.log("product_category_List --", ddlData?.product_category_List);
+    }
 
     var commonLovDetailsData: any = useRef({});
     const OtherAPIcall = async (payload: any) => {
@@ -458,6 +461,7 @@ const PotentialLead = () => {
                                         onClick={() => {
                                             handleDropdownSelect(cell.row.original?.lead_vertical.toUpperCase());
                                             rowData.current = cell.row.original;
+                                            selectedLeadDetails1();
                                         }}
                                     >
                                         <IoEyeSharp />
@@ -499,6 +503,11 @@ const PotentialLead = () => {
         setTimeout(() => {
             setDdlData((prevData: any) => ({ ...prevData, ...commonLovDetailsData.current }));
         }, 2000);
+        // setTimeout(() => {
+        //     if (rowData.current) {
+        //         selectedLeadDetails();
+        //     }
+        // }, 5000);
         VerticalWisBusinessLineAPICall();
     }, []);
 
@@ -506,12 +515,12 @@ const PotentialLead = () => {
         setData(((prev: any) => ({ ...prev, ptm_lead_share: popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : '' })));
     }, [popupOpenData?.popupHeader])
 
-    React.useEffect(() => {
-        console.log(ddlData);
-        if (rowData.current) {
-            selectedLeadDetails();
-        }
-    }, [ddlData]);
+    // React.useEffect(() => {
+    //     console.log(ddlData);
+    //     if (rowData.current) {
+    //         selectedLeadDetails();
+    //     }
+    // }, [ddlData]);
 
     React.useEffect(() => {
         console.log(data)
