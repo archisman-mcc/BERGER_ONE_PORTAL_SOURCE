@@ -124,13 +124,22 @@ const FixedLayout = () => {
         //         setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));
         //     }
         // }
+        const storedObjectString = localStorage.getItem('auth');
+        if (storedObjectString) {
+            const storedObject = JSON.parse(storedObjectString);
+            if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+                console.log(storedObject);
+            } else {
+                setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));
+            }
+        }
 
         // Close dropdown when clicking outside
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setShowDropdown(false);
             }
-            if (menuDropdownRef.current && !menuDropdownRef.current.contains(event.target as Node) && 
+            if (menuDropdownRef.current && !menuDropdownRef.current.contains(event.target as Node) &&
                 subMenuDropdownRef.current && !subMenuDropdownRef.current.contains(event.target as Node)) {
                 setOpenMenuDropdown(null);
             }
