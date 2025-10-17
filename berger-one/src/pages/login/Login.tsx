@@ -140,11 +140,11 @@ const Login = () => {
                         <div className="w-full max-w-[440px] lg:mt-16">
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl dark:text-white">Sign in</h1>
-                                <p className="text-base font-bold leading-normal text-white-dark dark:text-slate-500">Enter your user Id and password to login</p>
+                                <p className="text-base font-bold leading-normal text-white-dark dark:text-slate-500">Enter your User ID and Password to Login</p>
                             </div>
                             <form className="space-y-5 dark:text-white">
                                 <div>
-                                    <label htmlFor="Email">User Id</label>
+                                    <label htmlFor="Email">User ID</label>
                                     <div className="relative text-white-dark">
                                         {/* <input id="Email" type="text" {...register('user_id')} placeholder="Enter User Id" className="form-input ps-10 placeholder:text-white-dark" /> */}
                                         <input
@@ -153,7 +153,7 @@ const Login = () => {
                                             type="email"
                                             required
                                             className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                            placeholder="Email address"
+                                            placeholder="Enter User ID"
                                             value={loginData.email}
                                             onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                                         />
@@ -174,7 +174,7 @@ const Login = () => {
                                             type="password"
                                             required
                                             className="appearance-none rounded-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                            placeholder="Password"
+                                            placeholder="Enter Password"
                                             value={loginData.password}
                                             onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                                         />

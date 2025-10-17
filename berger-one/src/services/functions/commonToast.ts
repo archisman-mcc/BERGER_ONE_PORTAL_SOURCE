@@ -23,7 +23,7 @@ export function commonErrorToast(text: string) {
         toast: true,
         position: 'bottom-start',
         showConfirmButton: false,
-        timer: 10000, // 10 Seconds
+        timer: 3000, // 10 Seconds
         timerProgressBar: true,
         text: text,
         showCloseButton: true,

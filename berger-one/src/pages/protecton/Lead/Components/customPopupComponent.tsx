@@ -120,7 +120,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                     const newDocument = {
                         ptd_doc_desc: "",
                         ptd_doc_name: file.name,
-                        ptd_doc_path: base64String, // ✅ pure base64 only
+                        ptd_doc_path: base64String,
                         ptd_doc_type: selected_doc_type?.value,
                     };
 
@@ -171,50 +171,105 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
     const prolinksAlertFunc = () => {
         if (data?.selectedRegionList === '') {
             alert('Please select region');
-            return;
+            return false;
         } else if (data?.selectedApplicableDepotList === '') {
             alert('Please select depot');
-            return;
+            return false;
         } else if (data?.selectedPaint_admixture === '') {
             alert('Please select paint/admixture');
-            return;
+            return false;
         } else if (data?.selectedGovt_pvt === '') {
             alert('Please select govt./private');
-            return;
+            return false;
         } else if (data?.selectedPainting === '') {
             alert('Please select new/re-paint');
-            return;
+            return false;
         } else if (data?.selectedLead_sector === '') {
             alert('Please select sector');
-            return;
+            return false;
         } else if (data?.selectedLead_sub_sector === '') {
             alert('Please select sub sector');
-            return;
+            return false;
         } else if (data?.projectName.trim() === '') {
             alert('Please enter project name');
-            return;
+            return false;
         } else if (data?.siteLocation.trim() === '') {
             alert('Please enter site location');
-            return;
+            return false;
         } else if (data?.addr1.trim() === '') {
             alert('Please enter address line 1');
-            return;
+            return false;
         } else if (data?.city.trim() === '') {
             alert('Please enter city');
-            return;
+            return false;
         } else if (data?.pinCode.trim() === '') {
             alert('Please enter pincode');
-            return;
+            return false;
         } else if (data?.selectedStateList === '') {
             alert('Please select state');
-            return;
+            return false;
         }
+        return true;
     }
 
-    const selfAlertFunc = () => { }
+    const selfAlertFunc = () => {
+        if (data?.ptm_ref_lead_yn === '') {
+            commonErrorToast('Please select Referral Lead');
+            return false;
+        }
+        else if (data.ptm_ref_lead_yn?.value === 'Y' && data?.ptm_ref_lead_type === '') {
+            commonErrorToast('Please select Refer From');
+            return false;
+        }
+        else if (data.ptm_ref_lead_type?.value === "BC1" && data?.ptm_ref_dealer_code === '') {
+            commonErrorToast('Please select Existing Business Contract');
+            return false;
+        }
+        else if (data?.ptm_customer_name === '') {
+            commonErrorToast('Please enter Customer');
+            return false;
+        }
+        else if (data?.ptm_contractor_type === '') {
+            commonErrorToast('Please select Contractor Type');
+            return false;
+        }
+        else if (data?.ptm_project_name === '') {
+            commonErrorToast('Please enter Project Name');
+            return false;
+        }
+        else if (data?.ptm_project_location === '') {
+            commonErrorToast('Please enter Project Location');
+            return false;
+        }
+        else if (data?.ptm_project_address1 === '') {
+            commonErrorToast('Please enter Address Line 1');
+            return false;
+        }
+        else if (data?.ptm_region === '') {
+            commonErrorToast('Please select Region');
+            return false;
+        }
+        else if (data?.ptm_depot_code === '') {
+            commonErrorToast('Please select Depot');
+            return false;
+        }
+        else if (data?.ptm_terr_code === '') {
+            commonErrorToast('Please select Territory');
+            return false;
+        }
+        else if (data?.ptm_work_status === '') {
+            commonErrorToast('Please select Work In Progress');
+            return false;
+        }
+        return true;
+    }
 
     const handleSubmit = async () => {
-        popupOpenData?.popupHeader === 'PROLINKS' ? prolinksAlertFunc() : selfAlertFunc();
+        const isValidationPassed = popupOpenData?.popupHeader === 'PROLINKS' ? prolinksAlertFunc() : selfAlertFunc();
+
+        if (!isValidationPassed) {
+            return;
+        }
         // const payloadData = {
         //     lead_gen_id: 0,
         //     region: data?.selectedRegionList?.value || '',
@@ -259,6 +314,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
         // }
         const payloadData = {
             potentialTrackingMstr: [{
+                ptm_app_id: 15,
                 ptm_ref_lead_yn: data.ptm_ref_lead_yn?.value || '',
                 ptm_ref_lead_type: data.ptm_ref_lead_type?.value || '',
                 ptm_ref_dealer_code: data.ptm_ref_dealer_code?.value || '',
@@ -563,7 +619,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={data?.referralLead}
+                                        options={ddlData?.referralLead}
                                         value={data.ptm_ref_lead_yn}
                                         onChange={(event: any) => {
                                             setexistingBusinessContract({ ...blankObj });
@@ -573,7 +629,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 </div>
                                 {data.ptm_ref_lead_yn?.value === 'Y' &&
                                     <div>
-                                        <label className="block text-sm font-semibold mb-1">Refer From:</label>
+                                        <label className="block text-sm font-semibold mb-1">Refer From:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <Select
                                             className="text-sm"
                                             isSearchable={true}
@@ -588,7 +644,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 }
                                 {data.ptm_ref_lead_type?.value === "BC1" &&
                                     <div>
-                                        <label className="block text-sm font-semibold mb-1">Existing Business Contract:</label>
+                                        <label className="block text-sm font-semibold mb-1">Existing Business Contract:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <AsyncSelectBox
                                             data={existingBusinessContract}
                                             setData={setexistingBusinessContract}
@@ -606,11 +662,11 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     </div>
                                 }
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Customer:</label>
+                                    <label className="block text-sm font-semibold mb-1">Customer:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <input type="text" placeholder="Enter Customer" className="w-full border rounded form-input text-sm" value={data?.ptm_customer_name} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_customer_name: event.target.value }))} autoComplete="off" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1">Contractor Type:</label>
+                                    <label className="block text-sm font-semibold mb-1">Contractor Type:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         className="text-sm"
                                         isSearchable={true}
@@ -1009,7 +1065,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                             setData((pre: any) => ({ ...pre, ptm_product_category: event }))
                                         }
                                         onMenuOpen={() => {
-                                            // Prevent menu from opening on scroll
                                             return false;
                                         }}
                                         menuPlacement="auto"
@@ -1410,28 +1465,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Footer */}
-                            {/* <div className="px-6 py-4 bg-gray-50 rounded-b-xl border-t border-gray-200">
-                                <div className="flex gap-3">
-                                    <Button
-                                        size="md"
-                                        color="gray"
-                                        onClick={() => setIsImageUploadPopupOpen(false)}
-                                        className="flex-1 py-2 font-medium bg-gray-500 hover:bg-gray-600 transition-all duration-200 rounded-lg"
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        size="md"
-                                        color="blue"
-                                        onClick={() => setIsImageUploadPopupOpen(false)}
-                                        className="flex-1 py-2 font-medium bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 rounded-lg"
-                                    >
-                                        Upload
-                                    </Button>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                 }
