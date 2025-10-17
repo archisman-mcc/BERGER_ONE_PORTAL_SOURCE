@@ -7,11 +7,13 @@ import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'man
 import { Button } from '@mantine/core';
 import { FiEye } from "react-icons/fi";
 import ModalComponent from "./ModalComponent";
+import { commonErrorToast } from "../../../../services/functions/commonToast";
 
 
 const TableComponent = forwardRef(({ tableData, settableData, setLoading, filterData, form }: any, ref) => {
 
     const dataRef = useRef<any>(null);
+    const modalOpenRef = useRef<any>(null);
 
     const [territoryModalTableData, setTerritoryModalTableData] = useState<any>([]);
     const [categoryModalTableData, setCategoryModalTableData] = useState<any>([]);
@@ -43,7 +45,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         };
         try {
             const response: any = await dsr.UserApplDlrSales(payload);
-            if (response.data) {
+            if (response.data.table.length > 0) {
                 const roundVal = (number: any) => Math.round(parseFloat(number))
                 const tableData = response.data.table.map((t: any) => ({
                     ...t,
@@ -61,7 +63,19 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                                 report_grp_level === "CAT" || report_grp_level === "CAT_SMRY" ? setCategoryModalTableData(tableData) :
                                     setContractorDealerModalTableData(tableData)
             }
-            else settableData([]);
+            else {
+                settableData([]);
+                console.log(modalOpenRef)
+                modalOpenRef.current === 'TerritoryModalOpen' ? setIsTerritoryModalOpen(false) :
+                modalOpenRef.current === 'CategoryModalOpen' ? setIsCategoryModalOpen(false) :
+                modalOpenRef.current === 'ContractorDealerModalOpen' ? setIsContractorDealerModalOpen(false) :
+                modalOpenRef.current === 'CategorywiseProductModalOpen' ? setIsCategorywiseProductModalOpen(false) :
+                modalOpenRef.current === 'CategorywiseProductModalOpen_terr' ? setIsCategorywiseProductModalOpen_terr(false) :
+                modalOpenRef.current === 'CategorywiseProductModalOpen_contractor_Dealer' ? setIsCategorywiseProductModalOpen_contractor_Dealer(false) :
+                modalOpenRef.current === 'TransactionReportModalOpen' && setIsTransactionReportModalOpen(false);
+
+                commonErrorToast('Data not available!');
+            }
         } catch (error) {
             return;
         }
@@ -192,7 +206,13 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                         <span
                             className='text-blue-600 cursor-pointer'
                             onClick={() => {
-                                cell.row.original.regn === "Summary" ? setIsCategoryModalOpen(true) : setIsTerritoryModalOpen(true);
+                                if (cell.row.original.regn === "Summary") {
+                                    modalOpenRef.current = 'CategoryModalOpen';
+                                    setIsCategoryModalOpen(true);
+                                } else {
+                                    modalOpenRef.current = 'TerritoryModalOpen';
+                                    setIsTerritoryModalOpen(true);
+                                }
                                 GetUserApplDlrSales({
                                     prd_grp: "PROTECTON",
                                     report_grp_level: cell.row.original.regn === "Summary" ? 'CAT_SMRY' : "TERR",
@@ -221,12 +241,12 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             leftIcon={<FiEye size={16} style={{ paddingRight: "2px" }} />}
                             onClick={() => {
                                 setIsCategorywiseProductModalOpen(true);
+                                modalOpenRef.current = 'CategorywiseProductModalOpen';
                                 dataRef.current = {
                                     regn: row.original.regn,
                                     terr_code: '',
                                     cat_cust_desc: ''
                                 };
-                                // setRegionForCategorywiseProductModal(row.original.regn);
                                 GetUserApplDlrSales({
                                     prd_grp: "PROTECTON",
                                     report_grp_level: "REGION_CAT",
@@ -273,6 +293,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             className='text-blue-600 cursor-pointer'
                             onClick={() => {
                                 setIsCategoryModalOpen(true);
+                                modalOpenRef.current = 'CategoryModalOpen';
                                 GetUserApplDlrSales({ prd_grp: "PROTECTON", report_grp_level: "CAT", region: cell.row.original.regn, depot: 'abcd', terr: cell.row.original.terr_code });
                             }}
                         >
@@ -295,6 +316,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             leftIcon={<FiEye size={16} style={{ paddingRight: "2px" }} />}
                             onClick={() => {
                                 setIsCategorywiseProductModalOpen_terr(true);
+                                modalOpenRef.current = 'CategorywiseProductModalOpen_terr';
                                 dataRef.current = {
                                     regn: row.original.regn,
                                     terr_code: row.original.terr_code,
@@ -334,7 +356,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
     });
 
     const onCloseModal = () => {
-        setIsTerritoryModalOpen(false); setTerritoryModalTableData([]);
+        setIsTerritoryModalOpen(false); 
+        modalOpenRef.current = '';
+        setTerritoryModalTableData([]);
     }
 
     // category popup //
@@ -350,6 +374,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             className='text-blue-600 cursor-pointer'
                             onClick={() => {
                                 setIsContractorDealerModalOpen(true);
+                                modalOpenRef.current = 'ContractorDealerModalOpen';
                                 GetUserApplDlrSales({ prd_grp: "PROTECTON", report_grp_level: "DLR", region: cell.row.original.regn, depot: cell.row.original.cat_cust_desc, terr: cell.row.original.terr_code });
                             }}
                         >
@@ -372,6 +397,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             leftIcon={<FiEye size={16} style={{ paddingRight: "2px" }} />}
                             onClick={() => {
                                 setIsCategorywiseProductModalOpen_contractor_Dealer(true);
+                                modalOpenRef.current = 'CategorywiseProductModalOpen_contractor_Dealer';
                                 dataRef.current = {
                                     regn: row.original.regn,
                                     terr_code: row.original.terr_code,
@@ -407,6 +433,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             className='text-blue-600 cursor-pointer'
                             onClick={() => {
                                 setIsContractorDealerModalOpen(true);
+                                modalOpenRef.current = 'ContractorDealerModalOpen';
                                 GetUserApplDlrSales({ prd_grp: "PROTECTON", report_grp_level: "DLR", region: cell.row.original.regn, depot: cell.row.original.cat_cust_desc, terr: cell.row.original.terr_code });
                             }}
                         >
@@ -436,7 +463,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
     });
 
     const onCloseCategoryModal = () => {
-        setIsCategoryModalOpen(false); setCategoryModalTableData([]);
+        setIsCategoryModalOpen(false); setCategoryModalTableData([]); modalOpenRef.current = '';
     }
 
     // contractor / dealer report popup //
@@ -481,7 +508,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
     });
 
     const onCloseContractorDealerModal = () => {
-        setIsContractorDealerModalOpen(false); setContractorDealerModalTableData([]);
+        setIsContractorDealerModalOpen(false); setContractorDealerModalTableData([]); modalOpenRef.current = '';
     }
 
     // category wise product modal
@@ -706,6 +733,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                             onClick={() => {
                                 // console.log(regionForCategorywiseProductModal, territoryForCategorywiseProductModal)
                                 setIsTransactionReportModalOpen(true);
+                                modalOpenRef.current = 'TransactionReportModalOpen';
                                 GetUserApplDlrSales({
                                     prd_grp: row.original.prd_cat,
                                     report_grp_level: "OTHER_DTLS",
@@ -744,6 +772,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         setIsCategorywiseProductModalOpen_terr(false);
         setIsCategorywiseProductModalOpen_contractor_Dealer(false);
         setCategorywiseProductModalTableData([]);
+        modalOpenRef.current = ''
     }
 
     // Transaction modal
@@ -822,6 +851,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
     const onCloseTransactionReportModal = () => {
         setIsTransactionReportModalOpen(false);
         setTransactionReportModalTableData([]);
+        modalOpenRef.current = '';
     }
 
     useEffect(() => {

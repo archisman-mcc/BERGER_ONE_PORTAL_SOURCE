@@ -8,6 +8,7 @@ import * as usertracking from '../../../services/api/protectonTransact/TransactU
 import { UseAuthStore } from '../../../services/store/AuthStore';
 import TableComponent from './Components/TableComponent';
 import UserTrackingCollectionTableComponent from './Components/UserTrackingCollectionTableComponent';
+import UserTrackingVisitTableComponent from './Components/UserTrackingVisitTableComponent';
 
 const TransactUserTracking = () => {
     const childRef = useRef<any>(null);
@@ -78,7 +79,7 @@ const TransactUserTracking = () => {
     }
 
     const callGetUserCollectionList = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             asOnDate: filterData?.dsrDate,
             selectedUser: filterData?.usp_user_id
@@ -132,29 +133,31 @@ const TransactUserTracking = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
-    // remain
     const callGetVisitHistoryUserwise = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
-            asOnDate: filterData?.dsrDate,
+            asOnDate: filterData?.dsrDate instanceof Date ? 
+                `${filterData.dsrDate.getFullYear()}-${String(filterData.dsrDate.getMonth() + 1).padStart(2, '0')}-${String(filterData.dsrDate.getDate()).padStart(2, '0')}` : 
+                filterData?.dsrDate,
             selectedUser: filterData?.usp_user_id
         };
         try {
             const response: any = await usertracking.GetVisitHistoryUserwise(data);
             setVisitTableData(response.data.table || []);
-
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     }
 
     const handleSearch = (e: any) => {
         e.preventDefault();
-        childRef.current.triggerAPI({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '' });
+        if (childRef.current && childRef.current.triggerAPI) {
+            childRef.current.triggerAPI({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '' });
+        }
         callGetUserCollectionList();
         callGetVisitHistoryUserwise();
     };
@@ -164,9 +167,9 @@ const TransactUserTracking = () => {
         GetUserGroup();
     }, [])
 
-    useEffect(() => {
-        console.log(collectionTableData)
-    }, [collectionTableData])
+    // useEffect(() => {
+    //     console.log(collectionTableData)
+    // }, [collectionTableData])
 
     return (
         <>
@@ -299,6 +302,8 @@ const TransactUserTracking = () => {
                             </div>
                         ) :
                             <div className="text-base">
+                                {/* <h5 className="text-lg font-semibold dark:text-white-light">Collection Amount: {visitTableData?.data1} Lacs</h5> */}
+                                <UserTrackingVisitTableComponent tableData={visitTableData || []} />
                             </div>
                     }
                 </div>

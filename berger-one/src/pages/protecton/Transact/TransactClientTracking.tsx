@@ -6,14 +6,20 @@ import AsyncMultiSelectBox from './Components/AsyncMultiSelectBox';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 
 const TransactClientTracking = () => {
-    const [filterData, setFilterData] = useState({ dsrDate: new Date().toISOString().split('T')[0], viewBy: "MTD" });
+    const [filterData, setFilterData] = useState({ 
+        dsrDate: (() => {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        })(), 
+        viewBy: "MTD" 
+    });
     const [loading, setLoading] = useState(false);
     const [listDataHide, setListDataHide] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
     const [serachedData, setSerachedData] = useState('');
     const [multiselectData, setMultiselectData] = useState<any[]>([]);
     const [CTDetailData, setCTDetailData] = useState<any[]>([]);
-    const [outstandingData, setOutstandingData] = useState<any[]>([]);
+    const [outstandingData, setOutstandingData]: any = useState([]);
 
     const payload = {
         app_id: 15,
@@ -76,7 +82,7 @@ const TransactClientTracking = () => {
                                 ...net[index],
                                 ...age[index],
                                 // ...{ variance: Number(net[index].net) < 0 ? 0 : (Number((net[index].net - item?.gross) / item?.gross) * 100) }
-                                ...{ variance: item?.gross === 0 ? 0 : +(((net[index].net - item?.gross) / item?.gross) * 100).toFixed(2)}
+                                ...{ variance: item?.gross === 0 ? 0 : +(((net[index].net - item?.gross) / item?.gross) * 100).toFixed(2) }
                             }
                         }
                         else if (index !== 10)
@@ -85,7 +91,7 @@ const TransactClientTracking = () => {
                                 ...net[index],
                                 ...age[index],
                                 // ...{ variance: Number(net[index].net) < 0 ? 0 : (Number((net[index].net - item?.gross) / item?.gross) * 100) }
-                                ...{ variance: item?.gross === 0 ? 0 : +(((net[index].net - item?.gross) / item?.gross) * 100).toFixed(2)}
+                                ...{ variance: item?.gross === 0 ? 0 : +(((net[index].net - item?.gross) / item?.gross) * 100).toFixed(2) }
                             })
                     });
 
@@ -333,7 +339,7 @@ const TransactClientTracking = () => {
                         <label htmlFor="dsr-date" className="block text-sm font-semibold mb-1">Tracking Date:</label>
                         <Flatpickr
                             value={filterData.dsrDate || ''}
-                            onChange={(dates: any) => setFilterData((pre: any) => ({ ...pre, dsrDate: dates[0].slice(0, 10) || '' }))}
+                            onChange={(dates: Date[]) => setFilterData((pre: any) => ({ ...pre, dsrDate: dates[0] || '' }))}
                             options={{
                                 dateFormat: 'd/m/Y',
                             }}
@@ -382,7 +388,7 @@ const TransactClientTracking = () => {
                     columns={outstandingTableColumns}
                     data={outstandingData}
                     enablePagination={false}
-                    initialState={{ pagination: { pageSize: 12 } }}
+                    initialState={{ pagination: { pageIndex: 0, pageSize: 12 } }}
                     enableColumnResizing={true}
                     enableTopToolbar={false}
                     enableSorting={false}

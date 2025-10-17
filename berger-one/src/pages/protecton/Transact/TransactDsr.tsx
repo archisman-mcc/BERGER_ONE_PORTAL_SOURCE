@@ -8,12 +8,21 @@ const TransactDsr = () => {
     const childRef = useRef<any>(null);
 
     const [tableData, settableData] = useState<any>([]);
-    const [filterData, setFilterData] = useState({ dsrDate: new Date().toISOString().split('T')[0], viewBy: "MTD", usp_user_id: '' });
+    const [filterData, setFilterData] = useState({ 
+        dsrDate: (() => {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        })(), 
+        viewBy: "MTD", 
+        usp_user_id: '' 
+    });
     const [loading, setLoading] = useState(false);
 
     const handleSearch = (e: any) => {
         e.preventDefault();
-        childRef.current.triggerAPI({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '', selected_user: '' });
+        if (childRef.current && childRef.current.triggerAPI) {
+            childRef.current.triggerAPI({ prd_grp: "PROTECTON", report_grp_level: "REGION", region: '', depot: '', terr: '', selected_user: '' });
+        }
     };
 
 
