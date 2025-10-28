@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AsyncSelect from "react-select/async";
 
-const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadPrefixText }: any) => {
+const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadPrefixText, isDisabled }: any) => {
     const [asyncSelectData, setAsyncSelectData] = useState([]);
 
     const loadOptions = async (inputValue: string) => {
@@ -61,10 +61,11 @@ const AsyncSelectBox = ({ api, data, setData, apiPayload, label, value, payloadP
             }
             isClearable={true}
             isSearchable={true}
+            isDisabled={isDisabled}
             className="text-sm"
             styles={customStyles}
         />
     )
 }
 
-export default AsyncSelectBox
+export default AsyncSelectBox
