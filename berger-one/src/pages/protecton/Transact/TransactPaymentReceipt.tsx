@@ -4,6 +4,7 @@ import * as common from '../../../services/api/users/UserProfile';
 import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import * as PaymentReceipt from '../../../services/api/protectonTransact/TransactPaymentReceipt';
 import { CiSearch } from "react-icons/ci";
+import { MdRefresh } from "react-icons/md";
 import Select from 'react-select';
 import AnimateHeight from "react-animate-height";
 
@@ -23,6 +24,12 @@ const TransactPaymentReceipt = () => {
   });
 
   const user = UseAuthStore((state: any) => state.userDetails);
+
+  const formatAmount = (value: any) => {
+    const num = Number(value);
+    if (isNaN(num)) return value ?? '';
+    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
 
   const GetRegion = async () => {
     setLoading(true);
@@ -124,14 +131,32 @@ const TransactPaymentReceipt = () => {
     GetRegion();
   }, []);
 
+  const handleReset = () => {
+    setData((prev: any) => ({
+      ...prev,
+      selectedRegion: '',
+      selectedDepot: '',
+      selectedTerr: '',
+      depotList: [],
+      terrList: [],
+      paymentReceiptList: [],
+      valueInPage: 7,
+    }));
+    setOpenPR(null);
+  };
+
   return (
     <>
       <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
         <h5 className="text-lg font-semibold dark:text-white-light">Transact Payment Receipt</h5>
       </div>
 
-      <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div className="bg-white rounded-lg px-4 py-3 shadow-md mb-3">
+        <div className="flex items-center justify-between mb-3">
+          <h6 className="text-sm font-semibold text-gray-700">Filters</h6>
+          <div className="text-xs text-gray-500">Use filters and click Search</div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 
           <div>
             <label className="block text-sm font-semibold mb-1">Region:</label>
@@ -146,7 +171,7 @@ const TransactPaymentReceipt = () => {
               ]}
               value={
                 data.selectedRegion
-                  ? { value: data.selectedRegion, label: data.selectedRegion }
+                  ? { value: data.selectedRegion, label: data.regionList.find((d: any) => d.depot_regn === data.selectedRegion)?.regn_new || data.selectedRegion }
                   : null
               }
               onChange={(event) => {
@@ -171,7 +196,7 @@ const TransactPaymentReceipt = () => {
               value={
                 data.selectedDepot
                   ? { value: data.selectedDepot, label: data.depotList.find((d: any) => d.depot_code === data.selectedDepot)?.depot_name }
-                  : null
+                  : { value: '', label: 'ALL' }
               }
               onChange={(event) => {
                 setData((pre: any) => ({ ...pre, selectedDepot: event?.value }))
@@ -194,7 +219,7 @@ const TransactPaymentReceipt = () => {
               value={
                 data.selectedTerr
                   ? { value: data.selectedTerr, label: data.terrList.find((d: any) => d.terr_code === data.selectedTerr)?.terr_name }
-                  : null
+                  : { value: '', label: 'ALL' }
               }
               onChange={(event) => {
                 setData((pre: any) => ({ ...pre, selectedTerr: event?.value }))
@@ -223,18 +248,29 @@ const TransactPaymentReceipt = () => {
                 }
                 setData((prev: any) => ({ ...prev, valueInPage: value }));
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-[34px] px-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div className="flex items-end space-x-2">
             <button
-              className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center"
+              className="bg-blue-500 text-white px-4 py-2 space-x-2 rounded hover:bg-blue-600 text-sm flex items-center disabled:opacity-60"
               onClick={(e) => {
                 e.preventDefault();
                 GetPRList();
-              }}>
+              }}
+              disabled={loading}
+            >
               <CiSearch /> <span>Search</span>
+            </button>
+            <button
+              className="bg-gray-100 text-gray-700 px-3 py-2 rounded hover:bg-gray-200 text-sm flex items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                handleReset();
+              }}
+            >
+              <MdRefresh className="mr-1" /> Reset
             </button>
           </div>
         </div>
@@ -242,15 +278,31 @@ const TransactPaymentReceipt = () => {
 
       {/* Displaying Payment Receipt List accordion */}
       <div className="space-y-2">
+        {data.paymentReceiptList && Object.keys(data.paymentReceiptList).length === 0 && (
+          <div className="rounded border border-[#d3d3d3] bg-white p-6 text-center text-gray-500">No results. Adjust filters and click Search.</div>
+        )}
         {data.paymentReceiptList && Object.keys(data.paymentReceiptList).map((org) => (
           <div key={org} className="rounded border border-[#d3d3d3]">
             <button
               type="button"
-              className="custAccoHead flex w-full items-center px-3 py-2 text-white-dark"
+              className="custAccoHead relative flex w-full items-center px-3 pr-8 py-2 text-white-dark hover:bg-gray-50"
               onClick={() => setOpenPR(openPR === org ? null : org)}
             >
-              <span>{org}</span>
-              <div className={`ltr:ml-auto rtl:mr-auto ${openPR === org ? 'rotate-180' : ''}`}>
+              <span className="font-semibold text-gray-700">{org}</span>
+              <div className="ml-3 hidden text-xs text-gray-500 sm:block">
+                {(() => {
+                  const rows = data.paymentReceiptList[org] || [];
+                  return (
+                    <div className="flex items-center space-x-3">
+                      <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-blue-700">
+                        {rows.length} items
+                      </span>
+                    </div>
+                  );
+                })()}
+              </div>
+              {/* <div className={`absolute ltr:right-3 rtl:left-3 top-1/2 -translate-y-1/2 ${openPR === org ? 'rotate-180' : ''} text-gray-600`}> */}
+              <div className={`absolute right-3 top-1/2 -translate-y-1/2 ${openPR === org ? 'rotate-180' : ''} text-gray-700 z-10`}>
                 <svg
                   width="16"
                   height="16"
@@ -269,19 +321,19 @@ const TransactPaymentReceipt = () => {
               </div>
             </button>
             <AnimateHeight duration={300} height={openPR === org ? "auto" : 0}>
-              <div className="p-2">
-                <div className="grid grid-cols-4 gap-4 font-semibold border-b pb-1 mb-1">
+              <div className="p-2 bg-white">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-semibold border-b pb-2 mb-2 text-gray-700">
                   <span>Dealer</span>
                   <span className="text-center">PR DT.</span>
                   <span className="text-center">PR AMT</span>
                   <span className="text-center">Unadjusted Amount</span>
                 </div>
                 {data.paymentReceiptList[org].map((item: any, idx: number) => (
-                  <div key={idx} className="grid grid-cols-4 gap-4 py-1 border-b last:border-0">
-                    <span>{item.dealer}</span>
+                  <div key={idx} className="grid grid-cols-2 md:grid-cols-4 gap-4 py-2 border-b last:border-0 hover:bg-gray-50">
+                    <span className="truncate" title={item.dealer}>{item.dealer}</span>
                     <span className="text-center">{item.rcpt_date}</span>
-                    <span className="text-center">{item.rcpt_amount}</span>
-                    <span className="text-center">{item.due_amount}</span>
+                    <span className="text-center">{formatAmount(item.rcpt_amount)}</span>
+                    <span className="text-center">{formatAmount(item.due_amount)}</span>
                   </div>
                 ))}
               </div>

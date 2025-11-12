@@ -13,7 +13,7 @@ import { ValidateLogin } from '../../services/login/loginSevice';
 
 const Login = () => {
     const { login }: any = UseAuthStore();
-    const user = UseAuthStore((state: any) => state.userDetails);
+    // const user = UseAuthStore((state: any) => state.userDetails);
 
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
@@ -44,9 +44,9 @@ const Login = () => {
         }
     };
 
-    useEffect(() => {
-        user?.user_id && navigate('/')
-    }, [user])
+    // useEffect(() => {
+    //     user?.user_id && navigate('/')
+    // }, [user])
 
 
     return (

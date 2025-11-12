@@ -337,6 +337,7 @@ const EPCACancellation = () => {
         columns,
         data,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -421,7 +422,7 @@ const EPCACancellation = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+            <div className="mb-2 p-pl-table-item" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
                 <MantineReactTable table={table} />
             </div>
 

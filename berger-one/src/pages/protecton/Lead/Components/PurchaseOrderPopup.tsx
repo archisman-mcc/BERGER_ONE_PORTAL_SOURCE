@@ -3,21 +3,23 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { MdOutlineClose } from "react-icons/md";
 import { IoEyeSharp } from 'react-icons/io5';
 import PurchaseOrderDeliveryPopup from './PurchaseOrderDeliveryPopup';
-import { GetPotentialTrackingDeliverySchedule } from '../../../../services/api/protectonLead/PotentialLead';
+import { GetPotentialTrackingDeliverySchedule, InsertePcaDetails_Vr1, PTOrderdtlsSubmit } from '../../../../services/api/protectonLead/PotentialLead';
 import { FaPlus } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
 import Select from 'react-select';
 import { GetPCASkuBillingDetails, PCADtlsBillto } from '../../../../services/api/protectonTransact/TransactPotentialLead';
 import { GetSKUList } from '../../../../services/api/protectonEpca/EpcaDetails';
 import Flatpickr from 'react-flatpickr';
+import { commonErrorToast } from '../../../../services/functions/commonToast';
+import { UseAuthStore } from '../../../../services/store/AuthStore';
+import moment from 'moment';
 
-const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
+const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialTrackingOrderDtlsAPIcall }: any) => {
     // console.log('rowData in PO popup:', rowData);
     const [isPurchaseOrderDeliveryPopupOpen, setIsPurchaseOrderDeliveryPopupOpen] = React.useState(false);
     const [purchaseOrderDeliveryData, setPurchaseOrderDeliveryData] = React.useState([]);
     const [newPurchaseOrderData, setNewPurchaseOrderData]: any = React.useState({
-        bill_to: '', po_no: '', po_date: new Date().toLocaleDateString('en-GB'), sku: '', rate: null, nop: null, reqFrom: '', remarks: '', validfrom: new Date().toLocaleDateString('en-GB'),
-        validto: new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB'),
+        bill_to: '', po_no: '', po_date: new Date().toLocaleDateString('en-GB'), sku: '', rate: null, nop: null, reqFrom: '', remarks: '', validfrom: new Date().toLocaleDateString('en-GB'), validto: new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB'), epcaRequest: false
     });
     const [billToData, setBillToData] = React.useState([]);
     const [sku, setSKU] = React.useState<any>([]);
@@ -76,6 +78,81 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
                 setSkuDetails(response?.data?.table[0]);
             }
         } catch (error) {
+            return;
+        }
+    }
+
+    const PTOrderdtlsSubmitAPIcall = async () => {
+        const formattedDate = (dateStr: string) => {
+            const [day, month, year] = dateStr.split("/");
+            const formatted = `${year}-${month}-${day}`;
+            return formatted;
+        }
+
+        const payload = {
+            ptoh_ptm_id: rowData?.ptm_id,
+            ptoh_bill_to: newPurchaseOrderData?.bill_to?.value,
+            ptoh_po_no: newPurchaseOrderData?.po_no,
+            ptoh_po_date: formattedDate(newPurchaseOrderData?.po_date),
+            ptOrderdtls: skuDgData
+        }
+        try {
+            const response: any = await PTOrderdtlsSubmit(payload);
+            if (response?.statusCode === 200) {
+                setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: '', rate: null, nop: null, reqFrom: '', remarks: '', validfrom: new Date().toLocaleDateString('en-GB'), validto: new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB') }));
+                setSKU([]);
+                setSkuSrchData('');
+                setSkuDetails(null);
+                setSkuDgData([]);
+                GetPotentialTrackingOrderDtlsAPIcall({ order_id: rowData?.ptm_id });
+            } else {
+                commonErrorToast(response?.message || 'Something went wrong while submitting purchase order details');
+            }
+        } catch (error) {
+            return;
+        }
+    }
+
+    const user = UseAuthStore((state: any) => state.userDetails);
+    const EPCAInsertAPIcall = async () => {
+        const payload = {
+            auto_id: 0,
+            billto_code: newPurchaseOrderData?.bill_to?.value,
+            sku_id: newPurchaseOrderData.sku?.value,
+            factory: "000",
+            rate: newPurchaseOrderData.rate,
+            qty: newPurchaseOrderData.nop,
+            // valid_from: newPurchaseOrderData.validfrom,
+            // valid_till: newPurchaseOrderData.validto,
+            valid_from: moment(newPurchaseOrderData.validfrom, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            valid_till: moment(newPurchaseOrderData.validto, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            status: "PENDING_DEPOT",
+            remarks: newPurchaseOrderData.remarks,
+            mrp: skuDetails?.sku_pca,
+            projectid: rowData?.ptm_id,
+            project_appl_yn: "Y",
+            project_name: 'PROTECTON',
+            user_id: user.user_id,
+            app_name: '',
+            end_client_name: '',
+            project_type: '',
+        }
+        // console.log(payload);
+        try {
+            const response: any = await InsertePcaDetails_Vr1(payload);
+            // const response: any = await EPCAInsert(payload);
+            if (response?.statusCode === 200) {
+                setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: '', rate: null, nop: null, reqFrom: '', remarks: '', validfrom: new Date().toLocaleDateString('en-GB'), validto: new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB') }));
+                setSKU([]);
+                setSkuSrchData('');
+                setSkuDetails(null);
+                // setSkuDgData([]);
+                // GetPotentialTrackingOrderDtlsAPIcall({ order_id: rowData?.ptm_id });
+            } else {
+                commonErrorToast(response?.message || 'Something went wrong while submitting purchase order details');
+            }
+        } catch (error) {
+            commonErrorToast('Something went wrong while submitting purchase order details');
             return;
         }
     }
@@ -139,10 +216,6 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
         []
     );
 
-    const handleDeleteRow = React.useCallback((id: number) => {
-        setSkuDgData((prev: any[]) => prev.filter((pur: any) => pur?.newRowId !== id));
-    }, [setSkuDgData]);
-
     const table = useMantineReactTable({
         columns,
         data: purchaseOrderData,
@@ -150,11 +223,12 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
+        enableStickyHeader: true,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
                 overflow: 'auto',
-                maxHeight: '100%',
+                maxHeight: '20rem',
             },
         }
     });
@@ -206,19 +280,24 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
 
     const skuTable = useMantineReactTable({
         columns: skuColumns,
-        data: skuDgData.map((item: any, index: number) => ({ ...item, newRowId: index + 1 })),
+        data: skuDgData,
         enableColumnResizing: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
+        enableStickyHeader: true,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
                 overflow: 'auto',
-                maxHeight: '100%',
+                maxHeight: '16rem',
             },
         }
     });
+
+    const handleDeleteRow = React.useCallback((id: number) => {
+        setSkuDgData((prev: any[]) => prev.filter((pur: any) => pur?.newRowId !== id));
+    }, [setSkuDgData]);
 
     const convertToDate = (dateStr: any) => {
         if (typeof dateStr === 'string') {
@@ -258,9 +337,9 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
         skuSrchData.length > 2 && GetSkuData({ PrefixText: skuSrchData })
     }, [skuSrchData])
 
-    useEffect(() => {
-        console.log(newPurchaseOrderData)
-    }, [newPurchaseOrderData])
+    // useEffect(() => {
+    //     console.log(skuDgData)
+    // }, [skuDgData])
     // useEffect(() => {
     //     console.log(purchaseOrderDeliveryData)
     // }, [purchaseOrderDeliveryData])
@@ -269,208 +348,261 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose }: any) => {
         <>
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                 <div className="bg-white p-6 rounded-none shadow-lg w-screen h-screen relative overflow-hidden flex flex-col">
-                    <span className="absolute top-3 right-3 px-3 py-1 rounded cursor-pointer" ><MdOutlineClose color="red" onClick={() => onClose()} /></span>
-                    <p className="text-xl font-bold pr-12">Purchase Order List</p>
-                    <p className="text-sm pr-12">{rowData?.ptm_project_name}</p>
-                    <p className="text-sm pr-12">{rowData?.region}</p>
-                    <p className="text-sm pr-12">{rowData?.ptm_createdon}</p>
-                    <p className="text-sm pr-12">Status: {rowData?.work_status_disp}</p>
-                    <p className="text-sm pr-12">Depot: {rowData?.depot_code}: {rowData?.depot_name}</p>
-                    <p className="text-sm pr-12">Dealer: {rowData?.dealer_name}</p>
+                    <div className="flex items-start justify-between border-b pb-3">
+                        <div>
+                            <p className="text-xl font-bold">Purchase Orders</p>
+                            <p className="text-xs text-gray-500">Create and manage purchase orders for this lead</p>
+                        </div>
+                        <button
+                            aria-label="Close"
+                            className="px-2 py-1 rounded hover:bg-gray-100"
+                            onClick={() => onClose()}
+                        >
+                            <MdOutlineClose color="red" />
+                        </button>
+                    </div>
+                    <div className="flex-1 min-h-0 overflow-y-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-3 text-sm">
+                            <div><span className="text-gray-500">Project:</span> <span className="font-medium">{rowData?.ptm_project_name}</span></div>
+                            <div><span className="text-gray-500">Region:</span> <span className="font-medium">{rowData?.region}</span></div>
+                            <div><span className="text-gray-500">Created On:</span> <span className="font-medium">{rowData?.ptm_createdon}</span></div>
+                            <div><span className="text-gray-500">Status:</span> <span className="font-medium">{rowData?.work_status_disp}</span></div>
+                            <div><span className="text-gray-500">Depot:</span> <span className="font-medium">{rowData?.depot_code}: {rowData?.depot_name}</span></div>
+                            <div><span className="text-gray-500">Dealer:</span> <span className="font-medium">{rowData?.dealer_name}</span></div>
+                        </div>
 
-                    <hr className="my-4" />
-                    <div className="mt-2">
-                        <p className="text-base font-semibold">Billing Information</p>
-                        <div className="mt-2 rounded-md border border-gray-200 bg-gray-50 p-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Bill To</label>
-                                    <Select
-                                        className="text-sm"
-                                        isSearchable={true}
-                                        options={billToData.map((d: any) => ({
-                                            value: d.bill_to,
-                                            label: d.bill_to_name,
-                                        }))}
-                                        value={newPurchaseOrderData.bill_to}
-                                        onChange={(event: any) => setNewPurchaseOrderData((pre: any) => ({ ...pre, bill_to: event }))}
-                                    />
+                        <hr className="my-4" />
+
+                        <div className="mt-2">
+                            <p className="text-base font-semibold">Billing & Order Details</p>
+                            <div className="mt-2 rounded-md border border-gray-200 bg-gray-50 p-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">Bill To<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <Select
+                                            className="text-sm"
+                                            isSearchable={true}
+                                            options={billToData.map((d: any) => ({
+                                                value: d.bill_to,
+                                                label: d.bill_to_name,
+                                            }))}
+                                            value={newPurchaseOrderData.bill_to}
+                                            onChange={(event: any) => setNewPurchaseOrderData((pre: any) => ({ ...pre, bill_to: event }))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">PO No.<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <input
+                                            type="number"
+                                            placeholder="Enter PO Number"
+                                            className="border rounded form-input text-sm no-spinner w-full"
+                                            value={newPurchaseOrderData?.po_no}
+                                            onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_no: Number(e.target.value) }))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">PO Date<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <Flatpickr
+                                            name="po_date"
+                                            value={convertToDate(newPurchaseOrderData.po_date)}
+                                            autoComplete="off"
+                                            options={{
+                                                dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                altInput: true, // Enables alternative display input
+                                                altFormat: 'd/m/Y', // Display format for the user
+                                            }}
+                                            placeholder="PO Date"
+                                            className="tableInput" // Disable the Valid From field
+                                            onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_date: formatDateToString(e[0]) }))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">Search SKU<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <Select
+                                            isDisabled={newPurchaseOrderData?.bill_to === '' ? true : false}
+                                            className="text-sm"
+                                            value={newPurchaseOrderData.sku}
+                                            options={sku.map((d: any) => ({ value: d.sku_code, label: d.sku_desc }))}
+                                            onInputChange={(inputValue) => setSkuSrchData(inputValue)}
+                                            onChange={(event: any) => {
+                                                setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: event }))
+                                                GetPCASkuBillingDetailsAPICALL({ billto_code: newPurchaseOrderData?.bill_to?.value, depot_code: rowData?.depot_code, sku_code: event?.value });
+                                            }}
+                                        />
+                                    </div>
                                 </div>
+                                {newPurchaseOrderData.sku &&
+                                    <div className="mt-3 text-sm text-gray-700">
+                                        {newPurchaseOrderData.sku && (
+                                            <p className="font-medium">{`${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`}</p>
+                                        )}
+                                        <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                            {(skuDetails?.sku != null) && (
+                                                <div className="text-xs"><span className="font-semibold">SKU:</span> {skuDetails?.sku}</div>
+                                            )}
+                                            {(skuDetails?.sku_pca != null) && (
+                                                <div className="text-xs"><span className="font-semibold">Declared PCA (Rate/UOM):</span> {skuDetails?.sku_pca}</div>
+                                            )}
+                                            {(skuDetails?.pd_rate != null) && (
+                                                <div className="text-xs"><span className="font-semibold">Special PCA (Rate/UOM):</span> {skuDetails?.pd_rate}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                }
+
+
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">PO No.</label>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter PO Number"
-                                        className="border rounded form-input text-sm no-spinner w-full"
-                                        value={newPurchaseOrderData?.po_no}
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_no: Number(e.target.value) }))}
-                                    />
+                                    <div className="flex items-center h-9">
+                                        <input
+                                            id="epcaRequest"
+                                            type="checkbox"
+                                            className="form-checkbox h-4 w-4"
+                                            checked={!!newPurchaseOrderData?.epcaRequest}
+                                            onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, epcaRequest: e.target.checked }))}
+                                        />
+                                        <label htmlFor="epcaRequest" className="ml-2 text-sm">ePCA Request</label>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">PO Date</label>
-                                    <Flatpickr
-                                        name="po_date"
-                                        value={convertToDate(newPurchaseOrderData.po_date)}
-                                        autoComplete="off"
-                                        options={{
-                                            dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                            altInput: true, // Enables alternative display input
-                                            altFormat: 'd/m/Y', // Display format for the user
-                                        }}
-                                        placeholder="PO Date"
-                                        className="tableInput" // Disable the Valid From field
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_date: formatDateToString(e[0]) }))}
-                                    />
+
+                                {skuDetails &&
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">Rate/UOM:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                            <input
+                                                type="number"
+                                                placeholder="Enter Rate/UOM"
+                                                className="border rounded form-input text-sm no-spinner w-full"
+                                                value={newPurchaseOrderData?.rate}
+                                                onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, rate: Number(e.target.value) }))}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">NOP:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                            <input
+                                                type="number"
+                                                placeholder="Enter NOP"
+                                                className="border rounded form-input text-sm no-spinner w-full"
+                                                value={newPurchaseOrderData?.nop}
+                                                onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, nop: Number(e.target.value) }))}
+                                            />
+                                        </div>
+                                        {newPurchaseOrderData?.epcaRequest && <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">Required From</label>
+                                            <Select
+                                                className="text-sm"
+                                                isSearchable={true}
+                                                options={[{ value: '', label: 'No Source' }]}
+                                                value={newPurchaseOrderData.reqFrom}
+                                                onChange={(event: any) => setNewPurchaseOrderData((pre: any) => ({ ...pre, reqFrom: event }))}
+                                            />
+                                        </div>}
+                                        {newPurchaseOrderData?.epcaRequest && <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">Remarks:</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Enter Remarks"
+                                                className="border rounded form-input text-sm w-full"
+                                                value={newPurchaseOrderData?.remarks}
+                                                onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, remarks: e.target.value }))}
+                                            />
+                                        </div>}
+                                        {newPurchaseOrderData?.epcaRequest && <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">Valid From:</label>
+                                            <Flatpickr
+                                                name="validfrom"
+                                                value={convertToDate(newPurchaseOrderData.validfrom)}
+                                                autoComplete="off"
+                                                options={{
+                                                    dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                    altInput: true, // Enables alternative display input
+                                                    altFormat: 'd/m/Y', // Display format for the user
+                                                }}
+                                                placeholder="Valid From"
+                                                disabled={true}
+                                                className="tableInput" // Disable the Valid From field
+                                            />
+                                        </div>}
+                                        {newPurchaseOrderData?.epcaRequest && <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">Valid To:</label>
+                                            <Flatpickr
+                                                name="validto"
+                                                value={convertToDate(newPurchaseOrderData.validto)}
+                                                // autoComplete="off"
+                                                options={{
+                                                    dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                    altInput: true, // Enables alternative display input
+                                                    altFormat: 'd/m/Y', // Display format for the user
+                                                    minDate: getMinValidTillDate(newPurchaseOrderData.validfrom),
+                                                    maxDate: getMaxValidTillDate(newPurchaseOrderData.validfrom),
+                                                }}
+                                                placeholder="Valid To"
+                                                className="tableInput"
+                                                onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, validto: formatDateToString(e[0]) }))}
+                                            />
+                                        </div>}
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-700 mb-1">&nbsp;</label>
+                                            <button
+                                                type="button"
+                                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-xs inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                                id="addNewDropdownBtn"
+                                                disabled={!(newPurchaseOrderData.sku && newPurchaseOrderData.rate && newPurchaseOrderData.nop)}
+                                                onClick={() => {
+                                                    if (!newPurchaseOrderData.sku || !newPurchaseOrderData.rate || !newPurchaseOrderData.nop) {
+                                                        commonErrorToast('Please fill all mandatory fields marked with *');
+                                                        return;
+                                                    }
+                                                    if (newPurchaseOrderData?.epcaRequest) {
+                                                        EPCAInsertAPIcall();
+                                                        return;
+                                                    }
+                                                    setSkuDgData([...skuDgData, {
+                                                        sku_code: newPurchaseOrderData.sku?.value,
+                                                        sku_name: `${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`,
+                                                        rate: newPurchaseOrderData.rate,
+                                                        qty: newPurchaseOrderData.nop,
+                                                        newRowId: skuDgData.length + 1,
+                                                    }])
+                                                    setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: '', rate: null, nop: null, reqFrom: '', remarks: '', validfrom: new Date().toLocaleDateString('en-GB'), validto: new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB') }));
+                                                    setSkuDetails(null);
+                                                    setSKU([]);
+                                                }}
+                                            >
+                                                <FaPlus className="mr-2" /> <span>Add</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                                <p className="mt-4 mb-2 text-sm font-semibold">Selected SKU</p>
+                                <div className="mt-2 p-pl-table-item">
+                                    <MantineReactTable table={skuTable} />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Search SKU</label>
-                                    <Select
-                                        className="text-sm"
-                                        value={newPurchaseOrderData.sku}
-                                        options={sku.map((d: any) => ({ value: d.sku_code, label: d.sku_desc }))}
-                                        onInputChange={(inputValue) => setSkuSrchData(inputValue)}
-                                        onChange={(event: any) => {
-                                            setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: event }))
-                                            GetPCASkuBillingDetailsAPICALL({ billto_code: newPurchaseOrderData?.bill_to?.value, depot_code: rowData?.depot_code, sku_code: event?.value });
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-3 text-sm text-gray-700">
-                                {newPurchaseOrderData.sku && (
-                                    <p className="font-medium">{`${newPurchaseOrderData.sku?.label} - ${newPurchaseOrderData.sku?.value}`}</p>
-                                )}
-                                <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                    {skuDetails?.sku && (
-                                        <div className="text-xs"><span className="font-semibold">SKU:</span> {skuDetails?.sku}</div>
-                                    )}
-                                    {skuDetails?.min_rate && (
-                                        <div className="text-xs"><span className="font-semibold">Declared PCA (Rate/UOM):</span> {skuDetails?.min_rate}</div>
-                                    )}
-                                    {skuDetails?.pd_rate && (
-                                        <div className="text-xs"><span className="font-semibold">PD Rate/UOM:</span> {skuDetails?.pd_rate}</div>
-                                    )}
-                                </div>
-                            </div>
-                            {/* {skuDetails && */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-7 gap-4">
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Rate/UOM:</label>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter Rate/UOM"
-                                        className="border rounded form-input text-sm no-spinner w-full"
-                                        value={newPurchaseOrderData?.rate}
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, rate: Number(e.target.value) }))}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">NOP:</label>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter NOP"
-                                        className="border rounded form-input text-sm no-spinner w-full"
-                                        value={newPurchaseOrderData?.nop}
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, nop: Number(e.target.value) }))}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Required From</label>
-                                    <Select
-                                        className="text-sm"
-                                        isSearchable={true}
-                                        options={[{ value: '', label: 'No Source' }]}
-                                        value={newPurchaseOrderData.reqFrom}
-                                        onChange={(event: any) => setNewPurchaseOrderData((pre: any) => ({ ...pre, reqFrom: event }))}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Remarks:</label>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter Remarks"
-                                        className="border rounded form-input text-sm no-spinner w-full"
-                                        value={newPurchaseOrderData?.remarks}
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, remarks: Number(e.target.value) }))}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Valid From:</label>
-                                    <Flatpickr
-                                        name="validfrom"
-                                        value={convertToDate(newPurchaseOrderData.validfrom)}
-                                        autoComplete="off"
-                                        options={{
-                                            dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                            altInput: true, // Enables alternative display input
-                                            altFormat: 'd/m/Y', // Display format for the user
-                                        }}
-                                        placeholder="Valid From"
-                                        disabled={true}
-                                        className="tableInput" // Disable the Valid From field
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">Valid To:</label>
-                                    <Flatpickr
-                                        name="validto"
-                                        value={convertToDate(newPurchaseOrderData.validto)}
-                                        // autoComplete="off"
-                                        options={{
-                                            dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                            altInput: true, // Enables alternative display input
-                                            altFormat: 'd/m/Y', // Display format for the user
-                                            minDate: getMinValidTillDate(newPurchaseOrderData.validfrom),
-                                            maxDate: getMaxValidTillDate(newPurchaseOrderData.validfrom),
-                                        }}
-                                        placeholder="Valid To"
-                                        className="tableInput"
-                                        onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, validto: formatDateToString(e[0]) }))}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">.</label>
+                                <div className="bg-gray-50 px-6 py-4 border-t flex justify-end mt-4">
                                     <button
                                         type="button"
-                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-xs inline-flex items-center"
-                                        id="addNewDropdownBtn"
+                                        className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-xs inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                        id="addNewPurchaseOrderBtn"
+                                        disabled={!(newPurchaseOrderData?.bill_to && newPurchaseOrderData?.po_no && skuDgData.length > 0)}
                                         onClick={() => {
-                                            setSkuDgData((pre: any) => [...pre,
-                                            {
-                                                sku_code: newPurchaseOrderData.sku?.value,
-                                                sku_name: `${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`,
-                                                rate: newPurchaseOrderData.rate,
-                                                qty: newPurchaseOrderData.nop,
+                                            if (newPurchaseOrderData?.bill_to && newPurchaseOrderData?.po_no && skuDgData.length > 0) {
+                                                PTOrderdtlsSubmitAPIcall();
+                                            } else {
+                                                commonErrorToast('Please fill all mandatory fields marked with *');
                                             }
-                                            ])
                                         }}
                                     >
-                                        <FaPlus className="mr-2" /> <span>Add</span>
+                                        <FaPlus className="mr-2" /> <span>Add New Purchase Order</span>
                                     </button>
                                 </div>
                             </div>
-                            <p>Selected SKU</p>
-                            <div className="flex-1 min-h-0 overflow-auto">
-                                <MantineReactTable table={skuTable} />
-                            </div>
-                            {/* } */}
-                            <div className="mt-4">
-                                <button
-                                    type="button"
-                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-xs inline-flex items-center"
-                                    id="addNewDropdownBtn"
-                                    onClick={() => { }}
-                                >
-                                    <FaPlus className="mr-2" /> <span>Add New Purchase Order</span>
-                                </button>
-                            </div>
                         </div>
-                    </div>
 
-                    <hr className="my-4" />
+                        <hr className="my-4" />
 
-                    <div className="flex-1 min-h-0 overflow-auto">
-                        <MantineReactTable table={table} />
+                        <div className="mt-2 p-pl-table-item">
+                            <p className="text-sm font-semibold mb-2">Existing Purchase Orders</p>
+                            <MantineReactTable table={table} />
+                        </div>
                     </div>
                 </div>
             </div >

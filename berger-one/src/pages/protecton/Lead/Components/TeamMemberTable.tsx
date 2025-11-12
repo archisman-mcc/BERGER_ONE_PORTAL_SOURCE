@@ -73,7 +73,7 @@ const TeamMemberTable = ({ data, setData }: any) => {
 
     return (
         <>
-            <div className='mb-2'>
+            <div className='mb-2 p-pl-table-item'>
                 {/* <label className="block text-sm font-semibold mb-1">Team Memeber Search:</label> */}
                 <AsyncSelectBox
                     data={existingBusinessContract}
@@ -91,6 +91,7 @@ const TeamMemberTable = ({ data, setData }: any) => {
                 columns={columns}
                 // data={contacts}
                 data={data?.potentialTrackingcontacts.filter((ptc: any) => ptc?.ptc_contact_type === "STACKHOLDER") || []}
+                enableStickyHeader={true}
                 enablePagination={false}
                 enableColumnActions={false}
                 enableSorting={false}

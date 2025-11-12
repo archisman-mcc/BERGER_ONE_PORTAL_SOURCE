@@ -204,14 +204,16 @@ const EPCARsmApprovalList = () => {
     const table = useMantineReactTable({
         columns,
         data,
-        enableColumnResizing: true, 
+        enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden', // hides horizontal scrollbar
+                overflow: 'auto',
+                maxHeight: '16rem',
             },
         }
     });
@@ -325,7 +327,7 @@ const EPCARsmApprovalList = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 

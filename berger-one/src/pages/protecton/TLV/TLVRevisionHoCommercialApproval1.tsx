@@ -552,6 +552,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
         columns,
         data: dgData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -642,7 +643,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                 <CommonFilterComponent selectBoxData={selectBoxData} filterData={filterData} setFilterData={setFilterData} handleSearch={handleSearch} />
             </div>
 
-            <div className="mb-2 max-h-[50vh] overflow-y-auto">
+            <div className="mb-2 max-h-[50vh] overflow-y-auto p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 

@@ -17,7 +17,8 @@ export function commonAlert(title: string, text: string, icon: any) {
         confirmButtonText: `Confrim`,
         cancelButtonText: 'Cancel',
         reverseButtons: true,
-        padding: '2em',
+        padding: '1em',
+        width: '400px',
     });
 }
 
@@ -38,7 +39,8 @@ export function contactPersonAlert(title: string, text: string, icon: any, confi
         confirmButtonText: confirmButtonText,
         cancelButtonText: cancelButtonText,
         reverseButtons: true,
-        padding: '2em',
+        padding: '1em',
+        width: '400px',
     });
 }
 

@@ -47,6 +47,7 @@ const UserTrackingVisitTableComponent = ({ tableData }: any) => {
         columns,
         data: tableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -58,7 +59,7 @@ const UserTrackingVisitTableComponent = ({ tableData }: any) => {
         }
     });
     return (
-        <div className="max-h-[45vh] overflow-y-auto">
+        <div className="max-h-[45vh] overflow-y-auto p-pl-table-item">
             <MantineReactTable table={table} />
         </div>
     )

@@ -10,8 +10,10 @@ import { Modal } from '@mantine/core';
 import { FaPlus } from "react-icons/fa6";
 import { GetVerticalWisBusinessLine } from '../../services/api/protectonLead/PotentialLead';
 import CustomPopupComponent from '../protecton/Lead/Components/customPopupComponent';
+import DsrTodReportPopup from './Components/DsrTodReportPopup';
 
 const Dashboard = () => {
+    const [isDsrTodReportPopupOpen, setIsDsrTodReportPopupOpen] = useState(false);
     const [popupOpenData, setPopupOpenData] = useState({ open: false, popupHeader: '' });
     const [isMWALoading, setIsMWALoading] = useState(false);
     const [isOverduesLoading, setIsOverduesLoading] = useState(false);
@@ -443,7 +445,7 @@ const Dashboard = () => {
         setShowDropdown(false);
         setPopupOpenData({ open: true, popupHeader: action })
     };
-    const handleSearch = () => {}
+    const handleSearch = () => { }
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -644,6 +646,15 @@ const Dashboard = () => {
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <button
+                                type="button"
+                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-xs inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed float-right mt-2"
+                                id="addNewPurchaseOrderBtn"
+                                onClick={()=> setIsDsrTodReportPopupOpen(true)}
+                            >
+                                Click to View Today's Report
+                            </button>
                         </div>
 
                     </div>
@@ -1015,6 +1026,10 @@ const Dashboard = () => {
             {popupOpenData?.open &&
                 <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
             }
+
+            {isDsrTodReportPopupOpen && (
+                <DsrTodReportPopup onClose={() => setIsDsrTodReportPopupOpen(false)} />
+            )}
 
             <Modal
                 opened={isModalOpen}

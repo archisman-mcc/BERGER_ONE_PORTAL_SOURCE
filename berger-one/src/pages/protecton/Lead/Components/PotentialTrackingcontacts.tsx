@@ -189,10 +189,11 @@ const PotentialTrackingcontacts = ({ data, setData, type }: any) => {
     );
 
     return (
-        <div>
+        <div className='p-pl-table-item'>
             <MantineReactTable
                 columns={columns}
                 data={contacts}
+                enableStickyHeader={true}
                 enablePagination={false}
                 enableColumnActions={false}
                 enableSorting={false}

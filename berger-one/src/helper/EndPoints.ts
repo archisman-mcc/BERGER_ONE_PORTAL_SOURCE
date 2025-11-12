@@ -187,7 +187,8 @@ const ALL_ENDPOINTS = {
     potentialTrackingSubmit: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'potentialTrackingSubmit',
     GetPotentialTrackingList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingList',
     GetBusinessLineWiseLeadList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetBusinessLineWiseLeadList',
-    // PCADtlsBillto: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'PCADtlsBillto',
+    PTOrderdtlsSubmit: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'PTOrderdtlsSubmit',
+    GetKeyAccountList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetKeyAccountList',
     GetPotentialTrackingDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingDtls',
     GetPotentialTrackingActivityDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingActivityDtls',
     GetPotentialTrackingOrderDtls: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetPotentialTrackingOrderDtls',
@@ -196,6 +197,8 @@ const ALL_ENDPOINTS = {
     GetDealerSearch: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetDealerSearch',
     GetStakeHolderList: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStakeHolderList',
     GetStateListPotentialLead: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'GetStateList',
+    SubmitKeyAccountInsertUpdate: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonPotentialLead + 'SubmitKeyAccountInsertUpdate',
+    
 
     // Report
     getmwadetailsdatav5: BASE_ENDPOINTS.v1 + BASE_ENDPOINTS.ProtectonReport + 'getmwadetailsdatav5',

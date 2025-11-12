@@ -433,14 +433,21 @@ const TLVRevisionRSMApproval1 = () => {
         []
     );
 
-    const table = useMantineReactTable<TLVType>({
+    const table = useMantineReactTable({
         columns,
         data: dgData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
-        columnResizeMode: 'onChange'
+        columnResizeMode: 'onChange',
+        mantineTableContainerProps: {
+            style: {
+                overflow: 'auto',
+                maxHeight: '16rem',
+            },
+        }
     });
 
     const BesicDetailTable = ({ data }: any) => {
@@ -534,7 +541,7 @@ const TLVRevisionRSMApproval1 = () => {
                 <CommonFilterComponent selectBoxData={selectBoxData} filterData={filterData} setFilterData={setFilterData} handleSearch={handleSearch} />
             </div>
 
-            <div className="mb-2 max-h-[50vh] overflow-y-auto">
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 

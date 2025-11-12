@@ -95,6 +95,7 @@ const TransactBilling = () => {
         setLoading(false);
     }
 
+    // east, Guwahati, Accolade - select to get billing list
     const GetBillingList = async () => {
         setLoading(true);
         const payload: any = {
@@ -194,7 +195,7 @@ const TransactBilling = () => {
                 size: 50,
             },
             {
-                accessorKey: 'bpd_approved_rate',
+                accessorKey: 'bpd_declared_rate',
                 header: 'Billing Rate (Ltr/Kg)',
                 size: 50,
             },
@@ -221,6 +222,7 @@ const TransactBilling = () => {
         columns: columnsBilling,
         data: data.billingList,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -254,6 +256,7 @@ const TransactBilling = () => {
         columns: columnsBillingDetails,
         data: data.billingDetailsList.table1 ? data.billingDetailsList.table1 : [],
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -270,6 +273,7 @@ const TransactBilling = () => {
         columns: columnsBillingDetails,
         data: data.billingDetailsList.table2 ? data.billingDetailsList.table2 : [],
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -455,7 +459,7 @@ const TransactBilling = () => {
                 </div>
             </div>
 
-            <div className="mb-2 overflow-y-auto">
+            <div className="mb-2 overflow-y-auto p-pl-table-item">
                 <MantineReactTable table={tableBilling} />
             </div>
 
@@ -506,7 +510,7 @@ const TransactBilling = () => {
                 {data.billingDetailsList.table1 && data.billingDetailsList.table1.length > 0 &&
                     <div>
 
-                        <div className="my-4 overflow-y-auto">
+                        <div className="my-4 overflow-y-auto p-pl-table-item">
                             <MantineReactTable table={tableBillingDetails} />
                         </div>
 
@@ -567,7 +571,7 @@ const TransactBilling = () => {
                 {data.billingDetailsList.table2 && data.billingDetailsList.table2.length > 0 &&
                     <div>
 
-                        <div className="my-4 overflow-y-auto">
+                        <div className="my-4 overflow-y-auto p-pl-table-item">
                             <MantineReactTable table={tableBillingDetails} />
                         </div>
 

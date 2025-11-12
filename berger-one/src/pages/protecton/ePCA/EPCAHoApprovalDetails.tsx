@@ -846,6 +846,7 @@ const EPCAHoApprovalDetails = () => {
         columns,
         data,
         enableRowSelection: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -1164,7 +1165,7 @@ const EPCAHoApprovalDetails = () => {
                 </div>
 
                 {data.length > 0 && (
-                    <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+                    <div className="mb-2 p-pl-table-item" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
                         <MantineReactTable table={table} />
                     </div>
                 )}

@@ -1,5 +1,5 @@
 import { CiSearch } from "react-icons/ci";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
 import TableComponent from "./Components/TableComponent";

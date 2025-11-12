@@ -7,7 +7,7 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
 import SiteContactTable from './SiteContactTable';
 import { Button, Textarea } from '@mantine/core';
-import { GetDealerSearch, GetStateListPotentialLead, potentialTrackingSubmit, ProLeadInsert } from '../../../../services/api/protectonLead/PotentialLead';
+import { GetDealerSearch, GetKeyAccountList, GetStateListPotentialLead, potentialTrackingSubmit, ProLeadInsert } from '../../../../services/api/protectonLead/PotentialLead';
 import AsyncSelectBox from '../../Transact/Components/AsyncSelectBox';
 import PotentialTrackingcontacts from './PotentialTrackingcontacts';
 import TeamMemberTable from './TeamMemberTable';
@@ -96,7 +96,14 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
         // setLoading(false);
     }
 
-    const GetKeyAccountListAPIcall = async (inputValue: any) => { }
+    const GetKeyAccountListAPIcall = async (inputValue: any) => {
+        try {
+            const response: any = await GetKeyAccountList(inputValue);
+            setDdlData({ ...ddlData, key_account_List: [...response.data.table] });
+        } catch (error) {
+            return;
+        }
+    }
 
     // Document handling functions
     const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +157,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
         event.target.value = "";
     };
 
-
     const removeDocument = (index: number) => {
         setData((prevData: any) => ({
             ...prevData,
@@ -161,14 +167,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
     const handleImagePreview = (imagePath: string, fileName: string) => {
         setImagePreviewData({ isOpen: true, imagePath, fileName });
     };
-
-    // const formatFileSize = (bytes: number): string => {
-    //     if (bytes === 0) return '0 Bytes';
-    //     const k = 1024;
-    //     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    //     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    //     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    // };
 
     const prolinksAlertFunc = () => {
         if (data?.selectedRegionList === '') {
@@ -235,15 +233,23 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             commonErrorToast('Please select Contractor Type');
             return false;
         }
-        else if (data?.ptm_project_name === '') {
+        else if (data.ptm_key_account_type === '') {
+            commonErrorToast('Please select Key Account Type');
+            return false;
+        }
+        else if (data.ptm_key_account_id === '' && data.ptm_key_account_type?.value) {
+            commonErrorToast('Please select Key Account');
+            return false;
+        }
+        else if (data?.projectName === '') {
             commonErrorToast('Please enter Project Name');
             return false;
         }
-        else if (data?.ptm_project_location === '') {
+        else if (data?.siteLocation === '') {
             commonErrorToast('Please enter Project Location');
             return false;
         }
-        else if (data?.ptm_project_address1 === '') {
+        else if (data?.addr1 === '') {
             commonErrorToast('Please enter Address Line 1');
             return false;
         }
@@ -251,11 +257,11 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             commonErrorToast('Please select Region');
             return false;
         }
-        else if (data?.ptm_depot_code === '' || popupOpenData?.popupHeader === "SELF") {
+        else if (data?.ptm_depot_code === '' && popupOpenData?.popupHeader === "SELF") {
             commonErrorToast('Please select Depot');
             return false;
         }
-        else if (data?.ptm_terr_code === '' || popupOpenData?.popupHeader === "SELF") {
+        else if (data?.ptm_terr_code === '' && popupOpenData?.popupHeader === "SELF") {
             commonErrorToast('Please select Territory');
             return false;
         }
@@ -323,6 +329,8 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                 ptm_ref_dealer_code: data.ptm_ref_dealer_code?.value || '',
                 ptm_customer_name: data.ptm_customer_name || '',
                 ptm_contractor_type: data.ptm_contractor_type?.value || '',
+                ptm_key_account_type: data.ptm_key_account_type?.value || '',
+                ptm_key_account_id: data.ptm_key_account_id?.value || '',
                 ptm_project_name: data.projectName || '',
                 ptm_project_location: data.siteLocation || '',
                 ptm_project_address1: data.addr1 || '',
@@ -726,22 +734,24 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         options={ddlData?.key_account_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_key_account_type}
                                         onChange={(event: any) => {
-                                            GetKeyAccountListAPIcall({ business_line: "PROTECTON", key_account_type: "NATIONAL" });
+                                            GetKeyAccountListAPIcall({ business_line: "PROTECTON", key_account_type: event?.value });
                                             setData((pre: any) => ({ ...pre, ptm_key_account_type: event }))
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Key Account:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
-                                    <Select
-                                        className="text-sm"
-                                        // isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
-                                        isSearchable={true}
-                                        options={ddlData?.key_account_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                                        value={data.ptm_key_account_id}
-                                        onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_key_account_id: event }))}
-                                    />
-                                </div>
+                                {data.ptm_key_account_type?.value &&
+                                    <div>
+                                        <label className="block text-sm font-semibold mb-1">Key Account:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <Select
+                                            className="text-sm"
+                                            // isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            isSearchable={true}
+                                            options={ddlData?.key_account_List.map((d: any) => ({ value: d.key_account_id, label: d.key_account_name }))}
+                                            value={data.ptm_key_account_id}
+                                            onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_key_account_id: event }))}
+                                        />
+                                    </div>
+                                }
                             </div>
                             {data.ptm_ref_lead_type?.value === "BC2" &&
                                 <>
