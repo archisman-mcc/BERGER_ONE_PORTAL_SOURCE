@@ -173,6 +173,7 @@ const TransactDespatch = () => {
         columns: columnsDtls,
         data: data.despatchDetailsData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -434,7 +435,7 @@ const TransactDespatch = () => {
                         </div>
                     </div>
 
-                    <div className="mb-2 max-h-[55vh] overflow-y-auto">
+                    <div className="mb-2 max-h-[55vh] overflow-y-auto p-pl-table-item">
                         <MantineReactTable table={tableDetails} />
                     </div>
 

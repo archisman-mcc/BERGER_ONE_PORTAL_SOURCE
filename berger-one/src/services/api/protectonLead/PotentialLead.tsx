@@ -16,9 +16,12 @@ export function GetPotentialTrackingList<P, G>(data: any): Promise<G> {
 export function GetBusinessLineWiseLeadList<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetBusinessLineWiseLeadList) as Promise<G>;
 }
-// export function GetPCASkuBillingDetails<P, G>(data: any): Promise<G> {
-//     return HTTP_POST<P, G>(data, ENDPOINTS.GetPCASkuBillingDetails) as Promise<G>;
-// }
+export function PTOrderdtlsSubmit<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.PTOrderdtlsSubmit) as Promise<G>;
+}
+export function InsertePcaDetails_Vr1<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.InsertePcaDetails_Vr1) as Promise<G>;
+}
 export function GetPotentialTrackingDtls<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetPotentialTrackingDtls) as Promise<G>;
 }
@@ -40,7 +43,12 @@ export function GetDealerSearch<P, G>(data: any): Promise<G> {
 export function GetStakeHolderList<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetStakeHolderList) as Promise<G>;
 }
-
 export function GetStateListPotentialLead<P, G>(data: any): Promise<G> {
     return HTTP_GET<P, G>(data, ENDPOINTS.GetStateListPotentialLead) as Promise<G>;
+}
+export function GetKeyAccountList<P, G>(data: any): Promise<G> {
+    return HTTP_GET<P, G>(data, ENDPOINTS.GetKeyAccountList) as Promise<G>;
+}
+export function SubmitKeyAccountInsertUpdate<P, G>(data: any): Promise<G> {
+    return HTTP_POST<P, G>(data, ENDPOINTS.SubmitKeyAccountInsertUpdate) as Promise<G>;
 }

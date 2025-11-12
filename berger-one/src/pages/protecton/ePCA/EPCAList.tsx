@@ -65,12 +65,10 @@ const EPCAList = () => {
     };
 
     const selectedCustomer = async (Lead: any) => {
-        //setLoading(true); // Start loading
         setCustomerProfile(Lead);
         setValueInSessionStorage('epcaDtlList', Lead);
         setValueInSessionStorage('epcaDtlListEntryType', 'View');
         await navigate('/Protecton/ePCA/EPCADetails/');
-        // setLoading(false); // Stop loading
     };
 
     const findSelectedTypeValue = (arr: any[], arrPropName: string, checkValue: string) => {
@@ -113,7 +111,6 @@ const EPCAList = () => {
     };
 
     const GetApplicableDepot = async () => {
-        //setLoading(true);
         if (user) {
             const data: any = {
                 user_id: user.user_id,
@@ -142,7 +139,6 @@ const EPCAList = () => {
             navigate('/login/cover-login');
             // router.push('/login/cover-login');
         }
-        //setLoading(true);
     };
 
     const GetApplicableTerritory = async (depotCode: any) => {
@@ -231,7 +227,7 @@ const EPCAList = () => {
     };
 
     const GetPcaListData = async () => {
-        //setLoading(true);
+        setLoading(true);
         const data: any = {
             app_id: 15,
             DepotCode: selectedDropdown.Userdepot != -1 ? depot[selectedDropdown.Userdepot].depot_code : '',
@@ -250,7 +246,7 @@ const EPCAList = () => {
         } catch (error) {
             return;
         }
-        // setLoading(false);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -354,29 +350,17 @@ const EPCAList = () => {
         columns,
         data,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden',
+                overflow: 'auto',
+                maxHeight: '16rem',
             },
-        },
-        // mantineTableFooterCellProps: {
-        //     style: {
-        //         position: 'sticky',
-        //         bottom: 0,
-        //         zIndex: 2,
-        //     },
-        // },
-        // mantineTableHeadCellProps: {
-        //     style: {
-        //         position: 'sticky',
-        //         top: 0,
-        //         zIndex: 3,
-        //     },
-        // }
+        }
     });
 
     return (
@@ -472,11 +456,11 @@ const EPCAList = () => {
                     </div>
                 </div>
             </div>
-            
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
-            
+
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
                     <div role="status" className="animate-spin">

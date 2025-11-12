@@ -264,7 +264,7 @@ const PotentialLead = () => {
                 commonLovDetailsData.current["contractor_type_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_KEY_ACCOUNT_TYPE") {
-                commonLovDetailsData.current["key_account_type_List"] = response.data.table || [];
+                commonLovDetailsData.current["key_account_type_List"] = response.data.table ? [{lov_code: '',lov_value: 'None'}, ...response.data.table] : [];
             }
             else if (payload.lov_type === "PT_AREA_MOU") {
                 commonLovDetailsData.current["potential_area_uom_List"] = response.data.table || [];
@@ -293,6 +293,7 @@ const PotentialLead = () => {
     var rowData: any = useRef(null);
 
     const selectedLeadDetails1 = async () => {
+        // setLoading(true);
         const payload: any = {
             ptm_id: rowData?.current.ptm_id
         };
@@ -307,14 +308,13 @@ const PotentialLead = () => {
                 var selectedStateList: any = '';
                 try {
                     const stateRes: any = await GetStateList({});
-                    if (stateRes.data) {
+                    if (stateRes.data && response?.data?.table[0]?.ptm_project_state) {
                         selectedStateList = { value: stateRes?.data.table?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_code, label: stateRes?.data.table?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_name }
                     }
                 } catch (error) {
                     return;
                 }
-                // console.log(selectedStateList)
-                // console.log({ value: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_code, label: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_name })
+                console.log("render")
 
                 var ptm_ref_dealer_code: any = '';
                 if (response?.data?.table[0]?.ptm_ref_dealer_code) {
@@ -327,6 +327,7 @@ const PotentialLead = () => {
                         console.log(error)
                     }
                 }
+                console.log("render")
 
                 if (user.group_code) {
                     const data: any = {
@@ -341,6 +342,7 @@ const PotentialLead = () => {
                         return;
                     }
                 }
+                console.log("render")
 
                 var ptm_depot_code: any = '';
                 if (response?.data?.table[0]?.ptm_region) {
@@ -352,7 +354,7 @@ const PotentialLead = () => {
                     };
                     try {
                         const subRes: any = await GetProtectonApplicableDepot(payload1);
-                        if (subRes.data) {
+                        if (subRes.data && response?.data?.table[0]?.ptm_depot_code) {
                             ptm_depot_code = { value: subRes.data.table.find((item: any) => item?.depot_code === response?.data?.table[0]?.ptm_depot_code)?.depot_code, label: subRes.data.table.find((item: any) => item?.depot_code === response?.data?.table[0]?.ptm_depot_code)?.depot_name }
                         }
                         setDdlData((prevData: any) => ({
@@ -363,6 +365,7 @@ const PotentialLead = () => {
                         return;
                     }
                 }
+                console.log("render")
 
                 var ptm_terr_code: any = '';
                 if (response?.data?.table[0]?.ptm_region && response?.data?.table[0]?.ptm_depot_code) {
@@ -374,7 +377,7 @@ const PotentialLead = () => {
                     };
                     try {
                         const subRes: any = await GetProtectonApplicableTerr(payload);
-                        if (subRes.data) {
+                        if (subRes.data && response?.data?.table[0]?.ptm_terr_code) {
                             ptm_terr_code = { value: subRes.data.table.find((item: any) => item?.terr_code === response?.data?.table[0]?.ptm_terr_code)?.terr_code, label: subRes.data.table.find((item: any) => item?.terr_code === response?.data?.table[0]?.ptm_terr_code)?.terr_name }
                         }
                         setDdlData((prevData: any) => ({
@@ -385,12 +388,14 @@ const PotentialLead = () => {
                         return;
                     }
                 }
+                console.log("render")
 
                 // console.log(commonLovDetailsData.current.product_category_List, response?.data?.table[0]?.ptm_product_category)
                 const ptm_product_category = commonLovDetailsData.current.product_category_List.length > 0 && response?.data?.table[0]?.ptm_product_category ? commonLovDetailsData.current?.product_category_List.filter((item: any) => response?.data?.table[0]?.ptm_product_category.split(",").includes(item?.lov_code)).map((item: any) => ({
                     value: item.lov_code,
                     label: item.lov_value
                 })) : [];
+                console.log("render")
 
                 const getDetailsData = {
                     projectName: response?.data?.table[0]?.ptm_project_name || '',
@@ -433,15 +438,18 @@ const PotentialLead = () => {
 
                     potentialTrackingcontacts: response?.data?.table2 || [],
                 };
+                console.log("render")
 
                 setData((prevData: any) => ({
                     ...prevData,
                     ...response?.data?.table[0],
                     ...getDetailsData
                 }));
+                setLoading(false);
             }
         } catch (error) {
             return;
+            setLoading(false);
         }
     }
 
@@ -676,7 +684,6 @@ const PotentialLead = () => {
                                             setTimeout(() => {
                                                 selectedLeadDetails1();
                                             }, 2000);
-                                            setLoading(false);
                                         }}
                                     >
                                         {/* <IoEyeSharp /> */} View Details
@@ -705,13 +712,15 @@ const PotentialLead = () => {
         columns,
         data: potentialLeadDataList,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden',
+                overflow: 'auto',
+                maxHeight: '16rem',
             },
         }
     });
@@ -892,7 +901,7 @@ const PotentialLead = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={isProlinksToAPICALL ? table_prolinks_to : table} />
             </div>
 
@@ -912,6 +921,7 @@ const PotentialLead = () => {
                     rowData={rowData?.current}
                     purchaseOrderData={purchaseOrderData}
                     onClose={() => { setIsPurchaseOrderPopupOpen(false); setPurchaseOrderData([]); }}
+                    GetPotentialTrackingOrderDtlsAPIcall={GetPotentialTrackingOrderDtlsAPIcall}
                 />
             }
 

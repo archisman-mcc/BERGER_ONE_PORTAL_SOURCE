@@ -212,6 +212,7 @@ const TransactInvoice = () => {
         columns,
         data: data.invoiceDetails,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -496,7 +497,7 @@ const TransactInvoice = () => {
                                 </div>
                             </div>
 
-                            <div className="mb-2 overflow-y-auto">
+                            <div className="mb-2 overflow-y-auto p-pl-table-item">
                                 <MantineReactTable table={tableDetails} />
                             </div>
 

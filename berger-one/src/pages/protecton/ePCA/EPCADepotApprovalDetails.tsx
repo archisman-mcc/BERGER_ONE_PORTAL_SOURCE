@@ -883,6 +883,7 @@ const EPCADepotApprovalDetails = () => {
         columns,
         data,
         enableRowSelection: true, // Enable row selection with checkboxes
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -1185,7 +1186,7 @@ const EPCADepotApprovalDetails = () => {
                 </div>
             </div>
 
-            <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>{data.length > 0 && <MantineReactTable table={table} />}</div>
+            <div className="mb-2 p-pl-table-item" style={{ maxHeight: '45vh', overflowY: 'auto' }}>{data.length > 0 && <MantineReactTable table={table} />}</div>
 
             {/* <div className="panel mb-2">
                 <form className=" border-1 space-y-5">

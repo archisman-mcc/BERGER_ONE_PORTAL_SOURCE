@@ -208,15 +208,17 @@ const EPCADepotApprovalList = () => {
         columns,
         data,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden',
+                overflow: 'auto',
+                maxHeight: '16rem',
             },
-        },
+        }
     });
 
     useEffect(() => {
@@ -413,7 +415,7 @@ const EPCADepotApprovalList = () => {
             </div> */}
             {/* <div className="mb-2"> */}
 
-            <div className="mb-2 max-h-[45vh] overflow-y-auto">
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 
