@@ -97,10 +97,11 @@ const OutstandingTableComponent_single = ({ tableType, tableData, modalOpen, api
     );
 
     return (
-        <>
+        <div className='p-pl-table-item'>
             <MantineReactTable
                 columns={tableType === "invoice" ? columns_invoice : columns}
                 data={tableData}
+                enableStickyHeader={true}
                 enablePagination={false}
                 initialState={{ pagination: { pageSize: 12 } }}
                 enableColumnResizing={true}
@@ -120,7 +121,7 @@ const OutstandingTableComponent_single = ({ tableType, tableData, modalOpen, api
             //     };
             // }}
             />
-        </>
+        </div>
     )
 }
 

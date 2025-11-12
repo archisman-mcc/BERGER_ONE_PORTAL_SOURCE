@@ -388,23 +388,17 @@ const EPCADetails = () => {
         columns,
         data,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
-                overflowX: 'hidden',
+                overflow: 'auto',
+                maxHeight: '16rem',
             },
-        },
-        // defaultColumn: { minSize: 50, maxSize: 500 },
-        // mantineTableHeadCellProps: {
-        //     style: {
-        //         whiteSpace: 'normal',       // allow wrapping
-        //         overflow: 'visible',        // don't clip text
-        //         textOverflow: 'initial',    // allow full text
-        //     },
-        // }
+        }
     });
 
     // useEffect(() => {
@@ -712,8 +706,7 @@ const EPCADetails = () => {
                 }
             </div>
 
-            {/* {pageType == 'View' && <div className="mb-2 max-h-[45vh]">{data.length > 0 && <MantineReactTable table={table} />}</div>} */}
-            {pageType == 'View' && <div className="mb-2" style={{ maxHeight: '45vh', overflowY: 'auto' }}>{data.length > 0 && <MantineReactTable table={table} />}</div>}
+            {pageType == 'View' && <div className="mb-2 p-pl-table-item">{data.length > 0 && <MantineReactTable table={table} />}</div>}
 
             <div className="flex items-center justify-center gap-1 pb-2">
                 <button

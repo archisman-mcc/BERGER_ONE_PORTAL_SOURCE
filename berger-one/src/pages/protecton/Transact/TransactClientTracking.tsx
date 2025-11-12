@@ -6,12 +6,12 @@ import AsyncMultiSelectBox from './Components/AsyncMultiSelectBox';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 
 const TransactClientTracking = () => {
-    const [filterData, setFilterData] = useState({ 
+    const [filterData, setFilterData] = useState({
         dsrDate: (() => {
             const today = new Date();
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        })(), 
-        viewBy: "MTD" 
+        })(),
+        viewBy: "MTD"
     });
     const [loading, setLoading] = useState(false);
     const [listDataHide, setListDataHide] = useState(false);
@@ -268,6 +268,7 @@ const TransactClientTracking = () => {
         columns,
         data: CTDetailData || [],
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enablePagination: false,
         enableSorting: false,
@@ -379,17 +380,18 @@ const TransactClientTracking = () => {
                 </div>
             </div>
 
-            <div className="max-h-[50vh] overflow-y-auto mb-2">
+            <div className="max-h-[50vh] overflow-y-auto mb-2  p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 
-            <div className="max-h-[90vh] overflow-y-auto mb-2">
+            <div className="max-h-[90vh] overflow-y-auto mb-2  p-pl-table-item">
                 <MantineReactTable
                     columns={outstandingTableColumns}
                     data={outstandingData}
                     enablePagination={false}
                     initialState={{ pagination: { pageIndex: 0, pageSize: 12 } }}
                     enableColumnResizing={true}
+                    enableStickyHeader={true}
                     enableTopToolbar={false}
                     enableSorting={false}
                     enableColumnActions={false}

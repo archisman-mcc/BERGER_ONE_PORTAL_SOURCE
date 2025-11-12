@@ -640,3 +640,13 @@ span.flatpickr-weekday {
         justify-content: center !important;
     }
 }
+
+.p-pl-table-item .mantine-r2iq5s {
+    z-index: 1;
+}
+.p-pl-table-item .mantine-vl6xmj {
+    z-index: 0;
+}
+.css-1nmdiq5-menu {
+    z-index: 999 !important;
+}

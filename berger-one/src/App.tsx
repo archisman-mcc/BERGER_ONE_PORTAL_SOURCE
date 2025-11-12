@@ -61,21 +61,17 @@ import CustNotVisitedReport from './pages/protecton/HoMarketing/CustNotVisitedRe
 import CompetitorActivityReport from './pages/protecton/HoMarketing/CompetitorActivityReport';
 import ComplaintsReport from './pages/protecton/HoMarketing/ComplaintsReport';
 import AppUsageReport from './pages/protecton/HoMarketing/AppUsageReport';
-// import TLVRevisionRequestDetails1 from './pages/protecton/TLV/TLVRevisionRequestDetails';
-
-// Lazy load the MUI component to prevent SSR bundling
-// const TLVRevisionRequestDetails = React.lazy(() => import('./pages/protecton/TLV/TLVRevisionRequestDetails1'));
-
-// Base URL configuration
-// const BASE_URL = '/BERGERONE';
+import KeyAccountMaster from './pages/protecton/Others/KeyAccountMaster';
+// import KeyAccountDetails from './pages/protecton/Others/KeyAccountDetails';
 
 // Helper function to check authentication
 const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
   const storedObjectString: any = localStorage.getItem('auth');
-  // return auth !== null && auth !== undefined && auth !== '';
+  // console.log(storedObjectString)
+  if (storedObjectString === null || storedObjectString === undefined) return false;
   const storedObject = JSON.parse(storedObjectString);
-  // console.log(storedObject)
+  console.log(storedObject)
   if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
     return false;
   } else return true;
@@ -92,11 +88,9 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 function App() {
-  // Check if we're in a browser environment
   const isBrowser = typeof window !== 'undefined';
 
   if (isBrowser) {
-    // Client-side: Use createBrowserRouter
     const router = createBrowserRouter([
       {
         path: '/',
@@ -312,6 +306,10 @@ function App() {
             path: '/Protecton/HoMarketing/AppUsageReport',
             element: <AppUsageReport />,
           },
+          {
+            path: '/Protecton/KeyAccount/KeyAccountMaster',
+            element: <KeyAccountMaster />,
+          },
         ],
       },
       {
@@ -354,13 +352,15 @@ function App() {
           <Route path="/Protecton/ePCA/EPCAHoApprovalDetails" element={<EPCAHoApprovalDetails />} />
           <Route path="/Protecton/ePCA/EPCACancellation" element={<EPCACancellation />} />
           <Route path="/Protecton/TLV/TLVRevisionRequestList" element={<TLVRevisionRequestList />} />
-          <Route path="/Protecton/TLV/TLVRevisionRequestDetails" element={
-            <ClientOnly>
-              <Suspense fallback={<div>Loading...</div>}>
-                <TLVRevisionRequestDetails />
-              </Suspense>
-            </ClientOnly>
-          } />
+          <Route path="/Protecton/TLV/TLVRevisionRequestDetails"
+            element={
+              <ClientOnly>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <TLVRevisionRequestDetails />
+                </Suspense>
+              </ClientOnly>
+            }
+          />
           <Route path="/Protecton/TLV/TLVRevisionDepotApproval" element={<TLVRevisionDepotApproval1 />} />
           <Route path="/Protecton/TLV/TLVRevisionRSMApproval" element={<TLVRevisionRSMApproval1 />} />
           <Route path="/Protecton/TLV/TLVRevisionHoApproval" element={<TLVRevisionHoApproval1 />} />
@@ -390,6 +390,7 @@ function App() {
           <Route path="/Protecton/HoMarketing/CompetitorActivityReport" element={<CompetitorActivityReport />} />
           <Route path="/Protecton/HoMarketing/ComplaintsReport" element={<ComplaintsReport />} />
           <Route path="/Protecton/HoMarketing/AppUsageReport" element={<AppUsageReport />} />
+          <Route path="/Protecton/KeyAccount/KeyAccountMaster" element={<KeyAccountMaster />} />
         </Route>
         <Route path="/login/cover-login/" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />

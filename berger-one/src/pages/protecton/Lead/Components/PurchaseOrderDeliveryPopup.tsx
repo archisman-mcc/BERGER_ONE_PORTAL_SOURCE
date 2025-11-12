@@ -104,6 +104,7 @@ const PurchaseOrderDeliveryPopup = ({ onClose, rowData, purchaseOrderRowData, pu
         columns,
         data: purchaseOrderDeliveryData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -192,7 +193,7 @@ const PurchaseOrderDeliveryPopup = ({ onClose, rowData, purchaseOrderRowData, pu
                                 commonErrorToast("Can't add because of 0 Pending quantity!");
                                 return;
                             }
-                            if(formData?.qty <= 0){
+                            if (formData?.qty <= 0) {
                                 commonErrorToast("Quantity should be greater than 0!");
                                 return;
                             }
@@ -220,7 +221,7 @@ const PurchaseOrderDeliveryPopup = ({ onClose, rowData, purchaseOrderRowData, pu
 
                 <br />
 
-                <div className="flex-1 min-h-0 overflow-auto">
+                <div className="flex-1 min-h-0 overflow-auto p-pl-table-item">
                     <MantineReactTable table={table} />
                 </div>
 

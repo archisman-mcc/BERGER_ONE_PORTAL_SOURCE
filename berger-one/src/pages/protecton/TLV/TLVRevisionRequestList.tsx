@@ -433,35 +433,27 @@ const TLVRevisionRequestList = () => {
 
     const table = useMantineReactTable({
         columns,
-        data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+        data,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
-            className: 'overflow-x-hidden', // hides horizontal scrollbar
-        },
-        // mantineTableHeadCellProps: {
-        //     style: {
-        //         fontSize: '0.625rem',
-        //         fontWeight: '600',
-        //         color: '#374151',
-        //         textAlign: 'left',
-        //         padding: '0.5rem 0.65rem',
-        //         whiteSpace: 'nowrap',
-        //         overflow: 'hidden',
-        //         textOverflow: 'ellipsis'
-        //     }
-        // }
+            style: {
+                overflow: 'auto',
+                maxHeight: '16rem',
+            },
+        }
     });
 
-    useEffect(() => {
-        console.log(pcaParam)
-    }, [pcaParam])
-    useEffect(() => {
-        console.log(selectedDropdown)
-    }, [selectedDropdown])
+    // useEffect(() => {
+    //     console.log(pcaParam)
+    // }, [pcaParam])
+    // useEffect(() => {
+    //     console.log(selectedDropdown)
+    // }, [selectedDropdown])
 
     return (
         <>
@@ -555,7 +547,7 @@ const TLVRevisionRequestList = () => {
                 </div>
             </div>
 
-            <div className="mb-2 max-h-[50vh] overflow-y-auto">
+            <div className="mb-2 p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 

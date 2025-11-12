@@ -32,3 +32,4 @@ export function ValidateIFSC<P, G>(data: { common_request: any; }): Promise<G> {
 export function GetLegalStatusList<P, G>(data: any): Promise<G> {
     return HTTP_POST<P, G>(data, ENDPOINTS.GetLegalStatusList) as Promise<G>;
 }
+

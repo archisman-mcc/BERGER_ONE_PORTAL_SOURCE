@@ -204,13 +204,14 @@ const OutstandingTableComponent = ({ tableType, tableData, modalOpen, api, api1,
                                 <span className="mx-2">{data[tableType_]}</span>
                             </button>
 
-                            <div>
+                            <div className='p-pl-table-item'>
                                 <AnimateHeight duration={300} height={accordianOpen === data[tableType_] ? 'auto' : 0}>
                                     <MantineReactTable
                                         columns={data[tableType_] === "Summary" ? summary_columns : tableType === 'cat_cust_desct' ? category_summary_columns : columns}
                                         // columns={(data[tableType_] === "Summary" || tableType === 'cat_cust_desct') ? Summary_columns : columns}
                                         data={data?.tableData}
                                         enablePagination={false}
+                                        enableStickyHeader={true}
                                         initialState={{ pagination: { pageSize: 12 } }}
                                         enableColumnResizing={true}
                                         enableTopToolbar={false}

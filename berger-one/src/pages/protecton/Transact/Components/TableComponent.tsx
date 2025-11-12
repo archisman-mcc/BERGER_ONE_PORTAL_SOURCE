@@ -47,14 +47,31 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
             const response: any = await dsr.UserApplDlrSales(payload);
             if (response.data.table.length > 0) {
                 const roundVal = (number: any) => Math.round(parseFloat(number))
+                // console.log(response.data.table.map((t: any) => ({
+                //     ...t,
+                //     gr_val: roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === 'Infinity' || roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === '-Infinity' || roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString(),
+
+                //     gr_vol: roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === 'Infinity' || roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === '-Infinity' || roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString(),
+
+                //     gr_val_other: roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === 'Infinity' || roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === '-Infinity' || roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString(),
+
+                //     gr_vol_other: roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === 'Infinity' || roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === '-Infinity' || roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString(),
+
+                //     ach_val: ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === 'Infinity' || ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === '-Infinity' || ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === 'NaN' ? '0' : ((t?.ty_val / t?.tg_val) * 100).toFixed(2),
+                //     ach_vol: ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === 'Infinity' || ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === '-Infinity' || ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === 'NaN' ? '0' : ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2),
+                // })))
                 const tableData = response.data.table.map((t: any) => ({
                     ...t,
-                    gr_val: roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100),
-                    gr_vol: roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100),
-                    gr_val_other: roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100),
-                    gr_vol_other: roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100),
-                    ach_val: ((t?.ty_val / t?.tg_val) * 100).toFixed(2),
-                    ach_vol: ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2),
+                    gr_val: roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === 'Infinity' || roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === '-Infinity' || roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_val - t?.ly_val) / t?.ly_val) * 100).toString(),
+
+                    gr_vol: roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === 'Infinity' || roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === '-Infinity' || roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_vol - t?.ly_vol) / t?.ly_vol) * 100).toString(),
+
+                    gr_val_other: roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === 'Infinity' || roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === '-Infinity' || roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_val_other - t?.ly_val_other) / t?.ly_val_other) * 100).toString(),
+
+                    gr_vol_other: roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === 'Infinity' || roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === '-Infinity' || roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString() === 'NaN' ? '0' : roundVal(((t?.ty_vol_other - t?.ly_vol_other) / t?.ly_vol_other) * 100).toString(),
+
+                    ach_val: ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === 'Infinity' || ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === '-Infinity' || ((t?.ty_val / t?.tg_val) * 100).toFixed(2) === 'NaN' ? '0' : ((t?.ty_val / t?.tg_val) * 100).toFixed(2),
+                    ach_vol: ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === 'Infinity' || ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === '-Infinity' || ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2) === 'NaN' ? '0' : ((t?.ty_vol / t?.tg_vol) * 100).toFixed(2),
                 }))
                 report_grp_level === "REGION" ? settableData(tableData) :
                     report_grp_level === "REGION_CAT" || report_grp_level === "TERR_OTHER" || report_grp_level === "CAT_OTHER" ? setCategorywiseProductModalTableData(tableData) :
@@ -67,12 +84,12 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                 settableData([]);
                 console.log(modalOpenRef)
                 modalOpenRef.current === 'TerritoryModalOpen' ? setIsTerritoryModalOpen(false) :
-                modalOpenRef.current === 'CategoryModalOpen' ? setIsCategoryModalOpen(false) :
-                modalOpenRef.current === 'ContractorDealerModalOpen' ? setIsContractorDealerModalOpen(false) :
-                modalOpenRef.current === 'CategorywiseProductModalOpen' ? setIsCategorywiseProductModalOpen(false) :
-                modalOpenRef.current === 'CategorywiseProductModalOpen_terr' ? setIsCategorywiseProductModalOpen_terr(false) :
-                modalOpenRef.current === 'CategorywiseProductModalOpen_contractor_Dealer' ? setIsCategorywiseProductModalOpen_contractor_Dealer(false) :
-                modalOpenRef.current === 'TransactionReportModalOpen' && setIsTransactionReportModalOpen(false);
+                    modalOpenRef.current === 'CategoryModalOpen' ? setIsCategoryModalOpen(false) :
+                        modalOpenRef.current === 'ContractorDealerModalOpen' ? setIsContractorDealerModalOpen(false) :
+                            modalOpenRef.current === 'CategorywiseProductModalOpen' ? setIsCategorywiseProductModalOpen(false) :
+                                modalOpenRef.current === 'CategorywiseProductModalOpen_terr' ? setIsCategorywiseProductModalOpen_terr(false) :
+                                    modalOpenRef.current === 'CategorywiseProductModalOpen_contractor_Dealer' ? setIsCategorywiseProductModalOpen_contractor_Dealer(false) :
+                                        modalOpenRef.current === 'TransactionReportModalOpen' && setIsTransactionReportModalOpen(false);
 
                 commonErrorToast('Data not available!');
             }
@@ -269,6 +286,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns,
         data: tableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -344,6 +362,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns: territoryModalColumns,
         data: territoryModalTableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -356,7 +375,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
     });
 
     const onCloseModal = () => {
-        setIsTerritoryModalOpen(false); 
+        setIsTerritoryModalOpen(false);
         modalOpenRef.current = '';
         setTerritoryModalTableData([]);
     }
@@ -451,6 +470,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns: categoryModalTableData[0]?.regn === "Summary" ? categoryModalColumns_summary : categoryModalColumns,
         data: categoryModalTableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -496,6 +516,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns: contractorDealerModalColumns,
         data: contractorDealerModalTableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -654,6 +675,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns: categorywiseProductModalColumns,
         data: categorywiseProductModalTableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -756,6 +778,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         columns: categorywiseProductModalColumns_Terr,
         data: categorywiseProductModalTableData,
         enableColumnResizing: true,
+        enableStickyHeader: true,
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
@@ -840,6 +863,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
         enableTopToolbar: false,
         enableSorting: false,
         enableColumnActions: false,
+        enableStickyHeader: true,
         columnResizeMode: 'onChange',
         mantineTableContainerProps: {
             style: {
@@ -865,7 +889,7 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
 
     return (
         <>
-            <div className="max-h-[50vh] overflow-y-auto">
+            <div className="max-h-[50vh] overflow-y-auto p-pl-table-item">
                 <MantineReactTable table={table} />
             </div>
 
@@ -875,7 +899,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader={`Territory Report: ${filterData?.viewBy}`}
                     tableName={`${territoryModalTableData[0]?.regn} >`}
                     onCloseModal={onCloseModal} >
-                    <MantineReactTable table={territoryModal} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={territoryModal} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -885,7 +911,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader={`Category Report: ${filterData?.viewBy}`}
                     tableName={categoryModalTableData[0]?.regn === "Summary" ? `${categoryModalTableData[0]?.regn} >` : `${categoryModalTableData[0]?.regn} > ${categoryModalTableData[0]?.terr_code} >`}
                     onCloseModal={onCloseCategoryModal} >
-                    <MantineReactTable table={categoryModal} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={categoryModal} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -896,7 +924,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     }
                     tableName={`${contractorDealerModalTableData[0]?.regn} > ${contractorDealerModalTableData[0]?.terr_code} > ${contractorDealerModalTableData[0]?.cat_cust_desc} >`}
                     onCloseModal={onCloseContractorDealerModal} >
-                    <MantineReactTable table={contractorDealerModal} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={contractorDealerModal} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -906,7 +936,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader='Category Wise Product'
                     tableName={`${dataRef.current.regn} >`}
                     onCloseModal={onCloseCategorywiseProductModal} >
-                    <MantineReactTable table={categorywiseProductModal} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={categorywiseProductModal} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -915,7 +947,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader='Category Wise Product'
                     tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} >`}
                     onCloseModal={onCloseCategorywiseProductModal} >
-                    <MantineReactTable table={categorywiseProductModal_Terr} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={categorywiseProductModal_Terr} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -924,7 +958,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader='Category Wise Product'
                     tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`}
                     onCloseModal={onCloseCategorywiseProductModal} >
-                    <MantineReactTable table={categorywiseProductModal_Terr} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={categorywiseProductModal_Terr} />
+                    </div>
                 </ModalComponent>
             )}
 
@@ -934,7 +970,9 @@ const TableComponent = forwardRef(({ tableData, settableData, setLoading, filter
                     modalHeader='Transaction Report'
                     tableName={`${dataRef.current.regn} > ${dataRef.current.terr_code} > ${dataRef.current.cat_cust_desc} >`}
                     onCloseModal={onCloseTransactionReportModal} >
-                    <MantineReactTable table={transactionReportModal} />
+                    <div className="p-pl-table-item">
+                        <MantineReactTable table={transactionReportModal} />
+                    </div>
                 </ModalComponent>
             )}
         </>
