@@ -1,16 +1,19 @@
 
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { GetAppUsageReport } from '../../../services/api/protectonReport/ProtectonReport';
 import { commonErrorToast } from '../../../services/functions/commonToast';
 import { useNavigate } from 'react-router-dom';
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 
 
 const AppUsageReport: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
+    const [fileDownloaded, setFileDownloaded] = React.useState(true);
+    const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
     const currentDate = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(currentDate.getMonth() - 1);
@@ -39,6 +42,8 @@ const AppUsageReport: React.FC = () => {
             if (response?.statusCode !== 200) {
                 commonErrorToast('No data found for the selected date range');
                 setLoading(false);
+                setErrorInFileDownload(true);
+                setFileDownloaded(false);
                 return;
             }
             const fileUrl = response.data
@@ -48,20 +53,141 @@ const AppUsageReport: React.FC = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            setFileDownloaded(true);
+            setErrorInFileDownload(false);
         } catch (error) {
+            setErrorInFileDownload(true);
+            setFileDownloaded(false);
             return;
         }
         setLoading(false);
     }
 
     const backToDashboard = () => {
-        // window.history.back();
         navigate('/');
     }
 
-    // React.useEffect(() => {
-    //     console.log(data)
-    // }, [data]);
+    const columns = useMemo<MRT_ColumnDef<any>[]>(
+        () => [
+            {
+                accessorKey: 'employee_code',
+                header: 'Employee Code',
+                size: 120,
+            },
+            {
+                accessorKey: 'region',
+                header: 'Region',
+                size: 120,
+            },
+            {
+                accessorKey: 'Terr',
+                header: 'Terr',
+                size: 120,
+            },
+            {
+                accessorKey: 'Function',
+                header: 'Function',
+                size: 120,
+            },
+            {
+                accessorKey: 'name_of_employee',
+                header: 'Name of Employee',
+                size: 120,
+            },
+            {
+                accessorKey: 'app_installation_date',
+                header: 'App Installation Date',
+                size: 120,
+            },
+            {
+                accessorKey: 'no_of_days_app_opened_in_a_calender_month',
+                header: 'No. of days APP opened in a calender month',
+                size: 120,
+            },
+            {
+                accessorKey: 'actively_using_lead_entry_and_visit_menu_no_of_leads_updated_in_the_month',
+                header: 'actively using lead entry and visit menu (no. of leads updated in the month)',
+                size: 120,
+            },
+            {
+                accessorKey: 'lead_update_status_as_pending_as_no_of_leads',
+                header: 'Lead update status as pending (as no. of leads)',
+                size: 120,
+            },
+            {
+                accessorKey: 'actively_using_ePCA_no_of_entries_in_the_month',
+                header: 'actively using ePCA (no. of entries in the month)',
+                size: 120,
+            },
+            {
+                accessorKey: 'actively_using_Billing_instructions_no_of_entries_in_a_month_total_invoices_in_the_Territory',
+                header: 'actively using Billing instructions (no. of entries in a month/ total invoices in the Terr)',
+                size: 120,
+            },
+            {
+                accessorKey: 'actively_using_the_work_due_date_entry_no_of_entries_in_the_month',
+                header: 'actively using the work-due-date entry (no. of entries in the month)',
+                size: 120,
+            },
+            {
+                accessorKey: 'non_dealer_customer_types_no_of_direct_billing_without_working_on_the_lead_follow_up_process',
+                header: 'NON-DEALER customer types (no. of direct billing without working on the lead follow up process)',
+                size: 120,
+            },
+            {
+                accessorKey: 'complaints_received_from_this_user_in_this_month_on_the_APP_for_MCC_to_act',
+                header: 'complaints received from this user in this month on the APP (for MCC to act)',
+                size: 120,
+            },
+        ],
+        []
+    );
+    const table = useMantineReactTable({
+        columns,
+        data: [],
+        enableColumnResizing: false,
+        enableStickyHeader: false,
+        enableTopToolbar: false,
+        enableBottomToolbar: false,
+        enablePagination: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        columnResizeMode: 'onChange',
+        renderEmptyRowsFallback: () =>
+            fileDownloaded ? (
+                <div className="text-center text-sm text-green-500 py-4">
+                    File downloaded successfully
+                </div>
+            ) : null,
+        mantineTableProps: {
+            style: {
+                minWidth: '1560px',
+                borderColor: '#111827',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+            },
+            className: 'border border-collapse',
+            withColumnBorders: true,
+        },
+        mantineTableHeadProps: {
+            className: 'bg-slate-50',
+        },
+        mantineTableHeadCellProps: {
+            style: {
+                whiteSpace: 'nowrap',
+                fontWeight: 600,
+                borderLeft: '2px solid #111827',
+                borderRight: '2px solid #111827',
+                borderBottom: '1px solid #1f2937',
+            },
+        },
+        mantineTableContainerProps: {
+            style: {
+                overflow: 'auto',
+                maxHeight: '16rem',
+            },
+        }
+    });
 
     return (
         <>
@@ -71,7 +197,7 @@ const AppUsageReport: React.FC = () => {
                 </h5>
             </div>
 
-            <div className="bg-white rounded-lg px-4 py-2 shadow-md">
+            <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2">
                         <label className="block text-sm font-semibold w-20 text-right">
@@ -115,6 +241,22 @@ const AppUsageReport: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {fileDownloaded &&
+                <>
+                    <div className="mb-2 p-pl-table-item">
+                        <MantineReactTable table={table} />
+                    </div>
+                </>
+            }
+
+            {errorInFileDownload &&
+                <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
+                    <div className="text-center text-sm text-red-500 py-4">
+                        No records to display
+                    </div>
+                </div>
+            }
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
