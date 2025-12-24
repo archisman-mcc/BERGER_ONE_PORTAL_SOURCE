@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Select from 'react-select';
 import { GetRegion_report, GetRegnWiseUserList, GetTSRMonitoringData, GetUserGroupApplicable } from '../../../services/api/protectonReport/ProtectonReport';
 import { commonErrorToast } from '../../../services/functions/commonToast';
 import { useNavigate } from 'react-router-dom';
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { RiFileExcel2Fill } from "react-icons/ri";
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 
 interface MonthOption {
     value: string;
@@ -17,6 +18,8 @@ interface YearOption {
 
 const TSRMonitoringReport = () => {
     const [loading, setLoading] = React.useState(false);
+    const [fileDownloaded, setFileDownloaded] = React.useState(false);
+    const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
 
     const navigate = useNavigate();
 
@@ -129,20 +132,141 @@ const TSRMonitoringReport = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            setFileDownloaded(true);
+            setErrorInFileDownload(false);
         } catch (error) {
+            setErrorInFileDownload(true);
+            setFileDownloaded(false);
             return;
         }
         setLoading(false);
     }
 
     const backToDashboard = () => {
-        // window.history.back();
         navigate('/');
     }
 
-    // React.useEffect(() => {
-    //     console.log(data)
-    // }, [data]);
+    const columns = useMemo<MRT_ColumnDef<any>[]>(
+        () => [
+            {
+                accessorKey: 'region',
+                header: 'Region',
+                size: 120,
+            },
+            {
+                accessorKey: 'user_name',
+                header: 'User Name',
+                size: 120,
+            },
+            {
+                accessorKey: 'date',
+                header: 'Date',
+                size: 120,
+            },
+            {
+                accessorKey: 'start_time',
+                header: 'Start Time',
+                size: 120,
+            },
+            {
+                accessorKey: 'end_time',
+                header: 'End Time',
+                size: 120,
+            },
+            {
+                accessorKey: 'time_spent_in_minutes',
+                header: 'Time Spent (in minute)',
+                size: 120,
+            },
+            {
+                accessorKey: 'type',
+                header: 'Type',
+                size: 120,
+            },
+            {
+                accessorKey: 'name',
+                header: 'Name',
+                size: 120,
+            },
+            {
+                accessorKey: 'location',
+                header: 'Location',
+                size: 120,
+            },
+            {
+                accessorKey: 'address',
+                header: 'Address',
+                size: 120,
+            },
+            {
+                accessorKey: 'pin_code',
+                header: 'Pin Code',
+                size: 120,
+            },
+            {
+                accessorKey: 'activity_details',
+                header: 'Activity Details',
+                size: 120,
+            },
+            {
+                accessorKey: 'activity_list',
+                header: 'Activity List',
+                size: 120,
+            },
+            {
+                accessorKey: 'registered_by',
+                header: 'Registered By',
+                size: 120,
+            },
+        ],
+        []
+    );
+    const table = useMantineReactTable({
+        columns,
+        data: [],
+        enableColumnResizing: false,
+        enableStickyHeader: false,
+        enableTopToolbar: false,
+        enableBottomToolbar: false,
+        enablePagination: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        columnResizeMode: 'onChange',
+        renderEmptyRowsFallback: () =>
+            fileDownloaded ? (
+                <div className="text-center text-sm text-green-500 py-4">
+                    File downloaded successfully
+                </div>
+            ) : null,
+        mantineTableProps: {
+            style: {
+                minWidth: '1560px',
+                borderColor: '#111827',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+            },
+            className: 'border border-collapse',
+            withColumnBorders: true,
+        },
+        mantineTableHeadProps: {
+            className: 'bg-slate-50',
+        },
+        mantineTableHeadCellProps: {
+            style: {
+                whiteSpace: 'nowrap',
+                fontWeight: 600,
+                borderLeft: '2px solid #111827',
+                borderRight: '2px solid #111827',
+                borderBottom: '1px solid #1f2937',
+            },
+        },
+        mantineTableContainerProps: {
+            style: {
+                overflow: 'auto',
+                maxHeight: '16rem',
+            },
+        }
+    });
 
     React.useEffect(() => {
         GetRegion();
@@ -160,6 +284,7 @@ const TSRMonitoringReport = () => {
                     EMPLOYEE MONITOR OUTPUT
                 </h5>
             </div>
+
             <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-4">
                     {/* Region Selection */}
@@ -257,6 +382,23 @@ const TSRMonitoringReport = () => {
                     </div>
                 </div>
             </div>
+
+            {fileDownloaded &&
+                <>
+                    <div className="mb-2 p-pl-table-item">
+                        <MantineReactTable table={table} />
+                    </div>
+                </>
+            }
+
+            {errorInFileDownload &&
+                <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
+                    <div className="text-center text-sm text-red-500 py-4">
+                        No records to display
+                    </div>
+                </div>
+            }
+
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
                     <div role="status" className="animate-spin">
