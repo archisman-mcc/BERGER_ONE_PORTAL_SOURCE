@@ -62,6 +62,7 @@ import CompetitorActivityReport from './pages/protecton/HoMarketing/CompetitorAc
 import ComplaintsReport from './pages/protecton/HoMarketing/ComplaintsReport';
 import AppUsageReport from './pages/protecton/HoMarketing/AppUsageReport';
 import KeyAccountMaster from './pages/protecton/Others/KeyAccountMaster';
+import GPSmapView from './pages/protecton/HoMarketing/GPSmapView';
 // import KeyAccountDetails from './pages/protecton/Others/KeyAccountDetails';
 
 // Helper function to check authentication
@@ -267,10 +268,6 @@ function App() {
             element: <MWAReportDetails />,
           },
           {
-            path: '/Protecton/HoMarketing/TSRMonitoringReport',
-            element: <TSRMonitoringReport />,
-          },
-          {
             path: '/Protecton/HoMarketing/LeadGenerationReport',
             element: <LeadGenerationReport />,
           },
@@ -291,6 +288,10 @@ function App() {
             element: <PoSchedulesReport />,
           },
           {
+            path: '/Protecton/HoMarketing/TSRMonitoringReport',
+            element: <TSRMonitoringReport />,
+          },
+          {
             path: '/Protecton/HoMarketing/CustNotVisitedReport',
             element: <CustNotVisitedReport />,
           },
@@ -305,6 +306,10 @@ function App() {
           {
             path: '/Protecton/HoMarketing/AppUsageReport',
             element: <AppUsageReport />,
+          },
+          {
+            path: '/Protecton/HoMarketing/GPSmapView',
+            element: <GPSmapView />,
           },
           {
             path: '/Protecton/KeyAccount/KeyAccountMaster',
@@ -390,6 +395,7 @@ function App() {
           <Route path="/Protecton/HoMarketing/CompetitorActivityReport" element={<CompetitorActivityReport />} />
           <Route path="/Protecton/HoMarketing/ComplaintsReport" element={<ComplaintsReport />} />
           <Route path="/Protecton/HoMarketing/AppUsageReport" element={<AppUsageReport />} />
+          <Route path="/Protecton/HoMarketing/GPSmapView" element={<GPSmapView />} />
           <Route path="/Protecton/KeyAccount/KeyAccountMaster" element={<KeyAccountMaster />} />
         </Route>
         <Route path="/login/cover-login/" element={<PublicRoute><Login /></PublicRoute>} />
