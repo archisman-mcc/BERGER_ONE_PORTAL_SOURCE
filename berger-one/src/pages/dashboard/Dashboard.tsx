@@ -5,7 +5,8 @@ import * as dashboard from '../../services/api/protecton-dashboard';
 import { UseAuthStore } from '../../services/store/AuthStore';
 import * as common from '../../services/api/users/UserProfile';
 import Select from 'react-select';
-import addButton from '../../assets/images/add-button.svg'
+// import addButton from '../../assets/images/add-button.svg'
+import { FaArrowRight } from "react-icons/fa";
 import { Modal } from '@mantine/core';
 import { FaPlus } from "react-icons/fa6";
 import { GetVerticalWisBusinessLine } from '../../services/api/protectonLead/PotentialLead';
@@ -14,6 +15,8 @@ import DsrTodReportPopup from './Components/DsrTodReportPopup';
 
 const Dashboard = () => {
     const [isDsrTodReportPopupOpen, setIsDsrTodReportPopupOpen] = useState(false);
+    const [isDsrYTDReportPopupOpen, setIsDsrYTDReportPopupOpen] = useState(false);
+    const [isDsrMTDReportPopupOpen, setIsDsrMTDReportPopupOpen] = useState(false);
     const [popupOpenData, setPopupOpenData] = useState({ open: false, popupHeader: '' });
     const [isMWALoading, setIsMWALoading] = useState(false);
     const [isOverduesLoading, setIsOverduesLoading] = useState(false);
@@ -496,6 +499,7 @@ const Dashboard = () => {
             {/* Show dashboard content only when user is available */}
             {user && (
                 <div className="grid grid-cols-12 gap-4 mt-4">
+                    {/* Business Funnel */}
                     <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
                         <div className="flex justify-between items-center">
                             <h5 className="text-lg font-semibold">Business Funnel</h5>
@@ -556,6 +560,7 @@ const Dashboard = () => {
 
                     </div>
 
+                    {/* Sales Review */}
                     <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
                         <div className="flex justify-between items-center">
                             <h5 className="text-lg font-semibold">Sales Review</h5>
@@ -564,104 +569,131 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full border border-gray-300 text-sm text-center">
-                                <thead className="bg-blue-100 text-gray-700 font-semibold">
-                                    <tr>
-                                        <th className="w-20 p-2"></th>
-                                        <th className="p-2">Volume / Value</th>
-                                        <th className="p-2">LY</th>
-                                        <th className="p-2">TY</th>
-                                        <th className="p-2">GRW%</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {/* YTD */}
-                                    <tr className="bg-blue-50">
-                                        <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
-                                            YTD
-                                        </td>
-                                        <td className="p-2">Volume (KL)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_ytd_vol}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_ytd_vol}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.ytd_growth_vol >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.ytd_growth_vol} {data.dashboardSaleReviewData.ytd_growth_vol >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
-                                    <tr className="even:bg-blue-50">
-                                        <td className="p-2">Value (Lakh)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_ytd_val}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_ytd_val}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.ytd_growth_val >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.ytd_growth_val} {data.dashboardSaleReviewData.ytd_growth_val >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
+                        {isOverduesLoading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full border border-gray-300 text-sm text-center">
+                                    <thead className="bg-blue-100 text-gray-700 font-semibold">
+                                        <tr>
+                                            <th className="w-20 p-2"></th>
+                                            <th className="p-2">Volume / Value</th>
+                                            <th className="p-2">LY</th>
+                                            <th className="p-2">TY</th>
+                                            <th className="p-2">GRW%</th>
+                                            <th className="w-12 p-2"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* YTD */}
+                                        <tr className="bg-blue-50">
+                                            <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
+                                                YTD
+                                            </td>
+                                            <td className="p-2">Volume (KL)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_ytd_vol}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_ytd_vol}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.ytd_growth_vol >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.ytd_growth_vol} {data.dashboardSaleReviewData.ytd_growth_vol >= 0 ? "▲" : "▼"}</td>
+                                            <td rowSpan={2} className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details" onClick={() => setIsDsrYTDReportPopupOpen(true)}><FaArrowRight /></button>
+                                            </td>
+                                        </tr>
+                                        <tr className="even:bg-blue-50">
+                                            <td className="p-2">Value (Lakh)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_ytd_val}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_ytd_val}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.ytd_growth_val >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.ytd_growth_val} {data.dashboardSaleReviewData.ytd_growth_val >= 0 ? "▲" : "▼"}</td>
+                                            {/* <td className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details">→</button>
+                                            </td> */}
+                                        </tr>
 
-                                    {/* MTD */}
-                                    <tr className="bg-blue-50 border-t-4 border-white">
-                                        <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
-                                            MTD
-                                        </td>
-                                        <td className="p-2">Volume (KL)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_mtd_vol}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_mtd_vol}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.mtd_growth_vol >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.mtd_growth_vol} {data.dashboardSaleReviewData.mtd_growth_vol >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
-                                    <tr className="even:bg-blue-50">
-                                        <td className="p-2">Value (Lakh)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_mtd_val}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_mtd_val}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.mtd_growth_val >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.mtd_growth_val} {data.dashboardSaleReviewData.mtd_growth_val >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
+                                        {/* MTD */}
+                                        <tr className="bg-blue-50 border-t-4 border-white">
+                                            <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
+                                                MTD
+                                            </td>
+                                            <td className="p-2">Volume (KL)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_mtd_vol}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_mtd_vol}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.mtd_growth_vol >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.mtd_growth_vol} {data.dashboardSaleReviewData.mtd_growth_vol >= 0 ? "▲" : "▼"}</td>
+                                            <td rowSpan={2} className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details" onClick={() => setIsDsrMTDReportPopupOpen(true)}><FaArrowRight /></button>
+                                            </td>
+                                        </tr>
+                                        <tr className="even:bg-blue-50">
+                                            <td className="p-2">Value (Lakh)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_mtd_val}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_mtd_val}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.mtd_growth_val >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.mtd_growth_val} {data.dashboardSaleReviewData.mtd_growth_val >= 0 ? "▲" : "▼"}</td>
+                                            {/* <td className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details">→</button>
+                                            </td> */}
+                                        </tr>
 
-                                    {/* TODAY */}
-                                    <tr className="bg-blue-50 border-t-4 border-white">
-                                        <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
-                                            TODAY
-                                        </td>
-                                        <td className="p-2">Volume (KL)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_tod_vol}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_tod_vol}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.tod_growth_vol >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.tod_growth_vol} {data.dashboardSaleReviewData.tod_growth_vol >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
-                                    <tr className="even:bg-blue-50">
-                                        <td className="p-2">Value (Lakh)</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ly_tod_val}</td>
-                                        <td className="p-2">{data.dashboardSaleReviewData.ty_tod_val}</td>
-                                        <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.tod_growth_val >= 0
-                                            ? "text-green-600"
-                                            : "text-red-600"
-                                            }`}>{data.dashboardSaleReviewData.tod_growth_val} {data.dashboardSaleReviewData.tod_growth_val >= 0 ? "▲" : "▼"}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        {/* TODAY */}
+                                        <tr className="bg-blue-50 border-t-4 border-white">
+                                            <td rowSpan={2} className="text-blue-600 font-bold p-2 align-middle">
+                                                TODAY
+                                            </td>
+                                            <td className="p-2">Volume (KL)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_tod_vol}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_tod_vol}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.tod_growth_vol >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.tod_growth_vol} {data.dashboardSaleReviewData.tod_growth_vol >= 0 ? "▲" : "▼"}</td>
+                                            <td rowSpan={2} className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details" onClick={() => setIsDsrTodReportPopupOpen(true)}><FaArrowRight /></button>
+                                            </td>
+                                        </tr>
+                                        <tr className="even:bg-blue-50">
+                                            <td className="p-2">Value (Lakh)</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ly_tod_val}</td>
+                                            <td className="p-2">{data.dashboardSaleReviewData.ty_tod_val}</td>
+                                            <td className={`p-2 font-semibold ${data.dashboardSaleReviewData.tod_growth_val >= 0
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                                }`}>{data.dashboardSaleReviewData.tod_growth_val} {data.dashboardSaleReviewData.tod_growth_val >= 0 ? "▲" : "▼"}</td>
+                                            {/* <td className="p-2">
+                                                <button type="button" className="text-blue-600 hover:text-blue-800" aria-label="View details">→</button>
+                                            </td> */}
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                            <button
-                                type="button"
-                                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-xs inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed float-right mt-2"
-                                id="addNewPurchaseOrderBtn"
-                                onClick={()=> setIsDsrTodReportPopupOpen(true)}
-                            >
-                                Click to View Today's Report
-                            </button>
-                        </div>
+                                {/* <button
+                                    type="button"
+                                    className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 text-xs inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed float-right mt-2"
+                                    id="addNewPurchaseOrderBtn"
+                                    onClick={() => setIsDsrTodReportPopupOpen(true)}
+                                >
+                                    Click to View Today's Report
+                                </button> */}
+                            </div>
+                        )}
 
                     </div>
 
                 </div>
             )}
+
             <div className="grid grid-cols-12 gap-4 mt-4">
+                {/* Overdues */}
                 <div className="col-span-6 bg-white rounded-lg shadow-md p-4">
                     <div className="flex justify-between items-center">
                         <h5 className="text-lg font-semibold">Overdues</h5>
@@ -701,11 +733,9 @@ const Dashboard = () => {
                             </table>
                         </div>
                     )}
-
-
                 </div>
 
-
+                {/* MWA */}
                 <div className="col-span-6 bg-white rounded-lg shadow-md p-2">
                     <div className="flex justify-between items-center">
                         <h5 className="text-lg font-semibold">MWA</h5>
@@ -881,6 +911,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
+            {/* Lead Management */}
             <div className="mt-4 bg-white rounded-lg shadow-md">
                 <div className="grid grid-cols-12 gap-2">
                     <div className="col-span-6 p-4 flex justify-between items-center">
@@ -1022,14 +1053,19 @@ const Dashboard = () => {
                 </div>
 
             </div>
+
             {/* // for lead popup // */}
             {popupOpenData?.open &&
                 <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
             }
 
-            {isDsrTodReportPopupOpen && (
-                <DsrTodReportPopup onClose={() => setIsDsrTodReportPopupOpen(false)} />
-            )}
+            {isDsrTodReportPopupOpen ? (
+                <DsrTodReportPopup viewBy="TOD" onClose={() => setIsDsrTodReportPopupOpen(false)} />
+            ) : isDsrYTDReportPopupOpen ? (
+                <DsrTodReportPopup viewBy="YTD" onClose={() => setIsDsrYTDReportPopupOpen(false)} />
+            ) : isDsrMTDReportPopupOpen ? (
+                <DsrTodReportPopup viewBy="MTD" onClose={() => setIsDsrMTDReportPopupOpen(false)} />
+            ) : null}
 
             <Modal
                 opened={isModalOpen}
