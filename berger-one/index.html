@@ -147,6 +147,84 @@
 <body>
   <div id="root"><!--app-html--></div>
   <script type="module" src="/src/main.tsx"></script>
+  <script>
+    var isMapplsSDKLoaded = false;
+    // Generate Access Token
+    function GenerateAccessToken() {
+      const client_id = "96dHZVzsAuuSJ0Qp0ys-DrOP1KvimrDe2-tvofJuqzbokcPhqmY9Hx2fJeOfQakOHWJ3kEGJ4EhCsCUpzAGKFA==";
+      const client_secret = "lrFxI-iSEg__PG5cj3y2n1ZiLMSf65c3wlsc6imT5V7aH7Kgq5jCAk3Rn8LmIogsIxBxwp24qvYm5udah4og-L7ouGtGdaqh";
+      const mapplsUrl = `https://bpilmobile.bergerindia.com/mccapis/mapMyIndia/v1/DynamicTokenGeneration?client_id=${client_id}&client_secret=${client_secret}`;
+      // const mappleUrl = "https://bpilmobile.bergerindia.com/mccapis/mapMyIndia/v1/TokenGeneration";
+      return new Promise((resolve, reject) => {
+        fetch(mapplsUrl, {
+          method: "GET",
+          headers: {
+            Authorization: "Basic 764AFD67-0E12-4B9D-83D8-91CDB467C9E6", // Access Key
+          },
+
+        })
+          .then(response => response.json())
+          .then(data => {
+            const parsedData = JSON.parse(data);
+            if (parsedData && parsedData.access_token) {
+              resolve(parsedData);
+            } else {
+              reject("Failed to fetch access token");
+            }
+          })
+          .catch(error => {
+            reject("Error fetching access token: " + error);
+          });
+      });
+    }
+
+    // Load Mappls SDK with the token
+    function loadMapplsSDK(token) {
+      // var mapple;
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      // script.async = true; 
+      // script.defer = true;
+      script.src = "https://apis.mappls.com/advancedmaps/api/" + token + "/map_sdk?v=3.0&layer=vector";
+      script.onload = function () {
+        if (mapple) {
+          console.warn("Mappls SDK Loaded", token, mapple);
+          isMapplsSDKLoaded = true;
+        } else {
+          // loadMapplsSDK(token);
+          console.error("Mappls SDK Load Failed", token);
+        }
+      };
+      script.onerror = function () {
+        console.error("Error loading Mappls SDK", token);
+      };
+      document.head.appendChild(script);
+    }
+
+    // Get Mappls Access Token and load SDK
+    (function getMapplsAccessToken() {
+      console.log("Initiating Mappls Token Generation and SDK Load");
+      GenerateAccessToken()
+        .then(function (tokenData) {
+          console.log("Access token received");
+          if (tokenData?.access_token && tokenData?.token_type) {
+            // Store token in localStorage
+            localStorage.setItem("mapplsTokenType", tokenData.token_type);
+            localStorage.setItem("mapplsAccessToken", tokenData.access_token);
+
+            // Load Mappls SDK with the token
+            loadMapplsSDK(tokenData.access_token);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    })();
+
+    //   window.onload = function () {
+    //     getMapplsAccessToken();
+    // }
+  </script>
 </body>
 
 </html>

@@ -2,7 +2,7 @@ import { MdOutlineClose } from "react-icons/md";
 import TableComponent from "../../protecton/Transact/Components/TableComponent";
 import { useEffect, useRef, useState } from "react";
 
-const DsrTodReportPopup = ({ onClose }: any) => {
+const DsrTodReportPopup = ({ viewBy, onClose }: any) => {
     const childRef = useRef<any>(null);
     const [tableData, settableData] = useState<any>([]);
     const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ const DsrTodReportPopup = ({ onClose }: any) => {
             const today = new Date();
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         })(),
-        viewBy: "TOD",
+        viewBy: viewBy,
         usp_user_id: ''
     });
 
@@ -30,7 +30,7 @@ const DsrTodReportPopup = ({ onClose }: any) => {
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-full relative">
                     <span className="absolute top-3 right-3 px-3 py-1 rounded cursor-pointer" ><MdOutlineClose color="red" onClick={() => onClose()} /></span>
-                    <h2 className="text-xl font-bold pr-12">DSR TOD Report</h2>
+                    <h2 className="text-xl font-bold pr-12">DSR {viewBy} Report</h2>
                     <TableComponent ref={childRef} tableData={tableData} settableData={settableData} setLoading={setLoading} filterData={filterData} form="TransactDsr" />
                 </div>
             </div>
