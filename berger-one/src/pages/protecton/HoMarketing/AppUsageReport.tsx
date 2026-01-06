@@ -12,8 +12,9 @@ import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'man
 const AppUsageReport: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
-    const [fileDownloaded, setFileDownloaded] = React.useState(true);
-    const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
+    const [exported, setExported] = React.useState(false);
+    const [fileDownloaded, setFileDownloaded] = React.useState(false);
+    // const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
     const currentDate = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(currentDate.getMonth() - 1);
@@ -33,6 +34,7 @@ const AppUsageReport: React.FC = () => {
 
     const downloadTemplate = async () => {
         setLoading(true);
+        setExported(true);
         const payloadObj = {
             fromDate: data.fromDate,
             toDate: data.toDate,
@@ -42,7 +44,7 @@ const AppUsageReport: React.FC = () => {
             if (response?.statusCode !== 200) {
                 commonErrorToast('No data found for the selected date range');
                 setLoading(false);
-                setErrorInFileDownload(true);
+                // setErrorInFileDownload(true);
                 setFileDownloaded(false);
                 return;
             }
@@ -54,9 +56,9 @@ const AppUsageReport: React.FC = () => {
             link.click();
             document.body.removeChild(link);
             setFileDownloaded(true);
-            setErrorInFileDownload(false);
+            // setErrorInFileDownload(false);
         } catch (error) {
-            setErrorInFileDownload(true);
+            // setErrorInFileDownload(true);
             setFileDownloaded(false);
             return;
         }
@@ -158,7 +160,11 @@ const AppUsageReport: React.FC = () => {
                 <div className="text-center text-sm text-green-500 py-4">
                     File downloaded successfully
                 </div>
-            ) : null,
+            ) : (
+                <div className="text-center text-sm text-green-500 py-4">
+                    No records to display
+                </div>
+            ),
         mantineTableProps: {
             style: {
                 minWidth: '1560px',
@@ -242,7 +248,7 @@ const AppUsageReport: React.FC = () => {
                 </div>
             </div>
 
-            {fileDownloaded &&
+            {!loading && exported &&
                 <>
                     <div className="mb-2 p-pl-table-item">
                         <MantineReactTable table={table} />
@@ -250,13 +256,13 @@ const AppUsageReport: React.FC = () => {
                 </>
             }
 
-            {errorInFileDownload &&
+            {/* {errorInFileDownload &&
                 <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
                     <div className="text-center text-sm text-red-500 py-4">
                         No records to display
                     </div>
                 </div>
-            }
+            } */}
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">

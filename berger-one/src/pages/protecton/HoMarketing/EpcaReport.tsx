@@ -10,8 +10,9 @@ import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'man
 const EpcaReport: React.FC = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
+    const [exported, setExported] = React.useState(false);
     const [fileDownloaded, setFileDownloaded] = React.useState(false);
-    const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
+    // const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
     const currentDate = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(currentDate.getMonth() - 1);
@@ -31,6 +32,7 @@ const EpcaReport: React.FC = () => {
 
     const downloadTemplate = async () => {
         setLoading(true);
+        setExported(true);
         const payloadObj = {
             fromDate: data.fromDate,
             toDate: data.toDate,
@@ -40,7 +42,7 @@ const EpcaReport: React.FC = () => {
             if (response?.statusCode !== 200) {
                 commonErrorToast('No data found for the selected date range');
                 setLoading(false);
-                setErrorInFileDownload(true);
+                // setErrorInFileDownload(true);
                 setFileDownloaded(false);
                 return;
             }
@@ -52,9 +54,9 @@ const EpcaReport: React.FC = () => {
             link.click();
             document.body.removeChild(link);
             setFileDownloaded(true);
-            setErrorInFileDownload(false);
+            // setErrorInFileDownload(false);
         } catch (error) {
-            setErrorInFileDownload(true);
+            // setErrorInFileDownload(true);
             setFileDownloaded(false);
             return;
         }
@@ -67,87 +69,87 @@ const EpcaReport: React.FC = () => {
 
     const columns = useMemo<MRT_ColumnDef<any>[]>(
         () => [
-			{
-				header: 'Employee Code',
-				columns: [
-					{ accessorKey: 'employee_code', header: '', size: 120 },
-				],
-			},
-			{
-				header: 'Region',
-				columns: [
-					{ accessorKey: 'region', header: '', size: 120 },
-				],
-			},
-			{
-				header: 'Terr',
-				columns: [
-					{ accessorKey: 'Terr', header: '', size: 120 },
-				],
-			},
-			{
-				header: 'Function',
-				columns: [
-					{ accessorKey: 'Function', header: '', size: 120 },
-				],
-			},
-			{
-				header: 'Name of Employee',
-				columns: [
-					{ accessorKey: 'name_of_employee', header: '', size: 120 },
-				],
-			},
             {
-				header: 'ePCA generated and billed',
-				columns: [
-					{
-						accessorKey: 'lead_id',
-						header: 'Lead ID',
-						size: 120,
-					},
-					{
-						accessorKey: 'customer_name_oracle',
-						header: 'Customer Name (Oracle)',
-						size: 120,
-					},
-					{
-						accessorKey: 'customer_oracle_account_code',
-						header: 'Customer Oracle Account Code',
-						size: 120,
-					},
-					{
-						accessorKey: 'epca_date',
-						header: 'ePCA date',
-						size: 120,
-					},
-					{
-						accessorKey: 'valid_till_date',
-						header: 'valid till date',
-						size: 120,
-					},
-					{
-						accessorKey: 'sku',
-						header: 'SKU',
-						size: 120,
-					},
-					{
-						accessorKey: 'volume_in_kl_as_per_epca',
-						header: 'Volume in KL as per ePCA',
-						size: 120,
-					},
-					{
-						accessorKey: 'billed_within_the_epca_validity',
-						header: 'Billed within the ePCA validity',
-						size: 120,
-					},
-					{
-						accessorKey: 'epca_status',
-						header: 'ePCA (active/ closed)',
-						size: 120,
-					},
-				],
-			},
-            
+                header: 'Employee Code',
+                columns: [
+                    { accessorKey: 'employee_code', header: '', size: 120 },
+                ],
+            },
+            {
+                header: 'Region',
+                columns: [
+                    { accessorKey: 'region', header: '', size: 120 },
+                ],
+            },
+            {
+                header: 'Terr',
+                columns: [
+                    { accessorKey: 'Terr', header: '', size: 120 },
+                ],
+            },
+            {
+                header: 'Function',
+                columns: [
+                    { accessorKey: 'Function', header: '', size: 120 },
+                ],
+            },
+            {
+                header: 'Name of Employee',
+                columns: [
+                    { accessorKey: 'name_of_employee', header: '', size: 120 },
+                ],
+            },
+            {
+                header: 'ePCA generated and billed',
+                columns: [
+                    {
+                        accessorKey: 'lead_id',
+                        header: 'Lead ID',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'customer_name_oracle',
+                        header: 'Customer Name (Oracle)',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'customer_oracle_account_code',
+                        header: 'Customer Oracle Account Code',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'epca_date',
+                        header: 'ePCA date',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'valid_till_date',
+                        header: 'valid till date',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'sku',
+                        header: 'SKU',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'volume_in_kl_as_per_epca',
+                        header: 'Volume in KL as per ePCA',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'billed_within_the_epca_validity',
+                        header: 'Billed within the ePCA validity',
+                        size: 120,
+                    },
+                    {
+                        accessorKey: 'epca_status',
+                        header: 'ePCA (active/ closed)',
+                        size: 120,
+                    },
+                ],
+            },
+
         ],
         []
     );
@@ -167,7 +169,11 @@ const EpcaReport: React.FC = () => {
                 <div className="text-center text-sm text-green-500 py-4">
                     File downloaded successfully
                 </div>
-            ) : null,
+            ) : (
+                <div className="text-center text-sm text-green-500 py-4">
+                    No records to display
+                </div>
+            ),
         mantineTableProps: {
             style: {
                 minWidth: '1560px',
@@ -252,7 +258,7 @@ const EpcaReport: React.FC = () => {
                 </div>
             </div>
 
-            {fileDownloaded &&
+            {!loading && exported &&
                 <>
                     <div className="mb-2 p-pl-table-item">
                         <MantineReactTable table={table} />
@@ -260,13 +266,13 @@ const EpcaReport: React.FC = () => {
                 </>
             }
 
-            {errorInFileDownload &&
+            {/* {errorInFileDownload &&
                 <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
                     <div className="text-center text-sm text-red-500 py-4">
                         No records to display
                     </div>
                 </div>
-            }
+            } */}
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">

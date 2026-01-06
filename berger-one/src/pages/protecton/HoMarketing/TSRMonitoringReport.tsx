@@ -18,8 +18,9 @@ interface YearOption {
 
 const TSRMonitoringReport = () => {
     const [loading, setLoading] = React.useState(false);
+    const [exported, setExported] = React.useState(false);
     const [fileDownloaded, setFileDownloaded] = React.useState(false);
-    const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
+    // const [errorInFileDownload, setErrorInFileDownload] = React.useState(false);
 
     const navigate = useNavigate();
 
@@ -45,13 +46,13 @@ const TSRMonitoringReport = () => {
 
     const yearOptions: YearOption[] = [
         { value: '', label: 'Select' },
-        { value: '2020', label: '2020' },
-        { value: '2021', label: '2021' },
-        { value: '2022', label: '2022' },
-        { value: '2023', label: '2023' },
-        { value: '2024', label: '2024' },
+        { value: '2026', label: '2026' },
         { value: '2025', label: '2025' },
-        { value: '2026', label: '2026' }
+        { value: '2024', label: '2024' },
+        { value: '2023', label: '2023' },
+        { value: '2022', label: '2022' },
+        { value: '2021', label: '2021' },
+        { value: '2020', label: '2020' },
     ];
 
     const GetRegion = async () => {
@@ -110,6 +111,7 @@ const TSRMonitoringReport = () => {
     }
 
     const downloadTemplate = async () => {
+        setExported(true);
         const payloadObj = {
             regn: data.selectedRegion?.value,
             rep_user: data.selectedUser?.value,
@@ -134,9 +136,9 @@ const TSRMonitoringReport = () => {
             link.click();
             document.body.removeChild(link);
             setFileDownloaded(true);
-            setErrorInFileDownload(false);
+            // setErrorInFileDownload(false);
         } catch (error) {
-            setErrorInFileDownload(true);
+            // setErrorInFileDownload(true);
             setFileDownloaded(false);
             return;
         }
@@ -238,7 +240,11 @@ const TSRMonitoringReport = () => {
                 <div className="text-center text-sm text-green-500 py-4">
                     File downloaded successfully
                 </div>
-            ) : null,
+            ) : (
+                <div className="text-center text-sm text-green-500 py-4">
+                    No records to display
+                </div>
+            ),
         mantineTableProps: {
             style: {
                 minWidth: '1560px',
@@ -384,7 +390,7 @@ const TSRMonitoringReport = () => {
                 </div>
             </div>
 
-            {fileDownloaded &&
+            {!loading && exported &&
                 <>
                     <div className="mb-2 p-pl-table-item">
                         <MantineReactTable table={table} />
@@ -392,13 +398,13 @@ const TSRMonitoringReport = () => {
                 </>
             }
 
-            {errorInFileDownload &&
+            {/* {errorInFileDownload &&
                 <div className="mb-2 bg-white rounded-lg px-4 py-2 shadow-md">
                     <div className="text-center text-sm text-red-500 py-4">
                         No records to display
                     </div>
                 </div>
-            }
+            } */}
 
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75">
