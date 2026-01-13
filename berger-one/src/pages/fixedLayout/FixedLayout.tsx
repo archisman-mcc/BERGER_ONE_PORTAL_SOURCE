@@ -77,7 +77,7 @@ const FixedLayout = () => {
                 }}
             >
                 <button
-                    className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left text-gray-800 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 rounded-md"
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left text-gray-800 hover:bg-gray-100  rounded-md"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -160,7 +160,7 @@ const FixedLayout = () => {
         <div className="min-h-screen w-full overflow-auto">
             <header className="z-40">
                 <div className="shadow-sm">
-                    <div className="relative flex w-full items-center justify-between bg-white px-5 py-1.5 dark:bg-black">
+                    <div className="relative flex w-full items-center justify-between bg-white px-5 py-1.5">
                         {/* Logo Left */}
                         <Link to="/" className="main-logo flex shrink-0 items-center">
                             <img
@@ -200,14 +200,14 @@ const FixedLayout = () => {
                     </div>
 
                     {/* horizontal menu */}
-                    <ul className="horizontal-menu border-t border-[#ebedf2] bg-white px-6 py-0 font-semibold text-black rtl:space-x-reverse dark:border-[#191e3a] dark:bg-black dark:text-white-dark flex flex-wrap gap-4">
+                    <ul className="horizontal-menu border-t border-[#ebedf2] bg-white px-6 py-0 font-semibold text-black rtl:space-x-reverse dark:border-[#cacaca] dark:text-white-dark flex flex-wrap gap-4">
                         {userApplicableMenu.map((item: any, index: number) => (
                             <li className="relative" key={index} ref={menuDropdownRef} >
                                 <div className="flex items-center cursor-pointer">
                                     {item.form_link === '#' ? (
                                         <div
                                             onClick={() => { handleMenuDropdownToggle(index); }}
-                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100  rounded-md"
                                         >
                                             <CiViewList />
                                             <span>{item.form_name}</span>
@@ -216,7 +216,7 @@ const FixedLayout = () => {
                                     ) : (
                                         <div
                                             onClick={() => { navigate(item?.form_link || "#") }}
-                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-md"
                                         >
                                             <CiViewList />
                                             <span>{item.form_name}</span>
@@ -227,7 +227,7 @@ const FixedLayout = () => {
 
                                 {
                                     item.children && item.children.length > 0 && openMenuDropdown === index && (
-                                        <ul className="absolute left-0 mt-2 w-[300px] rounded-md bg-white p-2 shadow-lg dark:bg-[#1f2937] space-y-1 z-50">
+                                        <ul className="absolute left-0 mt-2 w-[300px] rounded-md bg-white p-2 shadow-lg dark:bg-[#ffffff] space-y-1 z-50">
                                             {multiLevelDropdown(item.children)}
                                         </ul>
                                     )
