@@ -1,0 +1,245 @@
+import React from "react";
+import img1 from '../../assets/images/total-sales.png';
+import img2 from '../../assets/images/odos.png';
+import basant from '../../assets/images/basant.png';
+import CircularSkillAvatar from "./CircularSkillAvatar";
+interface StatCardProps {
+  title: string;
+  value: string;
+  unit: string;
+  footer: string;
+  progress: number;
+  positive?: boolean;
+  imgItem: string;
+}
+
+interface CardProps {
+  title: string;
+  amount: string;
+  unit: string;
+  barColor: string;
+  iconBg: string;
+  iconColor: string;
+  footerLabel: string;
+  footerValue: string;
+  footerPercent: string;
+};
+
+const SalesDashboard: React.FC = () => {
+  return (
+    <div className="lg:min-h-screen p-6">
+      <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Profile Card */}
+        <div className="md:col-span-4 p-6 flex flex-col items-center rounded-lg">
+           <CircularSkillAvatar
+              image={basant}
+              percentage={78}
+              size={300}
+              strokeWidth={10}
+            />
+          <h2 className="mt-4 text-3xl font-bold">Basant Kumar</h2>
+          <p className="text-gray-500">Zonal Head - East</p>
+
+          <div className="mt-4 flex gap-4 text-sm">
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500" /> Good
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-yellow-400" /> Average
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-red-500" /> Critical
+            </span>
+          </div>
+        </div>
+
+        {/* Right Content */}
+        <div className="md:col-span-8">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <StatCard
+              title="Total Sales"
+              value="₹ 485.2"
+              unit="Lacs"
+              footer="From Last Year"
+              progress={82}
+              positive
+              imgItem={img1}
+            />
+            <StatCard
+              title="ODOS (>120 Days)"
+              value="₹ 42.8"
+              unit="Lacs"
+              footer="From Last Year"
+              progress={35}
+              positive={false}
+              imgItem={img2}
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <SalesCard
+              title="Dealer Sale"
+              amount="285.4"
+              unit="Lacs"
+              barColor="bg-emerald-500"
+              iconBg="bg-emerald-50"
+              iconColor="text-emerald-600"
+              footerLabel="Active Dealers"
+              footerValue="342"
+              footerPercent="8"
+            />
+
+            <SalesCard
+              title="Contractor Sale"
+              amount="142.6"
+              unit="Lacs"
+              barColor="bg-blue-500"
+              iconBg="bg-blue-50"
+              iconColor="text-blue-600"
+              footerLabel="Active Contractors"
+              footerValue="186"
+              footerPercent="12"
+            />
+
+            <SalesCard
+              title="Fabricator Sale"
+              amount="57.2"
+              unit="Lacs"
+              barColor="bg-purple-500"
+              iconBg="bg-purple-50"
+              iconColor="text-purple-600"
+              footerLabel="Active Fabricators"
+              footerValue="94"
+              footerPercent="5"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  imgItem,
+  unit,
+  footer,
+  progress,
+  positive = false,
+}) => {
+  return (
+    <div className="bg-white rounded-2xl shadow p-5 h-fit">
+      <div className="flex justify-between items-center">
+        <h4 className="text-gray-600 font-medium">{title}</h4>
+        <img src={imgItem} alt="err" />
+      </div>
+
+      <div className="mt-3 text-2xl font-bold">
+        {value} <span className="text-base text-gray-500">{unit}</span>
+      </div>
+      <div className="flex items-center justify-between">
+        <p className="mt-2 text-sm text-gray-500">{footer}</p>
+        <span className={positive ? "text-green-600" : "text-red-500"}>
+          {positive ? "↑ 12%" : "↑ 5%"}
+        </span>
+      </div>
+
+      <div className="mt-3 h-2 w-full rounded-full bg-gray-200">
+        <div
+          className={`h-2 rounded-full ${positive ? "bg-green-500" : "bg-red-500"}`}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
+
+const SalesCard: React.FC<CardProps> = ({
+  title,
+  amount,
+  unit,
+  barColor,
+  iconBg,
+  iconColor,
+  footerLabel,
+  footerValue,
+  footerPercent,
+}) => {
+  return (
+    <div className="w-full rounded-2xl bg-white p-5 shadow-md">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-gray-500">
+          {title}
+        </p>
+
+        <div
+          className={`h-10 w-10 rounded-xl ${iconBg} flex items-center justify-center`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-5 w-5 ${iconColor}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 9l9-6 9 6v2a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 22V12h6v10"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* Amount */}
+      <div className="mt-4 flex items-baseline gap-1">
+        <span className="text-2xl font-bold text-gray-900">
+          ₹ {amount}
+        </span>
+        <span className="text-sm text-gray-500">
+          {unit}
+        </span>
+      </div>
+
+      {/* Mini Bar Chart */}
+      <div className="mt-6 flex items-end gap-4 h-24">
+        <div className="w-10 h-16 rounded-md bg-gray-300" />
+        <div className={`w-10 h-20 rounded-md ${barColor}`} />
+      </div>
+
+      {/* Divider */}
+      <div className="my-4 h-px bg-gray-100" />
+
+      {/* Footer */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          {footerLabel}
+        </p>
+
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-semibold text-gray-900">
+            {footerValue}
+          </span>
+
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${iconBg} ${iconColor}`}
+          >
+            ↑ {footerPercent}%
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
+export default SalesDashboard;

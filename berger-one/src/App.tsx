@@ -63,6 +63,7 @@ import ComplaintsReport from './pages/protecton/HoMarketing/ComplaintsReport';
 import AppUsageReport from './pages/protecton/HoMarketing/AppUsageReport';
 import KeyAccountMaster from './pages/protecton/Others/KeyAccountMaster';
 import GPSmapView from './pages/protecton/HoMarketing/GPSmapView';
+import NewDashboard from './pages/dashboard/NewDashboard';
 // import KeyAccountDetails from './pages/protecton/Others/KeyAccountDetails';
 
 // Helper function to check authentication
@@ -315,6 +316,10 @@ function App() {
             path: '/Protecton/KeyAccount/KeyAccountMaster',
             element: <KeyAccountMaster />,
           },
+          {
+            path: '/NewDashboard', // ----------hv 2 ch------------
+            element: <NewDashboard />,
+          },
         ],
       },
       {
@@ -342,6 +347,9 @@ function App() {
       <Routes>
         <Route path="/" element={<ProtectedRoute><FixedLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
+          {/* ----------hv 2 ch------------ */}
+          <Route path="/NewDashboard" element={<NewDashboard />} /> 
+          {/* ----------hv 2 ch------------ */}
           <Route path="/admin/FromMenuMaster" element={<FromMenuMaster />} />
           <Route path="/admin/UserFormAccess" element={<UserFormAccess />} />
           <Route path="/admin/user-profile/UserProfile" element={<UserProfile />} />
