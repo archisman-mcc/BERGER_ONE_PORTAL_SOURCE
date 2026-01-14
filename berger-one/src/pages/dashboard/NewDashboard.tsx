@@ -4,6 +4,7 @@ import { FaRegCalendar } from "react-icons/fa";
 import { useState } from 'react'
 import SalesDashboard from './SalesDashboard';
 import basant from '../../assets/images/basant.png';
+import BergerPaints from '../../assets/images/BergerPaints.jpg';
 import { dsrdata, type IDSRData } from './dsrdata';
 /* ---------- TYPES ---------- */
 interface OrgNodeType {
@@ -15,11 +16,12 @@ interface OrgNodeType {
     children?: OrgNodeType[];
 }
 
-/* ---------- DATA ---------- */
+/* ----------sidebar for organization hierarchy DATA ---------- */
 const orgData: OrgNodeType = {
     id: 1,
     name: "All India Head",
     status: "onTrack",
+    userProfile: BergerPaints,
     children: [
         {
             id: 2,
@@ -54,10 +56,12 @@ const StatusDot: React.FC<{ status?: OrgNodeType["status"] }> = ({
     );
 };
 
-/* ---------- ORG NODE ---------- */
-const OrgNode: React.FC<{ node: OrgNodeType; level?: number; setSelectedNodeData: (data: IDSRData[]) => void }> = ({
+
+{/* sidebar for organization hierarchy */ }
+const OrgNode: React.FC<{ node: OrgNodeType; level?: number; selectedNodeData: IDSRData[]; setSelectedNodeData: (data: IDSRData[]) => void }> = ({
     node,
     level = 0,
+    selectedNodeData,
     setSelectedNodeData
 }) => {
     const [open, setOpen] = useState<boolean>(false);
@@ -89,7 +93,7 @@ const OrgNode: React.FC<{ node: OrgNodeType; level?: number; setSelectedNodeData
                             ? "ml-6 bg-gray-50 border-gray-300"
                             : isFirstLevel ? "bg-[#FEF3C7] border border-1 border-[#F59E0B]" : ""
                     }`}
-                onClick={() => { hasChildren && setOpen(!open); setSelectedNodeData(dsrdata.filter(item => item.id === node.id)); console.log(node.id); console.log(dsrdata); }}
+                onClick={() => { setSelectedNodeData(dsrdata.filter(item => item.id === node.id)); }}
             >
                 <div className="flex items-center gap-3">
                     {node.userProfile ? (
@@ -123,13 +127,18 @@ const OrgNode: React.FC<{ node: OrgNodeType; level?: number; setSelectedNodeData
                         )}
                     </div>
                 </div>
-
+                {selectedNodeData?.[0]?.id === node.id && <span className="h-2 w-2 rounded-full bg-green-500" />}
                 <div className="flex items-center gap-2">
-                    {level === 0 && <StatusDot status={node.status} />}
+                    {/* {level === 0 && <StatusDot status={node.status} />} */}
                     {hasChildren && (
-                        <span className="text-sm text-gray-400">
-                            {open ? "▾" : "▸"}
-                        </span>
+                        <>
+                            <span
+                                className="text-sm text-gray-400"
+                                onClick={() => { hasChildren && setOpen(!open); }}
+                            >
+                                {open ? "▾" : "▸"}
+                            </span>
+                        </>
                     )}
                 </div>
             </div>
@@ -137,7 +146,7 @@ const OrgNode: React.FC<{ node: OrgNodeType; level?: number; setSelectedNodeData
             {/* Children */}
             {open &&
                 node.children?.map((child) => (
-                    <OrgNode key={child.id} node={child} level={level + 1} setSelectedNodeData={setSelectedNodeData} />
+                    <OrgNode key={child.id} node={child} level={level + 1} selectedNodeData={selectedNodeData} setSelectedNodeData={setSelectedNodeData} />
                 ))}
         </div>
     );
@@ -161,7 +170,8 @@ const NewDashboard: React.FC = () => {
                                 Organization Hierarchy
                             </h2>
 
-                            <OrgNode node={orgData} setSelectedNodeData={setSelectedNodeData} />
+                            {/* sidebar for organization hierarchy */}
+                            <OrgNode node={orgData} selectedNodeData={selectedNodeData} setSelectedNodeData={setSelectedNodeData} />
 
                             {/* Legend */}
                             <div className="mt-6 rounded-md border bg-white p-3 text-xs">

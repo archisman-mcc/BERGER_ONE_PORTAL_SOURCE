@@ -6,13 +6,13 @@ import { UseAuthStore } from '../../services/store/AuthStore';
 import * as common from '../../services/api/users/UserProfile';
 import Select from 'react-select';
 // import addButton from '../../assets/images/add-button.svg'
-import { FaArrowRight } from "react-icons/fa";
 import { Modal } from '@mantine/core';
 import { FaPlus } from "react-icons/fa6";
 import { GetVerticalWisBusinessLine } from '../../services/api/protectonLead/PotentialLead';
 import CustomPopupComponent from '../protecton/Lead/Components/customPopupComponent';
 import DsrTodReportPopup from './Components/DsrTodReportPopup';
-
+import { Link } from 'react-router-dom';
+import { FaArrowRight } from "react-icons/fa6";
 const Dashboard = () => {
     const [isDsrTodReportPopupOpen, setIsDsrTodReportPopupOpen] = useState(false);
     const [isDsrYTDReportPopupOpen, setIsDsrYTDReportPopupOpen] = useState(false);
@@ -483,7 +483,11 @@ const Dashboard = () => {
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
-                <h5 className="text-lg font-semibold dark:text-white-light">Berger One Dashboard</h5>
+                <h5 className="text-lg font-semibold dark:text-white-light">Protecton Dashboard</h5>
+                {/* Performance Window Button */}
+                <Link to="/NewDashboard" className="main-logo flex shrink-0 items-center">
+                    <button className='border-2 border-[#7271ff] text-[#0000ff] px-3 py-2 rounded-lg flex items-center gap-2'>Performance Window <FaArrowRight className='text-xs' /></button>
+                </Link>
             </div>
 
             {/* Show loading state during SSR or when user is not available */}
