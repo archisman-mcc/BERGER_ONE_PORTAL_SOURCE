@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaLocationDot } from "react-icons/fa6";
 import { FaRegCalendar } from "react-icons/fa";
 import { useState } from 'react'
 import SalesDashboard from './SalesDashboard';
 import basant from '../../assets/images/basant.png';
+import { dsrdata, type IDSRData } from './dsrdata';
 /* ---------- TYPES ---------- */
 interface OrgNodeType {
   id: number;
@@ -55,9 +56,10 @@ const StatusDot: React.FC<{ status?: OrgNodeType["status"] }> = ({
 };
 
 /* ---------- ORG NODE ---------- */
-const OrgNode: React.FC<{ node: OrgNodeType; level?: number }> = ({
+const OrgNode: React.FC<{ node: OrgNodeType; level?: number; setSelectedNodeData: (data: IDSRData[]) => void }> = ({
   node,
-  level = 0
+  level = 0,
+  setSelectedNodeData
 }) => {
   const [open, setOpen] = useState<boolean>(true);
   const hasChildren = Boolean(node.children?.length);
@@ -89,7 +91,7 @@ const OrgNode: React.FC<{ node: OrgNodeType; level?: number }> = ({
                         ? "ml-6 bg-gray-50 border-gray-300"
                         : isFirstLevel ? "bg-[#FEF3C7] border border-1 border-[#F59E0B]" : ""
                     }`}
-        onClick={() => hasChildren && setOpen(!open)}
+        onClick={() => {hasChildren && setOpen(!open); setSelectedNodeData(dsrdata.filter(item => item.id === node.id)); console.log(node.id); console.log(dsrdata);}}
       >
         <div className="flex items-center gap-3">
           {node.userProfile ? (
@@ -137,16 +139,21 @@ const OrgNode: React.FC<{ node: OrgNodeType; level?: number }> = ({
       {/* Children */}
       {open &&
         node.children?.map((child) => (
-          <OrgNode key={child.id} node={child} level={level + 1} />
+          <OrgNode key={child.id} node={child} level={level + 1} setSelectedNodeData={setSelectedNodeData} />
         ))}
     </div>
   );
 };
 const NewDashboard: React.FC = () => {
     const [active, setActive] = useState<"MTD" | "YTD">("MTD");
+    const [selectedNodeData, setSelectedNodeData] = useState<IDSRData[]>();
+    useEffect(() => {
+        console.log(selectedNodeData);
+    }, [selectedNodeData]);
     return (
         <>
             <section className="w-full lg:flex">
+                {/* left Part */}
                 <div className="lg:w-[360px] bg-white rounded-lg">
                     <div className="lg:min-h-screen bg-gray-100 p-2 rounded-lg">
                         <div className="rounded-xl border bg-gray-50 p-4">
@@ -154,7 +161,7 @@ const NewDashboard: React.FC = () => {
                                 Organization Hierarchy
                             </h2>
 
-                            <OrgNode node={orgData}/>
+                            <OrgNode node={orgData} setSelectedNodeData={setSelectedNodeData} />
 
                             {/* Legend */}
                             <div className="mt-6 rounded-md border bg-white p-3 text-xs">
@@ -173,20 +180,21 @@ const NewDashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                {/* right Part */}
                 <div className="w-full lg:pl-2 lg:mt-0 mt-4">
                     <div className="h-full w-full bg-gradient-to-l from-[#daf0ff] to-[#F0F9FF] rounded-lg">
                         <div className="flex justify-between items-center p-5">
                             <div className="">
-                                <h2 className='text-3xl font-bold font-sans mb-1'>Performance Window – National Level (EAST)</h2>
+                                <h2 className='text-3xl font-bold font-sans mb-1'>{selectedNodeData?.[0]?.cat_heading}</h2>
                                 <div className="">
                                     <ul className='flex gap-2 items-center'>
                                         <li className='bg-white border border-[#E2E8F0] py-1 px-2 rounded-full  flex items-center gap-2 text-sm'>
                                             <span><FaLocationDot className='text-[#3B82F6]' /></span>
-                                            <p>National Level – East</p>
+                                            <p>{selectedNodeData?.[0]?.cat_region}</p>
                                         </li>
                                         <li className='bg-white border border-[#E2E8F0] py-1 px-2 rounded-full flex items-center gap-2 text-sm'>
                                             <span><FaRegCalendar className='text-[#3B82F6]' /></span>
-                                            <p>FY 2023-24</p>
+                                            <p>FY {selectedNodeData?.[0]?.cat_financial_year}</p>
                                         </li>
                                     </ul>
                                 </div>
@@ -218,7 +226,7 @@ const NewDashboard: React.FC = () => {
                             </div>
                         </div>
                         <div className="">
-                            <SalesDashboard />
+                            <SalesDashboard selectedNodeData={selectedNodeData || [] as IDSRData[]} />
                         </div>
                     </div>
                 </div>
