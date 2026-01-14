@@ -1,7 +1,8 @@
 import React from "react";
 import img1 from '../../assets/images/total-sales.png';
 import img2 from '../../assets/images/odos.png';
-import basant from '../../assets/images/basant.png';
+// import basant from '../../assets/images/basant.png';
+// import BergerPaints from '../../assets/images/BergerPaints.jpg';
 import CircularSkillAvatar from "./CircularSkillAvatar";
 import { type IDSRData } from './dsrdata';
 interface StatCardProps {
@@ -26,15 +27,15 @@ interface CardProps {
   footerPercent: string;
 };
 
-const SalesDashboard: React.FC<{ selectedNodeData: IDSRData[] }> = ({ selectedNodeData }) => {
+const SalesDashboard: React.FC<{ active: "MTD" | "YTD", selectedNodeData: IDSRData[] }> = ({ active, selectedNodeData }) => {
   return (
     <div className="lg:min-h-screen p-6">
       <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Profile Card */}
         <div className="md:col-span-4 p-6 flex flex-col items-center rounded-lg">
            <CircularSkillAvatar
-              image={basant}
-              percentage={78}
+              image={selectedNodeData?.[0]?.profile_image}
+              percentage={active === "MTD" ? selectedNodeData?.[0]?.achievement_target : selectedNodeData?.[0]?.achievement_target}
               size={300}
               strokeWidth={10}
             />
@@ -59,21 +60,21 @@ const SalesDashboard: React.FC<{ selectedNodeData: IDSRData[] }> = ({ selectedNo
           <div className="grid grid-cols-2 gap-4 mb-4">
             <StatCard
               title="Total Sales"
-              value={`₹ ${selectedNodeData?.[0]?.total_sales_mtd.toString()}`}
+              value={`₹ ${active === "MTD" ? selectedNodeData?.[0]?.total_sales_mtd.toString() : selectedNodeData?.[0]?.total_sales_ytd.toString()}`}
               // value="₹ 485.2"
               unit="Lacs"
               footer="From Last Year"
-              progress={82}
-              positive
+              progress={active === "MTD" ? selectedNodeData?.[0]?.total_sales_growth_mtd : selectedNodeData?.[0]?.total_sales_growth_ytd}
+              positive={active === "MTD" ? selectedNodeData?.[0]?.total_sales_growth_mtd > 0 : selectedNodeData?.[0]?.total_sales_growth_ytd > 0}
               imgItem={img1}
             />
             <StatCard
               title="ODOS (>120 Days)"
-              value={`₹ ${selectedNodeData?.[0]?.odos_mtd.toString()}`}
+              value={`₹ ${active === "MTD" ? selectedNodeData?.[0]?.odos_mtd.toString() : selectedNodeData?.[0]?.odos_ytd.toString()}`}
               unit="Lacs"
               footer="From Last Year"
-              progress={35}
-              positive={false}
+              progress={active === "MTD" ? selectedNodeData?.[0]?.odos_growth_mtd : selectedNodeData?.[0]?.odos_growth_ytd}
+              positive={active === "MTD" ? selectedNodeData?.[0]?.odos_growth_mtd > 0 : selectedNodeData?.[0]?.odos_growth_ytd > 0}
               imgItem={img2}
             />
           </div>
@@ -81,35 +82,35 @@ const SalesDashboard: React.FC<{ selectedNodeData: IDSRData[] }> = ({ selectedNo
             <SalesCard
               title="Dealer Sale"
               // amount="285.4"
-              amount={selectedNodeData?.[0]?.dealer_sales_mtd.toString()}
+              amount={active === "MTD" ? selectedNodeData?.[0]?.dealer_sales_mtd.toString() : selectedNodeData?.[0]?.dealer_sales_ytd.toString()}
               unit="Lacs"
               barColor="bg-emerald-500"
               iconBg="bg-emerald-50"
               iconColor="text-emerald-600"
               footerLabel="Active Dealers"
               // footerValue="342"
-              footerValue={selectedNodeData?.[0]?.total_dealer_count.toString()}
-              footerPercent={selectedNodeData?.[0]?.dealer_sales_growth_mtd.toString()}
+              footerValue={active === "MTD" ? selectedNodeData?.[0]?.total_dealer_count.toString() : selectedNodeData?.[0]?.total_dealer_count.toString()}
+              footerPercent={active === "MTD" ? selectedNodeData?.[0]?.total_dealer_count_growth_mtd.toString() : selectedNodeData?.[0]?.total_dealer_count_growth_ytd.toString()}
             />
 
             <SalesCard
               title="Contractor Sale"
               // amount="142.6"
-              amount={selectedNodeData?.[0]?.contractor_sales_mtd.toString()}
+              amount={active === "MTD" ? selectedNodeData?.[0]?.contractor_sales_mtd.toString() : selectedNodeData?.[0]?.contractor_sales_ytd.toString()}
               unit="Lacs"
               barColor="bg-blue-500"
               iconBg="bg-blue-50"
               iconColor="text-blue-600"
               footerLabel="Active Contractors"
               // footerValue="186"
-              footerValue={selectedNodeData?.[0]?.total_contractor_count.toString()}
-              footerPercent={selectedNodeData?.[0]?.contractor_sales_growth_mtd.toString()}
+              footerValue={active === "MTD" ? selectedNodeData?.[0]?.total_contractor_count.toString() : selectedNodeData?.[0]?.total_contractor_count.toString()}
+              footerPercent={active === "MTD" ? selectedNodeData?.[0]?.total_contractor_count_growth_mtd.toString() : selectedNodeData?.[0]?.total_contractor_count_growth_ytd.toString()}
             />
 
             <SalesCard
               title="Fabricator Sale"
               // amount="57.2"
-              amount={selectedNodeData?.[0]?.fabrication_sales_mtd.toString()}
+              amount={active === "MTD" ? selectedNodeData?.[0]?.fabrication_sales_mtd.toString() : selectedNodeData?.[0]?.fabrication_sales_ytd.toString()}
               unit="Lacs"
               barColor="bg-purple-500"
               iconBg="bg-purple-50"
@@ -117,7 +118,7 @@ const SalesDashboard: React.FC<{ selectedNodeData: IDSRData[] }> = ({ selectedNo
               footerLabel="Active Fabricators"
               // footerValue="94"
               footerValue={selectedNodeData?.[0]?.total_fabrication_count.toString()}
-              footerPercent={selectedNodeData?.[0]?.fabrication_sales_growth_mtd.toString()}
+              footerPercent={active === "MTD" ? selectedNodeData?.[0]?.total_fabrication_count_growth_mtd.toString() : selectedNodeData?.[0]?.total_fabrication_count_growth_ytd.toString()}
             />
           </div>
         </div>
