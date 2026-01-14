@@ -3,6 +3,7 @@ import img1 from '../../assets/images/total-sales.png';
 import img2 from '../../assets/images/odos.png';
 import basant from '../../assets/images/basant.png';
 import CircularSkillAvatar from "./CircularSkillAvatar";
+import { type IDSRData } from './dsrdata';
 interface StatCardProps {
   title: string;
   value: string;
@@ -25,7 +26,7 @@ interface CardProps {
   footerPercent: string;
 };
 
-const SalesDashboard: React.FC = () => {
+const SalesDashboard: React.FC<{ selectedNodeData: IDSRData[] }> = ({ selectedNodeData }) => {
   return (
     <div className="lg:min-h-screen p-6">
       <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -37,8 +38,8 @@ const SalesDashboard: React.FC = () => {
               size={300}
               strokeWidth={10}
             />
-          <h2 className="mt-4 text-3xl font-bold">Basant Kumar</h2>
-          <p className="text-gray-500">Zonal Head - East</p>
+          <h2 className="mt-4 text-3xl font-bold">{selectedNodeData?.[0]?.cat_title}</h2>
+          <p className="text-gray-500">{selectedNodeData?.[0]?.cat_designation}</p>
 
           <div className="mt-4 flex gap-4 text-sm">
             <span className="flex items-center gap-1">
@@ -58,7 +59,8 @@ const SalesDashboard: React.FC = () => {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <StatCard
               title="Total Sales"
-              value="₹ 485.2"
+              value={`₹ ${selectedNodeData?.[0]?.total_sales_mtd.toString()}`}
+              // value="₹ 485.2"
               unit="Lacs"
               footer="From Last Year"
               progress={82}
@@ -67,7 +69,7 @@ const SalesDashboard: React.FC = () => {
             />
             <StatCard
               title="ODOS (>120 Days)"
-              value="₹ 42.8"
+              value={`₹ ${selectedNodeData?.[0]?.odos_mtd.toString()}`}
               unit="Lacs"
               footer="From Last Year"
               progress={35}
@@ -78,38 +80,44 @@ const SalesDashboard: React.FC = () => {
           <div className="grid grid-cols-3 gap-4">
             <SalesCard
               title="Dealer Sale"
-              amount="285.4"
+              // amount="285.4"
+              amount={selectedNodeData?.[0]?.dealer_sales_mtd.toString()}
               unit="Lacs"
               barColor="bg-emerald-500"
               iconBg="bg-emerald-50"
               iconColor="text-emerald-600"
               footerLabel="Active Dealers"
-              footerValue="342"
-              footerPercent="8"
+              // footerValue="342"
+              footerValue={selectedNodeData?.[0]?.total_dealer_count.toString()}
+              footerPercent={selectedNodeData?.[0]?.dealer_sales_growth_mtd.toString()}
             />
 
             <SalesCard
               title="Contractor Sale"
-              amount="142.6"
+              // amount="142.6"
+              amount={selectedNodeData?.[0]?.contractor_sales_mtd.toString()}
               unit="Lacs"
               barColor="bg-blue-500"
               iconBg="bg-blue-50"
               iconColor="text-blue-600"
               footerLabel="Active Contractors"
-              footerValue="186"
-              footerPercent="12"
+              // footerValue="186"
+              footerValue={selectedNodeData?.[0]?.total_contractor_count.toString()}
+              footerPercent={selectedNodeData?.[0]?.contractor_sales_growth_mtd.toString()}
             />
 
             <SalesCard
               title="Fabricator Sale"
-              amount="57.2"
+              // amount="57.2"
+              amount={selectedNodeData?.[0]?.fabrication_sales_mtd.toString()}
               unit="Lacs"
               barColor="bg-purple-500"
               iconBg="bg-purple-50"
               iconColor="text-purple-600"
               footerLabel="Active Fabricators"
-              footerValue="94"
-              footerPercent="5"
+              // footerValue="94"
+              footerValue={selectedNodeData?.[0]?.total_fabrication_count.toString()}
+              footerPercent={selectedNodeData?.[0]?.fabrication_sales_growth_mtd.toString()}
             />
           </div>
         </div>
