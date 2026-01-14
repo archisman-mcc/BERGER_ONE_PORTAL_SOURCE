@@ -176,7 +176,7 @@ const SalesCard: React.FC<CardProps> = ({
   footerPercent,
 }) => {
   return (
-    <div className="w-full rounded-2xl bg-white p-5 shadow-md">
+    <div className="w-full rounded-2xl bg-white p-3 shadow-md">
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-500">
@@ -239,7 +239,7 @@ const SalesCard: React.FC<CardProps> = ({
           </span>
 
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${iconBg} ${iconColor}`}
+            className={`rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${iconBg} ${iconColor}`}
           >
             ↑ {footerPercent}%
           </span>
