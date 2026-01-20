@@ -84,7 +84,7 @@ const EPCACancellation = () => {
     const getDate = (date: Date[], field: 'frm_date' | 'to_date') => {
         setPcaParam((prevState) => ({
             ...prevState,
-            [field]: date[0], // Update the specified field
+            [field]: date[0],
         }));
     };
 

@@ -10,6 +10,7 @@ import CustomPopupComponent from './Components/customPopupComponent';
 import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import ActivityLogPopup from './Components/ActivityLogPopup';
 import PurchaseOrderPopup from './Components/PurchaseOrderPopup';
+import { GetUserApplicableDealer } from '../../../services/api/protectonEpca/EpcaList';
 // import axios, { type AxiosResponse } from 'axios';
 // import { GetPcaList } from '../../../services/api/protectonEpca/EpcaList';
 // import { BASE_ENDPOINTS } from '../../../helper/EndPoints';
@@ -18,6 +19,7 @@ const PotentialLead = () => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const [loading, setLoading] = React.useState(false);
+    const [detailsAPIcall, setdetailsAPIcall] = React.useState(false);
     const [potentialLeadDataList, setPotentialLeadDataList] = React.useState([]);
     const [showDropdown, setShowDropdown] = React.useState(false);
     const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '', type: '' });
@@ -84,7 +86,10 @@ const PotentialLead = () => {
         ptm_region: '', // region
         ptm_depot_code: '', // depot
         ptm_terr_code: '', // terr
+        ptm_dealer_code: '', // dealer
         ptm_work_status: '', // Work In Progress
+        ptm_expected_cldate: '', // Expected Closing Date
+        ptm_reason_for_onhold: '', // Reason For On Hold/No Activity
         ptm_extra_info: '', // Work In Progress
         ptm_product_category: '', // Product Category
         potentialTrackingcontacts: [], // Referral Source Details
@@ -107,6 +112,7 @@ const PotentialLead = () => {
         protecton_regionList: [],
         depotList: [],
         terrList: [],
+        applicableDealerList: [],
         assignStatusList: [],
         workStatusList: [],
         // for PROLINKS popup
@@ -157,7 +163,7 @@ const PotentialLead = () => {
         const data: any = {
             user_group: user.group_code,
             app_id: '15',
-            user_appl_yn: 'Y'
+            user_appl_yn: 'N'
         };
         try {
             const response: any = await GetProtectonRegion(data);
@@ -179,7 +185,7 @@ const PotentialLead = () => {
             app_id: '15',
             region: region,
             terr_code: '',
-            user_appl_yn: 'Y',
+            user_appl_yn: 'N',
         };
         try {
             const response: any = await GetProtectonApplicableDepot(payload);
@@ -200,13 +206,14 @@ const PotentialLead = () => {
             app_id: '15',
             region: props?.region,
             depot_code: props?.depot,
-            user_appl_yn: 'Y',
+            user_appl_yn: 'N',
         };
         try {
             const response: any = await GetProtectonApplicableTerr(payload);
             setDdlData((prevData: any) => ({
                 ...prevData,
-                terrList: response?.data?.table || []
+                terrList: response?.data?.table || [],
+                applicableDealerList: [],
             }));
         } catch (error) {
             return;
@@ -293,6 +300,7 @@ const PotentialLead = () => {
     var rowData: any = useRef(null);
 
     const selectedLeadDetails1 = async () => {
+        setdetailsAPIcall(true);
         // setLoading(true);
         const payload: any = {
             ptm_id: rowData?.current.ptm_id
@@ -300,11 +308,6 @@ const PotentialLead = () => {
         try {
             const response: any = await GetPotentialTrackingDtls(payload);
             if (response?.statusCode === 200) {
-
-                console.log(ddlData);
-                console.log(data)
-                console.log(commonLovDetailsData.current, response?.data?.table[0]);
-
                 var selectedStateList: any = '';
                 try {
                     const stateRes: any = await GetStateList({});
@@ -314,7 +317,7 @@ const PotentialLead = () => {
                 } catch (error) {
                     return;
                 }
-                console.log("render")
+                // console.log("render")
 
                 var ptm_ref_dealer_code: any = '';
                 if (response?.data?.table[0]?.ptm_ref_dealer_code) {
@@ -327,13 +330,13 @@ const PotentialLead = () => {
                         console.log(error)
                     }
                 }
-                console.log("render")
+                // console.log("render")
 
                 if (user.group_code) {
                     const data: any = {
                         user_group: user.group_code,
                         app_id: '15',
-                        user_appl_yn: 'Y'
+                        user_appl_yn: 'N'
                     };
                     try {
                         const response: any = await GetProtectonRegion(data);
@@ -342,7 +345,7 @@ const PotentialLead = () => {
                         return;
                     }
                 }
-                console.log("render")
+                // console.log("render")
 
                 var ptm_depot_code: any = '';
                 if (response?.data?.table[0]?.ptm_region) {
@@ -350,7 +353,7 @@ const PotentialLead = () => {
                         app_id: '15',
                         region: response?.data?.table[0]?.ptm_region,
                         terr_code: '',
-                        user_appl_yn: 'Y',
+                        user_appl_yn: 'N',
                     };
                     try {
                         const subRes: any = await GetProtectonApplicableDepot(payload1);
@@ -365,7 +368,7 @@ const PotentialLead = () => {
                         return;
                     }
                 }
-                console.log("render")
+                // console.log("render")
 
                 var ptm_terr_code: any = '';
                 if (response?.data?.table[0]?.ptm_region && response?.data?.table[0]?.ptm_depot_code) {
@@ -373,7 +376,7 @@ const PotentialLead = () => {
                         app_id: '15',
                         region: response?.data?.table[0]?.ptm_region,
                         depot_code: response?.data?.table[0]?.ptm_depot_code,
-                        user_appl_yn: 'Y',
+                        user_appl_yn: 'N',
                     };
                     try {
                         const subRes: any = await GetProtectonApplicableTerr(payload);
@@ -388,14 +391,37 @@ const PotentialLead = () => {
                         return;
                     }
                 }
-                console.log("render")
+                // console.log("render")
+
+                var ptm_dealer_code: any = '';
+                if (response?.data?.table[0]?.ptm_region && response?.data?.table[0]?.ptm_depot_code && response?.data?.table[0]?.ptm_terr_code) {
+                    const payload: any = {
+                        app_id: '15',
+                        region: response?.data?.table[0]?.ptm_region,
+                        depot_code: response?.data?.table[0]?.ptm_depot_code,
+                        terr_code: response?.data?.table[0]?.ptm_terr_code,
+                        user_appl_yn: 'N',
+                    };
+                    try {
+                        const subRes: any = await GetUserApplicableDealer(payload);
+                        if (subRes.data && response?.data?.table[0]?.ptm_dealer_code) {
+                            ptm_dealer_code = { value: subRes.data.table.find((item: any) => item?.dealer_code === response?.data?.table[0]?.ptm_dealer_code)?.dealer_code, label: subRes.data.table.find((item: any) => item?.dealer_code === response?.data?.table[0]?.ptm_dealer_code)?.dealer_name }
+                        }
+                        setDdlData((prevData: any) => ({
+                            ...prevData,
+                            applicableDealerList: subRes?.data?.table || []
+                        }));
+                    } catch (error) {
+                        return;
+                    }
+                }
 
                 // console.log(commonLovDetailsData.current.product_category_List, response?.data?.table[0]?.ptm_product_category)
                 const ptm_product_category = commonLovDetailsData.current.product_category_List.length > 0 && response?.data?.table[0]?.ptm_product_category ? commonLovDetailsData.current?.product_category_List.filter((item: any) => response?.data?.table[0]?.ptm_product_category.split(",").includes(item?.lov_code)).map((item: any) => ({
                     value: item.lov_code,
                     label: item.lov_value
                 })) : [];
-                console.log("render")
+                // console.log("render")
 
                 const getDetailsData = {
                     projectName: response?.data?.table[0]?.ptm_project_name || '',
@@ -432,13 +458,15 @@ const PotentialLead = () => {
 
                     ptm_terr_code: ptm_terr_code,
 
+                    ptm_dealer_code: ptm_dealer_code,
+
                     ptm_work_status: commonLovDetailsData.current?.workStatusList.length > 0 && response?.data?.table[0]?.ptm_work_status ? { value: commonLovDetailsData.current?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_code, label: commonLovDetailsData.current?.workStatusList?.find((item: any) => item?.lov_code === response?.data?.table[0]?.ptm_work_status)?.lov_value } : '',
 
                     potentialTrackingDocs: response?.data?.table1 || [],
 
                     potentialTrackingcontacts: response?.data?.table2 || [],
                 };
-                console.log("render")
+                // console.log("render")
 
                 setData((prevData: any) => ({
                     ...prevData,
@@ -448,8 +476,9 @@ const PotentialLead = () => {
                 setLoading(false);
             }
         } catch (error) {
-            return;
+            setdetailsAPIcall(false);
             setLoading(false);
+            return;
         }
     }
 
@@ -748,10 +777,12 @@ const PotentialLead = () => {
     React.useEffect(() => {
         console.log(filter_Data);
     }, [filter_Data]);
-
     React.useEffect(() => {
         console.log(data)
     }, [data]);
+    React.useEffect(() => {
+        console.log(ddlData);
+    }, [ddlData]);
 
     return (
         <>
@@ -906,7 +937,7 @@ const PotentialLead = () => {
             </div>
 
             {popupOpenData?.open &&
-                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcall={detailsAPIcall} />
             }
 
             {isActivityLogPopupOpen && (
