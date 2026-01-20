@@ -4,7 +4,7 @@ import * as Epca from '../../../services/api/protectonEpca/EpcaList';
 import * as EpcaDetails from '../../../services/api/protectonEpca/EpcaDetails';
 import Select from 'react-select';
 import { GetProdDevImgRouteBuilder } from '../../../services/functions/getProdDevUrlBuilder';
-import { NumberInput, TextInput } from '@mantine/core';
+import { NumberInput, Switch, TextInput } from '@mantine/core';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
 import moment from 'moment';
@@ -523,25 +523,15 @@ const EPCADetails = () => {
                         <div className="col-span-1">
                             <label className="formLabel">PD Applicable:</label>
                             <div className="mt-2 flex">
-                                <label className="relative h-6 w-12">
-                                    <input
-                                        type="checkbox"
-                                        className="custom_switch peer absolute z-10 h-full w-full cursor-pointer opacity-0"
-                                        id="custom_switch_checkbox1"
-                                        checked={ePCADetails.pdAppl === 'Y' ? true : false}
-                                        disabled={pageType === 'View'}
-                                        onChange={(event) => {
-                                            setePCADetails((pre: any) => ({ ...pre, pdAppl: event?.target?.checked ? 'Y' : 'N' }))
-                                        }}
-                                    />
-                                    <span
-                                        className={`outline_checkbox bg-icon block h-full rounded-full border-2 border-[#ebedf2] before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-[#ebedf2] before:bg-[url(${GetProdDevImgRouteBuilder(
-                                            '/assets/images/close.svg'
-                                        )})] before:bg-center before:bg-no-repeat before:transition-all before:duration-300 peer-checked:border-primary peer-checked:before:left-7 peer-checked:before:bg-primary peer-checked:before:bg-[url(${GetProdDevImgRouteBuilder(
-                                            '/assets/images/checked.svg'
-                                        )})] dark:border-white-dark dark:before:bg-white-dark`}
-                                    ></span>
-                                </label>
+                                <Switch
+                                    id="pd_applicable_switch"
+                                    role="switch"
+                                    checked={ePCADetails.pdAppl === 'Y'}
+                                    disabled={pageType === 'View'}
+                                    onChange={(event: any) => {
+                                        setePCADetails((pre: any) => ({ ...pre, pdAppl: event.target.checked ? 'Y' : 'N', bill_to: null, bill_to_name: "" }))
+                                    }}
+                                />
                             </div>
                         </div>
                         <div className="col-span-1">

@@ -12,8 +12,9 @@ import AsyncSelectBox from '../../Transact/Components/AsyncSelectBox';
 import PotentialTrackingcontacts from './PotentialTrackingcontacts';
 import TeamMemberTable from './TeamMemberTable';
 import { commonErrorToast, commonSuccessToast } from '../../../../services/functions/commonToast';
+import { GetUserApplicableDealer } from '../../../../services/api/protectonEpca/EpcaList';
 
-const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr }: any) => {
+const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr, detailsAPIcall }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const blankObj = { selectedOption: '', selectedObj: [], asyncSelectData: [] };
@@ -42,6 +43,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             setData((prevData: any) => ({
                 ...prevData,
                 regionList: response.data.table || [],
+                applicableDealerList: [],
             }));
         } catch (error) {
             return;
@@ -89,12 +91,26 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             setData((prevData: any) => ({
                 ...prevData,
                 applicableDepotList: response.data.table || [],
+                applicableDealerList: [],
             }));
         } catch (error) {
             return;
         }
         // setLoading(false);
     }
+
+    const GetCust = async (props: any) => {
+        try {
+            const response: any = await GetUserApplicableDealer(props);
+            // console.log(response);
+            setDdlData((prevData: any) => ({
+                ...prevData,
+                applicableDealerList: response?.data?.table || [],
+            }));
+        } catch (error) {
+            return;
+        }
+    };
 
     const GetKeyAccountListAPIcall = async (inputValue: any) => {
         try {
@@ -269,6 +285,10 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             commonErrorToast('Please select Work In Progress');
             return false;
         }
+        // else if (data?.ptm_expected_cldate === '') {
+        //     commonErrorToast('Please select Expected Closing Date For Order');
+        //     return false;
+        // }
         return true;
     }
 
@@ -351,6 +371,8 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                 ptm_depot_code: data.ptm_depot_code?.value || '',
                 ptm_terr_code: data.ptm_terr_code?.value || '',
                 ptm_work_status: data.ptm_work_status?.value || '',
+                ptm_expected_cldate: data.ptm_expected_cldate || '',
+                ptm_reason_for_onhold: data.ptm_reason_for_onhold || '',
                 ptm_extra_info: data.ptm_extra_info || '',
             }],
             potentialTrackingcontacts: data?.potentialTrackingcontacts || [],
@@ -513,6 +535,10 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
         // }, 10000);
     }, []);
 
+    // React.useEffect(() => {
+    //     data.ptm_terr_code?.value && GetCust();
+    // }, [data.ptm_terr_code]);
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white p-0 rounded-lg shadow-lg w-full h-full max-w-none max-h-none flex flex-col">
@@ -664,7 +690,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <label className="block text-sm font-semibold mb-1">Referral Lead:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         className="text-sm"
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         isSearchable={true}
                                         options={ddlData?.referralLead}
                                         value={data.ptm_ref_lead_yn}
@@ -679,7 +705,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         <label className="block text-sm font-semibold mb-1">Refer From:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <Select
                                             className="text-sm"
-                                            isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                             isSearchable={true}
                                             options={ddlData.refer_from_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                             value={data.ptm_ref_lead_type}
@@ -694,7 +720,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <div>
                                         <label className="block text-sm font-semibold mb-1">Existing Business Contract:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <AsyncSelectBox
-                                            isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                             data={existingBusinessContract}
                                             setData={setexistingBusinessContract}
                                             label="display_name"
@@ -712,13 +738,13 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 }
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Customer:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
-                                    <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Customer" className="w-full border rounded form-input text-sm" value={data?.ptm_customer_name} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_customer_name: event.target.value }))} autoComplete="off" />
+                                    <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Customer" className="w-full border rounded form-input text-sm" value={data?.ptm_customer_name} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_customer_name: event.target.value }))} autoComplete="off" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Contractor Type:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         className="text-sm"
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         isSearchable={true}
                                         options={ddlData?.contractor_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_contractor_type}
@@ -729,7 +755,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <label className="block text-sm font-semibold mb-1">Key Account Type:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         className="text-sm"
-                                        // isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         isSearchable={true}
                                         options={ddlData?.key_account_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_key_account_type}
@@ -744,7 +770,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         <label className="block text-sm font-semibold mb-1">Key Account:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <Select
                                             className="text-sm"
-                                            // isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                             isSearchable={true}
                                             options={ddlData?.key_account_List.map((d: any) => ({ value: d.key_account_id, label: d.key_account_name }))}
                                             value={data.ptm_key_account_id}
@@ -774,7 +800,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div>
                             <label className="block text-sm font-semibold mb-1">Project Name:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
-                            <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter project name" className="w-full border rounded form-input text-sm" name="billTo" value={data?.projectName} onChange={(event: any) => setData((pre: any) => ({ ...pre, projectName: event.target.value }))} autoComplete="off" />
+                            <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter project name" className="w-full border rounded form-input text-sm" name="billTo" value={data?.projectName} onChange={(event: any) => setData((pre: any) => ({ ...pre, projectName: event.target.value }))} autoComplete="off" />
                         </div>
                         {popupOpenData?.popupHeader === 'PROLINKS' && popupOpenData?.type === "NEW" &&
                             <div>
@@ -783,24 +809,24 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                             </div>}
                         <div>
                             <label className="block text-sm font-semibold mb-1">Project Location:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
-                            <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter project location" className="w-full border rounded form-input text-sm" name="billTo" value={data?.siteLocation} onChange={(event: any) => setData((pre: any) => ({ ...pre, siteLocation: event.target.value }))} autoComplete="off" />
+                            <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter project location" className="w-full border rounded form-input text-sm" name="billTo" value={data?.siteLocation} onChange={(event: any) => setData((pre: any) => ({ ...pre, siteLocation: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
                             <label className="block text-sm font-semibold mb-1">Address Line 1:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
-                            <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Address 1" className="w-full border rounded form-input text-sm" name="addr1" value={data?.addr1} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr1: event.target.value }))} autoComplete="off" />
+                            <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Address 1" className="w-full border rounded form-input text-sm" name="addr1" value={data?.addr1} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr1: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
                             <label className="block text-sm font-semibold mb-1">Address Line 2:</label>
-                            <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Address 2" className="w-full border rounded form-input text-sm" name="addr2" value={data?.addr2} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr2: event.target.value }))} autoComplete="off" />
+                            <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter Address 2" className="w-full border rounded form-input text-sm" name="addr2" value={data?.addr2} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr2: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
                             <label className="block text-sm font-semibold mb-1">City:</label>
-                            <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter City" className="w-full border rounded form-input text-sm" name="city" value={data?.city} onChange={(event: any) => setData((pre: any) => ({ ...pre, city: event.target.value }))} autoComplete="off" />
+                            <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="text" placeholder="Enter City" className="w-full border rounded form-input text-sm" name="city" value={data?.city} onChange={(event: any) => setData((pre: any) => ({ ...pre, city: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
                             <label className="block text-sm font-semibold mb-1">Pincode:</label>
                             <input
-                                readOnly={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                 type="number"
                                 placeholder="Enter Pincode"
                                 className="w-full border rounded form-input text-sm no-spinner text-right"
@@ -829,7 +855,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                             <label className="block text-sm font-semibold mb-1">Select State:</label>
                             <Select
                                 className="text-sm"
-                                isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                 isSearchable={true}
                                 options={data.stateList.map((d: any) => ({ value: d.state_code, label: d.state_name }))}
                                 value={data.selectedStateList}
@@ -877,7 +903,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         <input
                                             type="number"
                                             placeholder="Enter scope of paints"
-                                            readOnly={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                             className="w-full border rounded form-input text-sm no-spinner text-right"
                                             value={data?.ptm_potential_val}
                                             onChange={(event) =>
@@ -895,7 +921,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <div className="flex">
                                         <input
                                             type="number"
-                                            readOnly={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                            readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                             placeholder="Enter volume"
                                             className="w-full border rounded form-input text-sm no-spinner text-right"
                                             value={data?.ptm_potential_vol}
@@ -911,13 +937,13 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Scope for paints area:</label>
-                                    <input readOnly={data.ptm_work_status?.value === "WIP8" ? true : false} type="number" placeholder="Enter area" className="w-full border rounded form-input text-sm no-spinner text-right" value={data?.ptm_potential_area} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_potential_area: event.target.value }))} autoComplete="off" />
+                                    <input readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false} type="number" placeholder="Enter area" className="w-full border rounded form-input text-sm no-spinner text-right" value={data?.ptm_potential_area} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_potential_area: event.target.value }))} autoComplete="off" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Scope for paints area uom:</label>
                                     <Select
                                         className="text-sm"
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         isSearchable={true}
                                         options={ddlData?.potential_area_uom_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_potential_area_uom}
@@ -1273,7 +1299,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Depot:{popupOpenData?.popupHeader === 'SELF' && <span style={{ color: 'red', marginLeft: '2px' }}>*</span>}</label>
                                     <Select
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
@@ -1288,13 +1314,14 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Territory:{popupOpenData?.popupHeader === 'SELF' && <span style={{ color: 'red', marginLeft: '2px' }}>*</span>}</label>
                                     <Select
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
                                         options={ddlData.terrList.map((d: any) => ({ value: d.terr_code, label: d.terr_name }))}
                                         value={data.ptm_terr_code}
                                         onChange={(event: any) => {
+                                            GetCust({ depot_regn: data.ptm_region.value, depot_code: data.ptm_depot_code.value, terr_code: event.value, app_id: "15", user_appl_yn: "N" });
                                             setData((pre: any) => ({ ...pre, ptm_terr_code: event }))
                                         }}
                                     />
@@ -1302,7 +1329,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Work In Progress:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
-                                        isDisabled={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
@@ -1313,11 +1340,34 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         }}
                                     />
                                 </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:</label>
+                                    {/* <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label> */}
+                                    <Flatpickr value={data.ptm_expected_cldate} options={{ dateFormat: 'd/m/Y', position: 'auto left' }} className="w-full border rounded form-input text-sm" onChange={(date) => setData((pre: any) => ({ ...pre, ptm_expected_cldate: date }))} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Reason For On Hold/No Activity:</label>
+                                    <input type="text" placeholder="Enter reason for on hold/no activity" className="w-full border rounded form-input text-sm" name="ptm_reason_for_onhold" value={data?.ptm_reason_for_onhold} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_reason_for_onhold: event.target.value }))} autoComplete="off" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Oracle Customer:</label>
+                                    <Select
+                                        isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
+                                        menuPlacement="auto"
+                                        className="text-sm"
+                                        isSearchable={true}
+                                        options={ddlData.applicableDealerList.map((d: any) => ({ value: d.dealer_code, label: d.dealer_name }))}
+                                        value={data.ptm_dealer_code}
+                                        onChange={(event: any) => {
+                                            setData((pre: any) => ({ ...pre, ptm_dealer_code: event }))
+                                        }}
+                                    />
+                                </div>
                             </div>
                             <div className='mb-4'>
                                 <label className="block text-sm font-semibold mb-2">Lead Information:</label>
                                 <Textarea
-                                    readOnly={data.ptm_work_status?.value === "WIP8" ? true : false}
+                                    readOnly={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
                                     className="text-sm"
                                     placeholder='Enter Lead Information'
                                     value={data.ptm_extra_info}
