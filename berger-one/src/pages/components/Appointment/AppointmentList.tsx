@@ -108,7 +108,7 @@ const AppointmentDetails = ({ LeadDetails }: any) => {
         values.lal_auto_id = row.original.lal_auto_id;
         values.lal_assign_to = row.original.lal_assign_to;
         if (values.appointment_feedback != null && values.appointment_feedback != '') {
-            let index = FeedbackList.findIndex((item) => item.lov_value == values.appointment_feedback.trim());
+            let index = FeedbackList.findIndex((item: any) => item.lov_value == values.appointment_feedback.trim());
             if (index >= 0) {
                 values.lal_appointment_feedback = FeedbackList[index].lov_code;
             }
