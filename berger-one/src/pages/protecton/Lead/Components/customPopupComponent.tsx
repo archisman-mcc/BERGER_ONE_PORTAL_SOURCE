@@ -373,6 +373,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                 ptm_work_status: data.ptm_work_status?.value || '',
                 ptm_expected_cldate: data.ptm_expected_cldate || '',
                 ptm_reason_for_onhold: data.ptm_reason_for_onhold || '',
+                ptm_dealer_code: data.ptm_dealer_code?.value || '',
                 ptm_extra_info: data.ptm_extra_info || '',
             }],
             potentialTrackingcontacts: data?.potentialTrackingcontacts || [],
@@ -1340,16 +1341,18 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         }}
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:</label>
-                                    {/* <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label> */}
-                                    <Flatpickr value={data.ptm_expected_cldate} options={{ dateFormat: 'd/m/Y', position: 'auto left' }} className="w-full border rounded form-input text-sm" onChange={(date) => setData((pre: any) => ({ ...pre, ptm_expected_cldate: date }))} />
-                                </div>
-                                <div>
+                                {(data.ptm_work_status?.value === "WIP5" || data.ptm_work_status?.value === "WIP6" || data.ptm_work_status?.value === "WIP7" || data.ptm_work_status?.value === "WIP8" || data.ptm_work_status?.value === "WIP11") &&
+                                    <div>
+                                        <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:</label>
+                                        {/* <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label> */}
+                                        <Flatpickr value={data.ptm_expected_cldate} options={{ dateFormat: 'd/m/Y', position: 'auto left' }} className="w-full border rounded form-input text-sm" onChange={(date) => setData((pre: any) => ({ ...pre, ptm_expected_cldate: date }))} />
+                                    </div>
+                                }
+                                {(data.ptm_work_status?.value === "WIP9" || data.ptm_work_status?.value === "WIP11") && <div>
                                     <label className="block text-sm font-semibold mb-1">Reason For On Hold/No Activity:</label>
                                     <input type="text" placeholder="Enter reason for on hold/no activity" className="w-full border rounded form-input text-sm" name="ptm_reason_for_onhold" value={data?.ptm_reason_for_onhold} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_reason_for_onhold: event.target.value }))} autoComplete="off" />
-                                </div>
-                                <div>
+                                </div>}
+                                {data.ptm_work_status?.value === "WIP8" && <div>
                                     <label className="block text-sm font-semibold mb-1">Oracle Customer:</label>
                                     <Select
                                         isDisabled={detailsAPIcall && data.ptm_work_status?.value === "WIP8" ? true : false}
@@ -1362,7 +1365,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                             setData((pre: any) => ({ ...pre, ptm_dealer_code: event }))
                                         }}
                                     />
-                                </div>
+                                </div>}
                             </div>
                             <div className='mb-4'>
                                 <label className="block text-sm font-semibold mb-2">Lead Information:</label>
