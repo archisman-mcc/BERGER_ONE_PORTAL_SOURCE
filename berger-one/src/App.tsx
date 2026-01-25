@@ -74,7 +74,8 @@ const isAuthenticated = (): boolean => {
   if (storedObjectString === null || storedObjectString === undefined) return false;
   const storedObject = JSON.parse(storedObjectString);
   console.log(storedObject)
-  if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+  // if (storedObject?.state?.isLoggedIn === false || !storedObject?.state?.userDetails?.userApplicableMenu || storedObject?.state?.userDetails?.userApplicableMenu && storedObject?.state?.userDetails?.userApplicableMenu?.length === 0) {
+  if (!storedObject?.state?.isLoggedIn) {
     return false;
   } else return true;
 };
@@ -265,6 +266,10 @@ function App() {
             element: <PotentialLead />,
           },
           {
+            path: '/Protecton/Lead/BergeroneLead',
+            element: <PotentialLead />,
+          },
+          {
             path: '/Protecton/HoMarketing/MWAReportDetails',
             element: <MWAReportDetails />,
           },
@@ -348,7 +353,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute><FixedLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           {/* ----------hv 2 ch------------ */}
-          <Route path="/NewDashboard" element={<NewDashboard />} /> 
+          <Route path="/NewDashboard" element={<NewDashboard />} />
           {/* ----------hv 2 ch------------ */}
           <Route path="/admin/FromMenuMaster" element={<FromMenuMaster />} />
           <Route path="/admin/UserFormAccess" element={<UserFormAccess />} />
@@ -392,6 +397,7 @@ function App() {
           <Route path="/Protecton/Transact/TransactOutstanding" element={<TransactOutstanding />} />
           <Route path="/Protecton/Transact/TransactClientTracking" element={<TransactClientTracking />} />
           <Route path="/Protecton/Lead/PotentialLead" element={<PotentialLead />} />
+          <Route path="/Protecton/Lead/BergeroneLead" element={<PotentialLead />} />
           <Route path="/Protecton/HoMarketing/MWAReportDetails" element={<MWAReportDetails />} />
           <Route path="/Protecton/HoMarketing/TSRMonitoringReport" element={<TSRMonitoringReport />} />
           <Route path="/Protecton/HoMarketing/LeadGenerationReport" element={<LeadGenerationReport />} />

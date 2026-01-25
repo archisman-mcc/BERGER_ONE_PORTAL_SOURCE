@@ -65,12 +65,12 @@ const EPCARsmApprovalDetails = () => {
         };
         try {
             const response: any = await EpcaDepotApproval.GetePCARsmApprovalDetails(data1);
-            // if (response && response.data != null && response.data != undefined) 
             setData(response.data.table || [])
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
 
@@ -251,7 +251,7 @@ const EPCARsmApprovalDetails = () => {
                 size: 30,
             },
             {
-                accessorKey: 'pd_mrp',
+                accessorKey: 'sku_pca',
                 header: 'Declared PCA(Lt/Kg)',
                 size: 30,
             },
@@ -403,6 +403,7 @@ const EPCARsmApprovalDetails = () => {
                             value={selectedFactory}
                             onChange={handleFactoryChange} // Add onChange handler
                             placeholder="Select"
+                            withinPortal={true}
                             // className="mantine-select"
                         />
                     );
@@ -422,6 +423,7 @@ const EPCARsmApprovalDetails = () => {
                             value={row.original?.currentStatus}
                             onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select"
+                            withinPortal={true}
                             clearable
                             // className="mantine-select"
                         />

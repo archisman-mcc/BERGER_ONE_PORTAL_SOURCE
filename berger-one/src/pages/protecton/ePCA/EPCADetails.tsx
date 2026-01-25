@@ -70,7 +70,9 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.PcaDetailsGetDtl(data);
             setData(response?.data?.table || []);
         } catch (error) {
-            console.log(error)
+            setData([]);
+        } finally {
+            setLoading(false);
         }
         //setLoading(false);
     };
@@ -86,9 +88,10 @@ const EPCADetails = () => {
             const response: any = await Epca.GetApplicableDepotList(data);
             setDepot(response.data || []);
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableTerritory = async ({ depot_code }: any) => {
@@ -102,9 +105,10 @@ const EPCADetails = () => {
             const response: any = await Epca.GetApplicableTerrList(data);
             setApplTerr(response.data || [])
         } catch (error) {
-            return;
+            setApplTerr([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetDealerList = async ({ depot_code, terr_code }: any) => {
@@ -118,9 +122,10 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.GetPcaDealersList(data);
             setDealer(response.data || [])
         } catch (error) {
-            return;
+            setDealer([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableBillto = async ({ depot_code, terr_code, dealer_code }: any) => {
@@ -134,9 +139,10 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.GetPcaBillToList(data);
             setBillTo(response.data || [])
         } catch (error) {
-            return;
+            setBillTo([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableProjectList = async ({ billto_code, srch_str }: any) => {
@@ -150,10 +156,11 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.GetProjectList(data);
             setProject(response.data.table || [])
         } catch (error) {
-            console.log(error)
+            setProject([]);
+        } finally {
+            setLoading(false);
         }
         setProjectSrchData('')
-        setLoading(false);
     };
 
     const GetSkuData = async ({ PrefixText }: any) => {
@@ -166,10 +173,11 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.GetSKUList(data);
             setSKU(response.data.table || [])
         } catch (error) {
-            console.log(error)
+            setSKU([]);
+        } finally {
+            setLoading(false);
         }
         setSkuSrchData('')
-        setLoading(false);
     };
 
     const GetFactorydata = async ({ sku_code }: any) => {
@@ -182,9 +190,10 @@ const EPCADetails = () => {
             const response: any = await EpcaDetails.GetFactoryListBySKU(data);
             setFactory(response.data || [])
         } catch (error) {
-            console.log(error)
+            setFactory([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const convertToDate = (dateStr: any) => {
@@ -408,9 +417,9 @@ const EPCADetails = () => {
     //     console.log(ePCADetails)
     // }, [ePCADetails])
 
-    useEffect(() => {
-        projectSrchData.length > 2 && GetApplicableProjectList({ billto_code: ePCADetails?.bill_to, srch_str: projectSrchData })
-    }, [projectSrchData])
+    // useEffect(() => {
+    //     projectSrchData.length > 2 && GetApplicableProjectList({ billto_code: ePCADetails?.bill_to, srch_str: projectSrchData })
+    // }, [projectSrchData])
 
     useEffect(() => {
         skuSrchData.length > 2 && GetSkuData({ PrefixText: skuSrchData })
@@ -544,6 +553,8 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
                                     setePCADetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label }))
+                                    // GetApplicableProjectList({ billto_code: event?.value, srch_str: 'pro' })
+                                    GetApplicableProjectList({ billto_code: event?.value, srch_str: projectSrchData })
                                 }}
                             />
                             {/* {errMsg && errMsg.billto ? <div className="mt-1 text-danger">{errMsg.billto}</div> : ''} */}
@@ -559,7 +570,7 @@ const EPCADetails = () => {
                                 value={{ value: ePCADetails?.projectId, label: ePCADetails?.projectName }}
                                 options={project.map((d: any) => ({ value: d.projectId, label: d.projectName }))}
                                 isDisabled={pageType === 'View'}
-                                onInputChange={(inputValue) => setProjectSrchData(inputValue)}
+                                // onInputChange={(inputValue) => setProjectSrchData(inputValue)}
                                 onChange={(event) => {
                                     setePCADetails((pre: any) => ({ ...pre, projectId: event?.value, projectName: event?.label }))
                                 }}
@@ -609,7 +620,7 @@ const EPCADetails = () => {
                                         <td style={{ textAlign: 'left' }}>{skuDetails.sku_desc}</td>
                                         <td style={{ textAlign: 'center' }}>{skuDetails.sku_uom}</td>
                                         <td style={{ textAlign: 'center' }}>{skuDetails.sku_pack_size}</td>
-                                        <td style={{ textAlign: 'center' }}>{skuDetails.sku_mrp}</td>
+                                        <td style={{ textAlign: 'center' }}>{skuDetails.sku_pca}</td>
                                         <td style={{ textAlign: 'center' }}>
                                             <NumberInput
                                                 style={{ width: '75px' }}
