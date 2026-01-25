@@ -497,9 +497,9 @@ const Dashboard = () => {
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
                 <h5 className="text-lg font-semibold dark:text-white-light">Protecton Dashboard</h5>
                 {/* Performance Window Button */}
-                <Link to="/NewDashboard" className="main-logo flex shrink-0 items-center">
+                {/* <Link to="/NewDashboard" className="main-logo flex shrink-0 items-center">
                     <button className='border-2 border-[#7271ff] text-[#0000ff] px-3 py-2 rounded-lg flex items-center gap-2'>Performance Window <FaArrowRight className='text-xs' /></button>
-                </Link>
+                </Link> */}
             </div>
 
             {/* Show loading state during SSR or when user is not available */}
