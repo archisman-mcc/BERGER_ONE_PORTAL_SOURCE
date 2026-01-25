@@ -67,9 +67,10 @@ const EPCAHoApprovalDetails = () => {
             const response: any = await EpcaList.GetePCAHoApprovalDetails(data1);
             if (response && response.data != null && response.data != undefined) setData(response.data.table.map((t: any) => ({ ...t, currentStatus: 'A' })))
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableDepot = async () => {
@@ -83,9 +84,10 @@ const EPCAHoApprovalDetails = () => {
             const response: any = await Epca.GetApplicableDepotList(data);
             setDepot(response.data);
         } catch (error) {
-            return;
+            setDepot([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableTerritory = async ({ cd }: any) => {
@@ -99,9 +101,10 @@ const EPCAHoApprovalDetails = () => {
             const response: any = await Epca.GetApplicableTerrList(data);
             setApplTerr(response.data)
         } catch (error) {
-            return;
+            setApplTerr([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetDealerList = async (cd: any) => {
@@ -115,9 +118,10 @@ const EPCAHoApprovalDetails = () => {
             const response: any = await EpcaDetails.GetPcaDealersList(data);
             setDealer(response.data)
         } catch (error) {
-            return;
+            setDealer([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableBillto = async (cd: any) => {
@@ -130,9 +134,10 @@ const EPCAHoApprovalDetails = () => {
             const response: any = await EpcaDetails.GetPcaBillToList(data);
             setbillToData(response.data);
         } catch (error) {
-            return;
+            setbillToData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetPcaStatusData = async () => {
@@ -145,9 +150,10 @@ const EPCAHoApprovalDetails = () => {
             setApproveStatus(response.data);
             // setApproveStatus(response.data.filter((item: any) => item.lov_field1_value === cd?.main_status && !item.lov_value.includes('HO')))
         } catch (error) {
-            return;
+            setApproveStatus([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetFactorydata = async (skucode: string) => {
@@ -178,9 +184,11 @@ const EPCAHoApprovalDetails = () => {
             setPcaBesicData(response.data.table);
             setPcaDetailData(response.data.table1);
         } catch (error) {
-            return;
+            setPcaBesicData([]);
+            setPcaDetailData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const BesicDetailTable = ({ data }: any) => {
@@ -333,7 +341,7 @@ const EPCAHoApprovalDetails = () => {
                 size: 5,
             },
             {
-                accessorKey: 'pd_mrp',
+                accessorKey: 'sku_pca',
                 header: 'Declared PCA(Lt/Kg)',
                 size: 10,
             },
@@ -356,7 +364,7 @@ const EPCAHoApprovalDetails = () => {
                                 const notExistData = calculatedGCData.filter((sku: { table: { sku_code: any; }[]; }) => sku.table[0].sku_code !== response.data.table[0].sku_code)
                                 setCalculatedGCData([...notExistData, response.data]);
                             } catch (error) {
-                                console.error(error);
+                                setCalculatedGCData([]);
                             }
                         })();
                         const value = e.target.value;
@@ -507,7 +515,7 @@ const EPCAHoApprovalDetails = () => {
                                 const notExistData = calculatedGCData.filter((sku: { table: { sku_code: any; }[]; }) => sku.table[0].sku_code !== response.data.table[0].sku_code)
                                 setCalculatedGCData([...notExistData, response.data]);
                             } catch (error) {
-                                console.error(error);
+                                setCalculatedGCData([]);
                             }
                         })();
                         handleEditChange(value, row.index, 'factory_code')
@@ -520,6 +528,7 @@ const EPCAHoApprovalDetails = () => {
                             onChange={handleFactoryChange} // Add onChange handler
                             placeholder="Select an option"
                             className="mantine-select"
+                            withinPortal={true}
                         />
                     );
                 },
@@ -578,8 +587,8 @@ const EPCAHoApprovalDetails = () => {
                                 setTable1Data([]);
                             }
                         } catch (error) {
-                            setLoading(false);
-                            console.error(error);
+                            setTableData([]);
+                            setTable1Data([]);
                         }
                     };
 
@@ -656,7 +665,6 @@ const EPCAHoApprovalDetails = () => {
                 accessorKey: 'rate_wav',
                 header: header1,
                 size: 10,
-
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
                     const iconRef = useRef<HTMLDivElement | null>(null);
@@ -714,8 +722,8 @@ const EPCAHoApprovalDetails = () => {
                                 setTable1Data([]);
                             }
                         } catch (error) {
-                            setLoading(false);
-                            console.error(error);
+                            setTableData([]);
+                            setTable1Data([]);
                         }
                     };
 
@@ -801,6 +809,7 @@ const EPCAHoApprovalDetails = () => {
                             onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select status"
                             clearable
+                            withinPortal={true}
                         // className="mantine-select"
                         />
                     );

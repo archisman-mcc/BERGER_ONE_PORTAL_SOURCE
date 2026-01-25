@@ -130,7 +130,9 @@ const EPCAList = () => {
                 ];
                 setDepot(updatedDepotList);
             } catch (error) {
-                return;
+                setDepot([]);
+            } finally {
+                setLoading(false);
             }
         } else {
             localStorage.clear();
@@ -174,7 +176,9 @@ const EPCAList = () => {
                     Userterritory: 0,
                 }));
             } catch (error) {
-                return;
+                setApplTerr([]);
+            } finally {
+                setLoading(false);
             }
         } else {
             localStorage.clear();
@@ -221,7 +225,9 @@ const EPCAList = () => {
                     UsersubStatus: 0,
                 }));
         } catch (error) {
-            return;
+            setApproveStatus([]);
+        } finally {
+            setLoading(false);
         }
         //setLoading(false);
     };
@@ -244,9 +250,10 @@ const EPCAList = () => {
             if (response && response.data != null && response.data != undefined) setData(response.data.table);
             else setData([]);
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
