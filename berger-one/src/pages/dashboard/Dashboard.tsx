@@ -14,10 +14,11 @@ import DsrTodReportPopup from './Components/DsrTodReportPopup';
 import { Link } from 'react-router-dom';
 import { FaArrowRight } from "react-icons/fa6";
 const Dashboard = () => {
+    const [detailsAPIcall, setdetailsAPIcall] = React.useState(false);
     const [isDsrTodReportPopupOpen, setIsDsrTodReportPopupOpen] = useState(false);
     const [isDsrYTDReportPopupOpen, setIsDsrYTDReportPopupOpen] = useState(false);
     const [isDsrMTDReportPopupOpen, setIsDsrMTDReportPopupOpen] = useState(false);
-    const [popupOpenData, setPopupOpenData] = useState({ open: false, popupHeader: '' });
+    const [popupOpenData, setPopupOpenData] = useState({ open: false, popupHeader: '', type: '' });
     const [isMWALoading, setIsMWALoading] = useState(false);
     const [isOverduesLoading, setIsOverduesLoading] = useState(false);
     const [selectedMWAOption, setSelectedMWAOption] = useState('self');
@@ -122,6 +123,7 @@ const Dashboard = () => {
         protecton_regionList: [],
         depotList: [],
         terrList: [],
+        applicableDealerList: [],
         assignStatusList: [],
         workStatusList: [],
         // for PROLINKS popup
@@ -136,8 +138,11 @@ const Dashboard = () => {
         key_lead_stage_List: [],
         key_painting_start_time_List: [],
         // for SELF popup
+        referralLead: [{ value: 'Y', label: "YES" }, { value: 'N', label: 'NO' }], // Referral Lead DDL
         refer_from_List: [], // Refer From DDL
-        contractor_type_List: [],// Contractor Type DDL
+        contractor_type_List: [], // Contractor Type DDL
+        key_account_type_List: [], // Key Account Type DDL
+        key_account_List: [], // Key Account DDL
         potential_area_uom_List: [], // Scope for paints area uom DDL
         business_type_List: [], // Business Type DDL
         product_category_List: [], // Product Category
@@ -355,6 +360,9 @@ const Dashboard = () => {
             else if (payload.lov_type === "PT_CONTRACTOR_TYPE") {
                 commonLovDetailsData.current["contractor_type_List"] = response.data.table || [];
             }
+            else if (payload.lov_type === "PT_KEY_ACCOUNT_TYPE") {
+                commonLovDetailsData.current["key_account_type_List"] = response.data.table ? [{lov_code: '',lov_value: 'None'}, ...response.data.table] : [];
+            }
             else if (payload.lov_type === "PT_AREA_MOU") {
                 commonLovDetailsData.current["potential_area_uom_List"] = response.data.table || [];
             }
@@ -444,10 +452,14 @@ const Dashboard = () => {
     };
 
     // for lead popup //
-    const handleDropdownSelect = (action: string) => {
+    const handleDropdownSelect = (action: string, type: string) => {
         setShowDropdown(false);
-        setPopupOpenData({ open: true, popupHeader: action })
+        setPopupOpenData({ open: true, popupHeader: action, type: type })
     };
+    // const handleDropdownSelect = (action: string) => {
+    //     setShowDropdown(false);
+    //     setPopupOpenData({ open: true, popupHeader: action })
+    // };
     const handleSearch = () => { }
 
     const closeModal = () => {
@@ -485,9 +497,9 @@ const Dashboard = () => {
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-2">
                 <h5 className="text-lg font-semibold dark:text-white-light">Protecton Dashboard</h5>
                 {/* Performance Window Button */}
-                <Link to="/NewDashboard" className="main-logo flex shrink-0 items-center">
+                {/* <Link to="/NewDashboard" className="main-logo flex shrink-0 items-center">
                     <button className='border-2 border-[#7271ff] text-[#0000ff] px-3 py-2 rounded-lg flex items-center gap-2'>Performance Window <FaArrowRight className='text-xs' /></button>
-                </Link>
+                </Link> */}
             </div>
 
             {/* Show loading state during SSR or when user is not available */}
@@ -936,7 +948,7 @@ const Dashboard = () => {
                                 <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
                                     {ddlData?.verticalData.length &&
                                         ddlData?.verticalData.map((vd: any, indx: any) =>
-                                            <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name)}>{vd?.bm_name}</button>
+                                            <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name, "NEW")}>{vd?.bm_name}</button>
                                         )
                                     }
                                 </div>
@@ -1060,7 +1072,7 @@ const Dashboard = () => {
 
             {/* // for lead popup // */}
             {popupOpenData?.open &&
-                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={leadData} setData={setleadData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcall={detailsAPIcall} />
             }
 
             {isDsrTodReportPopupOpen ? (

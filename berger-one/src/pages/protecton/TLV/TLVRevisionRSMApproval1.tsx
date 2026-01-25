@@ -527,9 +527,12 @@ const TLVRevisionRSMApproval1 = () => {
 
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData();
         filterData?.mainStatus && filterData?.aprvStatus && GetTlcRsmApprovalListData();
     }, []);
+    
+    useEffect(() => {
+        filterData?.mainStatus && GetPcaStatusData();
+    }, [filterData?.mainStatus]);
 
     return (
         <>

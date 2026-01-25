@@ -289,9 +289,10 @@ const EPCADepotApprovalDetails = () => {
             if (currentCustomerDetails?.depot_code != '' && currentCustomerDetails?.depot_code != null)
                 setSelectedDropdown((prev) => ({ ...prev, Appldepot: findSelectedTypeValue(updatedDepotList, 'depot_code', currentCustomerDetails?.depot_code) }));
         } catch (error) {
-            return;
+            setDepot([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetDealerList = async (depotcode: any, terrcode: any) => {
@@ -319,9 +320,10 @@ const EPCADepotApprovalDetails = () => {
                     setSelectedDropdown((prev) => ({ ...prev, Dealer: findSelectedTypeValue(updatedDealertList, 'dealer_code', currentCustomerDetails?.dlr_dealer_code) }));
             } else setDealer([]);
         } catch (error) {
-            return;
+            setDealer([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableTerritory = async (depotCode: any) => {
@@ -348,9 +350,10 @@ const EPCADepotApprovalDetails = () => {
                     setSelectedDropdown((prev) => ({ ...prev, Applterritory: findSelectedTypeValue(updatedTerrList, 'terr_code', currentCustomerDetails?.dlr_terr_code) }));
             } else setApplTerr([]);
         } catch (error) {
-            return;
+            setApplTerr([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableProject = async (depotCode: any, terrcode: any, srch: string) => {
@@ -368,9 +371,11 @@ const EPCADepotApprovalDetails = () => {
             } 
             // else setProjectData([]);
         } catch (error) {
+            // setApplTerr([]);
             return;
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetSkuData = async (srch: any) => {
@@ -421,9 +426,10 @@ const EPCADepotApprovalDetails = () => {
                 setbillToData([]);
             }
         } catch (error) {
-            return;
+            setbillToData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     ////---factory dynamic---////
@@ -464,7 +470,10 @@ const EPCADepotApprovalDetails = () => {
                 return [];
             }
         } catch (error) {
+            // setFactory([]);
             return [];
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -507,9 +516,10 @@ const EPCADepotApprovalDetails = () => {
                 }));
             }
         } catch (error) {
-            return;
+            setApproveStatus([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetePCADetailsData = async () => {
@@ -529,9 +539,10 @@ const EPCADepotApprovalDetails = () => {
             if (response && response.data != null && response.data != undefined) setData(response.data.table.map((t: any) => ({ ...t, currentStatus: "A" })));
             else setData([]);
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const transformSKUResults = (results: any[]) => {
@@ -611,9 +622,11 @@ const EPCADepotApprovalDetails = () => {
             setPcaBesicData(response.data.table);
             setPcaDetailData(response.data.table1);
         } catch (error) {
-            return;
+            setPcaBesicData([]);
+            setPcaDetailData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const BesicDetailTable = ({ data }: any) => {
@@ -698,7 +711,7 @@ const EPCADepotApprovalDetails = () => {
                 size: 50,
             },
             {
-                accessorKey: 'pd_mrp',
+                accessorKey: 'sku_pca',
                 header: 'Declared PCA(Lt/Kg)',
                 size: 50,
             },
@@ -816,6 +829,7 @@ const EPCADepotApprovalDetails = () => {
                             value={selectedFactory}
                             onChange={handleFactoryChange} // Add onChange handler
                             placeholder="Select"
+                            withinPortal={true}
                             // className="tableInput"
                         />
                     );
@@ -834,8 +848,9 @@ const EPCADepotApprovalDetails = () => {
                                 { label: 'Reject', value: 'R' },
                             ]}
                             value={row.original?.currentStatus}
-                            onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
+                            onChange={(value: any) => handleEditChange(value, row.index, 'currentStatus')}
                             placeholder="Select"
+                            withinPortal={true}
                             clearable
                             // className="mantine-select tableInput"
                             // className="mantine-select tableInput"

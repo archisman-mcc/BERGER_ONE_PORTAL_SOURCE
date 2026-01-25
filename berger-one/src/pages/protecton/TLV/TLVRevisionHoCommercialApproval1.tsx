@@ -86,8 +86,6 @@ const TLVRevisionHoCommercialApproval1 = () => {
     const [filterData, setFilterData]: any = useState({ depotCode: '', terrCode: '', billToCode: '', dealerCode: '', dealerName: '', mainStatus: 'PENDING', aprvStatus: "PENDING_HO_COMMERCIAL" });
     const [tlvLogData, setTlvLogData] = useState<TlvLogInit[]>([TlvLogDto]);
     const [showTlvModal, setShowTlvModal] = useState(false);
-    const [dropdownOptions, setDropdownOptions] = useState<any>([]);
-    const [selectedValue, setSelectedValue] = useState<any>(null);
 
     const user = UseAuthStore((state: any) => state.userDetails);
 
@@ -207,8 +205,9 @@ const TLVRevisionHoCommercialApproval1 = () => {
         setDgData((prevData: any[]) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
     };
 
-    async function TlvApprove(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; approved_type?: any; }) {
+    async function TlvApprove(data: { depot_regn?: string; depot_name?: string; dlr_terr_code?: string; dlr_dealer_code?: string; dlr_dealer_name?: string; current_tlv?: number; td_proposed_tlv: any; credit_days?: number; td_proposed_cr_days: any; dropdown_field: any; status_value?: string; td_auto_id?: number; td_remarks: any; auto_id: any; file_doc?: string; approved_type?: any; }) {
         setLoading(true);
+        console.log(data)
         commonAlert('Are you sure you want to approve this TLV?', '', 'warning').then(async (result: any) => {
             if (result.value) {
                 const param: any = {
@@ -296,6 +295,84 @@ const TLVRevisionHoCommercialApproval1 = () => {
         setLoading(false);
     };
 
+    const CreditTermCell = ({ row }: any) => {
+        const [options, setOptions] = useState<any[]>([]);
+        const [selectedOption, setSelectedOption] = useState<any>(null);
+        const [isFetching, setIsFetching] = useState<boolean>(false);
+
+        useEffect(() => {
+            let isMounted = true;
+            const fetchDropdownOptions = async () => {
+                const depotCode = row.original.depot_code || filterData?.depotCode;
+                const billToCode = row.original.dlr_bill_to;
+                if (depotCode && billToCode) {
+                    setIsFetching(true);
+                    const data: any = {
+                        DepotCode: depotCode,
+                        BillToCode: billToCode,
+                    };
+                    try {
+                        const response: any = await TlvHoCom.TlvGetTermDetails(data);
+                        const list =
+                            response?.data?.table != null
+                                ? [
+                                      { label: 'Select...', value: '' },
+                                      ...response.data.table.map((item: any) => ({
+                                          label: item.tpt_description,
+                                          value: item.tpt_term_id,
+                                          tpt_description: item.tpt_description,
+                                          tpt_term_id: item.tpt_term_id,
+                                      })),
+                                  ]
+                                : [];
+                        if (!isMounted) return;
+                        setOptions(list);
+                        const preselected = list.find((opt) => opt.value === row.original.td_term_id) || null;
+                        setSelectedOption(preselected);
+                    } catch (error) {
+                        if (!isMounted) return;
+                        setOptions([]);
+                        setSelectedOption(null);
+                    } finally {
+                        setIsFetching(false);
+                    }
+                } else {
+                    setOptions([]);
+                    setSelectedOption(null);
+                }
+            };
+
+            fetchDropdownOptions();
+            return () => {
+                isMounted = false;
+            };
+        }, [row.original.depot_code, filterData?.depotCode, row.original.dlr_bill_to, row.original.td_term_id]);
+
+        if (!(row.original.td_proposed_cr_days > 0)) {
+            return <span className="text-gray-500">N/A</span>;
+        }
+
+        return (
+            <Select
+                className="text-sm"
+                isSearchable={true}
+                value={selectedOption}
+                options={options}
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
+                onChange={(opt: any) => {
+                    setSelectedOption(opt);
+                    setDgData((prev: any[]) =>
+                        prev.map((r, i) =>
+                            i === row.index ? { ...r, td_term_id: opt?.value ?? '', td_term_desc: opt?.label ?? '' } : r
+                        )
+                    );
+                }}
+            />
+        );
+    };
+
     const columns = useMemo<MRT_ColumnDef<TLVType>[]>(
         () => [
             {
@@ -306,7 +383,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
             {
                 accessorKey: 'depot_name',
                 header: 'Depot',
-                size: 160,
+                size: 130,
             },
             {
                 accessorKey: 'dlr_terr_code',
@@ -360,7 +437,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
             {
                 accessorKey: 'td_proposed_cr_days',
                 header: 'Proposed Credit Days',
-                size: 140,
+                size: 120,
                 Cell: ({ row }) =>
                     row.original.td_proposed_cr_days !== null && row.original.td_proposed_cr_days !== undefined ? (
                         <input className="tableInput" type="text" value={row.original.td_proposed_cr_days} onChange={(e) => handleEditChange(e, row.index, 'td_proposed_cr_days')} />
@@ -371,73 +448,20 @@ const TLVRevisionHoCommercialApproval1 = () => {
             {
                 accessorKey: 'dropdown_field',
                 header: 'Credit Term',
-                size: 140,
+                size: 130,
                 Cell: ({ row }: any) => {
-                    useEffect(() => {
-                        //setLoading(true);
-                        if (row.original.depot_code && row.original.dlr_bill_to) {
-                            const fetchDropdownOptions = async () => {
-                                const data: any = {
-                                    DepotCode: row.original.depot_code,
-                                    BillToCode: row.original.dlr_bill_to,
-                                }; // Replace with actual fields needed for the API call
-                                try {
-
-                                    const response: any = await TlvHoCom.TlvGetTermDetails(data);
-                                    if (response.data.table != null && response.data.table != undefined) {
-                                        const updatedList = [
-                                            { label: 'Select...', value: '' },
-                                            ...response.data.table.map((item: any) => ({
-                                                label: item.tpt_description,
-                                                value: item.tpt_term_id,
-                                                tpt_description: item.tpt_description,
-                                                tpt_term_id: item.tpt_term_id,
-                                            })),
-                                        ];
-                                        setDropdownOptions(updatedList);
-                                        const selectedOption = updatedList.find((option) => option.value === row.original.td_term_id);
-                                        setSelectedValue(selectedOption ? selectedOption.value : null);
-                                    } else {
-                                        setDropdownOptions([]);
-                                    }
-                                } catch (error) { }
-                                setLoading(false);
-                            };
-
-                            fetchDropdownOptions();
-                        }
-                    }, [row.original.depot_code, row.original.dlr_bill_to]);
-
-                    return row.original.td_proposed_cr_days > 0 ? (
-                        // <MantineSelect
-                        //     data={dropdownOptions}
-                        //     value={selectedValue}
-                        //     onChange={(value) => setSelectedValue(value)}
-                        //     placeholder="Select an option"
-                        //     clearable
-                        //     nothingFound="No options"
-                        // />
-                        <Select
-                            className="text-sm"
-                            isSearchable={true}
-                            value={selectedValue}
-                            options={dropdownOptions}
-                            onChange={(value) => setSelectedValue(value)}
-                        />
-                    ) : (
-                        <span className="text-gray-500">N/A</span>
-                    );
+                    return <CreditTermCell row={row} />;
                 },
             },
             {
                 accessorKey: 'status_value',
                 header: 'Status',
-                size: 70,
+                size: 90,
             },
             {
                 accessorKey: 'td_remarks',
                 header: 'Remarks',
-                size: 140,
+                size: 100,
                 Cell: ({ row }) => <input className="tableInput" type="text" value={row.original.td_remarks} onChange={(e) => handleEditChange(e, row.index, 'td_remarks')} />,
             },
             {
@@ -485,7 +509,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                             <Group className="tableGroupBtn">
                                 <Tooltip label="View" position="top" withArrow>
                                     <IconEye
-                                        size={20}
+                                        size={17}
                                         className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
                                         onClick={() => {
                                             GetTlvRevisionLog(row.original.auto_id);
@@ -496,7 +520,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                                 {shouldShowButton && (
                                     <Tooltip label="Approve" position="top" withArrow>
                                         <IconCheck
-                                            size={20}
+                                            size={17}
                                             className="text-green-600 cursor-pointer hover:text-green-800 transition-colors"
                                             onClick={() => TlvApprove(row.original)}
                                         />
@@ -505,7 +529,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                                 {shouldShowButton && (
                                     <Tooltip label="Reject" position="top" withArrow>
                                         <IconX
-                                            size={20}
+                                            size={17}
                                             className="text-red-600 cursor-pointer hover:text-red-800 transition-colors"
                                             onClick={() => TlvReject(row.original)}
                                         />
@@ -515,7 +539,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                                     <Tooltip label="Download" position="top" withArrow>
                                         <a href={downloadLink} target="_blank" rel="noopener noreferrer">
                                             <IconDownload
-                                                size={20}
+                                                size={17}
                                                 className="text-yellow-600 cursor-pointer hover:text-yellow-800 transition-colors"
                                             />
                                         </a>
@@ -524,7 +548,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                                 {shouldShowButton && (
                                     <Tooltip label="Revert" position="top" withArrow>
                                         <IconRotate
-                                            size={20}
+                                            size={17}
                                             className="text-gray-600 cursor-pointer hover:text-gray-800 transition-colors"
                                             onClick={() => TlvRevert(row.original)}
                                         />
@@ -545,7 +569,7 @@ const TLVRevisionHoCommercialApproval1 = () => {
                 },
             },
         ],
-        [dropdownOptions, selectedValue]
+        []
     );
 
     const table = useMantineReactTable<TLVType>({
@@ -629,9 +653,12 @@ const TLVRevisionHoCommercialApproval1 = () => {
 
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData();
         filterData?.mainStatus && filterData?.aprvStatus && GetTlcHoCommercialApprovalListData();
     }, []);
+
+    useEffect(() => {
+        filterData?.mainStatus && GetPcaStatusData();
+    }, [filterData?.mainStatus]);
 
     return (
         <>

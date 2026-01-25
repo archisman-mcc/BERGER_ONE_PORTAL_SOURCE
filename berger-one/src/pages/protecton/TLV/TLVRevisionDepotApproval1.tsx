@@ -497,9 +497,12 @@ const TLVRevisionDepotApproval1 = () => {
 
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData();
         filterData?.mainStatus && filterData?.aprvStatus && GetTlvDepotApprovalListData();
     }, []);
+
+    useEffect(() => {
+        filterData?.mainStatus && GetPcaStatusData();
+    }, [filterData?.mainStatus]);
 
     return (
         <>

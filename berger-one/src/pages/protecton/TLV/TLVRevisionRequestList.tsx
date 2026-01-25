@@ -93,6 +93,7 @@ const TLVRevisionRequestList = () => {
         if (flag == 'USER_STATUS' && e && e.target.innerText && mainStatus.length > 0) {
             let getIndex = findSelectedTypeValue(mainStatus, 'label', e.target.innerText);
             setSelectedDropdown((prev) => ({ ...prev, Userstatus: getIndex }));
+            GetPcaStatusData(mainStatus[getIndex].value);
         }
 
         if (flag == 'USER_SUB_STATUS' && e && e.target.innerText && approveStatus.length > 0) {
@@ -164,17 +165,26 @@ const TLVRevisionRequestList = () => {
         setLoading(false);
     };
 
-    const GetPcaStatusData = async (selectedstatus: string) => {
-        setLoading(true);
+    const GetPcaStatusData = async (selectedStatus: any) => {
+        //setLoading(true);
         const data: any = {
             app_id: '15',
         };
         try {
             const response: any = await Epca.GetPcaStatusList(data);
+            const dt = response.data.filter((item: any) => item.lov_field1_value === selectedStatus);
+            let filteredData = dt;
+            if (selectedStatus.toUpperCase() === 'REJECTED') {
+                const selectedTable = dt.filter((item: any) => !item.lov_value.includes('DEPOT'));
+                if (selectedTable.length > 0) filteredData = selectedTable;
+            } else {
+                const selectedTable = dt;
+                filteredData = selectedTable.length > 0 ? selectedTable : dt;
+            }
 
-            const updatedTerrList = [
-                { label: 'Select...', value: '' },
-                ...response.data.map((item: any) => ({
+            const updatedStatusList = [
+                { label: 'Select...', value: '', lov_value: '', lov_code: '' },
+                ...filteredData.map((item: any) => ({
                     label: item.lov_value,
                     value: item.lov_code,
                     lov_value: item.lov_value,
@@ -182,22 +192,20 @@ const TLVRevisionRequestList = () => {
                 })),
             ];
 
-            //labelValueConverter(newStatusList, 'lov_value', 'lov_code');
+            setApproveStatus(updatedStatusList);
 
-            setApproveStatus(updatedTerrList);
-
-            const currentUsersubStatusExists = updatedTerrList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
-
-            if (!currentUsersubStatusExists) {
+            const currentUsersubStatusExists = updatedStatusList.some((item) => item.lov_code === selectedDropdown.UsersubStatus);
+            if (!currentUsersubStatusExists)
                 setSelectedDropdown((prev) => ({
                     ...prev,
-                    UsersubStatus: 1, // or set it to any default value you prefer
+                    UsersubStatus: 0,
                 }));
-            }
         } catch (error) {
-            return;
+            setApproveStatus([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
+        //setLoading(false);
     };
 
     // list api 
@@ -236,7 +244,7 @@ const TLVRevisionRequestList = () => {
         GetPcaStatusData('PENDING').then(() => {
             setSelectedDropdown((prev) => ({
                 ...prev,
-                UsersubStatus: 1,
+                UsersubStatus: -1,
             }));
             GetTlvRevisionListData();
         });

@@ -529,9 +529,12 @@ const TLVRevisionHoApproval1 = () => {
 
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData();
         filterData?.mainStatus && filterData?.aprvStatus && GetTlcHoApprovalListData();
     }, []);
+
+    useEffect(() => {
+        filterData?.mainStatus && GetPcaStatusData();
+    }, [filterData?.mainStatus]);
 
     return (
         <>

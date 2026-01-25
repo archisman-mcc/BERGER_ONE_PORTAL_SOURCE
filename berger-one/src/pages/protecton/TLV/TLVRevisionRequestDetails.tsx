@@ -316,7 +316,8 @@ const TLVRevisionRequestDetails = () => {
             depotCode: detailsData?.depot?.value || '',
             dealerCode: detailsData?.dealer?.value || '',
             billtoCode: detailsData?.billTo?.value || '',
-            fullName: detailsData?.fullName || '',
+            fullName: detailsData?.full_name || '',
+            // holderName: detailsData?.holderName || '',
             aadharNo: detailsData?.aadhar_no || '',
             aadharDoc: aadharBase64JPEG,
             panNo: detailsData?.pan_no || '',
@@ -360,6 +361,7 @@ const TLVRevisionRequestDetails = () => {
             outputMsg: '',
             file_doc: tlvBase64JPEG
         }];
+        // console.log('data in showSubmitAlert:', entity)
         showSubmitAlert(entity)
     }
 
@@ -644,7 +646,7 @@ const TLVRevisionRequestDetails = () => {
                                                     />
                                                 </div>
 
-                                                <div>
+                                                {/* <div>
                                                     <label className="block text-sm font-semibold mb-1">Name as in PAN:</label>
                                                     <input
                                                         type="text"
@@ -657,7 +659,7 @@ const TLVRevisionRequestDetails = () => {
                                                             ...pre, holderName: e.target.value
                                                         }))}
                                                     />
-                                                </div>
+                                                </div> */}
 
                                                 <div>
                                                     <label className="block text-sm font-semibold mb-1">Upload PAN:</label>

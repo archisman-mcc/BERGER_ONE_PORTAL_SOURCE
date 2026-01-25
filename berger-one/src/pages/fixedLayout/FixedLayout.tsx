@@ -127,7 +127,7 @@ const FixedLayout = () => {
         const storedObjectString = localStorage.getItem('auth');
         if (storedObjectString) {
             const storedObject = JSON.parse(storedObjectString);
-            if (storedObject?.state?.isLoggedIn === false || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
+            if (storedObject?.state?.isLoggedIn === false || !storedObject?.state?.userDetails?.userApplicableMenu || storedObject?.state?.userDetails?.userApplicableMenu.length === 0) {
                 console.log(storedObject);
             } else {
                 setUserApplicableMenu(menuRec(storedObject?.state?.userDetails?.userApplicableMenu));

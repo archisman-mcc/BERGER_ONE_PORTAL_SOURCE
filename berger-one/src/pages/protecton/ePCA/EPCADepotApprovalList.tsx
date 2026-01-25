@@ -48,9 +48,10 @@ const EPCADepotApprovalList = () => {
             const response: any = await Epca.GetApplicableDepotList(data);
             setDepot(response.data);
         } catch (error) {
-            return;
+            setDepot([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetApplicableTerritory = async (cd: any) => {
@@ -64,9 +65,10 @@ const EPCADepotApprovalList = () => {
             const response: any = await Epca.GetApplicableTerrList(data);
             setApplTerr(response.data)
         } catch (error) {
-            return;
+            setApplTerr([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetePCAListData = async () => {
@@ -89,9 +91,10 @@ const EPCADepotApprovalList = () => {
             if (response && response.data != null && response.data != undefined) setData(response.data.table);
             else setData([]);
         } catch (error) {
-            return;
+            setData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const GetPcaStatusData = async () => {
@@ -105,9 +108,10 @@ const EPCADepotApprovalList = () => {
             // setApproveStatus(response.data.filter((item: any) => item.lov_field1_value === cd))
             // setApproveStatus(response.data.filter((item: any) => item.lov_field1_value === cd && !item.lov_value.includes('HO')))
         } catch (error) {
-            return;
+            setApproveStatus([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     type PcaType = {

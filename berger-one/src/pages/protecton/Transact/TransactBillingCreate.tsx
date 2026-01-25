@@ -175,7 +175,7 @@ const TransactBillingCreate = () => {
       const response: any = await Epca.GetUserApplicableDealer(payload);
       setData((prevData: any) => ({
         ...prevData,
-        custList: response.data.table || [],
+        custList: response?.data?.table || [],
         selectedTerr: terr,
         selectedCust: "",
         billToList: [],
@@ -199,6 +199,7 @@ const TransactBillingCreate = () => {
     const payload: any = {
       depot_code: data.selectedDepot,
       dealer_code: cust,
+      terr_code: data.selectedTerr,
       app_id: "15",
       pd_appl_yn: pd_appl_yn,
     };
@@ -206,7 +207,7 @@ const TransactBillingCreate = () => {
       const response: any = await PotentialLead.PCADtlsBillto(payload);
       setData((prevData: any) => ({
         ...prevData,
-        billToList: response.data.table || [],
+        billToList: response?.data?.table || [],
         selectedCust: cust,
         pd_appl_yn: pd_appl_yn,
         selectedBillTo: "",
@@ -235,7 +236,7 @@ const TransactBillingCreate = () => {
       const response: any = await Epca.GetProjectList(payload);
       setData((prevData: any) => ({
         ...prevData,
-        projectList: response.data.table || [],
+        projectList: response?.data?.table || [],
         selectedProject: 0,
       }));
     } catch (error) {
@@ -266,7 +267,7 @@ const TransactBillingCreate = () => {
       const billToValue = selectedBillToItem.bill_to;
       setData((prevData: any) => ({
         ...prevData,
-        TlvBal: response.data.table[0] || [],
+        TlvBal: response?.data?.table?.[0] || [],
         project_appl_yn: selectedBillToItem.project_appl_yn,
         selectedBillTo: selectedBillToItem.bill_to,
         projectList: [],
@@ -306,7 +307,7 @@ const TransactBillingCreate = () => {
 
     try {
       const response: any = await PotentialLead.GetPCASkuBillingDetails(payload);
-      setPCASkuBillingDetails(response.data.table[0] || []);
+      setPCASkuBillingDetails(response?.data?.table?.[0] || []);
       setBillingSkuPayload((pre: any) => ({
         ...pre, bpd_approved_rate: response.data.table[0].min_rate, bpd_stock: response.data.table[0].stock, pack_size: asyncSelectBoxData.selectedObj[0].sku_pack_size,
         bpd_declared_rate: response.data.table[0].min_rate, bpd_sku_id: response.data.table[0].sku, sku_label: asyncSelectBoxData.selectedOption.label,
@@ -623,7 +624,7 @@ const TransactBillingCreate = () => {
                   </label>
                   <Select
                     className="text-sm"
-                    isSearchable={true}
+                    // isSearchable={true}
                     isDisabled={data.selectedProject != 0}
                     options={[
                       ...data.projectList.map((d: any) => ({

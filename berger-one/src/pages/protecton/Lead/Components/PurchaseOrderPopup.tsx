@@ -41,7 +41,9 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
     }
 
     const BillToListAPICALL = async () => {
+        console.log('rowData in BillToListAPICALL:', rowData);
         const payload = {
+            terr_code: rowData?.terr_code,
             depot_code: rowData?.depot_code,
             dealer_code: rowData?.dealer_code,
             pd_appl_yn: ""

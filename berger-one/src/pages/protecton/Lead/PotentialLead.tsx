@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import { useParams, useLocation } from "react-router-dom";
 import Select from 'react-select';
-import { GetBusinessLineWiseLeadList, GetDealerSearch, GetPotentialTrackingActivityDtls, GetPotentialTrackingDtls, GetPotentialTrackingList, GetPotentialTrackingOrderDtls, GetVerticalWisBusinessLine } from '../../../services/api/protectonLead/PotentialLead';
-import { CommonLovDetails, GetProtectonApplicableDepot, GetProtectonApplicableTerr, GetProtectonRegion, GetStateList } from '../../../services/api/users/UserProfile';
 import { UseAuthStore } from '../../../services/store/AuthStore';
 import { CiSearch } from "react-icons/ci";
 import { FaPlus } from "react-icons/fa6";
+import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
+import { GetBusinessLineWiseLeadList, GetDealerSearch, GetKeyAccountList, GetPotentialTrackingActivityDtls, GetPotentialTrackingDtls, GetPotentialTrackingList, GetPotentialTrackingOrderDtls, GetVerticalWisBusinessLine } from '../../../services/api/protectonLead/PotentialLead';
+import { CommonLovDetails, GetProtectonApplicableDepot, GetProtectonApplicableTerr, GetProtectonRegion, GetStateList } from '../../../services/api/users/UserProfile';
 // import { IoEyeSharp } from 'react-icons/io5';
 import CustomPopupComponent from './Components/customPopupComponent';
-import { MantineReactTable, useMantineReactTable, type MRT_ColumnDef } from 'mantine-react-table';
 import ActivityLogPopup from './Components/ActivityLogPopup';
 import PurchaseOrderPopup from './Components/PurchaseOrderPopup';
 import { GetUserApplicableDealer } from '../../../services/api/protectonEpca/EpcaList';
@@ -17,9 +18,12 @@ import { GetUserApplicableDealer } from '../../../services/api/protectonEpca/Epc
 
 const PotentialLead = () => {
     const user = UseAuthStore((state: any) => state.userDetails);
+    const location = useLocation();
+
+    const [pathName, setPathName] = React.useState('');
 
     const [loading, setLoading] = React.useState(false);
-    const [detailsAPIcall, setdetailsAPIcall] = React.useState(false);
+    const [detailsAPIcallWithValueOrderOwn, setDetailsAPIcallWithValueOrderOwn] = React.useState(false);
     const [potentialLeadDataList, setPotentialLeadDataList] = React.useState([]);
     const [showDropdown, setShowDropdown] = React.useState(false);
     const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '', type: '' });
@@ -37,6 +41,8 @@ const PotentialLead = () => {
         selectedRegionList: '',
         selectedApplicableDepotList: '',
         selectedStateList: '',
+        selectedAccountTypeList: '',
+        selectedAccountList: '',
         selectedPaint_admixture: '',
         selectedAc_type: '',
         selectedGovt_pvt: '',
@@ -94,7 +100,7 @@ const PotentialLead = () => {
         ptm_product_category: '', // Product Category
         potentialTrackingcontacts: [], // Referral Source Details
         potentialTrackingDocs: [], // Upload Documents
-
+        potentialSiteImages: [], // Site Images
     }
     const [data, setData] = React.useState<any>({ ...dataObj });
     const [filter_Data, setFilter_Data] = React.useState<any>({
@@ -116,6 +122,55 @@ const PotentialLead = () => {
         assignStatusList: [],
         workStatusList: [],
         // for PROLINKS popup
+        accountTypeList: [
+            {
+                "lov_code": "DEALER",
+                "lov_value": "Dealer",
+                "lov_shrt_desc": "Dealer",
+                "lov_value_seq": 100,
+                "active": "Y"
+            },
+            {
+                "lov_code": "SITE",
+                "lov_value": "Site",
+                "lov_shrt_desc": "Site",
+                "lov_value_seq": 200,
+                "active": "Y"
+            },
+            {
+                "lov_code": "CONTRACTOR",
+                "lov_value": "Contractor",
+                "lov_shrt_desc": "Contractor",
+                "lov_value_seq": 300,
+                "active": "Y"
+            }
+        ],
+        accountList: [
+            {
+                "account_id": 4,
+                "account_type": "SITE",
+                "account_name": "Site Account Type 01",
+                "contact_name": null,
+                "contact_no": null,
+                "business_line": "PROLINKS"
+            },
+            {
+                "account_id": 5,
+                "account_type": "SITE",
+                "account_name": "Site Account Type 02",
+                "contact_name": null,
+                "contact_no": null,
+                "business_line": "PROLINKS"
+            },
+            {
+                "account_id": 6,
+                "account_type": "SITE",
+                "account_name": "Site Account Type 03",
+                "contact_name": null,
+                "contact_no": null,
+                "business_line": "PROLINKS"
+            }
+        ],
         paint_admixture_List: [],
         ac_type_List: [],
         govt_pvt_List: [],
@@ -140,8 +195,8 @@ const PotentialLead = () => {
         doc_type_List: [], // Upload Documents doc_type
     });
 
-    const VerticalWisBusinessLineAPICall = async () => {
-        // setLoading(true);
+    // for Potential Lead
+    const VerticalWisBusinessLine_PotentialLead_APICall = async () => {
         const data: any = {
             app_id: '15'
         };
@@ -155,7 +210,14 @@ const PotentialLead = () => {
         } catch (error) {
             return;
         }
-        // setLoading(false);
+    }
+
+    // for Bergerone Lead
+    const VerticalWisBusinessLine_BergeroneLead_APICall = () => {
+        setDdlData((prevData: any) => ({
+            ...prevData,
+            verticalData: [{ bm_id: 1, bm_name: "PROLINKS" }],
+        }));
     }
 
     const GetProtectonRegionAPICALL = async () => {
@@ -271,7 +333,7 @@ const PotentialLead = () => {
                 commonLovDetailsData.current["contractor_type_List"] = response.data.table || [];
             }
             else if (payload.lov_type === "PT_KEY_ACCOUNT_TYPE") {
-                commonLovDetailsData.current["key_account_type_List"] = response.data.table ? [{lov_code: '',lov_value: 'None'}, ...response.data.table] : [];
+                commonLovDetailsData.current["key_account_type_List"] = response.data.table ? [{ lov_code: '', lov_value: 'None' }, ...response.data.table] : [];
             }
             else if (payload.lov_type === "PT_AREA_MOU") {
                 commonLovDetailsData.current["potential_area_uom_List"] = response.data.table || [];
@@ -300,7 +362,6 @@ const PotentialLead = () => {
     var rowData: any = useRef(null);
 
     const selectedLeadDetails1 = async () => {
-        setdetailsAPIcall(true);
         // setLoading(true);
         const payload: any = {
             ptm_id: rowData?.current.ptm_id
@@ -416,12 +477,32 @@ const PotentialLead = () => {
                     }
                 }
 
+                var ptm_key_account_id: any = '';
+                if (response?.data?.table[0]?.ptm_key_account_type) {
+                    try {
+                        const subRes: any = await GetKeyAccountList({ business_line: "PROTECTON", key_account_type: response?.data?.table[0]?.ptm_key_account_type });
+                        if (subRes.data && response?.data?.table[0]?.ptm_key_account_id) {
+                            ptm_key_account_id = { value: subRes.data.table.find((item: any) => item.key_account_id === response?.data?.table[0]?.ptm_key_account_id)?.key_account_id, label: subRes.data.table.find((item: any) => item.key_account_id === response?.data?.table[0]?.ptm_key_account_id)?.key_account_name }
+                        }
+                        // setDdlData({ ...ddlData, key_account_List: [...subRes.data.table] });
+                        setDdlData((prevData: any) => ({
+                            ...prevData,
+                            key_account_List: subRes.data.table || []
+                        }));
+                    } catch (error) {
+                        return;
+                    }
+                }
+
                 // console.log(commonLovDetailsData.current.product_category_List, response?.data?.table[0]?.ptm_product_category)
                 const ptm_product_category = commonLovDetailsData.current.product_category_List.length > 0 && response?.data?.table[0]?.ptm_product_category ? commonLovDetailsData.current?.product_category_List.filter((item: any) => response?.data?.table[0]?.ptm_product_category.split(",").includes(item?.lov_code)).map((item: any) => ({
                     value: item.lov_code,
                     label: item.lov_value
                 })) : [];
                 // console.log("render")
+
+                setDetailsAPIcallWithValueOrderOwn(response?.data?.table[0]?.ptm_work_status === "WIP8");
+                // response?.data?.table[0]?.ptm_work_status === "WIP8" ? setDetailsAPIcallWithValueOrderOwn(false) : setDetailsAPIcallWithValueOrderOwn(true);
 
                 const getDetailsData = {
                     projectName: response?.data?.table[0]?.ptm_project_name || '',
@@ -440,6 +521,10 @@ const PotentialLead = () => {
                     ptm_ref_lead_type: commonLovDetailsData.current?.refer_from_List.length > 0 && response?.data?.table[0]?.ptm_ref_lead_type ? { value: commonLovDetailsData.current?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_code, label: commonLovDetailsData.current?.refer_from_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_ref_lead_type).lov_value } : '',
 
                     ptm_contractor_type: commonLovDetailsData.current?.contractor_type_List.length > 0 && response?.data?.table[0]?.ptm_contractor_type ? { value: commonLovDetailsData.current?.contractor_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_contractor_type).lov_code, label: commonLovDetailsData.current?.contractor_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_contractor_type).lov_value } : '',
+
+                    ptm_key_account_type: commonLovDetailsData.current?.key_account_type_List.length > 0 && response?.data?.table[0]?.ptm_key_account_type ? { value: commonLovDetailsData.current?.key_account_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_key_account_type).lov_code, label: commonLovDetailsData.current?.key_account_type_List?.find((item: any) => item.lov_code === response?.data?.table[0]?.ptm_key_account_type).lov_value } : '',
+
+                    ptm_key_account_id: ptm_key_account_id,
 
                     // selectedStateList: data?.stateList.length > 0 && response?.data?.table[0]?.ptm_project_state ? { value: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_code, label: data?.stateList?.find((item: any) => item.state_code === response?.data?.table[0]?.ptm_project_state).state_name } : '',
                     selectedStateList: selectedStateList,
@@ -476,7 +561,7 @@ const PotentialLead = () => {
                 setLoading(false);
             }
         } catch (error) {
-            setdetailsAPIcall(false);
+            setDetailsAPIcallWithValueOrderOwn(false);
             setLoading(false);
             return;
         }
@@ -767,27 +852,39 @@ const PotentialLead = () => {
         setTimeout(() => {
             setDdlData((prevData: any) => ({ ...prevData, ...commonLovDetailsData.current }));
         }, 500);
-        VerticalWisBusinessLineAPICall();
+        // const pageName = window.location.pathname.split("/").pop();
+        // setPathName(pageName || '');
+        // pageName === "BergeroneLead" ? VerticalWisBusinessLine_BergeroneLead_APICall() : VerticalWisBusinessLine_PotentialLead_APICall();
     }, []);
+
+    useEffect(() => {
+        const pageName = location.pathname.split("/").pop();
+        setPathName(pageName || '');
+        if (pageName === "BergeroneLead") {
+            VerticalWisBusinessLine_BergeroneLead_APICall();
+        } else {
+            VerticalWisBusinessLine_PotentialLead_APICall();
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         setData(((prev: any) => ({ ...prev, ptm_lead_share: popupOpenData?.popupHeader === 'SELF' ? { value: 'LS2', label: 'SELF' } : '' })));
     }, [popupOpenData?.popupHeader])
 
+    // React.useEffect(() => {
+    //     console.log(filter_Data);
+    // }, [filter_Data]);
     React.useEffect(() => {
-        console.log(filter_Data);
-    }, [filter_Data]);
-    React.useEffect(() => {
-        console.log(data)
+        console.log("potential lead data ->", data);
     }, [data]);
-    React.useEffect(() => {
-        console.log(ddlData);
-    }, [ddlData]);
+    // React.useEffect(() => {
+    //     console.log(ddlData);
+    // }, [ddlData]);
 
     return (
         <>
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
-                <h5 className="text-lg font-semibold dark:text-white-light">Potential Lead</h5>
+                <h5 className="text-lg font-semibold dark:text-white-light">{pathName === "BergeroneLead" ? "Bergerone Lead" : "Potential Lead"}</h5>
             </div>
 
             <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
@@ -937,7 +1034,7 @@ const PotentialLead = () => {
             </div>
 
             {popupOpenData?.open &&
-                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcall={detailsAPIcall} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcallWithValueOrderOwn={detailsAPIcallWithValueOrderOwn} />
             }
 
             {isActivityLogPopupOpen && (
