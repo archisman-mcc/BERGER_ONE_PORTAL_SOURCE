@@ -535,7 +535,7 @@ const EPCAHoApprovalDetails = () => {
             },
             {
                 accessorKey: 'rate_lpo',
-                header: header,
+                header: 'Rate LPO',
                 size: 20,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
@@ -663,7 +663,7 @@ const EPCAHoApprovalDetails = () => {
             },
             {
                 accessorKey: 'rate_wav',
-                header: header1,
+                header: 'Rate WAV',
                 size: 10,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
