@@ -806,7 +806,7 @@ const EPCAHoApprovalDetails = () => {
                                 { label: 'Reject', value: 'R' },
                             ]}
                             value={row.original?.currentStatus || 'A'}
-                            onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
+                            onChange={(value) => value && handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select status"
                             clearable
                             withinPortal={true}

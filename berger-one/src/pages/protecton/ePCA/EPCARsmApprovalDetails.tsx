@@ -186,6 +186,7 @@ const EPCARsmApprovalDetails = () => {
     };
 
     const handleEditChange = (e: any, rowIndex: number, field: string) => {
+        // console.log('e',e, 'rowIndex', rowIndex, 'field', field)
         const value = field === "valid_till" || field === "factory_code" ? e : e.target.value;
         setData((prevData: any[]) =>
             prevData.map((row: any, index: any) =>
@@ -421,7 +422,7 @@ const EPCARsmApprovalDetails = () => {
                                 { label: 'Reject', value: 'R' },
                             ]}
                             value={row.original?.currentStatus || 'A'}
-                            onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
+                            onChange={(value) => value && handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select"
                             withinPortal={true}
                             clearable
