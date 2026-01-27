@@ -603,6 +603,7 @@ const EPCADepotApprovalDetails = () => {
     }, [currentCustomerDetails]);
 
     const handleEditChange = (e: any, rowIndex: number, field: string) => {
+        // console.log('e', e, 'rowIndex', rowIndex, 'field', field)
         const value = e instanceof Date ? e : e.target.value;
         setData((prevData) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
     };
@@ -847,12 +848,12 @@ const EPCADepotApprovalDetails = () => {
                                 { label: 'Reject', value: 'R' },
                             ]}
                             value={row.original?.currentStatus || 'A'}
-                            onChange={(value: any) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
+                            onChange={(value: any) => {
+                                value && handleEditChange({ target: { value } }, row.index, 'currentStatus')
+                            }}
                             placeholder="Select"
                             withinPortal={true}
                             clearable
-                        // className="mantine-select tableInput"
-                        // className="mantine-select tableInput"
                         />
                     );
                 },
