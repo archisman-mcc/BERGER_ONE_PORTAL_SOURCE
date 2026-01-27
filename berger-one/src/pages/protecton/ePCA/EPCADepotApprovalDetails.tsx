@@ -266,7 +266,7 @@ const EPCADepotApprovalDetails = () => {
     };
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -290,13 +290,14 @@ const EPCADepotApprovalDetails = () => {
                 setSelectedDropdown((prev) => ({ ...prev, Appldepot: findSelectedTypeValue(updatedDepotList, 'depot_code', currentCustomerDetails?.depot_code) }));
         } catch (error) {
             setDepot([]);
-        } finally {
-            setLoading(false);
         }
+        // finally {
+        // setLoading(false);
+        // }
     };
 
     const GetDealerList = async (depotcode: any, terrcode: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: depotcode,
             terr_code: terrcode,
@@ -321,13 +322,14 @@ const EPCADepotApprovalDetails = () => {
             } else setDealer([]);
         } catch (error) {
             setDealer([]);
-        } finally {
-            setLoading(false);
         }
+        // finally {
+        // setLoading(false);
+        // }
     };
 
     const GetApplicableTerritory = async (depotCode: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: 'murthy',
             depot_code: depotCode,
@@ -351,13 +353,14 @@ const EPCADepotApprovalDetails = () => {
             } else setApplTerr([]);
         } catch (error) {
             setApplTerr([]);
-        } finally {
-            setLoading(false);
         }
+        // finally {
+        //     setLoading(false);
+        // }
     };
 
     const GetApplicableProject = async (depotCode: any, terrcode: any, srch: string) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: depotCode,
             terr_code: terrcode,
@@ -373,9 +376,10 @@ const EPCADepotApprovalDetails = () => {
         } catch (error) {
             // setApplTerr([]);
             return;
-        } finally {
-            setLoading(false);
         }
+        // finally {
+        //     setLoading(false);
+        // }
     };
 
     const GetSkuData = async (srch: any) => {
@@ -398,7 +402,7 @@ const EPCADepotApprovalDetails = () => {
     };
 
     const GetApplicableBillto = async (depotcode: any, dlrcode: any, pdAppl: string) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: depotcode,
             dealer_code: dlrcode,
@@ -427,31 +431,11 @@ const EPCADepotApprovalDetails = () => {
             }
         } catch (error) {
             setbillToData([]);
-        } finally {
-            setLoading(false);
+        } 
+        finally {
+            // setLoading(false);
         }
     };
-
-    ////---factory dynamic---////
-    // const GetFactorydata = async (skucode: string) => {
-    //     const data = {
-    //         sku_code: skucode,
-    //         app_id: '15',
-    //     };
-    //     try {
-    //         const response: any = await EpcaDetails.GetFactoryListBySKU(data);
-    //         if (response.data && Array.isArray(response.data)) {
-    //             return response.data.map((item: any) => ({
-    //                 label: item.org_name,
-    //                 value: item.org_code,
-    //             }));
-    //         } else {
-    //             return [];
-    //         }
-    //     } catch (error) {
-    //         return [];
-    //     }
-    // };
 
     const GetFactorydata = async (skucode: string) => {
         const data = {
@@ -473,12 +457,12 @@ const EPCADepotApprovalDetails = () => {
             // setFactory([]);
             return [];
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const GetPcaStatusData = async (selectedStatus: string) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -518,7 +502,7 @@ const EPCADepotApprovalDetails = () => {
         } catch (error) {
             setApproveStatus([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -635,14 +619,16 @@ const EPCADepotApprovalDetails = () => {
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
+                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PROJECT NAME</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU CODE</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU NAME</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
+                        <th style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
+                        <th style={{ width: '10%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].project_name}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].sku_code}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].sku_desc}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0].sku_uom}</td>

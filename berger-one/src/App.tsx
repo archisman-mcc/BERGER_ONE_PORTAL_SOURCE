@@ -73,7 +73,7 @@ const isAuthenticated = (): boolean => {
   // console.log(storedObjectString)
   if (storedObjectString === null || storedObjectString === undefined) return false;
   const storedObject = JSON.parse(storedObjectString);
-  console.log(storedObject)
+  // console.log(storedObject)
   // if (storedObject?.state?.isLoggedIn === false || !storedObject?.state?.userDetails?.userApplicableMenu || storedObject?.state?.userDetails?.userApplicableMenu && storedObject?.state?.userDetails?.userApplicableMenu?.length === 0) {
   if (!storedObject?.state?.isLoggedIn) {
     return false;

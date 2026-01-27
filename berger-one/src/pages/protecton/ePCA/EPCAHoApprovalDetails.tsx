@@ -74,7 +74,7 @@ const EPCAHoApprovalDetails = () => {
     };
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -86,12 +86,12 @@ const EPCAHoApprovalDetails = () => {
         } catch (error) {
             setDepot([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const GetApplicableTerritory = async ({ cd }: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             depot_code: cd?.depot_code,
@@ -103,12 +103,12 @@ const EPCAHoApprovalDetails = () => {
         } catch (error) {
             setApplTerr([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const GetDealerList = async (cd: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: cd?.depot_code,
             terr_code: cd?.dlr_terr_code,
@@ -120,12 +120,12 @@ const EPCAHoApprovalDetails = () => {
         } catch (error) {
             setDealer([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const GetApplicableBillto = async (cd: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: cd?.depot_code,
             dealer_code: cd?.dlr_dealer_code,
@@ -136,12 +136,12 @@ const EPCAHoApprovalDetails = () => {
         } catch (error) {
             setbillToData([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const GetPcaStatusData = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -152,7 +152,7 @@ const EPCAHoApprovalDetails = () => {
         } catch (error) {
             setApproveStatus([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -175,6 +175,7 @@ const EPCAHoApprovalDetails = () => {
     };
 
     const GetPcaDetailsView = async (skucode: string, autoid: any) => {
+        setLoading(true);
         const data: any = {
             skuCode: skucode,
             autoId: autoid,
@@ -196,14 +197,16 @@ const EPCAHoApprovalDetails = () => {
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
+                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PROJECT NAME</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU CODE</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU NAME</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
+                        <th style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
+                        <th style={{ width: '10%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.project_name}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_code}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_desc}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_uom}</td>
@@ -798,7 +801,7 @@ const EPCAHoApprovalDetails = () => {
                 header: 'Status',
                 size: 60,
                 Cell: ({ row }) => {
-                    console.log(row.original?.currentStatus)
+                    // console.log(row.original?.currentStatus)
                     return (
                         <MantineSelect
                             data={[

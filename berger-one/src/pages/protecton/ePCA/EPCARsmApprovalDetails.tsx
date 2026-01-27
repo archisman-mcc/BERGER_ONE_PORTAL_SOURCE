@@ -75,7 +75,7 @@ const EPCARsmApprovalDetails = () => {
 
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -87,11 +87,11 @@ const EPCARsmApprovalDetails = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetApplicableTerritory = async ({ cd }: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             depot_code: cd?.depot_code,
@@ -103,11 +103,11 @@ const EPCARsmApprovalDetails = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetDealerList = async (cd: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: cd?.depot_code,
             terr_code: cd?.dlr_terr_code,
@@ -119,11 +119,11 @@ const EPCARsmApprovalDetails = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetApplicableBillto = async (cd: any) => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             depot_code: cd?.depot_code,
             dealer_code: cd?.dlr_dealer_code,
@@ -134,11 +134,11 @@ const EPCARsmApprovalDetails = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetPcaStatusData = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -148,7 +148,7 @@ const EPCARsmApprovalDetails = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetFactorydata = async (skucode: string) => {
@@ -538,14 +538,16 @@ const EPCARsmApprovalDetails = () => {
             <table className="custTableView w-full border-collapse">
                 <thead>
                     <tr>
+                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PROJECT NAME</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU CODE</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU NAME</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
-                        <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
+                        <th style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
+                        <th style={{ width: '10%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.project_name}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_code}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_desc}</td>
                         <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{data[0]?.sku_uom}</td>
@@ -716,9 +718,9 @@ const EPCARsmApprovalDetails = () => {
         GetPcaStatusData();
     }, [])
 
-    useEffect(() => {
-        console.log(data)
-    }, [data])
+    // useEffect(() => {
+    //     console.log(data)
+    // }, [data])
 
     return (
         <>
@@ -932,7 +934,6 @@ const EPCARsmApprovalDetails = () => {
                             handleFormSubmit();
                         }}
                     >
-                        {' '}
                         <IoMdSave /> &nbsp; Submit
                     </button>
                 )}
