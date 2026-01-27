@@ -260,7 +260,7 @@ const EPCADetails = () => {
                 const response: any = await EpcaDetails.InsertePcaDetails_Vr1(submitObj);
                 if (response.response_message) {
                     commonSuccessToast('PCA Details Inserted Successfully');
-                    navigate('/Protecton/ePCA/EPCAList/');
+                    // navigate('/Protecton/ePCA/EPCAList/');
                 }
             }
         });
