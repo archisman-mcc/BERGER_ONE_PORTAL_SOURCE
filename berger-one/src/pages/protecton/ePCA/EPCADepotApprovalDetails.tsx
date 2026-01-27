@@ -368,7 +368,7 @@ const EPCADepotApprovalDetails = () => {
             if (response.data != null && response.data != undefined) {
                 const data = transformProjectResults(response.data);
                 // setProjectData(data);
-            } 
+            }
             // else setProjectData([]);
         } catch (error) {
             // setApplTerr([]);
@@ -389,7 +389,7 @@ const EPCADepotApprovalDetails = () => {
             if (response.data != null && response.data.table != null && response.data.table != undefined) {
                 const data = transformSKUResults(response.data.table);
                 // setSkuData(data);
-            } 
+            }
             // else setSkuData([]);
         } catch (error) {
             return;
@@ -602,7 +602,7 @@ const EPCADepotApprovalDetails = () => {
         }
     }, [currentCustomerDetails]);
 
-    const handleEditChange = (e: Date | ChangeEvent<HTMLInputElement>, rowIndex: number, field: string) => {
+    const handleEditChange = (e: any, rowIndex: number, field: string) => {
         const value = e instanceof Date ? e : e.target.value;
         setData((prevData) => prevData.map((row, index) => (index === rowIndex ? { ...row, [field]: value } : row)));
     };
@@ -830,12 +830,11 @@ const EPCADepotApprovalDetails = () => {
                             onChange={handleFactoryChange} // Add onChange handler
                             placeholder="Select"
                             withinPortal={true}
-                            // className="tableInput"
+                        // className="tableInput"
                         />
                     );
                 },
             },
-
             {
                 accessorKey: 'currentStatus',
                 header: 'Status',
@@ -847,13 +846,13 @@ const EPCADepotApprovalDetails = () => {
                                 { label: 'Approve', value: 'A' },
                                 { label: 'Reject', value: 'R' },
                             ]}
-                            value={row.original?.currentStatus}
-                            onChange={(value: any) => handleEditChange(value, row.index, 'currentStatus')}
+                            value={row.original?.currentStatus || 'A'}
+                            onChange={(value: any) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select"
                             withinPortal={true}
                             clearable
-                            // className="mantine-select tableInput"
-                            // className="mantine-select tableInput"
+                        // className="mantine-select tableInput"
+                        // className="mantine-select tableInput"
                         />
                     );
                 },
@@ -875,7 +874,7 @@ const EPCADepotApprovalDetails = () => {
                             variant="outline"
                             color="blue"
                             style={{ padding: 5 }}
-                            leftIcon={<FiEye size={16} style={{paddingRight: "2px"}} />}
+                            leftIcon={<FiEye size={16} style={{ paddingRight: "2px" }} />}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleView(row.original);
@@ -1005,7 +1004,7 @@ const EPCADepotApprovalDetails = () => {
                 sku_code: original.sku_id,
                 bill_to: original.bill_to,
             });
-
+            console.log(original)
             let minRate = 0;
             if (minRateResponse && minRateResponse.data && minRateResponse.data.length > 0) minRate = parseFloat(minRateResponse.data[0].smr_rebate);
 
@@ -1017,10 +1016,6 @@ const EPCADepotApprovalDetails = () => {
                     FactoryCode: original.factory_code,
                     Nop: parseInt(original.qty, 10),
                     RatePerPack: parseFloat(original.rate),
-                    // ValidFrom: dayjs(original.valid_from).format('YYYY-MM-DD'),
-                    // ValidTill: dayjs(original.valid_till).format('YYYY-MM-DD'),
-                    // ValidFrom: original.valid_from,
-                    // ValidTill: original.valid_till,
                     ValidFrom: convertDateFormat(original.valid_from),
                     ValidTill: convertDateFormat(original.valid_till),
 
@@ -1031,7 +1026,7 @@ const EPCADepotApprovalDetails = () => {
                 formattedData.push(entity);
             } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
         }
-
+        console.log(formattedData)
         if (formattedData.length > 0) showSubmitAlert(formattedData);
         else commonErrorToast('Please select atleast one row');
         setLoading(false);
@@ -1055,7 +1050,7 @@ const EPCADepotApprovalDetails = () => {
                         rejectionRemarks: item.RejectionRemarks,
                     })),
                 };
-
+                console.log(transformedData)
                 const response: any = await EpcaDepotApproval.PcaApprovalDetailsSubmit(transformedData);
                 if (response.response_message) {
                     commonSuccessToast('PCA Depot Approval details Updated Successfully');
@@ -1071,7 +1066,7 @@ const EPCADepotApprovalDetails = () => {
             <div className="page-titlebar flex items-center justify-between bg-white px-4 py-1">
                 <h5 className="text-lg font-semibold dark:text-white-light">e-PCA Depot Approval Details</h5>
             </div>
-            
+
             <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     {/* Depot */}

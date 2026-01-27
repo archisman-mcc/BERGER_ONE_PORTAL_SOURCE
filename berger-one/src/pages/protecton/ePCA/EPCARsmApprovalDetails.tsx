@@ -65,7 +65,7 @@ const EPCARsmApprovalDetails = () => {
         };
         try {
             const response: any = await EpcaDepotApproval.GetePCARsmApprovalDetails(data1);
-            setData(response.data.table || [])
+            setData(response.data.table ? [{...response.data.table[0], currentStatus: 'A'}] : [])
         } catch (error) {
             setData([]);
         } finally {
@@ -404,7 +404,7 @@ const EPCARsmApprovalDetails = () => {
                             onChange={handleFactoryChange} // Add onChange handler
                             placeholder="Select"
                             withinPortal={true}
-                            // className="mantine-select"
+                        // className="mantine-select"
                         />
                     );
                 },
@@ -420,12 +420,12 @@ const EPCARsmApprovalDetails = () => {
                                 { label: 'Approve', value: 'A' },
                                 { label: 'Reject', value: 'R' },
                             ]}
-                            value={row.original?.currentStatus}
+                            value={row.original?.currentStatus || 'A'}
                             onChange={(value) => handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select"
                             withinPortal={true}
                             clearable
-                            // className="mantine-select"
+                        // className="mantine-select"
                         />
                     );
                 },
@@ -446,7 +446,7 @@ const EPCARsmApprovalDetails = () => {
                         <Button
                             variant="outline"
                             color="blue"
-                            leftIcon={<FiEye size={16} style={{paddingRight: "4px"}} />}
+                            leftIcon={<FiEye size={16} style={{ paddingRight: "4px" }} />}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 GetPcaDetailsView(row.original?.sku_id, row.original?.pca_auto_id);
@@ -636,7 +636,9 @@ const EPCARsmApprovalDetails = () => {
 
     const handleFormSubmit = async () => {
         setLoading(true);
+        // console.log('data',data)
         const selectedRows = table.getSelectedRowModel().rows;
+        // console.log(selectedRows)
         const formattedData: PcaEntity[] = [];
 
         for (const row of selectedRows) {
@@ -645,6 +647,7 @@ const EPCARsmApprovalDetails = () => {
                 sku_code: original.sku_id,
                 bill_to: original.bill_to,
             });
+            // console.log(original)
 
             let minRate = 0;
             if (minRateResponse && minRateResponse.data && minRateResponse.data.length > 0) minRate = parseFloat(minRateResponse.data[0].smr_rebate);
@@ -657,14 +660,14 @@ const EPCARsmApprovalDetails = () => {
                     FactoryCode: original.factory_code,
                     Nop: parseInt(original.qty, 10),
                     RatePerPack: parseFloat(original.rate),
-                    // ValidFrom: dayjs(original.valid_from).format('YYYY-MM-DD'),
-                    // ValidTill: dayjs(original.valid_till).format('YYYY-MM-DD'),
                     ValidFrom: convertDateFormat(original.valid_from),
                     ValidTill: convertDateFormat(original.valid_till),
                     CurrentStatus: original.currentStatus === 'A' ? original.approved_type : original.rejected_type,
                     RejectionRemarks: original.remarks,
                 };
+                // console.log(entity)
                 formattedData.push(entity);
+                // console.log(formattedData)
             } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
         }
         if (formattedData.length > 0) showSubmitAlert(formattedData);
@@ -690,7 +693,7 @@ const EPCARsmApprovalDetails = () => {
                         rejectionRemarks: item.RejectionRemarks,
                     })),
                 };
-
+                // console.log(transformedData)
                 const response: any = await EpcaDepotApproval.PcaApprovalDetailsSubmit(transformedData);
                 if (response.response_message) {
                     commonSuccessToast('PCA RSM Approval Details Updated Successfully');
@@ -712,9 +715,9 @@ const EPCARsmApprovalDetails = () => {
         GetPcaStatusData();
     }, [])
 
-    // useEffect(() => {
-    //     console.log(customerDetails)
-    // }, [customerDetails])
+    useEffect(() => {
+        console.log(data)
+    }, [data])
 
     return (
         <>
