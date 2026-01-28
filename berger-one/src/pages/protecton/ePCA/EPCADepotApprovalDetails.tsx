@@ -991,7 +991,7 @@ const EPCADepotApprovalDetails = () => {
                 sku_code: original.sku_id,
                 bill_to: original.bill_to,
             });
-            console.log(original)
+            // console.log(original)
             let minRate = 0;
             if (minRateResponse && minRateResponse.data && minRateResponse.data.length > 0) minRate = parseFloat(minRateResponse.data[0].smr_rebate);
 
@@ -1009,13 +1009,12 @@ const EPCADepotApprovalDetails = () => {
                     CurrentStatus: original.currentStatus === 'A' ? original.approved_type : original.rejected_type,
                     RejectionRemarks: original.remarks,
                 };
-
                 formattedData.push(entity);
+                if (formattedData.length > 0) showSubmitAlert(formattedData);
+                else commonErrorToast('Please select atleast one row');
             } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
         }
-        console.log(formattedData)
-        if (formattedData.length > 0) showSubmitAlert(formattedData);
-        else commonErrorToast('Please select atleast one row');
+        // console.log(formattedData)
         setLoading(false);
     };
 

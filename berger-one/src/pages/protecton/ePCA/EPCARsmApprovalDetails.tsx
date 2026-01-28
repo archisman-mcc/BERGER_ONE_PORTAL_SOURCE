@@ -655,7 +655,7 @@ const EPCARsmApprovalDetails = () => {
             let minRate = 0;
             if (minRateResponse && minRateResponse.data && minRateResponse.data.length > 0) minRate = parseFloat(minRateResponse.data[0].smr_rebate);
 
-            if (original.status_value === 'R' || parseFloat(original.rate) >= minRate) {
+            if (parseFloat(original.rate) >= minRate) {
                 const entity: PcaEntity = {
                     AutoId: original.pca_auto_id,
                     BillTo: original.bill_to,
@@ -668,13 +668,11 @@ const EPCARsmApprovalDetails = () => {
                     CurrentStatus: original.currentStatus === 'A' ? original.approved_type : original.rejected_type,
                     RejectionRemarks: original.remarks,
                 };
-                // console.log(entity)
                 formattedData.push(entity);
-                // console.log(formattedData)
+                if (formattedData.length > 0) showSubmitAlert(formattedData);
+                else commonErrorToast(`Please select atleast one row`);
             } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
         }
-        if (formattedData.length > 0) showSubmitAlert(formattedData);
-        else commonErrorToast(`Please select atleast one row`);
         setLoading(false);
     };
 

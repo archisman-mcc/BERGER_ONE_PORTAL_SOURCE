@@ -834,7 +834,7 @@ const EPCAHoApprovalDetails = () => {
                         <Button
                             variant="outline"
                             color="blue"
-                            leftIcon={<FiEye size={16} style={{paddingRight: "4px"}} />}
+                            leftIcon={<FiEye size={16} style={{ paddingRight: "4px" }} />}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 GetPcaDetailsView(row.original.sku_id, row.original.pca_auto_id);
@@ -985,7 +985,10 @@ const EPCAHoApprovalDetails = () => {
             let minRate = 0;
             if (minRateResponse && minRateResponse.data && minRateResponse.data.length > 0) minRate = parseFloat(minRateResponse.data[0].smr_rebate);
 
-            if (original.status_value === 'R' || parseFloat(original.rate) >= minRate) {
+            // if (original.status_value === 'R' || parseFloat(original.rate) >= minRate) {
+            // } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
+            // console.log(typeof parseFloat(original.rate), typeof minRate, parseFloat(original.rate) >= minRate)
+            if (parseFloat(original.rate) >= minRate) {
                 const entity: PcaEntity = {
                     AutoId: original.pca_auto_id,
                     BillTo: original.bill_to,
@@ -993,13 +996,10 @@ const EPCAHoApprovalDetails = () => {
                     FactoryCode: original.factory_code,
                     Nop: parseInt(original.qty, 10),
                     RatePerPack: parseFloat(original.rate),
-                    // ValidFrom: dayjs(original.valid_from).format('YYYY-MM-DD'),
-                    // ValidTill: dayjs(original.valid_till).format('YYYY-MM-DD'),
                     ValidFrom: convertDateFormat(original.valid_from),
                     ValidTill: convertDateFormat(original.valid_till),
                     CurrentStatus: original.currentStatus === 'A' ? original.approved_type : original.rejected_type,
                     RejectionRemarks: original.remarks,
-
                     LpoYrMonth: original.lpo_yr_month,
                     LpoMaterialCost: original.lpo_material_cost,
                     LpoPackingCost: original.lpo_packing_cost,
@@ -1010,13 +1010,11 @@ const EPCAHoApprovalDetails = () => {
                     WavOverheadCost: original.wav_overhead_cost,
                     WavFreightCost: original.wav_freight_cost,
                 };
-
                 formattedData.push(entity);
+                if (formattedData.length > 0) showSubmitAlert(formattedData);
+                else commonErrorToast(`Please select atleast one row`);
             } else commonErrorToast(`PCA (${original.sku_id}) cannot go beyond the limit set by Accounts!`);
         }
-
-        if (formattedData.length > 0) showSubmitAlert(formattedData);
-        else commonErrorToast(`Please select atleast one row`);
         setLoading(false);
     };
 
