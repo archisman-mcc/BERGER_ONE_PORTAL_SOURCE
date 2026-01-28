@@ -494,6 +494,8 @@ const EPCADetails = () => {
                                         dealer_name: "",
                                         bill_to: null,
                                         bill_to_name: "",
+                                        projectId: null,
+                                        projectName: "",
                                     }))
                                 }}
                             />
@@ -509,7 +511,7 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
                                     GetDealerList({ depot_code: ePCADetails?.depot_code, terr_code: event?.value })
-                                    setePCADetails((pre: any) => ({ ...pre, terr_code: event?.value, terr_name: event?.label, dealer_code: '', dealer_name: '', bill_to: null, bill_to_name: "", }))
+                                    setePCADetails((pre: any) => ({ ...pre, terr_code: event?.value, terr_name: event?.label, dealer_code: '', dealer_name: '', bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
                                 }}
                             />
                             {/* {errMsg && errMsg.terr ? <div className="mt-1 text-danger">{errMsg.terr}</div> : ''} */}
@@ -524,7 +526,7 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
                                     GetApplicableBillto({ depot_code: ePCADetails?.depot_code, terr_code: ePCADetails?.terr_code, dealer_code: event?.value })
-                                    setePCADetails((pre: any) => ({ ...pre, dealer_code: event?.value, dealer_name: event?.label, bill_to: null, bill_to_name: "" }))
+                                    setePCADetails((pre: any) => ({ ...pre, dealer_code: event?.value, dealer_name: event?.label, bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
                                 }}
                             />
                             {/* {errMsg && errMsg.dealer ? <div className="mt-1 text-danger">{errMsg.dealer}</div> : ''} */}
@@ -538,7 +540,7 @@ const EPCADetails = () => {
                                     checked={ePCADetails.pdAppl === 'Y'}
                                     disabled={pageType === 'View'}
                                     onChange={(event: any) => {
-                                        setePCADetails((pre: any) => ({ ...pre, pdAppl: event.target.checked ? 'Y' : 'N', bill_to: null, bill_to_name: "" }))
+                                        setePCADetails((pre: any) => ({ ...pre, pdAppl: event.target.checked ? 'Y' : 'N', bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
                                     }}
                                 />
                             </div>
@@ -552,7 +554,7 @@ const EPCADetails = () => {
                                 options={billTo.filter((b: any) => b.pd_appl_yn === ePCADetails?.pdAppl).map((d: any) => ({ value: d.bill_to, label: d.bill_to_name }))}
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
-                                    setePCADetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label }))
+                                    setePCADetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label, projectId: null, projectName: "" }))
                                     // GetApplicableProjectList({ billto_code: event?.value, srch_str: 'pro' })
                                     GetApplicableProjectList({ billto_code: event?.value, srch_str: projectSrchData })
                                 }}
@@ -572,6 +574,7 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 // onInputChange={(inputValue) => setProjectSrchData(inputValue)}
                                 onChange={(event) => {
+                                    // setePCADetails((pre: any) => ({ ...pre, projectId: event?.value, projectName: event?.label, bill_to: null, bill_to_name: "" }))
                                     setePCADetails((pre: any) => ({ ...pre, projectId: event?.value, projectName: event?.label }))
                                 }}
                             />

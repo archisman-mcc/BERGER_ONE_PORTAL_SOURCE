@@ -8,6 +8,7 @@ import { CiViewList } from "react-icons/ci";
 import { FaAngleDown } from "react-icons/fa";
 import { UseAuthStore } from '../../services/store/AuthStore';
 import { Outlet } from 'react-router-dom';
+declare const __APP_VERSION__: string;
 
 const FixedLayout = () => {
     const navigate = useNavigate();
@@ -110,6 +111,7 @@ const FixedLayout = () => {
 
 
     useEffect(() => {
+        // console.log('__APP_VERSION__', __APP_VERSION__);
         const menuRec = (uam: any) => {
             return uam.map((u: any) => ({ ...u, childVisibility: u.form_parent_id === 0 ? true : false, children: u.children ? menuRec(u.children) : [] }))
         }
@@ -148,14 +150,6 @@ const FixedLayout = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // useEffect(() => {
-    //     const menuRec = (uam: any) => {
-    //         return uam.map((u: any) => ({ ...u, childVisibility: u.form_parent_id === 0 ? true : false, children: u.children ? menuRec(u.children) : [] }))
-    //     }
-    //     console.log(user)
-    //     if (user?.userApplicableMenu.length > 0) setUserApplicableMenu(menuRec(user.userApplicableMenu));
-    // }, [user]);
-
     return (
         <div className="min-h-screen w-full overflow-auto">
             <header className="z-40">
@@ -171,6 +165,10 @@ const FixedLayout = () => {
                             <span className="hidden align-middle text-2xl font-semibold transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
                                 BERGER ONE
                             </span>
+                            <span className="ml-2 text-xs text-gray-400">
+                                v{__APP_VERSION__}
+                            </span>
+
                         </Link>
 
                         {/* Icon Right */}
