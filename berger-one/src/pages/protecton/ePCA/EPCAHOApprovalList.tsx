@@ -36,7 +36,7 @@ const EPCAHOApprovalList = () => {
     const { setEpcaHoApprovalDetails } = EpcaHoApprovalDetailsStore((state) => state);
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -48,7 +48,7 @@ const EPCAHOApprovalList = () => {
         } catch (error) {
             setDepot([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -93,12 +93,10 @@ const EPCAHOApprovalList = () => {
         } finally {
             setLoading(false);
         }
-        // console.log("ePCA List Data:", data);
-
     };
 
     const GetPcaStatusData = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -110,7 +108,7 @@ const EPCAHOApprovalList = () => {
         } catch (error) {
             setApproveStatus([]);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
         // setLoading(false);
     };

@@ -38,7 +38,7 @@ const EPCADepotApprovalList = () => {
     const { setEpcaHoApprovalDetails } = EpcaHoApprovalDetailsStore((state) => state);
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -49,9 +49,10 @@ const EPCADepotApprovalList = () => {
             setDepot(response.data);
         } catch (error) {
             setDepot([]);
-        } finally {
-            setLoading(false);
-        }
+        } 
+        // finally {
+        //     setLoading(false);
+        // }
     };
 
     const GetApplicableTerritory = async (cd: any) => {
@@ -98,7 +99,7 @@ const EPCADepotApprovalList = () => {
     };
 
     const GetPcaStatusData = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -109,8 +110,9 @@ const EPCADepotApprovalList = () => {
             // setApproveStatus(response.data.filter((item: any) => item.lov_field1_value === cd && !item.lov_value.includes('HO')))
         } catch (error) {
             setApproveStatus([]);
-        } finally {
-            setLoading(false);
+        } 
+        finally {
+            // setLoading(false);
         }
     };
 

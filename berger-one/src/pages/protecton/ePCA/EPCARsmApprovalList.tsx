@@ -35,7 +35,7 @@ const EPCARsmApprovalList = () => {
     const { setEpcaHoApprovalDetails } = EpcaHoApprovalDetailsStore((state) => state);
 
     const GetApplicableDepot = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             user_id: user.user_id,
             region: '',
@@ -47,7 +47,7 @@ const EPCARsmApprovalList = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     const GetApplicableTerritory = async (cd: any) => {
@@ -92,7 +92,7 @@ const EPCARsmApprovalList = () => {
     };
 
     const GetPcaStatusData = async () => {
-        setLoading(true);
+        // setLoading(true);
         const data: any = {
             app_id: '15',
         };
@@ -104,7 +104,7 @@ const EPCARsmApprovalList = () => {
         } catch (error) {
             return;
         }
-        setLoading(false);
+        // setLoading(false);
     };
 
     type PcaType = {
