@@ -111,6 +111,7 @@ const EPCAList = () => {
     };
 
     const GetApplicableDepot = async () => {
+        setLoading(true);
         if (user) {
             const data: any = {
                 user_id: user.user_id,
@@ -130,9 +131,17 @@ const EPCAList = () => {
                 ];
                 setDepot(updatedDepotList);
             } catch (error) {
+                setLoading(false);
                 setDepot([]);
             } finally {
-                setLoading(false);
+                // setLoading(false);
+                GetPcaStatusData('PENDING').then(() => {
+                    setSelectedDropdown((prev) => ({
+                        ...prev,
+                        UsersubStatus: -1,
+                    }));
+                    GetPcaListData();
+                });
             }
         } else {
             localStorage.clear();
@@ -144,7 +153,7 @@ const EPCAList = () => {
     };
 
     const GetApplicableTerritory = async (depotCode: any) => {
-        //setLoading(true);
+        setLoading(true);
         if (user) {
             const data: any = {
                 user_id: user.user_id,
@@ -258,13 +267,13 @@ const EPCAList = () => {
 
     useEffect(() => {
         GetApplicableDepot();
-        GetPcaStatusData('PENDING').then(() => {
-            setSelectedDropdown((prev) => ({
-                ...prev,
-                UsersubStatus: -1,
-            }));
-            GetPcaListData();
-        });
+        // GetPcaStatusData('PENDING').then(() => {
+        //     setSelectedDropdown((prev) => ({
+        //         ...prev,
+        //         UsersubStatus: -1,
+        //     }));
+        //     GetPcaListData();
+        // });
     }, []);
 
     const handleSearch = (e: any) => {

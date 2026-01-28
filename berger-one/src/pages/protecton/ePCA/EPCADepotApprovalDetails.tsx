@@ -431,7 +431,7 @@ const EPCADepotApprovalDetails = () => {
             }
         } catch (error) {
             setbillToData([]);
-        } 
+        }
         finally {
             // setLoading(false);
         }
@@ -955,11 +955,11 @@ const EPCADepotApprovalDetails = () => {
 
     const handleBackButton = () => {
         setLoading(true);
-        commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
-            if (result.value) {
-                navigate('/Protecton/ePCA/EPCADepotApprovalList/');
-            }
-        });
+        // commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
+        //     if (result.value) {
+        navigate('/Protecton/ePCA/EPCADepotApprovalList/');
+        //     }
+        // });
         setLoading(false);
     };
 
