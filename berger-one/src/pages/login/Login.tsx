@@ -35,7 +35,7 @@ const Login = () => {
                 Cookies.set('authToken', response.token);
                 // setTimeout(() => navigate('/'));
                 setTimeout(() => {
-                    window.location.href = "/";
+                    window.location.href = "/BERGERONE/";
                 }, 100);
             } else {
                 commonErrorToast(response.message);
