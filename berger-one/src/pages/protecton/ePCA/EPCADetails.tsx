@@ -595,7 +595,7 @@ const EPCADetails = () => {
                                 onInputChange={(inputValue) => setSkuSrchData(inputValue)}
                                 onChange={(event) => {
                                     GetFactorydata({ sku_code: event?.value })
-                                    setePCADetails((pre: any) => ({ ...pre, sku_code: event?.value, sku_desc: event?.label }))
+                                    setePCADetails((pre: any) => ({ ...pre, sku_code: event?.value, sku_desc: `${event?.label} (${event?.value})` }))
                                     setSkuDetails((pre: any) => ({ ...pre, ...sku.find((s: any) => s.sku_code === event?.value) }))
                                 }}
                             />
