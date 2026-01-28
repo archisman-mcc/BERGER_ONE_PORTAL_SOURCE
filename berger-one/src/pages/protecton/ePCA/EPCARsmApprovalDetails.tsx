@@ -65,7 +65,7 @@ const EPCARsmApprovalDetails = () => {
         };
         try {
             const response: any = await EpcaDepotApproval.GetePCARsmApprovalDetails(data1);
-            setData(response.data.table ? [{...response.data.table[0], currentStatus: 'A'}] : [])
+            setData(response.data.table ? response.data.table.map((itm: any) => ({ ...itm, currentStatus: 'A' })) : [])
         } catch (error) {
             setData([]);
         } finally {
@@ -605,9 +605,10 @@ const EPCARsmApprovalDetails = () => {
 
     const handleBackButton = () => {
         setLoading(true);
-        commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
-            if (result.value) navigate('/Protecton/ePCA/EPCARsmApprovalList/');
-        });
+        // commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
+        // if (result.value) 
+        navigate('/Protecton/ePCA/EPCARsmApprovalList/');
+        // });
         setLoading(false);
     };
 

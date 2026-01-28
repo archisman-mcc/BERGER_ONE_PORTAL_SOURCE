@@ -265,9 +265,10 @@ const EPCAHoApprovalDetails = () => {
     };
 
     const handleBackButton = () => {
-        commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
-            if (result.value) navigate('/Protecton/ePCA/EPCAHOApprovalList/');
-        });
+        // commonAlert('Are you sure?', '', 'warning').then(async (result: any) => {
+        //     if (result.value) 
+        navigate('/Protecton/ePCA/EPCAHOApprovalList/');
+        // });
         setLoading(false);
     };
 
