@@ -266,6 +266,9 @@ const EPCADetails = () => {
             setSkuSrchData('');
             // setePCADetails({...ePCADetailsObj});
             // navigate('/Protecton/ePCA/EPCAList/');
+            const value: any = (sessionStorage.getItem('epcaDtlList'));
+            const parsedValue = JSON.parse(value);
+            parsedValue && GetePCADetailsData(parsedValue.dlr_bill_to);
         }
         // }
         // });
@@ -281,19 +284,16 @@ const EPCADetails = () => {
         // });
     };
 
-    const handleDelete = (rowData: any) => {
-        DeletePca(rowData.pd_auto_id);
-    };
-
     async function DeletePca(autoId: any) {
         //setLoading(true);
         commonAlert('Are you sure you want to delete this item?', '', 'warning').then(async (result: any) => {
             if (result.value) {
                 const response: any = await EpcaDetails.DeletePcaDetails({ auto_id: autoId });
-
                 if (response.response_message) {
                     commonSuccessToast('PCA Details Deleted Successfully');
-                    navigate('/Protecton/ePCA/EPCAList/');
+                    const value: any = (sessionStorage.getItem('epcaDtlList'));
+                    const parsedValue = JSON.parse(value);
+                    parsedValue && GetePCADetailsData(parsedValue.dlr_bill_to);
                 }
             }
         });
@@ -367,17 +367,10 @@ const EPCADetails = () => {
                 header: 'Action',
                 size: 50,
                 Cell: ({ row }) => {
-                    // console.log(billToData[selectedDropdown.BilltoCode].project_appl_yn, projectSearchValue)
-                    // var isDisabled = true;
-                    // const disFunc = () => {
-                    //     if (billToData[selectedDropdown.BilltoCode].project_appl_yn === "Y" && projectSearchValue === "") 
-
-                    // }
                     const isDisabled = row.original.status_code === 'PENDING_DEPOT';
                     return (
                         isDisabled && (
                             <button
-                                // disabled={billToData[selectedDropdown.BilltoCode].project_appl_yn === "Y" && projectSearchValue === "" ? true : false}
                                 style={{
                                     padding: '4px 8px',
                                     backgroundColor: '#f44336',
@@ -386,7 +379,10 @@ const EPCADetails = () => {
                                     borderRadius: '4px',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => handleDelete(row.original)}
+                                onClick={() =>
+                                    // handleDelete(row.original)
+                                    DeletePca(row.original.pd_auto_id)
+                                }
                             >
                                 Delete
                             </button>
@@ -410,21 +406,10 @@ const EPCADetails = () => {
         mantineTableContainerProps: {
             style: {
                 overflow: 'auto',
-                maxHeight: '16rem',
+                maxHeight: '12rem',
             },
         }
     });
-
-    // useEffect(() => {
-    //     console.log(skuDetails)
-    // }, [skuDetails])
-    // useEffect(() => {
-    //     console.log(ePCADetails)
-    // }, [ePCADetails])
-
-    // useEffect(() => {
-    //     projectSrchData.length > 2 && GetApplicableProjectList({ billto_code: ePCADetails?.bill_to, srch_str: projectSrchData })
-    // }, [projectSrchData])
 
     useEffect(() => {
         skuSrchData.length > 2 && GetSkuData({ PrefixText: skuSrchData })
@@ -576,7 +561,7 @@ const EPCADetails = () => {
                                 // isSearchable={true}
                                 value={{ value: ePCADetails?.projectId, label: ePCADetails?.projectName }}
                                 options={project.map((d: any) => ({ value: d.projectId, label: d.projectName }))}
-                                isDisabled={pageType === 'View'}
+                                // isDisabled={pageType === 'View'}
                                 // onInputChange={(inputValue) => setProjectSrchData(inputValue)}
                                 onChange={(event) => {
                                     // setePCADetails((pre: any) => ({ ...pre, projectId: event?.value, projectName: event?.label, bill_to: null, bill_to_name: "" }))
@@ -591,7 +576,7 @@ const EPCADetails = () => {
                                 // isSearchable={true}
                                 value={{ value: ePCADetails?.sku_code, label: ePCADetails?.sku_desc }}
                                 options={sku.map((d: any) => ({ value: d.sku_code, label: d.sku_desc }))}
-                                isDisabled={pageType === 'View'}
+                                // isDisabled={pageType === 'View'}
                                 onInputChange={(inputValue) => setSkuSrchData(inputValue)}
                                 onChange={(event) => {
                                     GetFactorydata({ sku_code: event?.value })
@@ -602,120 +587,122 @@ const EPCADetails = () => {
                         </div>
                     </div>
                 </form>
-                {pageType == "New" &&
-                    <div className="mt-5">
-                        <div className="table-responsive h200">
-                            <table className="custTableView w-full border-collapse">
-                                <thead>
-                                    <tr>
-                                        <th style={{ width: '10%', textAlign: 'left' }}>SKU Code</th>
-                                        <th style={{ width: '14%', textAlign: 'left' }}>SKU Name</th>
-                                        <th style={{ width: '5%', textAlign: 'center' }}>UOM</th>
-                                        <th style={{ width: '5%', textAlign: 'center' }}>Pack Size</th>
-                                        <th style={{ width: '8%', textAlign: 'center' }}>Declared PCA (Lt/Kg)</th>
-                                        <th style={{ width: '7%', textAlign: 'center' }}>Rate (Lt/Kg)</th>
-                                        <th style={{ width: '5%', textAlign: 'center' }}>NOP</th>
-                                        <th style={{ width: '8%', textAlign: 'center' }}>Valid From</th>
-                                        <th style={{ width: '8%', textAlign: 'center' }}>Valid Till</th>
-                                        <th style={{ width: '10%', textAlign: 'center' }}>Required From</th>
-                                        <th style={{ width: '14%', textAlign: 'center' }}>Remarks</th>
-                                        <th style={{ width: '6%', textAlign: 'center' }}>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style={{ textAlign: 'left' }}>{skuDetails.sku_code}</td>
-                                        <td style={{ textAlign: 'left' }}>{skuDetails.sku_desc}</td>
-                                        <td style={{ textAlign: 'center' }}>{skuDetails.sku_uom}</td>
-                                        <td style={{ textAlign: 'center' }}>{skuDetails.sku_pack_size}</td>
-                                        <td style={{ textAlign: 'center' }}>{skuDetails.sku_pca}</td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <NumberInput
-                                                style={{ width: '75px' }}
-                                                id="txtRate"
-                                                name="rate"
-                                                value={skuDetails?.rate}
-                                                autoComplete="off"
-                                                onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, rate: e }))}
-                                                placeholder="Rate"
-                                            />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <NumberInput
-                                                style={{ width: '55px' }}
-                                                name="nop"
-                                                value={skuDetails?.nop}
-                                                autoComplete="off"
-                                                onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, nop: e }))}
-                                                placeholder="NOP"
-                                            />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <Flatpickr
-                                                name="validfrom"
-                                                value={convertToDate(skuDetails.validfrom)}
-                                                autoComplete="off"
-                                                options={{
-                                                    dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                                    altInput: true, // Enables alternative display input
-                                                    altFormat: 'd/m/Y', // Display format for the user
-                                                }}
-                                                placeholder="Valid From"
-                                                disabled={true}
-                                                className="tableInput" // Disable the Valid From field
-                                            />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <Flatpickr
-                                                name="validto"
-                                                value={convertToDate(skuDetails.validto)}
-                                                // autoComplete="off"
-                                                options={{
-                                                    dateFormat: 'Y-m-d', // Actual input value format (ISO format)
-                                                    altInput: true, // Enables alternative display input
-                                                    altFormat: 'd/m/Y', // Display format for the user
-                                                    minDate: getMinValidTillDate(skuDetails.validfrom),
-                                                    maxDate: getMaxValidTillDate(skuDetails.validfrom),
-                                                }}
-                                                placeholder="Valid To"
-                                                className="tableInput"
-                                                onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, validto: formatDateToString(e[0]) }))}
-                                            />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <Select
-                                                name="requiredForm"
-                                                className="innerTableSelectWt"
-                                                isSearchable={true}
-                                                value={{ value: skuDetails?.requiredForm?.org_code, label: skuDetails?.requiredForm?.org_name }}
-                                                options={factory.map((d: any) => ({ value: d.org_code, label: d.org_name }))}
-                                                onChange={(event) => {
-                                                    setSkuDetails((pre: any) => ({ ...pre, requiredForm: { org_code: event?.value, org_name: event?.label } }))
-                                                }}
-                                            />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <TextInput style={{ width: '100%' }} name="remarks" value={skuDetails.remarks} autoComplete="off" onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, remarks: e.target.value }))} placeholder="Enter data" />
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <button
-                                                className={`${isFormValid() ? 'cursor-pointer bg-blue-500 hover:bg-blue-700' : 'cursor-not-allowed bg-gray-300'
-                                                    } relative rounded border border-gray-400 px-4 py-2 font-semibold text-white shadow`}
-                                                disabled={!isFormValid()}
-                                                onClick={() => {
-                                                    handleSubmit();
-                                                }}
-                                            >Add</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                {/* {pageType == "New" && */}
+                <div className="mt-5">
+                    <div className="table-responsive h100">
+                        <table className="custTableView w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: '10%', textAlign: 'left' }}>SKU Code</th>
+                                    <th style={{ width: '14%', textAlign: 'left' }}>SKU Name</th>
+                                    <th style={{ width: '5%', textAlign: 'center' }}>UOM</th>
+                                    <th style={{ width: '5%', textAlign: 'center' }}>Pack Size</th>
+                                    <th style={{ width: '8%', textAlign: 'center' }}>Declared PCA (Lt/Kg)</th>
+                                    <th style={{ width: '7%', textAlign: 'center' }}>Rate (Lt/Kg)</th>
+                                    <th style={{ width: '5%', textAlign: 'center' }}>NOP</th>
+                                    <th style={{ width: '8%', textAlign: 'center' }}>Valid From</th>
+                                    <th style={{ width: '8%', textAlign: 'center' }}>Valid Till</th>
+                                    <th style={{ width: '10%', textAlign: 'center' }}>Required From</th>
+                                    <th style={{ width: '14%', textAlign: 'center' }}>Remarks</th>
+                                    <th style={{ width: '6%', textAlign: 'center' }}>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style={{ textAlign: 'left' }}>{skuDetails.sku_code}</td>
+                                    <td style={{ textAlign: 'left' }}>{skuDetails.sku_desc}</td>
+                                    <td style={{ textAlign: 'center' }}>{skuDetails.sku_uom}</td>
+                                    <td style={{ textAlign: 'center' }}>{skuDetails.sku_pack_size}</td>
+                                    <td style={{ textAlign: 'center' }}>{skuDetails.sku_pca}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <NumberInput
+                                            style={{ width: '75px' }}
+                                            id="txtRate"
+                                            name="rate"
+                                            value={skuDetails?.rate}
+                                            autoComplete="off"
+                                            onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, rate: e }))}
+                                            placeholder="Rate"
+                                        />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <NumberInput
+                                            style={{ width: '55px' }}
+                                            name="nop"
+                                            value={skuDetails?.nop}
+                                            autoComplete="off"
+                                            onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, nop: e }))}
+                                            placeholder="NOP"
+                                        />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <Flatpickr
+                                            name="validfrom"
+                                            value={convertToDate(skuDetails.validfrom)}
+                                            autoComplete="off"
+                                            options={{
+                                                dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                altInput: true, // Enables alternative display input
+                                                altFormat: 'd/m/Y', // Display format for the user
+                                            }}
+                                            placeholder="Valid From"
+                                            disabled={true}
+                                            className="tableInput" // Disable the Valid From field
+                                        />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <Flatpickr
+                                            name="validto"
+                                            value={convertToDate(skuDetails.validto)}
+                                            // autoComplete="off"
+                                            options={{
+                                                dateFormat: 'Y-m-d', // Actual input value format (ISO format)
+                                                altInput: true, // Enables alternative display input
+                                                altFormat: 'd/m/Y', // Display format for the user
+                                                minDate: getMinValidTillDate(skuDetails.validfrom),
+                                                maxDate: getMaxValidTillDate(skuDetails.validfrom),
+                                            }}
+                                            placeholder="Valid To"
+                                            className="tableInput"
+                                            onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, validto: formatDateToString(e[0]) }))}
+                                        />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <Select
+                                            name="requiredForm"
+                                            className="innerTableSelectWt"
+                                            isSearchable={true}
+                                            value={{ value: skuDetails?.requiredForm?.org_code, label: skuDetails?.requiredForm?.org_name }}
+                                            options={factory.map((d: any) => ({ value: d.org_code, label: d.org_name }))}
+                                            onChange={(event) => {
+                                                setSkuDetails((pre: any) => ({ ...pre, requiredForm: { org_code: event?.value, org_name: event?.label } }))
+                                            }}
+                                        />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <TextInput style={{ width: '100%' }} name="remarks" value={skuDetails.remarks} autoComplete="off" onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, remarks: e.target.value }))} placeholder="Enter data" />
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <button
+                                            className={`${isFormValid() ? 'cursor-pointer bg-blue-500 hover:bg-blue-700' : 'cursor-not-allowed bg-gray-300'
+                                                } relative rounded border border-gray-400 px-4 py-2 font-semibold text-white shadow`}
+                                            disabled={!isFormValid()}
+                                            onClick={() => {
+                                                handleSubmit();
+                                            }}
+                                        >Add</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                }
+                </div>
+                {/* } */}
             </div>
 
-            {pageType == 'View' && <div className="mb-2 p-pl-table-item">{data.length > 0 && <MantineReactTable table={table} />}</div>}
+            {/* {pageType == 'View' && */}
+            {data.length > 0 && <div className="panel mb-2 p-pl-table-item"><MantineReactTable table={table} /></div>}
+            {/* } */}
 
             <div className="flex items-center justify-center gap-1 pb-2">
                 <button
