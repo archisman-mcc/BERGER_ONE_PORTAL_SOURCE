@@ -65,7 +65,11 @@ const EPCAHoApprovalDetails = () => {
         };
         try {
             const response: any = await EpcaList.GetePCAHoApprovalDetails(data1);
-            if (response && response.data != null && response.data != undefined) setData(response.data.table.map((t: any) => ({ ...t, currentStatus: 'A' })))
+            if (response && response.data != null && response.data != undefined) {
+                setHeader(response.data.table[0]?.lpo_yr_month_desc);
+                setHeader1(response.data.table[0]?.wav_yr_month_desc);
+                setData(response.data.table.map((t: any) => ({ ...t, currentStatus: 'A' })))
+            }
         } catch (error) {
             setData([]);
         } finally {
@@ -539,7 +543,7 @@ const EPCAHoApprovalDetails = () => {
             },
             {
                 accessorKey: 'rate_lpo',
-                header: 'Rate LPO',
+                header: `Rate LPO (${header})`,
                 size: 20,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
@@ -667,7 +671,7 @@ const EPCAHoApprovalDetails = () => {
             },
             {
                 accessorKey: 'rate_wav',
-                header: 'Rate WAV',
+                header: `Rate WAV (${header1})`,
                 size: 10,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
