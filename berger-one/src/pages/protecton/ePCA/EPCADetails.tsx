@@ -255,7 +255,7 @@ const EPCADetails = () => {
             projectid: ePCADetails.projectId,
             project_type: 'EXISTING',
         };
-
+        // console.log(ePCADetails?.bill_to)
         // commonAlert('Are you want to insert the PCA Info?', '', 'warning').then(async (result: any) => {
         // if (result.value) {
         const response: any = await EpcaDetails.InsertePcaDetails_Vr1(submitObj);
@@ -264,11 +264,7 @@ const EPCADetails = () => {
             setePCADetails((pre: any) => ({ ...pre, sku_code: "", sku_desc: "" }))
             setSkuDetails({ ...skuObj });
             setSkuSrchData('');
-            // setePCADetails({...ePCADetailsObj});
-            // navigate('/Protecton/ePCA/EPCAList/');
-            const value: any = (sessionStorage.getItem('epcaDtlList'));
-            const parsedValue = JSON.parse(value);
-            parsedValue && GetePCADetailsData(parsedValue.dlr_bill_to);
+            GetePCADetailsData(ePCADetails?.bill_to);
         }
         // }
         // });
@@ -291,9 +287,7 @@ const EPCADetails = () => {
                 const response: any = await EpcaDetails.DeletePcaDetails({ auto_id: autoId });
                 if (response.response_message) {
                     commonSuccessToast('PCA Details Deleted Successfully');
-                    const value: any = (sessionStorage.getItem('epcaDtlList'));
-                    const parsedValue = JSON.parse(value);
-                    parsedValue && GetePCADetailsData(parsedValue.dlr_bill_to);
+                    GetePCADetailsData(ePCADetails?.bill_to);
                 }
             }
         });
@@ -379,20 +373,20 @@ const EPCADetails = () => {
                                     borderRadius: '4px',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() =>
-                                    // handleDelete(row.original)
-                                    DeletePca(row.original.pd_auto_id)
-                                }
+                                onClick={() => {
+                                    // console.log(ePCADetails?.bill_to)
+                                    ePCADetails?.bill_to && DeletePca(row.original.pd_auto_id)
+                                }}
                             >
                                 Delete
-                            </button>
+                            </button >
                         )
                     );
                 },
             }
 
         ],
-        []
+        [ePCADetails?.bill_to]
     );
     const table = useMantineReactTable({
         columns,
@@ -424,7 +418,7 @@ const EPCADetails = () => {
             const value: any = (sessionStorage.getItem('epcaDtlList'));
             const parsedValue = JSON.parse(value);
             if (parsedValue) {
-                // console.log(parsedValue)
+                console.log(parsedValue)
                 GetePCADetailsData(parsedValue.dlr_bill_to);
                 GetApplicableTerritory({ depot_code: parsedValue.depot_code })
                 GetDealerList({ depot_code: parsedValue.depot_code, terr_code: parsedValue.dlr_terr_code })
@@ -440,6 +434,15 @@ const EPCADetails = () => {
             }
         }
     }, [])
+
+    useEffect(() => {
+        // console.log(ePCADetails?.bill_to)
+        const entryType: any = (sessionStorage.getItem('epcaDtlListEntryType'));
+        if (JSON.parse(entryType) === 'New' && ePCADetails?.depot_code && ePCADetails?.terr_code && ePCADetails?.dealer_code && ePCADetails?.bill_to) {
+            setData([]);
+            GetePCADetailsData(ePCADetails?.bill_to);
+        }
+    }, [ePCADetails?.depot_code, ePCADetails?.terr_code, ePCADetails?.dealer_code, ePCADetails?.bill_to])
 
     useEffect(() => {
         const entryType: any = (sessionStorage.getItem('epcaDtlListEntryType'));

@@ -204,7 +204,7 @@ const EPCAHoApprovalDetails = () => {
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>PROJECT NAME</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU CODE</th>
                         <th style={{ width: '25%', textAlign: 'center', verticalAlign: 'middle' }}>SKU NAME</th>
-                        <th style={{ width: '15%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
+                        <th style={{ width: '8%', textAlign: 'center', verticalAlign: 'middle' }}>UOM</th>
                         <th style={{ width: '10%', textAlign: 'center', verticalAlign: 'middle' }}>PACK SIZE</th>
                     </tr>
                 </thead>
@@ -336,27 +336,37 @@ const EPCAHoApprovalDetails = () => {
             {
                 accessorKey: 'sku_desc',
                 header: 'SKU Name',
-                size: 60,
+                size: 50,
+                minSize: 10,
+                maxSize: 60,
             },
             {
                 accessorKey: 'sku_uom',
                 header: 'UOM',
                 size: 10,
+                minSize: 10,
+                maxSize: 60,
             },
             {
                 accessorKey: 'sku_pack_size',
                 header: 'Pack Size',
-                size: 5,
+                size: 23,
+                minSize: 10,
+                maxSize: 60,
             },
             {
                 accessorKey: 'sku_pca',
                 header: 'Declared PCA(Lt/Kg)',
-                size: 10,
+                size: 40,
+                minSize: 10,
+                maxSize: 60,
             },
             {
                 accessorKey: 'rate',
                 header: 'Rate (Lt/Kg)',
-                size: 10,
+                size: 25,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ row }) => {
                     const handleChange = (e: { target: { value: any; }; }) => {
                         (async () => {
@@ -402,7 +412,9 @@ const EPCAHoApprovalDetails = () => {
             {
                 accessorKey: 'qty',
                 header: 'NOP(Lt/Kg)',
-                size: 10,
+                size: 25,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ row }) => {
                     const handleChange = (e: any) => {
                         handleEditChange(e, row.index, 'qty');
@@ -412,139 +424,11 @@ const EPCAHoApprovalDetails = () => {
                 },
             },
             {
-                accessorKey: 'valid_from',
-                header: 'Valid From',
-                size: 20,
-                Cell: ({ row }) => {
-                    const parseDate = (dateStr: string) => {
-                        const [day, month, year] = dateStr.split('/');
-                        return new Date(`${year}-${month}-${day}`);
-                    };
-
-                    const validFrom = row.original.valid_from ? parseDate(row.original.valid_from) : null;
-
-                    return (
-                        <Flatpickr
-                            value={validFrom || ''}
-                            onChange={(dates) => {
-                                handleEditChange(dates[0], row.index, 'valid_from');
-                                // If valid from date is selected, update the valid till date
-                                // if (dates[0]) {
-                                //     const validTill = row.original.valid_till ? parseDate(row.original.valid_till) : null;
-                                //     if (validTill && validTill < dates[0]) {
-                                //         // Optionally reset valid till date if it's invalid
-                                //         handleEditChange('', row.index, 'valid_till');
-                                //     }
-                                // }
-                            }}
-                            options={{
-                                dateFormat: 'd/m/Y',
-                            }}
-                            className="tableInput"
-                            disabled
-                        />
-                    );
-                },
-            },
-            {
-                accessorKey: 'valid_till',
-                header: 'Valid Till',
-                size: 20,
-                Cell: ({ row }) => {
-                    const parseDate = (dateStr: string | number | Date) => {
-                        if (typeof dateStr === 'string' && dateStr.includes('/')) {
-                            const [day, month, year] = dateStr.split('/');
-                            return new Date(`${year}-${month}-${day}`);
-                        } else if (typeof dateStr === 'object') {
-                            const date = new Date(dateStr);
-                            const day = String(date.getDate()).padStart(2, '0'); // Get day and pad with leading zero if needed
-                            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-                            const year = date.getFullYear();
-                            return new Date(`${year}-${month}-${day}`);
-                        }
-                        return null; // Return null if the date string is invalid or not in the expected format
-                    };
-
-                    const validFrom = row.original.valid_from ? parseDate(row.original.valid_from) : null;
-                    const validTill = row.original.valid_till ? parseDate(row.original.valid_till) : null;
-
-                    return (
-                        <Flatpickr
-                            value={validTill || ''}
-                            onChange={(dates) => handleEditChange(dates[0], row.index, 'valid_till')}
-                            options={{
-                                dateFormat: 'd/m/Y',
-                                minDate: validFrom ? validFrom : undefined, // Disable dates before validFrom
-                            }}
-                            className="tableInput"
-                        />
-                    );
-                },
-            },
-            {
-                accessorKey: 'factory',
-                header: 'Required From',
-                size: 10,
-                Cell: ({ row }) => {
-                    const [options, setOptions] = useState<any[]>([]);
-                    const [selectedFactory, setSelectedFactory] = useState<string>('');
-
-                    const staticFactoryValue = row.original.factory || ''; // Full value like '300:Howrah - Mfg'
-                    const factoryCode = staticFactoryValue.split(':')[0]; // Extract the factory code (e.g., '300')
-
-                    useEffect(() => {
-                        const fetchOptions = async () => {
-                            const factoryOptions = await GetFactorydata(row.original.sku_id);
-                            setOptions(factoryOptions);
-
-                            // Find the corresponding option in the dropdown
-                            const selectedOption = factoryOptions.find((option: { value: string; }) => option.value === factoryCode);
-                            if (selectedOption) {
-                                setSelectedFactory(selectedOption.value); // Set the selected factory code
-                            }
-                        };
-
-                        fetchOptions();
-                        setLoading(false);
-                    }, [row.original.sku_id, factoryCode]);
-
-                    const handleFactoryChange = (value: string) => {
-                        setSelectedFactory(value); // Update the selected factory when user selects an option
-                        (async () => {
-                            const requestData = {
-                                sku_code: row.original.sku_id,
-                                factory_code: value,
-                                yr_month_lpo: row.original.lpo_yr_month,
-                                yr_month_wav: row.original.wav_yr_month,
-                                rate: row.original.rate,
-                            };
-                            try {
-                                const response: any = await EpcaDetails.GetCalculatedGC(requestData);
-                                const notExistData = calculatedGCData.filter((sku: { table: { sku_code: any; }[]; }) => sku.table[0].sku_code !== response.data.table[0].sku_code)
-                                setCalculatedGCData([...notExistData, response.data]);
-                            } catch (error) {
-                                setCalculatedGCData([]);
-                            }
-                        })();
-                        handleEditChange(value, row.index, 'factory_code')
-                    };
-
-                    return (
-                        <MantineSelect
-                            data={options || []}
-                            value={selectedFactory}
-                            onChange={handleFactoryChange} // Add onChange handler
-                            placeholder="Select an option"
-                            className="mantine-select"
-                            withinPortal={true}
-                        />
-                    );
-                },
-            },
-            {
                 accessorKey: 'rate_lpo',
                 header: `Rate LPO (${header})`,
-                size: 20,
+                size: 35,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
                     const iconRef = useRef<HTMLDivElement | null>(null);
@@ -672,7 +556,9 @@ const EPCAHoApprovalDetails = () => {
             {
                 accessorKey: 'rate_wav',
                 header: `Rate WAV (${header1})`,
-                size: 10,
+                size: 35,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ cell, row }) => {
                     const [isHovered, setIsHovered] = useState(false);
                     const iconRef = useRef<HTMLDivElement | null>(null);
@@ -792,19 +678,157 @@ const EPCAHoApprovalDetails = () => {
                 },
             },
             {
-                accessorKey: 'lpo_yr_month',
-                header: 'LpoYrMonth',
-                size: 1,
+                accessorKey: 'valid_from',
+                header: 'Valid From',
+                size: 20,
+                minSize: 10,
+                maxSize: 60,
+                Cell: ({ row }) => {
+                    const parseDate = (dateStr: string) => {
+                        const [day, month, year] = dateStr.split('/');
+                        return new Date(`${year}-${month}-${day}`);
+                    };
+
+                    const validFrom = row.original.valid_from ? parseDate(row.original.valid_from) : null;
+
+                    return (
+                        <Flatpickr
+                            value={validFrom || ''}
+                            onChange={(dates) => {
+                                handleEditChange(dates[0], row.index, 'valid_from');
+                                // If valid from date is selected, update the valid till date
+                                // if (dates[0]) {
+                                //     const validTill = row.original.valid_till ? parseDate(row.original.valid_till) : null;
+                                //     if (validTill && validTill < dates[0]) {
+                                //         // Optionally reset valid till date if it's invalid
+                                //         handleEditChange('', row.index, 'valid_till');
+                                //     }
+                                // }
+                            }}
+                            options={{
+                                dateFormat: 'd/m/Y',
+                            }}
+                            className="tableInput"
+                            disabled
+                        />
+                    );
+                },
             },
             {
-                accessorKey: 'wav_yr_month',
-                header: 'WavYrMonth',
-                size: 1,
+                accessorKey: 'valid_till',
+                header: 'Valid Till',
+                size: 20,
+                minSize: 10,
+                maxSize: 60,
+                Cell: ({ row }) => {
+                    const parseDate = (dateStr: string | number | Date) => {
+                        if (typeof dateStr === 'string' && dateStr.includes('/')) {
+                            const [day, month, year] = dateStr.split('/');
+                            return new Date(`${year}-${month}-${day}`);
+                        } else if (typeof dateStr === 'object') {
+                            const date = new Date(dateStr);
+                            const day = String(date.getDate()).padStart(2, '0'); // Get day and pad with leading zero if needed
+                            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                            const year = date.getFullYear();
+                            return new Date(`${year}-${month}-${day}`);
+                        }
+                        return null; // Return null if the date string is invalid or not in the expected format
+                    };
+
+                    const validFrom = row.original.valid_from ? parseDate(row.original.valid_from) : null;
+                    const validTill = row.original.valid_till ? parseDate(row.original.valid_till) : null;
+
+                    return (
+                        <Flatpickr
+                            value={validTill || ''}
+                            onChange={(dates) => handleEditChange(dates[0], row.index, 'valid_till')}
+                            options={{
+                                dateFormat: 'd/m/Y',
+                                minDate: validFrom ? validFrom : undefined, // Disable dates before validFrom
+                            }}
+                            className="tableInput"
+                        />
+                    );
+                },
             },
+            {
+                accessorKey: 'factory',
+                header: 'Required From',
+                size: 40,
+                minSize: 10,
+                maxSize: 60,
+                Cell: ({ row }) => {
+                    const [options, setOptions] = useState<any[]>([]);
+                    const [selectedFactory, setSelectedFactory] = useState<string>('');
+
+                    const staticFactoryValue = row.original.factory || ''; // Full value like '300:Howrah - Mfg'
+                    const factoryCode = staticFactoryValue.split(':')[0]; // Extract the factory code (e.g., '300')
+
+                    useEffect(() => {
+                        const fetchOptions = async () => {
+                            const factoryOptions = await GetFactorydata(row.original.sku_id);
+                            setOptions(factoryOptions);
+
+                            // Find the corresponding option in the dropdown
+                            const selectedOption = factoryOptions.find((option: { value: string; }) => option.value === factoryCode);
+                            if (selectedOption) {
+                                setSelectedFactory(selectedOption.value); // Set the selected factory code
+                            }
+                        };
+
+                        fetchOptions();
+                        setLoading(false);
+                    }, [row.original.sku_id, factoryCode]);
+
+                    const handleFactoryChange = (value: string) => {
+                        setSelectedFactory(value); // Update the selected factory when user selects an option
+                        (async () => {
+                            const requestData = {
+                                sku_code: row.original.sku_id,
+                                factory_code: value,
+                                yr_month_lpo: row.original.lpo_yr_month,
+                                yr_month_wav: row.original.wav_yr_month,
+                                rate: row.original.rate,
+                            };
+                            try {
+                                const response: any = await EpcaDetails.GetCalculatedGC(requestData);
+                                const notExistData = calculatedGCData.filter((sku: { table: { sku_code: any; }[]; }) => sku.table[0].sku_code !== response.data.table[0].sku_code)
+                                setCalculatedGCData([...notExistData, response.data]);
+                            } catch (error) {
+                                setCalculatedGCData([]);
+                            }
+                        })();
+                        handleEditChange(value, row.index, 'factory_code')
+                    };
+
+                    return (
+                        <MantineSelect
+                            data={options || []}
+                            value={selectedFactory}
+                            onChange={handleFactoryChange} // Add onChange handler
+                            // placeholder="Select an option"
+                            className="mantine-select"
+                            withinPortal={true}
+                        />
+                    );
+                },
+            },
+            // {
+            //     accessorKey: 'lpo_yr_month',
+            //     header: 'LpoYrMonth',
+            //     size: 5,
+            // },
+            // {
+            //     accessorKey: 'wav_yr_month',
+            //     header: 'WavYrMonth',
+            //     size: 5,
+            // },
             {
                 accessorKey: 'currentStatus',
                 header: 'Status',
-                size: 60,
+                size: 35,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ row }) => {
                     // console.log(row.original?.currentStatus)
                     return (
@@ -813,6 +837,11 @@ const EPCAHoApprovalDetails = () => {
                                 { label: 'Approve', value: 'A' },
                                 { label: 'Reject', value: 'R' },
                             ]}
+                            size="xs"
+                            styles={{
+                                input: { fontSize: 12 },
+                                dropdown: { fontSize: 12 },
+                            }}
                             value={row.original?.currentStatus || 'A'}
                             onChange={(value) => value && handleEditChange({ target: { value } }, row.index, 'currentStatus')}
                             placeholder="Select status"
@@ -827,27 +856,26 @@ const EPCAHoApprovalDetails = () => {
                 accessorKey: 'remarks',
                 header: 'Remarks',
                 size: 30,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ row }) => <input className="tableInput" autoComplete="off" type="text" value={row.original.remarks} onChange={(e) => handleEditChange(e, row.index, 'remarks')} />,
             },
             {
                 id: 'action',
                 header: 'Action',
-                size: 50,
+                size: 10,
+                minSize: 10,
+                maxSize: 60,
                 Cell: ({ row }) => {
-                    // const isDisabled = row.original.status_code === 'PENDING_DEPOT';
                     return (
-                        <Button
-                            variant="outline"
-                            color="blue"
-                            leftIcon={<FiEye size={16} style={{ paddingRight: "4px" }} />}
+                        <span
                             onClick={(e) => {
                                 e.stopPropagation();
                                 GetPcaDetailsView(row.original.sku_id, row.original.pca_auto_id);
                                 setShowPCAModal(true);
-                            }}
-                        >
-                            View
-                        </Button>
+                            }}>
+                            <FiEye size={20} style={{ color: 'blue',paddingRight: "4px" }} />
+                        </span>
                     );
                 },
             },
