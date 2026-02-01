@@ -172,7 +172,8 @@ const EPCADetails = () => {
         };
         try {
             const response: any = await EpcaDetails.GetSKUList(data);
-            setSKU(response.data.table || [])
+            // setSKU(response.data.table || [])
+            setSKU(response.data.table.map((d: any) => ({ ...d, sku_desc: `${d.sku_desc} (${d.sku_code})` })) || [])
         } catch (error) {
             setSKU([]);
         } finally {
@@ -469,7 +470,7 @@ const EPCADetails = () => {
                 <form className=" border-1 space-y-5">
                     <div className="grid md:grid-cols-7 gap-2">
                         <div className="col-span-1">
-                            <label className="formLabel">Depot:</label>
+                            <label className="formLabel">Depot:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <Select
                                 className="text-sm"
                                 isSearchable={true}
@@ -489,13 +490,16 @@ const EPCADetails = () => {
                                         bill_to_name: "",
                                         projectId: null,
                                         projectName: "",
+                                        sku_code: "",
+                                        sku_desc: "",
                                     }))
+                                    setSkuDetails({ ...skuObj });
                                 }}
                             />
                             {/* {errMsg && errMsg.depot ? <div className="mt-1 text-danger">{errMsg.depot}</div> : ''} */}
                         </div>
                         <div className="col-span-1">
-                            <label className="formLabel">Territory:</label>
+                            <label className="formLabel">Territory:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <Select
                                 className="text-sm"
                                 isSearchable={true}
@@ -504,13 +508,14 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
                                     GetDealerList({ depot_code: ePCADetails?.depot_code, terr_code: event?.value })
-                                    setePCADetails((pre: any) => ({ ...pre, terr_code: event?.value, terr_name: event?.label, dealer_code: '', dealer_name: '', bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
+                                    setePCADetails((pre: any) => ({ ...pre, terr_code: event?.value, terr_name: event?.label, dealer_code: '', dealer_name: '', bill_to: null, bill_to_name: "", projectId: null, projectName: "", sku_code: "", sku_desc: "" }))
+                                    setSkuDetails({ ...skuObj });
                                 }}
                             />
                             {/* {errMsg && errMsg.terr ? <div className="mt-1 text-danger">{errMsg.terr}</div> : ''} */}
                         </div>
                         <div className="col-span-1">
-                            <label className="formLabel">Customer:</label>
+                            <label className="formLabel">Customer:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <Select
                                 className="text-sm"
                                 isSearchable={true}
@@ -519,13 +524,14 @@ const EPCADetails = () => {
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
                                     GetApplicableBillto({ depot_code: ePCADetails?.depot_code, terr_code: ePCADetails?.terr_code, dealer_code: event?.value })
-                                    setePCADetails((pre: any) => ({ ...pre, dealer_code: event?.value, dealer_name: event?.label, bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
+                                    setePCADetails((pre: any) => ({ ...pre, dealer_code: event?.value, dealer_name: event?.label, bill_to: null, bill_to_name: "", projectId: null, projectName: "", sku_code: "", sku_desc: "" }))
+                                    setSkuDetails({ ...skuObj });
                                 }}
                             />
                             {/* {errMsg && errMsg.dealer ? <div className="mt-1 text-danger">{errMsg.dealer}</div> : ''} */}
                         </div>
                         <div className="col-span-1">
-                            <label className="formLabel">PD Applicable:</label>
+                            <label className="formLabel">PD Applicable:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <div className="mt-2 flex">
                                 <Switch
                                     id="pd_applicable_switch"
@@ -533,13 +539,17 @@ const EPCADetails = () => {
                                     checked={ePCADetails.pdAppl === 'Y'}
                                     disabled={pageType === 'View'}
                                     onChange={(event: any) => {
-                                        setePCADetails((pre: any) => ({ ...pre, pdAppl: event.target.checked ? 'Y' : 'N', bill_to: null, bill_to_name: "", projectId: null, projectName: "" }))
+                                        setePCADetails((pre: any) => ({
+                                            ...pre, pdAppl: event.target.checked ? 'Y' : 'N', bill_to: null, bill_to_name: "", projectId: null, projectName: "", sku_code: "",
+                                            sku_desc: ""
+                                        }))
+                                        setSkuDetails({ ...skuObj });
                                     }}
                                 />
                             </div>
                         </div>
                         <div className="col-span-1">
-                            <label className="formLabel">Bill To:</label>
+                            <label className="formLabel">Bill To:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                             <Select
                                 className="text-sm"
                                 isSearchable={true}
@@ -547,7 +557,8 @@ const EPCADetails = () => {
                                 options={billTo.filter((b: any) => b.pd_appl_yn === ePCADetails?.pdAppl).map((d: any) => ({ value: d.bill_to, label: d.bill_to_name }))}
                                 isDisabled={pageType === 'View'}
                                 onChange={(event) => {
-                                    setePCADetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label, projectId: null, projectName: "" }))
+                                    setePCADetails((pre: any) => ({ ...pre, bill_to: event?.value, bill_to_name: event?.label, projectId: null, projectName: "", sku_code: "", sku_desc: "" }))
+                                    setSkuDetails({ ...skuObj });
                                     // GetApplicableProjectList({ billto_code: event?.value, srch_str: 'pro' })
                                     GetApplicableProjectList({ billto_code: event?.value, srch_str: projectSrchData })
                                 }}
@@ -622,9 +633,15 @@ const EPCADetails = () => {
                                             style={{ width: '75px' }}
                                             id="txtRate"
                                             name="rate"
+                                            min={0}
                                             value={skuDetails?.rate}
                                             autoComplete="off"
-                                            onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, rate: e }))}
+                                            onChange={(e) =>
+                                                setSkuDetails((pre: any) => ({
+                                                    ...pre,
+                                                    rate: typeof e === 'number' ? Math.max(0, e) : e,
+                                                }))
+                                            }
                                             placeholder="Rate"
                                         />
                                     </td>
@@ -632,9 +649,15 @@ const EPCADetails = () => {
                                         <NumberInput
                                             style={{ width: '55px' }}
                                             name="nop"
+                                            min={0}
                                             value={skuDetails?.nop}
                                             autoComplete="off"
-                                            onChange={(e) => setSkuDetails((pre: any) => ({ ...pre, nop: e }))}
+                                            onChange={(e) =>
+                                                setSkuDetails((pre: any) => ({
+                                                    ...pre,
+                                                    nop: typeof e === 'number' ? Math.max(0, e) : e,
+                                                }))
+                                            }
                                             placeholder="NOP"
                                         />
                                     </td>
