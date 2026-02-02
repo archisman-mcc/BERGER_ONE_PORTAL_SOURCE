@@ -155,8 +155,8 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                 setData((prevData: any) => ({
                     ...prevData,
                     selectedStateList: { value: response.data.table[0].state_code, label: response.data.table[0].state_name },
-                    addr1: response.data.table[0].pm_town_villige,
-                    addr2: response.data.table[0].pm_sub_district,
+                    // addr1: response.data.table[0].pm_town_villige,
+                    // addr2: response.data.table[0].pm_sub_district,
                     city: response.data.table[0].pm_district,
                 }));
             }
@@ -311,6 +311,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
     }
 
     const selfAlertFunc = () => {
+        // console.log(data?.ptm_expected_cldate)
         if (data?.ptm_ref_lead_yn === '') {
             commonErrorToast('Please select Referral Lead');
             return false;
@@ -367,8 +368,20 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
             commonErrorToast('Please select Work In Progress');
             return false;
         }
-        else if (data.ptm_work_status?.value === "WIP8" && data.ptm_dealer_code === '') {
+        else if (data.ptm_work_status?.value === "WIP8" && data.ptm_expected_cldate === '') {
+            commonErrorToast('Please select Expected Closing Date');
+            return false;
+        }
+        else if (data.ptm_work_status?.value === "WIP8" && !data.ptm_dealer_code) {
             commonErrorToast('Please select Oracle Customer');
+            return false;
+        }
+        else if (data.ptm_work_status?.value === "WIP8" && !data.ptm_potential_val) {
+            commonErrorToast('Please select Value of paints');
+            return false;
+        }
+        else if (data.ptm_work_status?.value === "WIP8" && !data.ptm_potential_vol) {
+            commonErrorToast('Please select Scope of paints');
             return false;
         }
         return true;
@@ -624,7 +637,16 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
     }, []);
 
     React.useEffect(() => {
-        console.log(ddlData);
+        const workStatusList: any = [];
+        var matched = false;
+        ddlData.workStatusList.forEach((d: any) => {
+            if (d.lov_code === data?.ptm_work_status?.value) {
+                matched = true;
+            }
+            matched && workStatusList.push({ value: d.lov_code, label: d.lov_value });
+        });
+        // console.log(workStatusList);
+        // console.log(ddlData);
     }, [ddlData]);
 
     return (
@@ -935,10 +957,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                             <input readOnly={detailsAPIcallWithValueOrderOwn} type="text" placeholder="Enter Address 2" className="w-full border rounded form-input text-sm" name="addr2" value={data?.addr2} onChange={(event: any) => setData((pre: any) => ({ ...pre, addr2: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold mb-1">City:</label>
-                            <input readOnly={detailsAPIcallWithValueOrderOwn} type="text" placeholder="Enter City" className="w-full border rounded form-input text-sm" name="city" value={data?.city} onChange={(event: any) => setData((pre: any) => ({ ...pre, city: event.target.value }))} autoComplete="off" />
-                        </div>
-                        <div>
                             <label className="block text-sm font-semibold mb-1">Pincode:</label>
                             <input
                                 readOnly={detailsAPIcallWithValueOrderOwn}
@@ -965,6 +983,10 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 min="100000"
                                 max="999999"
                             />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold mb-1">City:</label>
+                            <input readOnly={detailsAPIcallWithValueOrderOwn} type="text" placeholder="Enter City" className="w-full border rounded form-input text-sm" name="city" value={data?.city} onChange={(event: any) => setData((pre: any) => ({ ...pre, city: event.target.value }))} autoComplete="off" />
                         </div>
                         <div>
                             <label className="block text-sm font-semibold mb-1">Select State:</label>
@@ -998,90 +1020,6 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                         </div>
                     }
                     {/* ---------Project Information--------- */}
-
-                    {/* ----------Scope Information------- */}
-                    {(
-                        (popupOpenData?.popupHeader === 'SELF' && popupOpenData?.type === "NEW") ||
-                        (popupOpenData?.popupHeader === 'SELF' && popupOpenData?.type === "VIEW") ||
-                        (popupOpenData?.popupHeader === "OTHER PROTECTON" && popupOpenData?.type === "NEW") ||
-                        (popupOpenData?.popupHeader === "OTHER PROTECTON" && popupOpenData?.type === "VIEW") ||
-                        (popupOpenData?.popupHeader === "PROLINKS" && popupOpenData?.type === "VIEW")
-                    ) &&
-                        <div className="mb-2">
-                            <div className="border-b-2 border-blue-400 pb-2 mb-2">
-                                <h2 className="text-xl font-semibold text-gray-800">Scope Information</h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Value of paints:</label>
-                                    <div className="flex">
-                                        <input
-                                            type="number"
-                                            placeholder="Enter scope of paints"
-                                            readOnly={detailsAPIcallWithValueOrderOwn}
-                                            className="w-full border rounded form-input text-sm no-spinner text-right"
-                                            value={data?.ptm_potential_val}
-                                            onChange={(event) =>
-                                                setData((pre: any) => ({ ...pre, ptm_potential_val: event.target.value }))
-                                            }
-                                            autoComplete="off"
-                                        />
-                                        <span className="px-3 border border-l-0 rounded-r bg-gray-100 text-sm flex items-center">
-                                            Lakhs
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Scope of paints:</label>
-                                    <div className="flex">
-                                        <input
-                                            type="number"
-                                            readOnly={detailsAPIcallWithValueOrderOwn}
-                                            placeholder="Enter volume"
-                                            className="w-full border rounded form-input text-sm no-spinner text-right"
-                                            value={data?.ptm_potential_vol}
-                                            onChange={(event) =>
-                                                setData((pre: any) => ({ ...pre, ptm_potential_vol: event.target.value }))
-                                            }
-                                            autoComplete="off"
-                                        />
-                                        <span className="px-3 border border-l-0 rounded-r bg-gray-100 text-sm flex items-center">
-                                            KL
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Scope for paints area:</label>
-                                    <input readOnly={detailsAPIcallWithValueOrderOwn} type="number" placeholder="Enter area" className="w-full border rounded form-input text-sm no-spinner text-right" value={data?.ptm_potential_area} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_potential_area: event.target.value }))} autoComplete="off" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold mb-1">Scope for paints area uom:</label>
-                                    <Select
-                                        className="text-sm"
-                                        isDisabled={detailsAPIcallWithValueOrderOwn}
-                                        isSearchable={true}
-                                        options={ddlData?.potential_area_uom_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                                        value={data.ptm_potential_area_uom}
-                                        onChange={(event: any) =>
-                                            setData((pre: any) => ({ ...pre, ptm_potential_area_uom: event }))
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold mb-2">Service area (specifically mention where paint has to be applied):</label>
-                                <Textarea
-                                    className="text-sm"
-                                    placeholder='Enter service area'
-                                    value={data.ptm_area}
-                                    onChange={(event: any) =>
-                                        setData((pre: any) => ({ ...pre, ptm_area: event.target.value }))
-                                    }
-                                />
-                            </div>
-                        </div>
-                    }
-                    {/* ----------Scope Information------- */}
 
                     {/* ----------Business & Other Information------- */}
                     <div className="border-b-2 border-blue-400 pb-2 mb-6">
@@ -1448,7 +1386,18 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         menuPlacement="auto"
                                         className="text-sm"
                                         isSearchable={true}
-                                        options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        options={(() => {
+                                            const workStatusList: any = [];
+                                            var matched = false;
+                                            ddlData.workStatusList.forEach((d: any) => {
+                                                if (d.lov_code === data?.ptm_work_status?.value) {
+                                                    matched = true;
+                                                }
+                                                matched && workStatusList.push({ value: d.lov_code, label: d.lov_value });
+                                            });
+                                            return workStatusList;
+                                        })()}
+                                        // options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_work_status}
                                         onChange={(event: any) => {
                                             setData((pre: any) => ({ ...pre, ptm_work_status: event }))
@@ -1457,9 +1406,21 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 </div>
                                 {(data.ptm_work_status?.value === "WIP5" || data.ptm_work_status?.value === "WIP6" || data.ptm_work_status?.value === "WIP7" || data.ptm_work_status?.value === "WIP8" || data.ptm_work_status?.value === "WIP11") &&
                                     <div>
-                                        <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:</label>
-                                        {/* <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label> */}
-                                        <Flatpickr value={data.ptm_expected_cldate} options={{ dateFormat: 'd/m/Y', position: 'auto left' }} className="w-full border rounded form-input text-sm" onChange={(date) => setData((pre: any) => ({ ...pre, ptm_expected_cldate: date[0] }))} />
+                                        <label className="block text-sm font-semibold mb-1">Expected Closing Date For Order:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <div className="relative">
+                                            <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm12 6H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zM8 13h3v3H8v-3zM8 10h3v2H8v-2zm5 3h3v3h-3v-3zm0-3h3v2h-3v-2zM7 4v1h10V4H7z" />
+                                                </svg>
+                                            </span>
+                                            <Flatpickr
+                                                value={data.ptm_expected_cldate || new Date()}
+                                                options={{ dateFormat: 'd/m/Y', position: 'auto left', minDate: 'today' }}
+                                                className="w-full border rounded form-input text-sm pr-8"
+                                                placeholder="Select date"
+                                                onChange={(date) => setData((pre: any) => ({ ...pre, ptm_expected_cldate: date[0] }))}
+                                            />
+                                        </div>
                                     </div>
                                 }
                                 {(data.ptm_work_status?.value === "WIP9" || data.ptm_work_status?.value === "WIP11") && <div>
@@ -1467,7 +1428,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                     <input type="text" placeholder="Enter reason for on hold/no activity" className="w-full border rounded form-input text-sm" name="ptm_reason_for_onhold" value={data?.ptm_reason_for_onhold} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_reason_for_onhold: event.target.value }))} autoComplete="off" />
                                 </div>}
                                 {data.ptm_work_status?.value === "WIP8" && <div>
-                                    <label className="block text-sm font-semibold mb-1">Oracle Customer:</label>
+                                    <label className="block text-sm font-semibold mb-1">Oracle Customer:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                     <Select
                                         isDisabled={detailsAPIcallWithValueOrderOwn}
                                         menuPlacement="auto"
@@ -1524,6 +1485,90 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                         </>
                     }
                     {/* ----------Business & Other Information------- */}
+
+                    {/* ----------Scope Information------- */}
+                    {(
+                        (popupOpenData?.popupHeader === 'SELF' && popupOpenData?.type === "NEW") ||
+                        (popupOpenData?.popupHeader === 'SELF' && popupOpenData?.type === "VIEW") ||
+                        (popupOpenData?.popupHeader === "OTHER PROTECTON" && popupOpenData?.type === "NEW") ||
+                        (popupOpenData?.popupHeader === "OTHER PROTECTON" && popupOpenData?.type === "VIEW") ||
+                        (popupOpenData?.popupHeader === "PROLINKS" && popupOpenData?.type === "VIEW")
+                    ) &&
+                        <div className="mb-2">
+                            <div className="border-b-2 border-blue-400 pb-2 mb-2">
+                                <h2 className="text-xl font-semibold text-gray-800">Scope Information</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Value of paints:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                    <div className="flex">
+                                        <input
+                                            type="number"
+                                            placeholder="Enter scope of paints"
+                                            readOnly={detailsAPIcallWithValueOrderOwn}
+                                            className="w-full border rounded form-input text-sm no-spinner text-right"
+                                            value={data?.ptm_potential_val}
+                                            onChange={(event) =>
+                                                setData((pre: any) => ({ ...pre, ptm_potential_val: event.target.value }))
+                                            }
+                                            autoComplete="off"
+                                        />
+                                        <span className="px-3 border border-l-0 rounded-r bg-gray-100 text-sm flex items-center">
+                                            Lakhs
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Scope of paints:<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                    <div className="flex">
+                                        <input
+                                            type="number"
+                                            readOnly={detailsAPIcallWithValueOrderOwn}
+                                            placeholder="Enter volume"
+                                            className="w-full border rounded form-input text-sm no-spinner text-right"
+                                            value={data?.ptm_potential_vol}
+                                            onChange={(event) =>
+                                                setData((pre: any) => ({ ...pre, ptm_potential_vol: event.target.value }))
+                                            }
+                                            autoComplete="off"
+                                        />
+                                        <span className="px-3 border border-l-0 rounded-r bg-gray-100 text-sm flex items-center">
+                                            KL
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Scope for paints area:</label>
+                                    <input readOnly={detailsAPIcallWithValueOrderOwn} type="number" placeholder="Enter area" className="w-full border rounded form-input text-sm no-spinner text-right" value={data?.ptm_potential_area} onChange={(event: any) => setData((pre: any) => ({ ...pre, ptm_potential_area: event.target.value }))} autoComplete="off" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1">Scope for paints area uom:</label>
+                                    <Select
+                                        className="text-sm"
+                                        isDisabled={detailsAPIcallWithValueOrderOwn}
+                                        isSearchable={true}
+                                        options={ddlData?.potential_area_uom_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
+                                        value={data.ptm_potential_area_uom}
+                                        onChange={(event: any) =>
+                                            setData((pre: any) => ({ ...pre, ptm_potential_area_uom: event }))
+                                        }
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold mb-2">Service area (specifically mention where paint has to be applied):</label>
+                                <Textarea
+                                    className="text-sm"
+                                    placeholder='Enter service area'
+                                    value={data.ptm_area}
+                                    onChange={(event: any) =>
+                                        setData((pre: any) => ({ ...pre, ptm_area: event.target.value }))
+                                    }
+                                />
+                            </div>
+                        </div>
+                    }
+                    {/* ----------Scope Information------- */}
 
                     {/* -------Site Contact Information------- */}
                     {popupOpenData?.popupHeader === 'PROLINKS' && popupOpenData?.type === "NEW" &&

@@ -596,9 +596,9 @@ const PotentialLead = () => {
         // setLoading(false);
     }
 
-    const handleSearch = async () => {
+    const GetLeadListAPICall = async () => {
+        setLoading(true);
         var filterData: any = {};
-
         try {
             if (filter_Data?.viewBy === "TO") {
                 filterData = {
@@ -637,15 +637,13 @@ const PotentialLead = () => {
             }
         } catch (error) {
             return;
+        } finally {
+            setLoading(false);
         }
-        // {
-        //     "depotCode": "",
-        //         "terr_code": "",
-        //             "region": "",
-        //                 "businessLine": "PROLINKS",
-        //                     "appid": 15
-        // }
-        // GetBusinessLineWiseLeadList
+    }
+
+    const handleSearch = () => {
+        GetLeadListAPICall();
     }
 
     const handleDropdownSelect = (action: string, type: string) => {
@@ -840,6 +838,7 @@ const PotentialLead = () => {
     });
 
     React.useEffect(() => {
+        GetLeadListAPICall();
         GetProtectonRegionAPICALL();
         OtherAPIcall({
             lov_type: "PT_ASSIGN_STATUS",
@@ -889,7 +888,7 @@ const PotentialLead = () => {
 
             <div className="bg-white rounded-lg px-4 py-2 shadow-md mb-2">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div>
+                    {/* <div>
                         <span className="block text-sm font-semibold mb-1">View by:</span>
                         <label className="mr-4">
                             <input
@@ -913,7 +912,7 @@ const PotentialLead = () => {
                             />
                             TO
                         </label>
-                    </div>
+                    </div> */}
                     <div>
                         <label className="block text-sm font-semibold mb-1">Select Vertical:</label>
                         <Select
@@ -1019,7 +1018,7 @@ const PotentialLead = () => {
                                 <div className="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
                                     {ddlData?.verticalData.length &&
                                         ddlData?.verticalData.map((vd: any, indx: any) =>
-                                            <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name, "NEW")}>{vd?.bm_name}</button>
+                                            vd?.bm_id !== 1 && <button key={indx} className="block w-full text-left px-4 py-2 text-sm hover:bg-blue-50" onClick={() => handleDropdownSelect(vd?.bm_name, "NEW")}>{vd?.bm_name}</button>
                                         )
                                     }
                                 </div>
