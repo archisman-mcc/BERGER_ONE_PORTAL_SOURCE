@@ -850,7 +850,7 @@ const PotentialLead = () => {
         });
         setTimeout(() => {
             setDdlData((prevData: any) => ({ ...prevData, ...commonLovDetailsData.current }));
-        }, 500);
+        }, 800);
         // const pageName = window.location.pathname.split("/").pop();
         // setPathName(pageName || '');
         // pageName === "BergeroneLead" ? VerticalWisBusinessLine_BergeroneLead_APICall() : VerticalWisBusinessLine_PotentialLead_APICall();
