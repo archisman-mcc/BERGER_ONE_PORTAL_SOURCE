@@ -23,7 +23,9 @@ const PotentialLead = () => {
     const [pathName, setPathName] = React.useState('');
 
     const [loading, setLoading] = React.useState(false);
+    const [detailsAPIcall, setDetailsAPIcall] = React.useState(false);
     const [detailsAPIcallWithValueOrderOwn, setDetailsAPIcallWithValueOrderOwn] = React.useState(false);
+    const [workStatusInDetls, setWorkStatusInDetls] = React.useState('');
     const [potentialLeadDataList, setPotentialLeadDataList] = React.useState([]);
     const [showDropdown, setShowDropdown] = React.useState(false);
     const [popupOpenData, setPopupOpenData] = React.useState({ open: false, popupHeader: '', type: '' });
@@ -501,7 +503,9 @@ const PotentialLead = () => {
                 })) : [];
                 // console.log("render")
 
+                setWorkStatusInDetls(response?.data?.table[0]?.ptm_work_status);
                 setDetailsAPIcallWithValueOrderOwn(response?.data?.table[0]?.ptm_work_status === "WIP8");
+                setDetailsAPIcall(true);
                 // response?.data?.table[0]?.ptm_work_status === "WIP8" ? setDetailsAPIcallWithValueOrderOwn(false) : setDetailsAPIcallWithValueOrderOwn(true);
 
                 const getDetailsData = {
@@ -1033,7 +1037,7 @@ const PotentialLead = () => {
             </div>
 
             {popupOpenData?.open &&
-                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcallWithValueOrderOwn={detailsAPIcallWithValueOrderOwn} setDetailsAPIcallWithValueOrderOwn={setDetailsAPIcallWithValueOrderOwn} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcallWithValueOrderOwn={detailsAPIcallWithValueOrderOwn} setDetailsAPIcallWithValueOrderOwn={setDetailsAPIcallWithValueOrderOwn} detailsAPIcall={detailsAPIcall} setDetailsAPIcall={setDetailsAPIcall} workStatusInDetls={workStatusInDetls} />
             }
 
             {isActivityLogPopupOpen && (
