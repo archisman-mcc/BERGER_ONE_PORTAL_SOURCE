@@ -700,6 +700,9 @@ const EPCADetails = () => {
                                             isSearchable={true}
                                             value={{ value: skuDetails?.requiredForm?.org_code, label: skuDetails?.requiredForm?.org_name }}
                                             options={factory.map((d: any) => ({ value: d.org_code, label: d.org_name }))}
+                                            menuPortalTarget={document.body}
+                                            menuPosition="fixed"
+                                            styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
                                             onChange={(event) => {
                                                 setSkuDetails((pre: any) => ({ ...pre, requiredForm: { org_code: event?.value, org_name: event?.label } }))
                                             }}
