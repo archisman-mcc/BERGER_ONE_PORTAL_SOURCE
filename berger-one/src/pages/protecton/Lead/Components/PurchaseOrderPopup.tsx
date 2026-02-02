@@ -65,7 +65,7 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
         };
         try {
             const response: any = await GetSKUList(data);
-            setSKU(response.data.table || [])
+            setSKU(response.data.table.map((d: any) => ({ ...d, sku_desc: `${d.sku_desc} (${d.sku_code})` })) || [])
         } catch (error) {
             console.log(error)
         }
@@ -395,14 +395,31 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                     <div>
                                         <label className="block text-xs font-semibold text-gray-700 mb-1">PO No.<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             placeholder="Enter PO Number"
                                             className="border rounded form-input text-sm no-spinner w-full"
                                             value={newPurchaseOrderData?.po_no}
-                                            onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_no: Number(e.target.value) }))}
+                                            onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_no: e.target.value }))}
                                         />
                                     </div>
                                     <div>
+                                        <label className="block text-xs font-semibold text-gray-700 mb-1">PO Date<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
+                                        <div className="relative">
+                                            <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm12 6H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zM8 13h3v3H8v-3zM8 10h3v2H8v-2zm5 3h3v3h-3v-3zm0-3h3v2h-3v-2zM7 4v1h10V4H7z" />
+                                                </svg>
+                                            </span>
+                                            <Flatpickr
+                                                value={convertToDate(newPurchaseOrderData.po_date)}
+                                                options={{ dateFormat: 'd/m/Y', position: 'auto left', minDate: 'today' }}
+                                                className="w-full border rounded form-input text-sm pr-8"
+                                                placeholder="Select date"
+                                                onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_date: formatDateToString(e[0]) }))}
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* <div>
                                         <label className="block text-xs font-semibold text-gray-700 mb-1">PO Date<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <Flatpickr
                                             name="po_date"
@@ -417,22 +434,28 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                             className="tableInput" // Disable the Valid From field
                                             onChange={(e) => setNewPurchaseOrderData((pre: any) => ({ ...pre, po_date: formatDateToString(e[0]) }))}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <label className="block text-xs font-semibold text-gray-700 mb-1">Search SKU<span style={{ color: 'red', marginLeft: '2px' }}>*</span></label>
                                         <Select
-                                            isDisabled={newPurchaseOrderData?.bill_to === '' ? true : false}
+                                            isDisabled={!newPurchaseOrderData?.bill_to || !newPurchaseOrderData?.po_no}
                                             className="text-sm"
                                             value={newPurchaseOrderData.sku}
                                             options={sku.map((d: any) => ({ value: d.sku_code, label: d.sku_desc }))}
                                             onInputChange={(inputValue) => setSkuSrchData(inputValue)}
                                             onChange={(event: any) => {
+                                                // console.log(skuDgData, event?.value)
+                                                if(skuDgData.find((d: any) => d.sku_code === event?.value)) {
+                                                    commonErrorToast('SKU already added');
+                                                    return;
+                                                }
                                                 setNewPurchaseOrderData((pre: any) => ({ ...pre, sku: event }))
                                                 GetPCASkuBillingDetailsAPICALL({ billto_code: newPurchaseOrderData?.bill_to?.value, depot_code: rowData?.depot_code, sku_code: event?.value });
                                             }}
                                         />
                                     </div>
                                 </div>
+
                                 {newPurchaseOrderData.sku &&
                                     <div className="mt-3 text-sm text-gray-700">
                                         {newPurchaseOrderData.sku && (
@@ -452,8 +475,7 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                     </div>
                                 }
 
-
-                                <div>
+                                {newPurchaseOrderData.sku && <div>
                                     <div className="flex items-center h-9">
                                         <input
                                             id="epcaRequest"
@@ -464,7 +486,7 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                         />
                                         <label htmlFor="epcaRequest" className="ml-2 text-sm">ePCA Request</label>
                                     </div>
-                                </div>
+                                </div>}
 
                                 {skuDetails &&
                                     <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-7 gap-4">
@@ -560,7 +582,8 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                                     }
                                                     setSkuDgData([...skuDgData, {
                                                         sku_code: newPurchaseOrderData.sku?.value,
-                                                        sku_name: `${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`,
+                                                        sku_name: newPurchaseOrderData.sku?.label,
+                                                        // sku_name: `${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`,
                                                         rate: newPurchaseOrderData.rate,
                                                         qty: newPurchaseOrderData.nop,
                                                         newRowId: skuDgData.length + 1,
