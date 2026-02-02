@@ -1395,7 +1395,8 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                                 }
                                                 matched && workStatusList.push({ value: d.lov_code, label: d.lov_value });
                                             });
-                                            return workStatusList;
+
+                                            return workStatusList?.length ? workStatusList : ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }));
                                         })()}
                                         // options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_work_status}
