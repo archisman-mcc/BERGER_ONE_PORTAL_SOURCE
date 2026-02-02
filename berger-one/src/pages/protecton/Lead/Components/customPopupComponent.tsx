@@ -896,7 +896,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         isDisabled={detailsAPIcallWithValueOrderOwn}
                                         isSearchable={true}
                                         options={ddlData?.key_account_type_List.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
-                                        value={data.ptm_key_account_type}
+                                        value={data.ptm_key_account_type || { value: '', label: 'None' }}
                                         onChange={(event: any) => {
                                             GetKeyAccountListAPIcall({ business_line: "PROTECTON", key_account_type: event?.value });
                                             setData((pre: any) => ({ ...pre, ptm_key_account_type: event }))
