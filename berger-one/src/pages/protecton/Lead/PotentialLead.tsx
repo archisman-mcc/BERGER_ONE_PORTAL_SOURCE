@@ -1033,7 +1033,7 @@ const PotentialLead = () => {
             </div>
 
             {popupOpenData?.open &&
-                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcallWithValueOrderOwn={detailsAPIcallWithValueOrderOwn} />
+                <CustomPopupComponent handleSearch={handleSearch} commonLovDetailsData={commonLovDetailsData} setDdlData={setDdlData} dataObj={dataObj} ddlData={ddlData} data={data} setData={setData} popupOpenData={popupOpenData} setPopupOpenData={setPopupOpenData} setLoading={setLoading} OtherAPIcall={OtherAPIcall} Getdepot={Getdepot} Getterr={Getterr} detailsAPIcallWithValueOrderOwn={detailsAPIcallWithValueOrderOwn} setDetailsAPIcallWithValueOrderOwn={setDetailsAPIcallWithValueOrderOwn} />
             }
 
             {isActivityLogPopupOpen && (

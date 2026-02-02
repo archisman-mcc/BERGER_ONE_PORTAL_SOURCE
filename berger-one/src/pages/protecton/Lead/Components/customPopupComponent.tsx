@@ -14,7 +14,7 @@ import TeamMemberTable from './TeamMemberTable';
 import { commonErrorToast, commonSuccessToast } from '../../../../services/functions/commonToast';
 import { GetUserApplicableDealer } from '../../../../services/api/protectonEpca/EpcaList';
 
-const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr, detailsAPIcallWithValueOrderOwn }: any) => {
+const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr, detailsAPIcallWithValueOrderOwn, setDetailsAPIcallWithValueOrderOwn }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const blankObj = { selectedOption: '', selectedObj: [], asyncSelectData: [] };
@@ -662,6 +662,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                             onClick={() => {
                                 setPopupOpenData({ open: false, popupHeader: '' });
                                 setData({ ...dataObj });
+                                setDetailsAPIcallWithValueOrderOwn(false);
                                 if (commonLovDetailsData.current) {
                                     commonLovDetailsData.current = {}; // Set the input's value to an empty string
                                 }
