@@ -240,21 +240,21 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
             {
                 accessorKey: 'sku_name',
                 header: 'SKU',
-                size: 60,
+                size: 100,
             },
             {
                 accessorKey: 'rate',
                 header: 'Rate/UOM',
-                size: 60,
+                size: 10,
             },
             {
                 accessorKey: 'qty',
                 header: 'NOP',
-                size: 60,
+                size: 10,
             },
             {
                 header: 'Action',
-                size: 20,
+                size: 5,
                 Cell: ({ cell }) => {
                     return (
                         <>
