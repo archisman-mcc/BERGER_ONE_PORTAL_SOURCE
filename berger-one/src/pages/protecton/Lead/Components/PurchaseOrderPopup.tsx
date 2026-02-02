@@ -459,7 +459,8 @@ const PurchaseOrderPopup = ({ rowData, purchaseOrderData, onClose, GetPotentialT
                                 {newPurchaseOrderData.sku &&
                                     <div className="mt-3 text-sm text-gray-700">
                                         {newPurchaseOrderData.sku && (
-                                            <p className="font-medium">{`${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`}</p>
+                                            <p className="font-medium">{newPurchaseOrderData.sku?.label}</p>
+                                            // <p className="font-medium">{`${newPurchaseOrderData.sku?.label} (${newPurchaseOrderData.sku?.value})`}</p>
                                         )}
                                         <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
                                             {(skuDetails?.sku != null) && (
