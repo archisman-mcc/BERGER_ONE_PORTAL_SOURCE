@@ -59,7 +59,7 @@ table input[type="number"],
 
 /* Panel */
 .panel {
-    @apply relative rounded-md bg-white p-5 shadow dark:bg-black;
+    @apply relative rounded-md bg-white p-5 shadow dark:bg-white;
 }
 
 /* Navbar */

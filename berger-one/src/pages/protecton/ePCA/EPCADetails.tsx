@@ -466,7 +466,7 @@ const EPCADetails = () => {
                 <h5 className="text-lg font-semibold dark:text-white-light">e-PCA Details</h5>
             </div>
 
-            <div className="panel mb-2">
+            <div className="panel mb-2 bg-white">
                 <form className=" border-1 space-y-5">
                     <div className="grid md:grid-cols-7 gap-2">
                         <div className="col-span-1">
