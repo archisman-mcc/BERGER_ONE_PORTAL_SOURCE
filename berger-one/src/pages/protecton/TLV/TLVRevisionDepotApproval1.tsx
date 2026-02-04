@@ -536,7 +536,7 @@ const TLVRevisionDepotApproval1 = () => {
                         <div id="slideIn_down_modal" className="fixed inset-0 z-[200] overflow-y-auto bg-[black]/60">
                             <div className="flex min-h-screen items-start justify-center px-4">
                                 <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-7xl overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
-                                    <div className="grid-cols-12 items-center justify-between bg-secondary-light px-2 py-1 dark:bg-[#121c2c] md:flex">
+                                    <div className="grid-cols-12 items-center justify-between bg-secondary-light px-2 py-1 md:flex">
                                         <div className="flex items-center justify-between bg-secondary-light px-2 w-full">
                                             <div className="flex">
                                                 {/* <img className="mr-2 h-8 w-auto" src={GetProdDevImgRouteBuilder('/assets/images/meeting.png')} alt="" /> */}

@@ -14,7 +14,7 @@ import TeamMemberTable from './TeamMemberTable';
 import { commonErrorToast, commonSuccessToast } from '../../../../services/functions/commonToast';
 import { GetUserApplicableDealer } from '../../../../services/api/protectonEpca/EpcaList';
 
-const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr, detailsAPIcallWithValueOrderOwn, setDetailsAPIcallWithValueOrderOwn }: any) => {
+const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, dataObj, ddlData, data, setData, popupOpenData, setPopupOpenData, setLoading, OtherAPIcall, Getdepot, Getterr, detailsAPIcallWithValueOrderOwn, setDetailsAPIcallWithValueOrderOwn, detailsAPIcall, setDetailsAPIcall, workStatusInDetls }: any) => {
     const user = UseAuthStore((state: any) => state.userDetails);
 
     const blankObj = { selectedOption: '', selectedObj: [], asyncSelectData: [] };
@@ -663,6 +663,7 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                 setPopupOpenData({ open: false, popupHeader: '' });
                                 setData({ ...dataObj });
                                 setDetailsAPIcallWithValueOrderOwn(false);
+                                setDetailsAPIcall(false);
                                 if (commonLovDetailsData.current) {
                                     commonLovDetailsData.current = {}; // Set the input's value to an empty string
                                 }
@@ -1388,16 +1389,18 @@ const CustomPopupComponent = ({ handleSearch, commonLovDetailsData, setDdlData, 
                                         className="text-sm"
                                         isSearchable={true}
                                         options={(() => {
-                                            const workStatusList: any = [];
-                                            var matched = false;
-                                            ddlData.workStatusList.forEach((d: any) => {
-                                                if (d.lov_code === data?.ptm_work_status?.value) {
-                                                    matched = true;
-                                                }
-                                                matched && workStatusList.push({ value: d.lov_code, label: d.lov_value });
-                                            });
-
-                                            return workStatusList?.length ? workStatusList : ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }));
+                                            if (detailsAPIcall) {
+                                                const workStatusList: any = [];
+                                                var matched = false;
+                                                ddlData.workStatusList.forEach((d: any) => {
+                                                    if (d.lov_code === workStatusInDetls) {
+                                                        matched = true;
+                                                    }
+                                                    matched && workStatusList.push({ value: d.lov_code, label: d.lov_value });
+                                                });
+                                                return workStatusList?.length ? workStatusList : ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }));
+                                            } else
+                                                return ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }));
                                         })()}
                                         // options={ddlData.workStatusList.map((d: any) => ({ value: d.lov_code, label: d.lov_value }))}
                                         value={data.ptm_work_status}
