@@ -182,6 +182,36 @@ const EPCADetails = () => {
         setSkuSrchData('')
     };
 
+    const PcaDetailsGetStatus = async ({ billto_code, sku_code, valid_from }: any) => {
+        setLoading(true);
+        const data: any = {
+            billto_code: billto_code,
+            sku_code: sku_code,
+            valid_from: valid_from
+        };
+        try {
+            const response: any = await EpcaDetails.PcaDetailsGetStatus(data);
+            console.log(response)
+            if (response.data && response.data.length > 0) {
+                commonAlert('PCA already exists. Do you want to Cancel existing ePCA and Request New ePCA ?', '', 'warning').then(async (result: any) => {
+                    if (result.value) {
+                        handleSubmit();
+                    } else {
+                        setSkuDetails({ ...skuObj });
+                        setePCADetails((pre: any) => ({ ...pre, sku_code: "", sku_desc: "" }))
+                        setSkuSrchData('');
+                    }
+                });
+            } else {
+                handleSubmit();
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const GetFactorydata = async ({ sku_code }: any) => {
         setLoading(true);
         const data: any = {
@@ -717,7 +747,8 @@ const EPCADetails = () => {
                                                 } relative rounded border border-gray-400 px-4 py-2 font-semibold text-white shadow`}
                                             disabled={!isFormValid()}
                                             onClick={() => {
-                                                handleSubmit();
+                                                PcaDetailsGetStatus({ billto_code: ePCADetails?.bill_to, sku_code: ePCADetails?.sku_code, valid_from: skuDetails.validfrom });
+                                                // handleSubmit();
                                             }}
                                         >Add</button>
                                     </td>
