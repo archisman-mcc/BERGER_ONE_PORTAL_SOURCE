@@ -184,10 +184,13 @@ const EPCADetails = () => {
 
     const PcaDetailsGetStatus = async ({ billto_code, sku_code, valid_from }: any) => {
         setLoading(true);
+        const [day, month, year] = valid_from.split("/");
+        const formatted = `${year}/${month}/${day}`;
+
         const data: any = {
             billto_code: billto_code,
             sku_code: sku_code,
-            valid_from: valid_from
+            valid_from: formatted
         };
         try {
             const response: any = await EpcaDetails.PcaDetailsGetStatus(data);
